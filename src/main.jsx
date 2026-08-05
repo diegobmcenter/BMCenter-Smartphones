@@ -66,6 +66,7 @@ function App({cloudUser,onCloudLogout}){
     <div className="brand-mark"><span/><span/><span/></div>
     <div><b>BM<span>CENTER</span></b><small>SMARTPHONES</small></div>
    </div>
+   <button className="mobile-sidebar-close" type="button" onClick={()=>setMobileMenuOpen(false)} aria-label="Fechar menu"><X/></button>
 
    <nav className="sidebar-nav modern-sidebar-nav">
     <div className="sidebar-menu-card">
@@ -87,7 +88,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.2</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -168,7 +169,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=><label key={item.id}><input type="checkbox" checked={visibleMenus[item.id]!==false} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b></label>)}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.1</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.2</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>

@@ -628,3 +628,13 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Dashboard e cards ocupam 100% da largura do aparelho.
 - Modais e formulários adaptados à tela móvel.
 - Sincronização preserva a página atual e a posição da rolagem.
+
+
+## v5.0.2 — Menu mobile
+
+- Menu móvel reorganizado em uma única coluna.
+- Nomes completos, sem reticências ou cortes.
+- Central de dados posicionada abaixo do menu principal.
+- Botão dedicado para fechar a gaveta.
+- Logo, rolagem e rodapé do usuário ajustados para celular.
+- Gaveta limitada a 88% da tela, com sobreposição correta.
