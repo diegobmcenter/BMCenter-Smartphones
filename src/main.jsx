@@ -18,10 +18,10 @@ const statuses=['Aguardando análise','Aguardando peças','Em reparo','Em testes
 function App({cloudUser,onCloudLogout}){
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
- const[page,setPage]=useState(()=>loadSystemConfig().homePage||'dashboard');
+ const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
- useEffect(()=>{if(config.autoSnapshot!==false){const version='5.0.0',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
+ useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.0.0',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
 
  const menuItems=[
   {id:'dashboard',icon:<LayoutDashboard/>,text:'Dashboard'},
@@ -58,7 +58,7 @@ function App({cloudUser,onCloudLogout}){
  function isVisible(id){return id==='settings'||visibleMenus[id]!==false}
  function saveVisible(next){setVisibleMenus(next);save(MENUKEY,next)}
  function saveConfig(next){setConfig(next);save(CFGKEY,next)}
- function navigate(id){setPage(id);setMobileMenuOpen(false)}
+ function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
 
  return <div className={`shell global-dark-shell theme-${config.accent||'blue'} mode-${config.themeMode||'dark'} ${config.density==='compact'||config.compact?'compact-mode':''} ${config.density==='professional'?'professional-density':''} ${config.themeTransitions!==false?'theme-transitions':''} ${config.showProductCode===false?'hide-product-code':''}`} style={{'--app-primary':config.primaryColor||'#3b82f6','--app-secondary':config.secondaryColor||'#1e40af','--app-highlight':config.highlightColor||'#10b981','--app-surface':config.surfaceColor||'#0d1a2b','--app-panel':config.panelColor||'#111827','--app-card':config.cardColor||'#1a1f2e','--app-border':config.borderColor||'#2a3344','--app-text':config.textColor||'#f8fafc','--app-muted':config.mutedTextColor||'#94a3b8','--app-radius':`${config.borderRadius??10}px`}}>
   <aside className={`global-sidebar ${mobileMenuOpen?'mobile-open':''}`}>
@@ -87,7 +87,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>setPage('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -168,7 +168,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=><label key={item.id}><input type="checkbox" checked={visibleMenus[item.id]!==false} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b></label>)}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.1</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -193,10 +193,11 @@ function CommandPalette({menuItems,onNavigate,onClose}){
  </div>
 }
 
+function reloadPreservingContext(){sessionStorage.setItem('bmcenter-scroll-y',String(window.scrollY||0));location.reload()}
 function CloudGate(){
  const[session,setSession]=useState(null),[ready,setReady]=useState(false),[syncing,setSyncing]=useState(false),[status,setStatus]=useState('');
- useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);unsubscribe=subscribeCloudState(()=>{setStatus('Alteração recebida de outro dispositivo');setTimeout(()=>location.reload(),650)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
- async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);subscribeCloudState(()=>setTimeout(()=>location.reload(),650));setSyncing(false)}
+ useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);unsubscribe=subscribeCloudState(()=>{setStatus('Alteração recebida de outro dispositivo');setTimeout(reloadPreservingContext,450)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
+ async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);subscribeCloudState(()=>setTimeout(reloadPreservingContext,450));setSyncing(false)}
  if(!ready||syncing)return <CloudLoading text={status||'Carregando BMCenter...'}/>;
  if(!cloudConfigured())return <CloudSetupRequired/>;
  if(!session?.user)return <CloudLogin onAuthenticated={authenticated}/>;

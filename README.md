@@ -613,10 +613,18 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Melhor alinhamento entre os dois lados da tela.
 
 
-## v5.0.0 Cloud
+## v5.0.1 Cloud
 - Supabase Auth e banco em nuvem.
 - Sincronização automática entre computador e celular, com verificação contínua em poucos segundos.
 - Migração automática do localStorage no primeiro acesso.
 - Layout mobile com menu lateral em gaveta.
 - Formulários e modais adaptados ao celular.
 - Configuração pronta para Vercel.
+
+
+## v5.0.1 — Mobile e sincronização
+- Corrige o conteúdo deslocado para fora da tela no celular.
+- Menu lateral vira gaveta móvel de verdade.
+- Dashboard e cards ocupam 100% da largura do aparelho.
+- Modais e formulários adaptados à tela móvel.
+- Sincronização preserva a página atual e a posição da rolagem.
