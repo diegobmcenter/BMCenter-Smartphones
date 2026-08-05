@@ -659,3 +659,14 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Até 10 backups versionados armazenados na nuvem.
 - Restaurar ou excluir backups diretamente pelo sistema.
 - Contas Bancárias novamente visível no menu principal.
+
+## v5.2.0 — Cadastro em massa e privacidade global
+
+- Novo cadastro em massa de aparelhos na tela Smartphones.
+- Dados compartilhados da compra: data, vendedor, fornecedor/pessoa, origem, pagamento e conta bancária.
+- Quantidade livre de aparelhos no mesmo lote.
+- Marca, modelo, cor, armazenamento, RAM, IMEI, serial, senha, valores, status, prioridade e observações individuais.
+- Cada item é salvo separadamente e recebe código próprio.
+- Campo “Senha do aparelho” também disponível no cadastro individual e na ficha.
+- Ocultação do código interno reforçada em Anúncios, Ações em lote, Comprar peças, alertas, pesquisa e demais telas.
+- Backup completo continua dinâmico e agora registra auditoria de tema, cores, colunas, layouts, menus e visualizações.

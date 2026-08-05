@@ -3023,3 +3023,36 @@ html,body,#root{
 .cloud-backup-list{display:grid;gap:7px;margin-top:12px}.cloud-backup-list>div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:7px;padding:10px;border:1px solid var(--app-border);border-radius:9px;background:var(--app-card)}.cloud-backup-list>div>div{display:grid;gap:2px}
 .backup-busy-overlay{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:25px;background:rgba(2,8,16,.82);color:#fff;font-size:16px;font-weight:800;text-align:center;backdrop-filter:blur(6px)}
 @media(max-width:700px){.complete-backup-grid{grid-template-columns:1fr!important}.backup-preview-panel,.cloud-backup-heading{align-items:stretch;flex-direction:column}.backup-preview-panel button{width:100%}.cloud-backup-list>div{grid-template-columns:1fr 1fr}.cloud-backup-list>div>div{grid-column:1/-1}}
+
+/* =========================================================
+   v5.2.0 — cadastro em massa e privacidade do código
+   ========================================================= */
+.batch-phone-modal{width:min(1180px,calc(100vw - 36px))!important;max-width:1180px!important}
+.batch-shared-section,.batch-phone-list{display:grid;gap:12px}
+.batch-shared-section{padding:14px;border:1px solid var(--app-border);border-radius:var(--app-radius);background:var(--app-card)}
+.batch-shared-section>header,.batch-phone-list-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.batch-shared-section h3,.batch-shared-section p,.batch-phone-list-head h3,.batch-phone-list-head p{margin:0!important}
+.batch-shared-section>header span{padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--app-primary) 15%,transparent);color:var(--app-primary)!important;font-size:10px}
+.batch-phone-list{margin-top:16px}
+.batch-phone-list-head>div:last-child{display:flex;gap:6px}
+.batch-phone-row{display:grid;gap:10px;padding:13px;border:1px solid var(--app-border);border-radius:var(--app-radius);background:var(--app-panel)}
+.batch-phone-row>header{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--app-border)}
+.batch-phone-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.batch-phone-fields label{display:grid!important;gap:5px!important}
+.batch-phone-notes{grid-column:1/-1}
+.batch-phone-notes textarea{min-height:70px!important}
+.batch-phone-modal .modalbody{padding-bottom:0!important}
+.batch-phone-modal .actions{margin-top:16px!important}
+@media(max-width:1000px){.batch-phone-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){
+ .batch-phone-modal{width:100vw!important;max-width:none!important}
+ .batch-shared-section>header,.batch-phone-list-head{flex-direction:column}
+ .batch-phone-list-head>div:last-child{width:100%}.batch-phone-list-head>div:last-child button{flex:1}
+ .batch-phone-fields{grid-template-columns:1fr}
+ .batch-phone-notes{grid-column:auto}
+}
+
+/* Camada final: quando o código interno estiver desativado, elementos marcados nunca aparecem */
+body.hide-product-code .product-code,
+body.hide-product-code [data-product-code],
+body.hide-product-code .internal-product-code{display:none!important}
