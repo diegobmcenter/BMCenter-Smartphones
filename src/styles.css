@@ -3056,3 +3056,191 @@ html,body,#root{
 body.hide-product-code .product-code,
 body.hide-product-code [data-product-code],
 body.hide-product-code .internal-product-code{display:none!important}
+
+/* =========================================================
+   v5.2.1 — correção de regressão visual desktop e mobile
+   ========================================================= */
+
+/* Modal de colunas do Smartphone */
+.column-editor-list{
+  display:grid!important;
+  gap:7px!important;
+  max-height:min(52vh,520px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:0 4px 2px 0!important;
+}
+.column-editor-row{
+  display:grid!important;
+  grid-template-columns:24px minmax(190px,1fr) 190px 82px!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:52px!important;
+  width:100%!important;
+  padding:8px 10px!important;
+  margin:0!important;
+  border:1px solid var(--app-border)!important;
+  border-radius:10px!important;
+  background:var(--app-card)!important;
+}
+.column-editor-row>label{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:9px!important;
+  min-width:0!important;
+}
+.column-editor-row>label b{
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.column-width-control{
+  display:grid!important;
+  grid-template-columns:34px 82px 20px 34px!important;
+  align-items:center!important;
+  justify-content:end!important;
+  gap:5px!important;
+  width:auto!important;
+}
+.column-width-control input{
+  width:82px!important;
+  min-width:82px!important;
+  text-align:center!important;
+}
+.column-order-buttons{
+  display:flex!important;
+  justify-content:flex-end!important;
+  gap:5px!important;
+}
+.column-order-buttons button,
+.column-width-control button{
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  padding:0!important;
+}
+
+/* Apenas um botão de configuração por tabela */
+.table-wrap{
+  position:relative!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+}
+.table-wrap>.universal-table-config-button{
+  position:absolute!important;
+  top:8px!important;
+  right:8px!important;
+  left:auto!important;
+  z-index:20!important;
+  margin:0!important;
+}
+.table-wrap>.universal-table-config-button~.universal-table-config-button{
+  display:none!important;
+}
+
+/* Tabelas não podem alargar a página inteira */
+.global-page,
+.global-main,
+.panel{
+  min-width:0!important;
+}
+.universal-managed-table{
+  max-width:none!important;
+}
+.universal-flex-table{
+  margin:0!important;
+}
+
+/* Menu mobile estável */
+@media(max-width:760px){
+  .global-sidebar.mobile-open{
+    width:min(88vw,360px)!important;
+    max-width:min(88vw,360px)!important;
+    height:100dvh!important;
+    overflow:hidden!important;
+    padding:18px 14px 12px!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+  }
+  .global-sidebar.mobile-open .brand-block{
+    min-height:112px!important;
+    margin:0 0 10px!important;
+    padding:6px 52px 14px 4px!important;
+  }
+  .global-sidebar.mobile-open .sidebar-nav{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    min-height:0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding:4px 2px 14px!important;
+    scroll-behavior:auto!important;
+  }
+  .global-sidebar.mobile-open .sidebar-menu-card,
+  .global-sidebar.mobile-open .sidebar-data-menu{
+    width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:5px!important;
+  }
+  .global-sidebar.mobile-open .nav{
+    width:100%!important;
+    min-height:52px!important;
+    justify-content:flex-start!important;
+    white-space:normal!important;
+    overflow:visible!important;
+  }
+  .global-sidebar.mobile-open .nav span,
+  .global-sidebar.mobile-open .nav .nav-label{
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+  .mobile-sidebar-close{
+    top:20px!important;
+    right:16px!important;
+  }
+
+  /* No celular, a personalização fica no botão principal da tela, não repetida nas linhas. */
+  .table-wrap>.universal-table-config-button{
+    display:none!important;
+  }
+  .table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-x:contain!important;
+  }
+  .universal-flex-table{
+    width:max-content!important;
+    min-width:100%!important;
+  }
+
+  .column-editor-row{
+    grid-template-columns:22px minmax(120px,1fr) 150px!important;
+  }
+  .column-order-buttons{
+    grid-column:2/4!important;
+    justify-content:flex-end!important;
+  }
+  .column-width-control{
+    grid-template-columns:30px 66px 16px 30px!important;
+  }
+  .column-width-control input{
+    width:66px!important;
+    min-width:66px!important;
+  }
+}
+@media(max-width:480px){
+  .column-editor-row{
+    grid-template-columns:20px minmax(0,1fr)!important;
+  }
+  .column-width-control,
+  .column-order-buttons{
+    grid-column:2!important;
+    justify-content:flex-start!important;
+  }
+}

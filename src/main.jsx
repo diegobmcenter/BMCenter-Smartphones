@@ -22,7 +22,16 @@ function App({cloudUser,onCloudLogout}){
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
  useEffect(()=>{document.body.classList.toggle('hide-product-code',config.showProductCode===false)},[config.showProductCode]);
- useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.2.0',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
+ useEffect(()=>{
+  if(!mobileMenuOpen)return;
+  requestAnimationFrame(()=>{
+   const nav=document.querySelector('.global-sidebar .sidebar-nav');
+   if(nav)nav.scrollTop=0;
+   const sidebar=document.querySelector('.global-sidebar');
+   if(sidebar)sidebar.scrollTop=0;
+  });
+ },[mobileMenuOpen]);
+ useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.2.1',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
 
  const menuItems=[
   {id:'dashboard',icon:<LayoutDashboard/>,text:'Dashboard'},
@@ -89,7 +98,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.2.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.2.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -178,7 +187,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=><label key={item.id}><input type="checkbox" checked={visibleMenus[item.id]!==false} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b></label>)}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.2.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.2.1</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -707,7 +716,10 @@ function prepareUniversalTable(table,key,openEditor){
  const layouts=getTableLayouts(),settings=layouts[key]||readUniversalColumns(table);
  if(!layouts[key])saveTableLayouts({...layouts,[key]:settings});
  applyUniversalLayout(table,settings);
- if(!table.querySelector('.universal-table-config-button')){const button=document.createElement('button');button.type='button';button.className='universal-table-config-button';button.textContent='⚙ Colunas';button.onclick=e=>{e.preventDefault();e.stopPropagation();openEditor(key)};(table.closest('.table-wrap')||table.parentElement).appendChild(button)}
+ const configHost=table.closest('.table-wrap')||table.parentElement;
+ const existingButtons=[...configHost.querySelectorAll(':scope > .universal-table-config-button')];
+ existingButtons.slice(1).forEach(button=>button.remove());
+ if(!existingButtons.length){const button=document.createElement('button');button.type='button';button.className='universal-table-config-button';button.textContent='⚙ Colunas';button.onclick=e=>{e.preventDefault();e.stopPropagation();openEditor(key)};configHost.appendChild(button)}
  headers.forEach(th=>{
   if(!th.querySelector('.universal-resize-handle')){const handle=document.createElement('i');handle.className='universal-resize-handle';handle.onpointerdown=e=>{if(e.detail>=2){e.preventDefault();e.stopPropagation();autoFitUniversalColumn(table,key,th.dataset.columnId)}else startUniversalResize(e,table,key,th.dataset.columnId)};handle.ondblclick=e=>{e.preventDefault();e.stopPropagation();autoFitUniversalColumn(table,key,th.dataset.columnId)};handle.title='Arraste para redimensionar; dê dois cliques para ajustar ao conteúdo';th.appendChild(handle)}
   th.draggable=true;th.ondragstart=e=>e.dataTransfer.setData('text/universal-column',th.dataset.columnId);th.ondragover=e=>e.preventDefault();th.ondrop=e=>{const from=e.dataTransfer.getData('text/universal-column'),layouts=getTableLayouts(),list=layouts[key]||readUniversalColumns(table),fromIndex=list.findIndex(x=>x.id===from),toIndex=list.findIndex(x=>x.id===th.dataset.columnId);if(fromIndex<0||toIndex<0||fromIndex===toIndex)return;const next=[...list],item=next.splice(fromIndex,1)[0];next.splice(toIndex,0,item);saveTableLayouts({...layouts,[key]:next});applyUniversalLayout(table,next)}

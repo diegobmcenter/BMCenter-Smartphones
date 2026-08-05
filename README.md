@@ -670,3 +670,14 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Campo “Senha do aparelho” também disponível no cadastro individual e na ficha.
 - Ocultação do código interno reforçada em Anúncios, Ações em lote, Comprar peças, alertas, pesquisa e demais telas.
 - Backup completo continua dinâmico e agora registra auditoria de tema, cores, colunas, layouts, menus e visualizações.
+
+## v5.2.1 — Correção de regressão visual
+
+- Corrigido botão “Colunas” sendo criado repetidamente em cada atualização da tabela.
+- Apenas um botão de configuração por tabela no desktop.
+- Botão flutuante de colunas ocultado no celular.
+- Modal de personalização de colunas reorganizado e compactado.
+- Menu mobile sempre abre no início da lista.
+- Gaveta móvel com largura, rolagem e cabeçalho corrigidos.
+- Tabelas confinadas em rolagem horizontal própria.
+- Cadastro em massa, backup integral e demais funções da v5.2.0 preservados.
