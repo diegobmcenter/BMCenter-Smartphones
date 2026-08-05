@@ -647,3 +647,15 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Dupla confirmação antes da exclusão definitiva.
 - Mensagem de processamento e tratamento de falhas.
 - A sessão de login é preservada; apenas os dados operacionais são apagados.
+
+## v5.1.0 — Estabilidade, backup integral e bancos
+
+- Backup dinâmico de 100% das chaves do BMCenter.
+- Fornecedores, contas bancárias, perfis, configurações, layouts e futuras funções incluídos automaticamente.
+- Restauração integral sincronizada com o Supabase antes do recarregamento.
+- Compatibilidade com backups legados em JSON.
+- Prévia e resumo antes da restauração.
+- Backups manuais em arquivo `.bmcenter`.
+- Até 10 backups versionados armazenados na nuvem.
+- Restaurar ou excluir backups diretamente pelo sistema.
+- Contas Bancárias novamente visível no menu principal.

@@ -7,6 +7,7 @@ let writeTimers=new Map();
 let applyingRemote=false;
 let currentSession=null;
 const RESET_KEY='__bmcenter_cloud_reset__';
+const BACKUP_PREFIX='__bmcenter_backup__:';
 
 export function cloudConfigured(){return Boolean(url&&anon)}
 export function getCloudStatus(){return{configured:cloudConfigured(),clientId}}
@@ -31,7 +32,7 @@ export async function initializeCloudState(keys){
   resetKeys.forEach(key=>localStorage.removeItem(key));
   applyingRemote=false;
  }
- const dataRows=(rows||[]).filter(row=>row.state_key!==RESET_KEY);
+ const dataRows=(rows||[]).filter(row=>row.state_key!==RESET_KEY&&!row.state_key.startsWith(BACKUP_PREFIX));
  if(!dataRows.length){
   if(resetRow)return;
   const payload=keys.map(key=>({user_id:user.id,state_key:key,state_value:safeParse(localStorage.getItem(key)),updated_by:clientId,updated_at:new Date().toISOString()}));
@@ -55,6 +56,7 @@ export function subscribeCloudState(onRemoteChange){
    for(const row of rows||[]){
     if(row.updated_at>lastSync)lastSync=row.updated_at;
     if(row.updated_by===clientId)continue;
+    if(row.state_key.startsWith(BACKUP_PREFIX))continue;
     if(row.state_key===RESET_KEY){
      applyingRemote=true;
      const resetKeys=Array.isArray(row.state_value?.keys)?row.state_value.keys:[];
@@ -98,4 +100,34 @@ export async function clearCloudState(keys=[]){
  }finally{
   applyingRemote=false;
  }
+}
+
+export async function pushCloudStateNow(key,value){
+ if(!cloudConfigured())return;
+ const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
+ clearTimeout(writeTimers.get(key));
+ await rest('app_state?on_conflict=user_id,state_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,state_key:key,state_value:value,updated_by:clientId,updated_at:new Date().toISOString()})})
+}
+export async function createCloudBackup(backup){
+ const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
+ const id=crypto.randomUUID(),createdAt=new Date().toISOString(),stateKey=`${BACKUP_PREFIX}${createdAt}:${id}`;
+ await rest('app_state?on_conflict=user_id,state_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,state_key:stateKey,state_value:{...backup,id,createdAt},updated_by:clientId,updated_at:createdAt})});
+ const all=await rest(`app_state?select=state_key,updated_at&user_id=eq.${user.id}&state_key=like.${encodeURIComponent(BACKUP_PREFIX+'*')}&order=updated_at.desc`);
+ for(const row of (all||[]).slice(10))await rest(`app_state?user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(row.state_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
+ return{id,createdAt}
+}
+export async function listCloudBackups(){
+ const session=await getCloudSession();const user=session?.user;if(!user)return[];
+ const rows=await rest(`app_state?select=state_key,state_value,updated_at&user_id=eq.${user.id}&state_key=like.${encodeURIComponent(BACKUP_PREFIX+'*')}&order=updated_at.desc`);
+ return(rows||[]).map(row=>({id:row.state_key,createdAt:row.state_value?.createdAt||row.updated_at,summary:row.state_value?.summary?`${row.state_value.summary.smartphones||0} aparelho(s), ${row.state_value.summary.suppliers||0} fornecedor(es), ${row.state_value.summary.bankAccounts||0} conta(s) bancária(s)`:''}))
+}
+export async function restoreCloudBackup(id){
+ const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
+ const rows=await rest(`app_state?select=state_value&user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(id)}`);
+ if(!rows?.[0]?.state_value)throw new Error('Backup não encontrado.');
+ return rows[0].state_value
+}
+export async function deleteCloudBackup(id){
+ const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
+ await rest(`app_state?user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}})
 }

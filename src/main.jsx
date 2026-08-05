@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,Star,CheckSquare,DatabaseZap,RefreshCw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy}from'lucide-react';
-import{QRCodeSVG}from'qrcode.react';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState}from'./cloud.js';import'./styles.css';
+import{QRCodeSVG}from'qrcode.react';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
@@ -21,7 +21,7 @@ function App({cloudUser,onCloudLogout}){
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
- useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.0.0',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
+ useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.1.0',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setCommandOpen(v=>!v)}if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
 
  const menuItems=[
   {id:'dashboard',icon:<LayoutDashboard/>,text:'Dashboard'},
@@ -70,7 +70,7 @@ function App({cloudUser,onCloudLogout}){
 
    <nav className="sidebar-nav modern-sidebar-nav">
     <div className="sidebar-menu-card">
-     {['dashboard','today','phones','ads','batch','agenda','activity','goals','suppliers','profileAnalytics','parts','renewals','dataQuality','reports','globalSearch','archive'].map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;const label=id==='profileAnalytics'?'Perfis':id==='parts'?'Peças e acessórios':id==='renewals'?'Central de renovações':id==='archive'?'Arquivados':item.text;return <Nav key={id} icon={item.icon} text={label} active={page===id} badge={id==='today'?getOperationalAlerts().length:null} onClick={()=>navigate(id)}/>})}
+     {['dashboard','today','phones','ads','batch','agenda','activity','goals','suppliers','banks','profileAnalytics','parts','renewals','dataQuality','reports','globalSearch','archive'].map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;const label=id==='profileAnalytics'?'Perfis':id==='parts'?'Peças e acessórios':id==='renewals'?'Central de renovações':id==='archive'?'Arquivados':item.text;return <Nav key={id} icon={item.icon} text={label} active={page===id} badge={id==='today'?getOperationalAlerts().length:null} onClick={()=>navigate(id)}/>})}
     </div>
     <div className="sidebar-section-label">CENTRAL DE DADOS</div>
     <div className="sidebar-data-menu">
@@ -88,7 +88,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.3</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.1.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -169,7 +169,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=><label key={item.id}><input type="checkbox" checked={visibleMenus[item.id]!==false} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b></label>)}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.3</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.1.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -1807,46 +1807,134 @@ function DataCenterPage(){
   <div className="panel"><h2>Pontos de restauração</h2>{!snapshots.length?<Empty text="Nenhum ponto criado."/>:<div className="snapshot-list">{snapshots.map(s=><div className="snapshot-row" key={s.id}><div><b>{new Date(s.date).toLocaleString('pt-BR')}</b><small>{(s.data.smartphones||[]).length} smartphone(s)</small></div><button onClick={()=>restore(s)}>Restaurar</button></div>)}</div>}</div>
  </>
 }
+
+const BACKUP_FORMAT='bmcenter-complete-backup';
+const BACKUP_FORMAT_VERSION=2;
+function backupEligibleKey(key){
+ return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session'].includes(key);
+}
+function captureCompleteBackup(){
+ const storage={};
+ for(let index=0;index<localStorage.length;index++){
+  const key=localStorage.key(index);
+  if(!key||!backupEligibleKey(key))continue;
+  const raw=localStorage.getItem(key);
+  try{storage[key]=JSON.parse(raw)}catch{storage[key]=raw}
+ }
+ return{
+  format:BACKUP_FORMAT,
+  formatVersion:BACKUP_FORMAT_VERSION,
+  appVersion:'5.1.0',
+  exportedAt:new Date().toISOString(),
+  storage,
+  summary:{
+   smartphones:Array.isArray(storage[SKEY])?storage[SKEY].length:0,
+   suppliers:Array.isArray(storage[FKEY])?storage[FKEY].length:0,
+   bankAccounts:Array.isArray(storage[BKEY])?storage[BKEY].length:0,
+   marketplaceProfiles:Array.isArray(storage[PKEY])?storage[PKEY].length:0,
+   sellers:Array.isArray(storage[VKEY])?storage[VKEY].length:0,
+   parts:Array.isArray(storage[IKEY])?storage[IKEY].length:0,
+   totalKeys:Object.keys(storage).length
+  }
+ }
+}
+function normalizeBackupFile(data){
+ if(data?.format===BACKUP_FORMAT&&data.storage&&typeof data.storage==='object')return data;
+ const legacyMap={
+  [SKEY]:data?.smartphones||[],[VKEY]:data?.sellers||[],[FKEY]:data?.suppliers||[],
+  [BKEY]:data?.bankAccounts||[],[UKEY]:data?.users||[],[PKEY]:data?.marketplaceProfiles||[],
+  [TKEY]:data?.adTemplates||[],[IKEY]:data?.partsInventory||[],[MKEY]:data?.inventoryMovements||[],
+  [MENUKEY]:data?.menuSettings||{},[CFGKEY]:data?.systemConfig||{},[ATITLEKEY]:data?.adTitleLibrary||[],
+  [ADESCKEY]:data?.adDescriptionLibrary||[],[VIEWKEY]:data?.savedViews||[],
+  [CHECKKEY]:data?.customChecklistTemplates||[],[GOALKEY]:data?.operationalGoals||{},
+  [PHONECOLKEY]:data?.phoneColumns||data?.columnSettings||[],[TABLELAYOUTKEY]:data?.tableLayouts||{},
+  [SNAPKEY]:data?.snapshots||[]
+ };
+ return{format:BACKUP_FORMAT,formatVersion:1,appVersion:data?.version||'legado',exportedAt:data?.exportedAt||null,storage:legacyMap,summary:{totalKeys:Object.keys(legacyMap).length}}
+}
+async function applyCompleteBackup(backup,{replace=true}={}){
+ const normalized=normalizeBackupFile(backup);
+ if(!normalized.storage||typeof normalized.storage!=='object')throw new Error('O arquivo não contém dados restauráveis.');
+ const entries=Object.entries(normalized.storage).filter(([key])=>backupEligibleKey(key));
+ if(!entries.length)throw new Error('Nenhum dado do BMCenter foi encontrado no arquivo.');
+ if(replace){
+  const current=[];
+  for(let index=0;index<localStorage.length;index++){const key=localStorage.key(index);if(key&&backupEligibleKey(key))current.push(key)}
+  current.filter(key=>!Object.prototype.hasOwnProperty.call(normalized.storage,key)).forEach(key=>localStorage.removeItem(key));
+ }
+ for(const[key,value]of entries){
+  localStorage.setItem(key,JSON.stringify(value));
+ }
+ await Promise.all(entries.map(([key,value])=>pushCloudStateNow(key,value)));
+ return normalized;
+}
+function backupSummaryText(backup){
+ const b=normalizeBackupFile(backup),s=b.summary||{},storage=b.storage||{};
+ const count=(key)=>Array.isArray(storage[key])?storage[key].length:0;
+ return `${count(SKEY)} aparelho(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is) e ${Object.keys(storage).length} conjunto(s) de dados.`;
+}
+
 function BackupPage(){
-  function exportData(){
-    const data={
-      version:'0.5.1',
-      exportedAt:new Date().toISOString(),
-      smartphones:load(SKEY).map(p=>({...p,ads:p.ads||migrateLegacyAds(p)})),
-      sellers:load(VKEY),
-      suppliers:load(FKEY),
-      bankAccounts:load(BKEY),
-      users:load(UKEY),
-      marketplaceProfiles:load(PKEY),
-      adTemplates:load(TKEY),
-      partsInventory:load(IKEY),inventoryMovements:load(MKEY),menuSettings:load(MENUKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY)
-    };
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`bmcenter-backup-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-  function importData(file){
-    const reader=new FileReader();
-    reader.onload=()=>{
-      try{
-        const data=JSON.parse(reader.result);
-        restoreAllData(data);
-        alert('Backup importado. A página será recarregada.');
-        location.reload();
-      }catch{alert('Arquivo de backup inválido.')}
-    };
-    reader.readAsText(file);
-  }
-  return <>
-    <Title t="Backup" s="Exporte ou restaure todos os dados desta versão local."/>
-    <div className="backup-grid">
-      <div className="panel backup-card"><Download size={38}/><h2>Exportar backup</h2><p>Baixe smartphones, fornecedores, contas, anúncios e configurações em um arquivo JSON.</p><button className="primary" onClick={exportData}>Baixar backup</button></div>
-      <div className="panel backup-card"><Upload size={38}/><h2>Importar backup</h2><p>Restaure dados de um backup criado pelo sistema.</p><label className="file-button">Selecionar arquivo<input type="file" accept=".json" hidden onChange={e=>e.target.files?.[0]&&importData(e.target.files[0])}/></label></div>
-    </div>
-  </>
+ const[preview,setPreview]=useState(null),[file,setFile]=useState(null),[busy,setBusy]=useState(false),[cloudBackups,setCloudBackups]=useState([]),[loadingCloud,setLoadingCloud]=useState(true);
+ async function refreshCloud(){setLoadingCloud(true);try{setCloudBackups(await listCloudBackups())}catch(error){console.warn(error)}finally{setLoadingCloud(false)}}
+ useEffect(()=>{refreshCloud()},[]);
+ function exportData(){
+  const data=captureCompleteBackup();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`bmcenter-completo-${new Date().toISOString().replace(/[:.]/g,'-')}.bmcenter`;
+  a.click();URL.revokeObjectURL(a.href)
+ }
+ function chooseFile(selected){
+  if(!selected)return;
+  const reader=new FileReader();
+  reader.onload=()=>{try{const data=normalizeBackupFile(JSON.parse(reader.result));setFile(selected);setPreview(data)}catch{setFile(null);setPreview(null);alert('Arquivo de backup inválido.')}};
+  reader.readAsText(selected)
+ }
+ async function importData(){
+  if(!preview)return;
+  if(!confirm(`Restaurar este backup?\n\n${backupSummaryText(preview)}\n\nOs dados atuais serão substituídos.`))return;
+  setBusy(true);
+  try{
+   await applyCompleteBackup(preview,{replace:true});
+   alert('Backup restaurado integralmente e enviado para a nuvem.');
+   location.reload()
+  }catch(error){alert(`Falha na restauração: ${error.message||error}`)}
+  finally{setBusy(false)}
+ }
+ async function makeCloudBackup(){
+  setBusy(true);
+  try{await createCloudBackup(captureCompleteBackup());await refreshCloud();alert('Backup automático criado na nuvem.')}
+  catch(error){alert(`Falha ao criar backup na nuvem: ${error.message||error}`)}
+  finally{setBusy(false)}
+ }
+ async function restoreCloud(item){
+  if(!confirm(`Restaurar o backup de ${new Date(item.createdAt).toLocaleString('pt-BR')}?\n\nOs dados atuais serão substituídos.`))return;
+  setBusy(true);
+  try{const backup=await restoreCloudBackup(item.id);await applyCompleteBackup(backup,{replace:true});alert('Backup da nuvem restaurado integralmente.');location.reload()}
+  catch(error){alert(`Falha ao restaurar: ${error.message||error}`)}
+  finally{setBusy(false)}
+ }
+ async function removeCloud(item){
+  if(!confirm('Excluir este backup da nuvem?'))return;
+  setBusy(true);try{await deleteCloudBackup(item.id);await refreshCloud()}catch(error){alert(error.message||String(error))}finally{setBusy(false)}
+ }
+ return <>
+  <Title t="Backup completo" s="Proteja e restaure 100% dos dados, configurações e personalizações do BMCenter.">
+   <button onClick={makeCloudBackup} disabled={busy}><UploadCloud/> Criar backup na nuvem</button>
+  </Title>
+  <div className="backup-integrity-banner"><ShieldCheck/><div><b>Backup integral e compatível com versões futuras</b><small>O sistema inclui automaticamente todas as chaves BMCenter, inclusive fornecedores, contas bancárias, perfis, layouts e novas funções adicionadas depois.</small></div></div>
+  <div className="backup-grid complete-backup-grid">
+   <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com todos os módulos e configurações.</p><button className="primary" onClick={exportData}>Baixar arquivo .bmcenter</button></div>
+   <div className="panel backup-card"><Upload size={38}/><h2>Restaurar arquivo</h2><p>Leia e confira o conteúdo antes de substituir os dados atuais.</p><label className="file-button">Selecionar backup<input type="file" accept=".bmcenter,.json,application/json" hidden onChange={e=>chooseFile(e.target.files?.[0])}/></label></div>
+  </div>
+  {preview&&<div className="panel backup-preview-panel"><div><h2>Conteúdo encontrado</h2><p>{backupSummaryText(preview)}</p><small>Arquivo: {file?.name} · Criado em {preview.exportedAt?new Date(preview.exportedAt).toLocaleString('pt-BR'):'data não informada'} · Versão {preview.appVersion||'—'}</small></div><button className="primary" disabled={busy} onClick={importData}>Restaurar tudo</button></div>}
+  <div className="panel cloud-backup-panel">
+   <div className="cloud-backup-heading"><div><h2>Backups automáticos na nuvem</h2><p>Os 10 backups mais recentes ficam disponíveis para recuperação.</p></div><button onClick={refreshCloud} disabled={loadingCloud||busy}><RefreshCw/> Atualizar</button></div>
+   {loadingCloud?<p>Carregando backups...</p>:!cloudBackups.length?<Empty text="Nenhum backup na nuvem criado ainda."/>:<div className="cloud-backup-list">{cloudBackups.map(item=><div key={item.id}><div><b>{new Date(item.createdAt).toLocaleString('pt-BR')}</b><small>{item.summary||'Backup completo do sistema'}</small></div><button onClick={()=>restoreCloud(item)} disabled={busy}>Restaurar</button><button className="danger" onClick={()=>removeCloud(item)} disabled={busy}>Excluir</button></div>)}</div>}
+  </div>
+  {busy&&<div className="backup-busy-overlay">Processando backup e sincronizando com a nuvem...</div>}
+ </>
 }
 
 function SimpleEntityModal({title,item,fields=[],selects=[],onClose,onSave}){
@@ -2074,21 +2162,8 @@ function nextPhoneCode(items){
  const max=items.reduce((m,p)=>Math.max(m,Number(String(p.code||'').replace(/\D/g,''))||0),0);
  return `BM-${String(max+1).padStart(6,'0')}`;
 }
-function collectAllData(){
- return{
-  version:'2.3.0',
-  exportedAt:new Date().toISOString(),
-  smartphones:load(SKEY).map(p=>({...p,ads:p.ads||migrateLegacyAds(p)})),
-  sellers:load(VKEY),suppliers:load(FKEY),bankAccounts:load(BKEY),
-  users:load(UKEY),marketplaceProfiles:load(PKEY),adTemplates:load(TKEY),
-  partsInventory:load(IKEY),inventoryMovements:load(MKEY),menuSettings:load(MENUKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY),systemConfig:load(CFGKEY),adTitleLibrary:load(ATITLEKEY),adDescriptionLibrary:load(ADESCKEY),savedViews:load(VIEWKEY),customChecklistTemplates:load(CHECKKEY),operationalGoals:load(GOALKEY),tableLayouts:load(TABLELAYOUTKEY)
- }
-}
-function restoreAllData(data){
- save(SKEY,data.smartphones||[]);save(VKEY,data.sellers||[]);save(FKEY,data.suppliers||[]);
- save(BKEY,data.bankAccounts||[]);save(UKEY,data.users||[]);save(PKEY,data.marketplaceProfiles||[]);
- save(TKEY,data.adTemplates||[]);save(IKEY,data.partsInventory||[]);save(MKEY,data.inventoryMovements||[]);save(MENUKEY,data.menuSettings||{});save(CFGKEY,data.systemConfig||{});save(ATITLEKEY,data.adTitleLibrary||[]);save(ADESCKEY,data.adDescriptionLibrary||[]);save(VIEWKEY,data.savedViews||[]);save(CHECKKEY,data.customChecklistTemplates||[]);save(GOALKEY,data.operationalGoals||{});save(TABLELAYOUTKEY,data.tableLayouts||{});
-}
+function collectAllData(){return captureCompleteBackup()}
+async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
 function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',imei1:'',imei2:'',serial:'',date:new Date().toISOString().slice(0,10),sellerId:'',origin:'',payment:'',bankAccountId:'',purchaseSupplierId:'',paid:0,expected:0,status:'Aguardando análise',priority:'Média',nextAction:'',nextActionDate:'',expectedSaleDate:'',tasks:'',notes:'',tags:[],accessories:defaultAccessories(),photoChecklist:defaultPhotoChecklist(),photoNotes:'',photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
