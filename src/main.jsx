@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,Star,CheckSquare,DatabaseZap,RefreshCw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy}from'lucide-react';
-import{QRCodeSVG}from'qrcode.react';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus}from'./cloud.js';import'./styles.css';
+import{QRCodeSVG}from'qrcode.react';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState}from'./cloud.js';import'./styles.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
@@ -88,7 +88,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.2</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="command-trigger" onClick={()=>setCommandOpen(true)}><Search/><span>Pesquisar</span><kbd>Ctrl K</kbd></button><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.0.3</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -169,7 +169,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=><label key={item.id}><input type="checkbox" checked={visibleMenus[item.id]!==false} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b></label>)}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.2</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.0.3</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -197,8 +197,8 @@ function CommandPalette({menuItems,onNavigate,onClose}){
 function reloadPreservingContext(){sessionStorage.setItem('bmcenter-scroll-y',String(window.scrollY||0));location.reload()}
 function CloudGate(){
  const[session,setSession]=useState(null),[ready,setReady]=useState(false),[syncing,setSyncing]=useState(false),[status,setStatus]=useState('');
- useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);unsubscribe=subscribeCloudState(()=>{setStatus('Alteração recebida de outro dispositivo');setTimeout(reloadPreservingContext,450)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
- async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);subscribeCloudState(()=>setTimeout(reloadPreservingContext,450));setSyncing(false)}
+ useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);unsubscribe=subscribeCloudState(key=>{setStatus(key==='__BM_RESET__'?'Dados apagados em outro dispositivo':'Alteração recebida de outro dispositivo');setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
+ async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);subscribeCloudState(key=>setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450));setSyncing(false)}
  if(!ready||syncing)return <CloudLoading text={status||'Carregando BMCenter...'}/>;
  if(!cloudConfigured())return <CloudSetupRequired/>;
  if(!session?.user)return <CloudLogin onAuthenticated={authenticated}/>;
@@ -1779,10 +1779,23 @@ function DataCenterPage(){
   profiles.forEach(profile=>{let published=0;phones.forEach(p=>(p.ads||migrateLegacyAds(p)).forEach(ad=>{if(normalizeAd(ad).publications[profile.id]?.status==='published')published++}));const sales=phones.filter(p=>p.sale?.profileId===profile.id);rows.push([profile.name,published,sales.length,sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)])});
   downloadText('bmcenter-perfis.csv',rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
- function clearAll(){
-  if(prompt('Digite APAGAR TUDO para confirmar:')!=='APAGAR TUDO')return;
-  [SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,TABLELAYOUTKEY,SNAPKEY].forEach(key=>localStorage.removeItem(key));
-  alert('Dados apagados.');location.reload();
+ async function clearAll(){
+  if(prompt('ATENÇÃO: esta ação excluirá todos os dados locais e da nuvem.\n\nDigite APAGAR TUDO para confirmar:')!=='APAGAR TUDO')return;
+  if(!confirm('Confirma a exclusão definitiva de aparelhos, perfis, fornecedores, anúncios, configurações e demais dados em todos os dispositivos?'))return;
+  const keys=[...ALL_CLOUD_KEYS];
+  try{
+   document.body.classList.add('cloud-destructive-busy');
+   await clearCloudState(keys);
+   keys.forEach(key=>localStorage.removeItem(key));
+   sessionStorage.removeItem('bmcenter-scroll-y');
+   alert('Todos os dados foram apagados deste dispositivo e da nuvem. Os outros dispositivos serão atualizados automaticamente.');
+   location.href=location.pathname;
+  }catch(error){
+   console.error(error);
+   alert(`Não foi possível apagar os dados da nuvem: ${error.message||error}`);
+  }finally{
+   document.body.classList.remove('cloud-destructive-busy');
+  }
  }
  return <>
   <Title t="Central de dados" s="Migração, exportação, pontos de restauração e manutenção."/>

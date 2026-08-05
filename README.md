@@ -638,3 +638,12 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Botão dedicado para fechar a gaveta.
 - Logo, rolagem e rodapé do usuário ajustados para celular.
 - Gaveta limitada a 88% da tela, com sobreposição correta.
+
+## v5.0.3 — Exclusão completa de dados
+
+- A função “Apagar todos os dados” agora remove os registros da conta no Supabase.
+- Exclusão sincronizada com todos os dispositivos conectados.
+- Marcador de redefinição impede que dados antigos sejam enviados novamente para a nuvem.
+- Dupla confirmação antes da exclusão definitiva.
+- Mensagem de processamento e tratamento de falhas.
+- A sessão de login é preservada; apenas os dados operacionais são apagados.
