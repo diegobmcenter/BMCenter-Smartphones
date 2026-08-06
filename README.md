@@ -681,3 +681,10 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Gaveta móvel com largura, rolagem e cabeçalho corrigidos.
 - Tabelas confinadas em rolagem horizontal própria.
 - Cadastro em massa, backup integral e demais funções da v5.2.0 preservados.
+
+## v5.2.2 — Menu Smartphones restaurado
+
+- O menu Smartphones passa a ser considerado essencial e não pode mais ser ocultado.
+- Configurações antigas ou backups que tenham Smartphones desativado são corrigidos automaticamente.
+- A sincronização na nuvem não consegue mais remover esse menu.
+- A opção permanece visível nas configurações, marcada como “Essencial”.
