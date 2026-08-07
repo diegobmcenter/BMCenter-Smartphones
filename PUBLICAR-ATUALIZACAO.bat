@@ -84,7 +84,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando commit...
-git commit -m "BMCenter - publicar versao validada"
+git commit -m "BMCenter v5.9.0 - Calm UI"
 if errorlevel 1 goto :erro
 
 echo [8/8] Enviando para o GitHub...

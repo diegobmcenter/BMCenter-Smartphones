@@ -774,3 +774,14 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 ## v5.8.1 — correção de build
 - Corrigida a função Parts() que estava truncada e impedia o build na Vercel.
 - Build local validado antes da entrega.
+
+
+## v5.9.0 — Calm UI
+- Reforma visual global para reduzir aparência de planilha.
+- Cards compactos em Smartphones, Anúncios e Ações em lote.
+- Dashboard, Hoje, Atividades, Fornecedores, Contas, Peças, Qualidade, Relatórios, Configurações e modais seguem a mesma linguagem visual.
+- Anúncios em grade de dois cards por linha no desktop.
+- Ações em lote em três cards compactos por linha no desktop.
+- Smartphones em três cards por linha no desktop.
+- Menos bordas, menos altura, mais respiro e hierarquia.
+- Formulário Novo aparelho reduzido e organizado em quatro colunas no desktop.
