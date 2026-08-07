@@ -761,3 +761,11 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Perfis e Relatórios foram integrados ao mesmo design system.
 - A configuração de exibição de Smartphones continua funcionando, agora controlando informações dos cards.
 - Toda a lógica funcional existente foi preservada.
+
+
+## v5.8.0 — camada visual final
+- CSS novo carregado depois de todos os estilos antigos.
+- Smartphones em grid de cards no desktop.
+- Anúncios com cards maiores e canais organizados.
+- Ações em lote, fornecedores, contas e peças com visual de cards.
+- Versão 5.8.0 visível no topo.
