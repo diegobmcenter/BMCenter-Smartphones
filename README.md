@@ -845,3 +845,21 @@ Esta versão abandona a evolução visual da linha 6.x e cria uma nova interface
 - novo padrão para Dashboard, Hoje, Fornecedores, Contas, Perfis, Peças, Qualidade e Relatórios;
 - novos modais e formulários;
 - nova composição mobile.
+
+## v8.0.0 — Reconstrução visual
+
+Nova aparência baseada em módulos com composições diferentes:
+- novo rail de navegação compacto;
+- nova command bar;
+- Dashboard em bento;
+- Hoje em fila de foco;
+- Smartphones como feed de inventário;
+- Anúncios como central de publicação;
+- Ações em lote como inbox de seleção;
+- novo padrão visual para fornecedores, contas, perfis, peças, qualidade e relatórios;
+- modais e formulários reestilizados;
+- mobile adaptado.
+
+## v8.0.1
+
+- Corrigido fechamento da função Dashboard que causava `Unexpected end of file` no build.

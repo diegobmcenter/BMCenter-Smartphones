@@ -3,7 +3,13 @@ import{QRCodeSVG}from'qrcode.react';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
-import AppFrame from './components/v7/AppFrame.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';
+import AppFrame from './components/v7/AppFrame.jsx';
+import AppFrameV8 from './v8/AppFrameV8.jsx';
+import DashboardV8 from './v8/pages/DashboardV8.jsx';
+import TodayV8 from './v8/pages/TodayV8.jsx';
+import SmartphonesV8 from './v8/pages/SmartphonesV8.jsx';
+import AdsV8 from './v8/pages/AdsV8.jsx';
+import BatchV8 from './v8/pages/BatchV8.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
@@ -98,7 +104,7 @@ function App({cloudUser,onCloudLogout}){
   const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
   if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
   if(config.autoSnapshot!==false){
-   const version='7.0.0',last=localStorage.getItem('bmcenter-last-version');
+   const version='8.0.1',last=localStorage.getItem('bmcenter-last-version');
    if(last!==version){
     try{
      const snapshots=normalizeSnapshotList(load(SNAPKEY));
@@ -147,7 +153,7 @@ function App({cloudUser,onCloudLogout}){
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
- return <AppFrame
+ return <AppFrameV8
   mobileOpen={mobileMenuOpen}
   setMobileOpen={setMobileMenuOpen}
   menuItems={menuItems}
@@ -155,17 +161,17 @@ function App({cloudUser,onCloudLogout}){
   page={page}
   navigate={navigate}
   alerts={getOperationalAlerts().length}
-  version="7.0.0"
+  version="8.0.0"
   userEmail={cloudUser?.email}
   onLogout={onCloudLogout}
  >
-  <section className={`v7-page v7-page-${page}`}>
+  <section className={`v8-route v8-route-${page}`}>
    {page==='settings'
     ?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>
     :<PageContent page={page}/>}
   </section>
   <UniversalTableCustomizer page={page}/>
- </AppFrame>
+ </AppFrameV8>
 }
 
 function loadSystemConfig(){const saved=load(CFGKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow'],...saved}:{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow']}}
@@ -255,7 +261,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v7.0.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.1</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -356,20 +362,8 @@ function TodayPage(){
   {title:'Reparar e testar',items:active.filter(p=>['Em reparo','Em testes','Aguardando peças'].includes(p.status))},
   {title:'Prontos para anunciar',items:active.filter(p=>['Pronto','Para fotografar','Anúncio preparado'].includes(p.status)&&!(p.ads||migrateLegacyAds(p)).length)}
  ];
- return <>
-  <Title t="Hoje" s="Sua lista operacional automática para saber o que fazer primeiro."/>
-  <div className="today-summary">
-   <div><span>Pendências</span><strong>{alerts.length}</strong></div>
-   <div><span>Aguardando análise</span><strong>{groups[0].items.length}</strong></div>
-   <div><span>Peças para resolver</span><strong>{groups[1].items.length}</strong></div>
-   <div><span>Prontos para anunciar</span><strong>{groups[3].items.length}</strong></div>
-  </div>
-  <div className="today-board">{groups.map(group=><section className="today-column" key={group.title}>
-   <header><b>{group.title}</b><span>{group.items.length}</span></header>
-   <div>{group.items.map(p=><article key={p.id}><b>{phoneDisplayName(p)}</b><small>{p.status}</small></article>)}{!group.items.length&&<p>Nada pendente.</p>}</div>
-  </section>)}</div>
-  <section className="panel"><h2>Alertas operacionais</h2><div className="operational-alerts">{alerts.slice(0,12).map((a,i)=><div key={i}><AlertTriangle/><div><b>{a.title}</b><small>{a.detail}</small></div></div>)}{!alerts.length&&<Empty text="Nenhum alerta operacional."/>}</div></section>
- </>
+ return <TodayV8 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
+
 }
 
 function GlobalSearchPage(){
@@ -497,7 +491,7 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <BatchActionsView
+ return <BatchV8
   rows={rows} selected={selected} setSelected={setSelected} query={query} setQuery={setQuery}
   statusFilter={statusFilter} setStatusFilter={setStatusFilter} statuses={statuses}
   newStatus={newStatus} setNewStatus={setNewStatus} newTag={newTag} setNewTag={setNewTag}
@@ -611,49 +605,9 @@ function Dashboard(){
   {label:'Cadastros incompletos',value:dataIssues,detail:'precisam de revisão',kind:'amber'},
   {label:'Parados há 7+ dias',value:stale.length,detail:'sem movimentação',kind:'red'}
  ];
- return <div className="dashboard-v122">
-  <div className="dashboard-v122-heading">
-   <div><h1>Dashboard</h1><p>Visão operacional e financeira.</p></div>
-   <span>{new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}</span>
-  </div>
-
-  <section className="dashboard-v122-metrics">
-   {metrics.map(item=><article className={`dashboard-metric metric-${item.kind}`} key={item.label}>
-    <span>{item.label}</span>
-    <strong>{item.value}</strong>
-    <small>{item.detail}</small>
-   </article>)}
-  </section>
-
-  <section className="dashboard-v122-row">
-   <article className="dashboard-panel attention-panel">
-    <header><div><AlertTriangle size={18}/><h2>Prioridades e atenção</h2></div><span>{attention.length}</span></header>
-    {!attention.length?<div className="dashboard-empty"><ClipboardCheck size={27}/><b>Tudo em ordem</b><small>Nenhum aparelho atrasado ou parado.</small></div>:
-    <div className="dashboard-attention-list">{attention.map(p=><div className="dashboard-attention-item" key={p.id}>
-     <div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><small>{p.tasks||p.status}</small></div><span className="is-stale">{daysSince(p.lastActivityAt||p.date)} dias</span>
-    </div>)}</div>}
-   </article>
-
-   <article className="dashboard-panel profile-panel">
-    <header><div><BarChart3 size={18}/><h2>Desempenho por perfil</h2></div><span>{salesByProfile.length}</span></header>
-    {!salesByProfile.length?<div className="dashboard-empty"><BarChart3 size={27}/><b>Sem vendas por perfil</b><small>Os resultados aparecerão após registrar vendas.</small></div>:
-    <div className="dashboard-profile-list">{salesByProfile.slice(0,6).map((x,index)=><div className="dashboard-profile-item" key={x.profile.id}>
-     <span className="profile-position">{index+1}</span>
-     <div><b>{x.profile.name}</b><small>{x.quantity} venda(s)</small></div>
-     <strong>{money(x.revenue)}</strong>
-    </div>)}</div>}
-   </article>
-  </section>
-
-  <section className="dashboard-panel workflow-panel">
-   <header><div><KanbanSquare size={18}/><h2>Fluxo dos aparelhos</h2></div><span>{active.length} ativos</span></header>
-   <div className="dashboard-workflow">{workflow.map(([label,value])=><div className="workflow-line" key={label}>
-    <div><b>{label}</b><span>{value}</span></div>
-    <div className="workflow-track"><i style={{width:`${value/workflowMax*100}%`}}/></div>
-   </div>)}</div>
-  </section>
- </div>
+ return <DashboardV8 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
 }
+
 
 function defaultPhoneColumns(){return[
  {id:'code',label:'Código',width:86,visible:true},
@@ -697,7 +651,7 @@ function Phones(){
   }
  }
  return <>
-  <SmartphonesView
+  <SmartphonesV8
     filtered={filtered} statuses={statuses} statusFilter={statusFilter} setStatusFilter={setStatusFilter}
     allTags={allTags} tagFilter={tagFilter} setTagFilter={setTagFilter}
     query={query} setQuery={setQuery} onlyFavorites={onlyFavorites} setOnlyFavorites={setOnlyFavorites}
@@ -1285,7 +1239,7 @@ function Ads(){
   </div>
   <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
 
-  {view==='matrix'&&<AdsOverviewView
+  {view==='matrix'&&<AdsV8
     filtered={filtered} profiles={profiles} noAds={noAds} setShowNoAds={setShowNoAds}
     query={query} setQuery={setQuery} money={money} showProductCode={showProductCode}
     publicationLabel={publicationLabel} cyclePublication={cyclePublication}
