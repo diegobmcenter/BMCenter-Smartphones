@@ -823,3 +823,10 @@ Nova composição visual: shell, navegação, Smartphones, Anúncios e Ações e
 ## v6.1.2
 
 - Corrigido erro JSX na navegação lateral (`primaryMenuIds.map` e `dataMenuIds.map`) que impedia o Vite de compilar.
+
+## v6.2.0 — Componentização real da interface
+
+- Criados componentes compartilhados em `src/components/ui`.
+- Criadas views separadas em `src/pages` para Smartphones, Anúncios e Ações em lote.
+- O `main.jsx` mantém a lógica e passa dados/ações para essas views.
+- Novo CSS isolado `v62.css`, carregado por último, referente apenas aos novos componentes.
