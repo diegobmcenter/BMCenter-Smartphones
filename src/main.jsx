@@ -170,7 +170,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.8.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.8.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -268,7 +268,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.8.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.8.1</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -854,12 +854,196 @@ function Parts(){
 
   function changeOrderStatus(phoneId,partId,orderStatus){
     const next=phones.map(phone=>{
-      if(phone.id!==phoneId) return <div className="modern-page parts-card-page">
- <Title t="Peças e acessórios" s="Cotações, pedidos e recebimentos organizados por fornecedor."/>
- <div className="modern-filter-strip parts-modern-filters"><label>Fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label><label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label><button onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista</button></div>
- {!filteredRows.length&&<div className="modern-empty-card"><ShoppingCart size={30}/><b>Nenhuma peça encontrada</b></div>}
- <div className="parts-group-list">{viewMode==='supplier'?Object.entries(groupedBySupplier).map(([group,list])=><section className="parts-modern-group" key={group}><header><div><h3>{group}</h3><small>{list.length} peça(s)</small></div><div><strong>{money(totalForRows(list))}</strong>{group!=='Fornecedor não definido'&&<button onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</div></header><div className="parts-modern-items">{list.map(row=><article className="part-modern-row" key={row.part.id}><div className="part-device"><Smartphone size={17}/><div><b>{phoneDisplayName(row.phone)}</b><small>{row.part.name}</small></div></div><div className="part-best"><span>Melhor cotação</span><b>{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</b></div><div className="part-control"><span>Fornecedor</span>{renderQuoteSelect(row)}</div><div className="part-control"><span>Pedido</span>{renderOrderSelect(row)}</div><span className="modern-status-pill">{row.part.status}</span><div className="part-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar</button></div></article>)}</div></section>):Object.entries(groupedByPhone).map(([group,list])=><section className="parts-modern-group" key={group}><header><div><h3>{group}</h3><small>{list.length} peça(s)</small></div><strong>{money(totalForRows(list))}</strong></header><div className="parts-modern-items">{list.map(row=><article className="part-modern-row" key={row.part.id}><div className="part-device"><Package size={17}/><div><b>{row.part.name}</b><small>{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</small></div></div><div className="part-control"><span>Fornecedor</span>{renderQuoteSelect(row)}</div><div className="part-control"><span>Pedido</span>{renderOrderSelect(row)}</div><span className="modern-status-pill">{row.part.status}</span><div className="part-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar</button></div></article>)}</div></section>)}</div>
-</div>
+      if(phone.id!==phoneId) return phone;
+      const parts=(phone.parts||[]).map(part=>part.id!==partId?part:{...part,orderStatus});
+      const pendingOrder=parts.some(part=>['Pedido realizado','Pedido enviado'].includes(part.orderStatus||'Não pedido'));
+      const allDelivered=parts.length>0&&parts.every(part=>['Pedido entregue','Instalada'].includes(part.orderStatus||'Não pedido'));
+      let status=phone.status;
+      if(pendingOrder) status='Aguardando peças';
+      else if(allDelivered&&phone.status==='Aguardando peças') status='Em reparo';
+      return{...phone,parts,status};
+    });
+    savePhones(next);
+  }
+
+  function markSupplierOrderDone(supplierName,list){
+    if(!confirm(`Marcar todas as peças deste pedido em ${supplierName} como “Pedido realizado”?`)) return;
+    const targets=new Set(list.map(row=>`${row.phone.id}::${row.part.id}`));
+    const next=phones.map(phone=>{
+      let changed=false;
+      const parts=(phone.parts||[]).map(part=>{
+        if(!targets.has(`${phone.id}::${part.id}`)) return part;
+        changed=true;
+        const selected=(part.quotes||[]).find(q=>q.id===part.selectedQuoteId);
+        const cheapest=[...(part.quotes||[])].sort((a,b)=>Number(a.price)-Number(b.price))[0];
+        const chosen=selected||cheapest;
+        if(chosen?.supplier!==supplierName) return part;
+        return{...part,orderStatus:'Pedido realizado'};
+      });
+      return changed?{...phone,parts,status:'Aguardando peças'}:phone;
+    });
+    savePhones(next);
+  }
+
+  function persistInventory(next){setInventory(next);save(IKEY,next)}
+  function addInventoryMovement(movement){save(MKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),...movement},...load(MKEY)])}
+
+  function receiveIntoInventory(row){
+    const quote=row.chosen;
+    if(!quote)return alert('Escolha primeiro o fornecedor.');
+    const compatibility=`${row.phone.brand} ${row.phone.model}`.trim();
+    const match=inventory.find(item=>item.name.toLowerCase()===row.part.name.toLowerCase()&&(item.compatibility||'').toLowerCase()===compatibility.toLowerCase());
+    let next;
+    if(match){
+      next=inventory.map(item=>item.id===match.id?{...item,quantity:Number(item.quantity||0)+1,unitCost:Number(quote.price||item.unitCost||0),updatedAt:new Date().toISOString()}:item);
+    }else{
+      const supplier=load(FKEY).find(s=>s.name===quote.supplier);
+      next=[{id:crypto.randomUUID(),name:row.part.name,compatibility,supplierId:supplier?.id||'',quantity:1,minimum:0,unitCost:Number(quote.price||0),location:'',notes:`Recebida para ${row.phone.code}`,updatedAt:new Date().toISOString()},...inventory];
+    }
+    persistInventory(next);
+    addInventoryMovement({itemId:match?.id||next[0]?.id,itemName:row.part.name,type:'Entrada',quantity:1,before:Number(match?.quantity||0),after:Number(match?.quantity||0)+1,reason:`Recebimento para ${row.phone.code}`,unitCost:Number(quote.price||0)});
+    changeOrderStatus(row.phone.id,row.part.id,'Pedido entregue');
+    alert('Peça recebida e adicionada ao estoque.');
+  }
+
+  function installFromInventory(row){
+    const compatibility=`${row.phone.brand} ${row.phone.model}`.trim().toLowerCase();
+    const match=inventory.find(item=>item.name.toLowerCase()===row.part.name.toLowerCase()&&(!item.compatibility||(item.compatibility||'').toLowerCase()===compatibility)&&Number(item.quantity||0)>0);
+    if(!match)return alert('Não existe esta peça disponível no estoque.');
+    persistInventory(inventory.map(item=>item.id===match.id?{...item,quantity:Number(item.quantity)-1,updatedAt:new Date().toISOString()}:item));
+    addInventoryMovement({itemId:match.id,itemName:match.name,type:'Saída',quantity:1,before:Number(match.quantity),after:Number(match.quantity)-1,reason:`Instalada no ${row.phone.code}`,unitCost:Number(match.unitCost||0)});
+    const nextPhones=phones.map(phone=>phone.id!==row.phone.id?phone:{
+      ...phone,
+      parts:(phone.parts||[]).map(part=>part.id!==row.part.id?part:{...part,status:'Instalada',orderStatus:'Pedido entregue'}),
+      lastActivityAt:new Date().toISOString(),
+      timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Peça instalada usando estoque: ${row.part.name}`}]
+    });
+    savePhones(nextPhones);
+    alert('Peça baixada do estoque e marcada como instalada.');
+  }
+
+  function supplierQuote(row){
+    if(supplierFilter==='Todos') return row.chosen;
+    return row.quotes.find(q=>q.supplier===supplierFilter)||null;
+  }
+
+  function totalForRows(list){
+    return list.reduce((sum,row)=>sum+(Number(supplierQuote(row)?.price)||0),0);
+  }
+
+  function optionColor(row,q){
+    if(q.id===row.cheapest?.id) return '#1d4ed8';
+    if(row.quotes.length>1&&q.id===row.mostExpensive?.id) return '#b91c1c';
+    return '#111827';
+  }
+
+  function optionLabel(row,q){
+    const tags=[];
+    if(q.id===row.cheapest?.id) tags.push('menor preço');
+    if(row.quotes.length>1&&q.id===row.mostExpensive?.id) tags.push('maior preço');
+    return `${q.supplier} · ${money(q.price)}${tags.length?` (${tags.join(' / ')})`:''}`;
+  }
+
+  function copySupplierList(){
+    if(supplierFilter==='Todos'){
+      alert('Selecione um fornecedor específico para copiar a lista.');
+      return;
+    }
+    const list=filteredRows.map(r=>{
+      const quote=supplierQuote(r);
+      if(!quote) return '';
+      return `${r.phone.code} - ${r.phone.brand} ${r.phone.model} | ${r.part.name} | ${money(quote.price)} | ${r.part.orderStatus||'Não pedido'}`;
+    }).filter(Boolean).join('\n');
+    if(!list){alert('Nenhuma peça encontrada para este fornecedor.');return;}
+    const finalText=`${list}\n\nTOTAL: ${money(totalForRows(filteredRows))}`;
+    navigator.clipboard.writeText(finalText)
+      .then(()=>alert('Lista copiada para a área de transferência.'))
+      .catch(()=>prompt('Copie a lista abaixo:',finalText));
+  }
+
+  const groupedBySupplier=filteredRows.reduce((acc,row)=>{
+    const quote=supplierQuote(row);
+    const key=supplierFilter==='Todos'?(row.chosen?.supplier||'Fornecedor não definido'):supplierFilter;
+    if(!quote&&supplierFilter!=='Todos') return acc;
+    (acc[key]??=[]).push(row);
+    return acc;
+  },{});
+
+  const groupedByPhone=filteredRows.reduce((acc,row)=>{
+    const key=`${row.phone.code} · ${row.phone.brand} ${row.phone.model}`;
+    (acc[key]??=[]).push(row);
+    return acc;
+  },{});
+
+  const renderQuoteSelect=row=><select
+    className={
+      row.chosen?.id===row.cheapest?.id
+        ? 'quote-select quote-select-low'
+        : row.quotes.length>1&&row.chosen?.id===row.mostExpensive?.id
+          ? 'quote-select quote-select-high'
+          : 'quote-select'
+    }
+    value={row.chosen?.id||''}
+    onChange={e=>choose(row.phone.id,row.part.id,e.target.value)}
+  >
+    <option value="">Selecione</option>
+    {row.quotes.map(q=><option value={q.id} key={q.id} style={{color:optionColor(row,q),fontWeight:700}}>
+      {optionLabel(row,q)}
+    </option>)}
+  </select>;
+
+  const renderOrderSelect=row=><select
+    className={`order-status order-${(row.part.orderStatus||'Não pedido').replaceAll(' ','-').toLowerCase()}`}
+    value={row.part.orderStatus||'Não pedido'}
+    onChange={e=>changeOrderStatus(row.phone.id,row.part.id,e.target.value)}
+  >
+    <option>Não pedido</option>
+    <option>Pedido realizado</option>
+    <option>Pedido enviado</option>
+    <option>Pedido entregue</option>
+  </select>;
+
+  return <div className="modern-module parts-modern">
+    <Title t="Peças e acessórios" s="Controle cotações, pedidos e recebimentos com uma visão mais simples."/>
+    <div className="purchase-toolbar">
+      <label>Filtrar por fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label>
+      <label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label>
+      <button type="button" className="primary" onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista do fornecedor</button>
+    </div>
+    <div className="price-legend">
+      <span className="legend-item cheapest-legend">Azul: menor preço</span>
+      <span className="legend-item expensive-legend">Vermelho: maior preço</span>
+    </div>
+    {!filteredRows.length&&<Empty text="Nenhuma peça encontrada para este filtro."/>}
+
+    {viewMode==='supplier'
+      ? Object.entries(groupedBySupplier).map(([group,list])=><div className="panel" key={group}>
+          <h2 className="group-title"><span>{group}</span><span className="group-title-actions"><span className="group-total">{money(totalForRows(list))}</span>{group!=='Fornecedor não definido'&&<button type="button" className="order-all-button" onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</span></h2>
+          <div className="table-wrap"><table><thead><tr><th>Aparelho</th><th>Peça</th><th>Menor cotação</th><th>Fornecedor escolhido</th><th>Pedido</th><th>Peça</th><th>Ações</th></tr></thead>
+          <tbody>{list.map(row=><tr key={row.part.id}>
+            <td>{phoneDisplayName(row.phone)}</td>
+            <td>{row.part.name}</td>
+            <td><span className="price-low">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</span></td>
+            <td>{renderQuoteSelect(row)}</td>
+            <td>{renderOrderSelect(row)}</td>
+            <td><span className="badge">{row.part.status}</span></td>
+            <td><div className="row-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar do estoque</button></div></td>
+          </tr>)}</tbody></table></div>
+        </div>)
+      : Object.entries(groupedByPhone).map(([group,list])=><div className="panel" key={group}>
+          <h2 className="group-title"><span>{group}</span><span className="group-total">{money(totalForRows(list))}</span></h2>
+          <div className="table-wrap"><table><thead><tr><th>Peça</th><th>Menor cotação</th><th>Fornecedor escolhido</th><th>Pedido</th><th>Peça</th><th>Ações</th></tr></thead>
+          <tbody>{list.map(row=><tr key={row.part.id}>
+            <td>{row.part.name}</td>
+            <td><span className="price-low">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</span></td>
+            <td>{renderQuoteSelect(row)}</td>
+            <td>{renderOrderSelect(row)}</td>
+            <td><span className="badge">{row.part.status}</span></td>
+            <td><div className="row-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar do estoque</button></div></td>
+          </tr>)}</tbody></table></div>
+        </div>)
+    }
+  </div>
 }
 
 
@@ -1720,7 +1904,7 @@ function captureCompleteBackup(options={}){
   audit,
   format:BACKUP_FORMAT,
   formatVersion:BACKUP_FORMAT_VERSION,
-  appVersion:'5.8.0',
+  appVersion:'5.8.1',
   exportedAt:new Date().toISOString(),
   storage,
   summary:{

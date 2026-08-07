@@ -2,109 +2,122 @@
 setlocal EnableExtensions
 chcp 65001 >nul
 title BMCenter Smartphones - Publicar Atualizacao
-
 cd /d "%~dp0"
-
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
 
 echo.
 echo ============================================================
-echo        BMCenter Smartphones - PUBLICAR ATUALIZACAO
+echo   BMCenter Smartphones - VALIDAR E PUBLICAR ATUALIZACAO
 echo ============================================================
 echo.
-echo Pasta da versao:
-echo %CD%
-echo.
-echo Este processo vai enviar ESTA pasta diretamente ao GitHub.
-echo A Vercel publicara a nova versao automaticamente.
+echo Esta pasta sera validada antes de qualquer envio ao GitHub.
+echo Se o build falhar, nada sera publicado.
 echo.
 pause
 
 where git >nul 2>&1
 if errorlevel 1 (
-    echo.
-    echo [ERRO] Git nao foi encontrado neste computador.
-    echo Instale o Git for Windows e tente novamente.
-    echo.
-    pause
-    exit /b 1
+ echo [ERRO] Git nao encontrado.
+ pause
+ exit /b 1
+)
+where npm >nul 2>&1
+if errorlevel 1 (
+ echo [ERRO] NPM/Node.js nao encontrado.
+ pause
+ exit /b 1
 )
 
 echo.
-echo [1/6] Preparando repositorio...
+echo [1/8] Instalando/verificando dependencias...
+call npm install
+if errorlevel 1 goto :build_error
+
+echo.
+echo [2/8] Testando compilacao da versao...
+call npm run build
+if errorlevel 1 goto :build_error
+
+echo.
+echo ============================================================
+echo   BUILD APROVADO - agora a versao pode ser publicada.
+echo ============================================================
+echo.
 
 if not exist ".git" (
-    git init
-    if errorlevel 1 goto :erro
+ echo [3/8] Criando repositorio local...
+ git init
+ if errorlevel 1 goto :erro
+) else (
+ echo [3/8] Repositorio local encontrado.
 )
 
 git branch -M %BRANCH% >nul 2>&1
-
 git remote get-url origin >nul 2>&1
-if errorlevel 1 (
-    git remote add origin "%REPO%"
-) else (
-    git remote set-url origin "%REPO%"
-)
+if errorlevel 1 (git remote add origin "%REPO%") else (git remote set-url origin "%REPO%")
 
-echo [2/6] Buscando a versao atual do GitHub...
+echo [4/8] Buscando a versao atual do GitHub...
 git fetch origin %BRANCH%
 if errorlevel 1 goto :erro
 
-echo [3/6] Ligando esta pasta ao historico do projeto...
+echo [5/8] Ligando esta pasta ao historico do projeto...
 git symbolic-ref HEAD refs/heads/%BRANCH%
 git reset --mixed origin/%BRANCH%
 if errorlevel 1 goto :erro
 
-echo [4/6] Preparando os arquivos da nova versao...
+echo [6/8] Preparando arquivos...
 git add -A
 if errorlevel 1 goto :erro
 
 git diff --cached --quiet
 if not errorlevel 1 (
-    echo.
-    echo Nenhuma alteracao nova foi encontrada.
-    echo Esta versao parece ja estar publicada.
-    echo.
-    pause
-    exit /b 0
+ echo.
+ echo Nenhuma alteracao nova encontrada. Esta versao parece ja estar publicada.
+ pause
+ exit /b 0
 )
 
 git config user.name >nul 2>&1
 if errorlevel 1 git config user.name "BMCenter Updater"
-
 git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
-echo [5/6] Criando a atualizacao...
-git commit -m "BMCenter - publicar nova versao"
+echo [7/8] Criando commit...
+git commit -m "BMCenter - publicar versao validada"
 if errorlevel 1 goto :erro
 
-echo [6/6] Enviando para o GitHub...
+echo [8/8] Enviando para o GitHub...
 git push -u origin %BRANCH%
 if errorlevel 1 goto :erro
 
 echo.
 echo ============================================================
-echo          ATUALIZACAO ENVIADA COM SUCESSO!
+echo   ATUALIZACAO VALIDADA E ENVIADA COM SUCESSO!
 echo ============================================================
 echo.
-echo O GitHub recebeu a nova versao.
-echo A Vercel deve iniciar o deploy automaticamente.
-echo Aguarde alguns instantes e atualize o BMCenter no navegador.
-echo.
+echo A Vercel deve iniciar um novo deploy automaticamente.
 pause
 exit /b 0
+
+:build_error
+echo.
+echo ============================================================
+echo   BUILD FALHOU - A ATUALIZACAO NAO FOI PUBLICADA
+echo ============================================================
+echo.
+echo Copie a mensagem de erro acima e envie ao ChatGPT.
+echo Nenhum arquivo foi enviado ao GitHub.
+pause
+exit /b 1
 
 :erro
 echo.
 echo ============================================================
-echo       NAO FOI POSSIVEL PUBLICAR A ATUALIZACAO
+echo   ERRO DURANTE A PUBLICACAO
 echo ============================================================
 echo.
-echo Leia a mensagem de erro acima.
-echo Nenhum dado do Supabase foi apagado por este processo.
-echo.
+echo Leia a mensagem acima. O build havia sido aprovado,
+echo mas ocorreu uma falha no Git/GitHub.
 pause
 exit /b 1

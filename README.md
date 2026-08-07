@@ -769,3 +769,8 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Anúncios com cards maiores e canais organizados.
 - Ações em lote, fornecedores, contas e peças com visual de cards.
 - Versão 5.8.0 visível no topo.
+
+
+## v5.8.1 — correção de build
+- Corrigida a função Parts() que estava truncada e impedia o build na Vercel.
+- Build local validado antes da entrega.

@@ -16,3 +16,7 @@ O arquivo `.env.local`, quando existente, não deve ser enviado ao GitHub e perm
 ## Importante
 
 O BAT publica os arquivos da própria pasta onde ele está. Não é necessário copiar a nova versão para uma pasta antiga.
+
+
+## Validação automática (v5.8.1+)
+O BAT agora executa `npm install` e `npm run build` antes do Git. Se o build falhar, a publicação é cancelada automaticamente.
