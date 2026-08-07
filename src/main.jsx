@@ -4,14 +4,14 @@ import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
 import AppFrame from './components/v7/AppFrame.jsx';
-import AppFrameV8 from './v8/AppFrameV8.jsx';
-import DashboardV8 from './v8/pages/DashboardV8.jsx';
-import TodayV8 from './v8/pages/TodayV8.jsx';
-import SmartphonesV8 from './v8/pages/SmartphonesV8.jsx';
-import AdsV8 from './v8/pages/AdsV8.jsx';
-import BatchV8 from './v8/pages/BatchV8.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';
+import AppFrameV9 from './v9/AppFrameV9.jsx';
+import DashboardV9 from './v9/pages/DashboardV9.jsx';
+import TodayV9 from './v9/pages/TodayV9.jsx';
+import SmartphonesV9 from './v9/pages/SmartphonesV9.jsx';
+import AdsV9 from './v9/pages/AdsV9.jsx';
+import BatchV9 from './v9/pages/BatchV9.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';import'./v9.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='8.0.7';
+const APP_VERSION='9.0.0';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -160,7 +160,7 @@ function App({cloudUser,onCloudLogout}){
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
- return <AppFrameV8
+ return <AppFrameV9
   mobileOpen={mobileMenuOpen}
   setMobileOpen={setMobileMenuOpen}
   menuItems={menuItems}
@@ -172,14 +172,15 @@ function App({cloudUser,onCloudLogout}){
   userEmail={cloudUser?.email}
   onLogout={onCloudLogout}
   config={config}
+  onConfigChange={saveConfig}
  >
-  <section className={`v8-route v8-route-${page}`}>
+  <section className={`v9-route v9-route-${page}`}>
    {page==='settings'
     ?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>
     :<PageContent page={page}/>}
   </section>
   <UniversalTableCustomizer page={page}/>
- </AppFrameV8>
+ </AppFrameV9>
 }
 
 const BALANCED_THEME={
@@ -283,45 +284,37 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
    {[['general','Geral','⚙'],['appearance','Aparência','◉'],['notifications','Notificações','♟'],['system','Sistema','⚙'],['integrations','Integrações','⌘'],['about','Sobre','ⓘ']].map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><span>{icon}</span>{label}</button>)}
   </div>
 
-  {tab==='appearance'&&<div className="appearance-settings-layout">
-   <section className="panel appearance-left-card">
-    <h2>Tema do sistema</h2><p>Escolha uma paleta de cores para todo o sistema.</p>
-    <div className="theme-preset-grid">
-     {Object.keys(presets).map(id=><button key={id} className={config.accent===id?'selected':''} onClick={()=>applyPreset(id)}><i style={{background:`linear-gradient(135deg,${presets[id].primaryColor},${presets[id].highlightColor})`}}/><span>{presetLabels[id]}</span>{config.accent===id&&<b>✓</b>}</button>)}
-     <button className={config.accent==='custom'?'selected':''} onClick={()=>onConfigChange({...config,accent:'custom'})}><i className="custom-theme-swatch">✎</i><span>Personalizado</span>{config.accent==='custom'&&<b>✓</b>}</button>
-    </div>
-    <h3>Modo da interface</h3><p>Escolha o modo de exibição do sistema.</p>
-    <div className="interface-mode-grid">
-     {[['auto','Automático','Segue a configuração do sistema'],['light','Claro','Interface clara e limpa'],['dark','Escuro','Interface escura']].map(([id,label,desc])=><button key={id} className={config.themeMode===id?'selected':''} onClick={()=>onConfigChange({...config,themeMode:id})}><span className="mode-radio">{config.themeMode===id?'●':'○'}</span><div><b>{label}</b><small>{desc}</small></div></button>)}
-    </div>
-    <h3>Prévia do tema</h3><p>Veja como o tema será aplicado em todo o sistema.</p>
-    <div className="theme-preview"><aside><b>BM</b><span>Dashboard</span><span>Smartphones</span><span>Anúncios</span></aside><main><header><span>Aparelho</span><span>Status</span><span>Valor</span><span>Lucro</span></header><div><b>Xiaomi Redmi Note 12</b><em>Disponível</em><span>R$ 1.250,00</span><strong>R$ 350,00</strong></div></main></div>
+  {tab==='appearance'&&<div className="v9-appearance-settings">
+   <section className="v9-settings-intro">
+    <div><span>APARÊNCIA</span><h2>Escolha como você prefere trabalhar.</h2><p>O BMCenter possui apenas dois temas, ambos ajustados para leitura e uso prolongado.</p></div>
    </section>
 
-   <section className="panel appearance-right-card">
-    <h2>Personalização avançada</h2><p>Ajuste detalhes específicos do tema. As alterações são aplicadas em todo o sistema.</p>
-    <div className="advanced-color-grid">
-     {[['primaryColor','Cor primária'],['secondaryColor','Cor secundária'],['highlightColor','Cor de destaque'],['surfaceColor','Fundo principal'],['panelColor','Fundo dos painéis'],['cardColor','Fundo dos cards'],['textColor','Cor do texto'],['mutedTextColor','Texto secundário'],['borderColor','Bordas']].map(([key,label])=><label key={key}>{label}<div className="color-field"><input type="color" value={/^#[0-9a-fA-F]{6}$/.test(customTheme[key]||'')?customTheme[key]:'#000000'} onChange={e=>updateCustom(key,e.target.value)}/><input value={customTheme[key]||''} onChange={e=>updateCustom(key,e.target.value)} onBlur={e=>{if(!/^#[0-9a-fA-F]{6}$/.test(e.target.value))updateCustom(key,config[key]||'#000000')}}/></div></label>)}
-    </div>
-    <div className="custom-theme-actions"><div><b>Tema personalizado</b><small>Escolha as cores acima e clique em aplicar. O sistema inteiro será atualizado.</small></div><button className="primary" onClick={applyCustom}>Aplicar personalizado</button></div>
-    <div className="appearance-controls-grid">
-     <label>Raio das bordas<input type="range" min="0" max="24" value={config.borderRadius??10} onChange={e=>onConfigChange({...config,borderRadius:Number(e.target.value)})}/><span>{config.borderRadius??10}px</span></label>
-     <label>Densidade da interface<select value={config.density||'comfortable'} onChange={e=>onConfigChange({...config,density:e.target.value,compact:e.target.value==='compact'})}><option value="comfortable">Confortável</option><option value="professional">Profissional</option><option value="compact">Compacta</option></select></label>
-    </div>
-    <label className="theme-transition-toggle"><div><b>Transição de cores</b><small>Aplicar transições suaves ao trocar de tema.</small></div><input type="checkbox" checked={config.themeTransitions!==false} onChange={e=>onConfigChange({...config,themeTransitions:e.target.checked})}/></label>
-    <div className="global-theme-success"><ShieldCheck/><div><b>As alterações de aparência são aplicadas em todo o sistema automaticamente.</b><small>Inclui todas as páginas, modais, tabelas, formulários, menus e componentes.</small></div></div>
-   </section>
+   <div className="v9-theme-choice-grid">
+    <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v9',applyThemeGlobally:true})}>
+     <div className="v9-theme-preview light">
+      <aside><i/><i/><i/><i/></aside><main><header/><section><i/><i/><i/></section><footer/></main>
+     </div>
+     <div><b>Claro</b><span>Neutro, leve e confortável para ambientes claros.</span></div>
+     {config.themeMode==='light'&&<em>✓ Em uso</em>}
+    </button>
 
-   <section className="panel global-theme-section">
-    <h2>Aplicação global do tema</h2><p>Todos os componentes abaixo recebem automaticamente as cores escolhidas.</p>
-    <div className="global-theme-chips">{['Páginas principais','Modais e diálogos','Tabelas e grids','Formulários e campos','Menus e popovers','Sidebar e navegação','Gráficos e badges','Todos os componentes'].map(x=><span key={x}>✓ {x}</span>)}</div>
-    <div className="global-theme-footer"><small>As alterações são aplicadas imediatamente em todo o sistema.</small><button className="primary" onClick={()=>onConfigChange({...config,applyThemeGlobally:true,appearanceSavedAt:new Date().toISOString()})}>💾 Salvar alterações</button></div>
+    <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v9',applyThemeGlobally:true})}>
+     <div className="v9-theme-preview dark">
+      <aside><i/><i/><i/><i/></aside><main><header/><section><i/><i/><i/></section><footer/></main>
+     </div>
+     <div><b>Escuro</b><span>Grafite profundo, sem preto puro e com contraste confortável.</span></div>
+     {config.themeMode!=='light'&&<em>✓ Em uso</em>}
+    </button>
+   </div>
+
+   <section className="v9-appearance-note">
+    <ShieldCheck/><div><b>Cores calibradas para leitura</b><p>Fundos, textos, bordas, estados e botões mudam em conjunto. Você não precisa ajustar cor por cor.</p></div>
    </section>
   </div>}
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.7</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v9.0.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -422,7 +415,7 @@ function TodayPage(){
   {title:'Reparar e testar',items:active.filter(p=>['Em reparo','Em testes','Aguardando peças'].includes(p.status))},
   {title:'Prontos para anunciar',items:active.filter(p=>['Pronto','Para fotografar','Anúncio preparado'].includes(p.status)&&!(p.ads||migrateLegacyAds(p)).length)}
  ];
- return <TodayV8 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
+ return <TodayV9 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
 
 }
 
@@ -551,7 +544,7 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <BatchV8
+ return <BatchV9
   rows={rows} selected={selected} setSelected={setSelected} query={query} setQuery={setQuery}
   statusFilter={statusFilter} setStatusFilter={setStatusFilter} statuses={statuses}
   newStatus={newStatus} setNewStatus={setNewStatus} newTag={newTag} setNewTag={setNewTag}
@@ -665,7 +658,7 @@ function Dashboard(){
   {label:'Cadastros incompletos',value:dataIssues,detail:'precisam de revisão',kind:'amber'},
   {label:'Parados há 7+ dias',value:stale.length,detail:'sem movimentação',kind:'red'}
  ];
- return <DashboardV8 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
+ return <DashboardV9 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
 }
 
 
@@ -711,7 +704,7 @@ function Phones(){
   }
  }
  return <>
-  <SmartphonesV8
+  <SmartphonesV9
     filtered={filtered} statuses={statuses} statusFilter={statusFilter} setStatusFilter={setStatusFilter}
     allTags={allTags} tagFilter={tagFilter} setTagFilter={setTagFilter}
     query={query} setQuery={setQuery} onlyFavorites={onlyFavorites} setOnlyFavorites={setOnlyFavorites}
@@ -1299,7 +1292,7 @@ function Ads(){
   </div>
   <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
 
-  {view==='matrix'&&<AdsV8
+  {view==='matrix'&&<AdsV9
     filtered={filtered} profiles={profiles} noAds={noAds} setShowNoAds={setShowNoAds}
     query={query} setQuery={setQuery} money={money} showProductCode={showProductCode}
     publicationLabel={publicationLabel} cyclePublication={cyclePublication}

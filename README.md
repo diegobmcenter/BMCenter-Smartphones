@@ -911,3 +911,16 @@ Nova aparência baseada em módulos com composições diferentes:
 - Cabeçalhos, tabelas, filtros, cards e Dashboard neutralizados.
 - Gradientes decorativos e excesso de superfícies azuis reduzidos.
 - Restaurar padrões agora retorna ao tema Equilíbrio.
+
+## v9.0.0 — Redesign completo
+
+- Nova interface AppFrameV9.
+- Sidebar larga e legível com agrupamento de menus.
+- Apenas dois temas: Claro e Escuro.
+- Nova Dashboard.
+- Nova página Hoje em fluxo vertical.
+- Smartphones redesenhado como catálogo em cards.
+- Anúncios redesenhado como cards de publicação.
+- Ações em lote redesenhado.
+- Padrão visual V9 aplicado aos módulos legados, tabelas, formulários e modais.
+- Tipografia e contraste aumentados para leitura.
