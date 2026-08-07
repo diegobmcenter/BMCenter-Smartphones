@@ -9,9 +9,9 @@ import DashboardV10 from './v10/pages/DashboardV10.jsx';
 import TodayV10 from './v10/pages/TodayV10.jsx';
 import SmartphonesV10 from './v10/pages/SmartphonesV10.jsx';
 import AdsV10 from './v10/pages/AdsV10.jsx';
-import BatchV10 from './v10/pages/BatchV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';
+import BatchV10 from './v10/pages/BatchV10.jsx';import ActivityV10 from './v10/pages/ActivityV10.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.0.0';
+const APP_VERSION='10.1.0';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -279,22 +279,22 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
    {[['general','Geral','⚙'],['appearance','Aparência','◉'],['notifications','Notificações','♟'],['system','Sistema','⚙'],['integrations','Integrações','⌘'],['about','Sobre','ⓘ']].map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><span>{icon}</span>{label}</button>)}
   </div>
 
-  {tab==='appearance'&&<div className="v9-appearance-settings">
-   <section className="v9-settings-intro">
+  {tab==='appearance'&&<div className="v10-appearance-settings">
+   <section className="v10-settings-intro">
     <div><span>APARÊNCIA</span><h2>Escolha como você prefere trabalhar.</h2><p>O BMCenter possui apenas dois temas, ambos ajustados para leitura e uso prolongado.</p></div>
    </section>
 
-   <div className="v9-theme-choice-grid">
-    <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v9',applyThemeGlobally:true})}>
-     <div className="v9-theme-preview light">
+   <div className="v10-theme-choice-grid">
+    <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v10',applyThemeGlobally:true})}>
+     <div className="v10-theme-preview light">
       <aside><i/><i/><i/><i/></aside><main><header/><section><i/><i/><i/></section><footer/></main>
      </div>
      <div><b>Claro</b><span>Neutro, leve e confortável para ambientes claros.</span></div>
      {config.themeMode==='light'&&<em>✓ Em uso</em>}
     </button>
 
-    <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v9',applyThemeGlobally:true})}>
-     <div className="v9-theme-preview dark">
+    <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v10',applyThemeGlobally:true})}>
+     <div className="v10-theme-preview dark">
       <aside><i/><i/><i/><i/></aside><main><header/><section><i/><i/><i/></section><footer/></main>
      </div>
      <div><b>Escuro</b><span>Grafite profundo, sem preto puro e com contraste confortável.</span></div>
@@ -302,14 +302,14 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
     </button>
    </div>
 
-   <section className="v9-appearance-note">
+   <section className="v10-appearance-note">
     <ShieldCheck/><div><b>Cores calibradas para leitura</b><p>Fundos, textos, bordas, estados e botões mudam em conjunto. Você não precisa ajustar cor por cor.</p></div>
    </section>
   </div>}
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v10.0.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v10.1.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -584,12 +584,7 @@ function ActivityCenterPage(){
   const dateOk=days==='Todos'||daysSince(x.event.date)<=Number(days);
   return text.includes(query.toLowerCase())&&(type==='Todos'||x.type===type)&&dateOk;
  }).sort((a,b)=>new Date(b.event.date)-new Date(a.event.date));
- return <>
-  <Title t="Central de atividades" s="Histórico global de tudo o que aconteceu nos aparelhos."/>
-  <div className="activity-metrics"><div><span>Eventos encontrados</span><strong>{events.length}</strong></div><div><span>Hoje</span><strong>{events.filter(x=>daysSince(x.event.date)===0).length}</strong></div><div><span>Últimos 7 dias</span><strong>{events.filter(x=>daysSince(x.event.date)<=7).length}</strong></div><div><span>Aparelhos movimentados</span><strong>{new Set(events.map(x=>x.phone.id)).size}</strong></div></div>
-  <div className="filter-bar activity-filters"><label><Search size={16}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Aparelho ou atividade"/></label><label>Tipo<select value={type} onChange={e=>setType(e.target.value)}><option>Todos</option><option>Cadastro</option><option>Operação</option><option>Peças</option><option>Anúncios</option><option>Venda</option><option>Outros</option></select></label><label>Período<select value={days} onChange={e=>setDays(e.target.value)}><option value="7">7 dias</option><option value="30">30 dias</option><option value="90">90 dias</option><option>Todos</option></select></label></div>
-  <div className="activity-stream">{events.map((x,i)=><article key={`${x.phone.id}-${x.event.id||i}`}><span className={`activity-type type-${x.type.toLowerCase().replace('ç','c').replace('ú','u')}`}>{x.type}</span><div><b>{showProductCode()&&<>{x.phone.code} · </>}{x.phone.brand} {x.phone.model}</b><span>{x.event.message}</span></div><time>{new Date(x.event.date).toLocaleString('pt-BR')}</time></article>)}{!events.length&&<Empty text="Nenhuma atividade encontrada."/>}</div>
- </>
+ return <ActivityV10 events={events} query={query} setQuery={setQuery} type={type} setType={setType} days={days} setDays={setDays} showProductCode={showProductCode}/>;
 }
 function classifyActivity(message=''){
  const m=message.toLowerCase();
@@ -1717,17 +1712,7 @@ function ReportsPage(){
 
  const channelSummary={};sales.forEach(p=>{const key=p.sale.saleChannel||'Não informado';channelSummary[key]=(channelSummary[key]||0)+saleNetValue(p.sale)});
  const bankSummary={};sales.forEach(p=>{const bank=load(BKEY).find(b=>b.id===p.sale.bankAccountId)?.name||'Não informado';bankSummary[bank]=(bankSummary[bank]||0)+saleReceivedValue(p.sale)});
- return <div className="premium-page reports-page modern-page reports-modern-page"><Title t="Relatórios" s="Vendas, compras, fornecedores, etiquetas e previsão."/>
- <div className="sales-totals"><div><span>Previsão 7 dias</span><strong>{money(forecast7)}</strong></div><div><span>Previsão 30 dias</span><strong>{money(forecast30)}</strong></div><div><span>Estoque previsto</span><strong>{money(active.reduce((a,p)=>a+Number(p.expected||0),0))}</strong></div></div>
- <div className="report-grid">
-  <section className="panel"><h2>Desempenho por perfil</h2>{!profileData.some(x=>x.qty)?<Empty text="Sem vendas por perfil."/>:<div className="report-list">{profileData.filter(x=>x.qty).map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>{x.qty} venda(s)</small></div><div><b>{money(x.revenue)}</b><small>Lucro {money(x.profit)}</small></div></div>)}</div>}</section>
-  <section className="panel"><h2>Gastos por fornecedor de peças</h2>{!supplierData.length?<Empty text="Sem peças selecionadas."/>:<div className="report-list">{supplierData.map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>Peças escolhidas</small></div><strong>{money(x.value)}</strong></div>)}</div>}</section>
-  <section className="panel"><h2>Etiquetas mais usadas</h2>{!tags.length?<Empty text="Sem etiquetas."/>:<div className="tag-cloud">{tags.map(([name,count])=><span key={name}>{name} <b>{count}</b></span>)}</div>}</section>
-  <section className="panel"><h2>Vendas por canal</h2><div className="report-list">{Object.entries(channelSummary).sort((a,b)=>b[1]-a[1]).map(([name,value],i)=><div className="report-row" key={name}><span className="ranking-position">{i+1}</span><div><b>{name}</b><small>Valor líquido</small></div><strong>{money(value)}</strong></div>)}</div>{!Object.keys(channelSummary).length&&<Empty text="Sem dados por canal."/>}</section>
-  <section className="panel"><h2>Recebido por conta</h2><div className="report-list">{Object.entries(bankSummary).sort((a,b)=>b[1]-a[1]).map(([name,value],i)=><div className="report-row" key={name}><span className="ranking-position">{i+1}</span><div><b>{name}</b><small>Valor recebido</small></div><strong>{money(value)}</strong></div>)}</div>{!Object.keys(bankSummary).length&&<Empty text="Sem dados por conta."/>}</section>
- </div>
- <section className="panel"><h2>Resultado mensal</h2><div className="table-wrap"><table><thead><tr><th>Mês</th><th>Quantidade</th><th>Faturamento</th><th>Lucro</th></tr></thead><tbody>{Object.entries(monthly).sort(([a],[b])=>b.localeCompare(a)).map(([month,data])=><tr key={month}><td>{formatMonth(month)}</td><td>{data.qty}</td><td>{money(data.revenue)}</td><td><span className={data.profit>=0?'profit-positive':'profit-negative'}>{money(data.profit)}</span></td></tr>)}</tbody></table>{!Object.keys(monthly).length&&<Empty text="Sem vendas registradas."/>}</div></section>
- </div>
+ return <ReportsV10 forecast7={forecast7} forecast30={forecast30} stockExpected={active.reduce((a,p)=>a+Number(p.expected||0),0)} profileData={profileData} supplierData={supplierData} tags={tags} channelSummary={channelSummary} bankSummary={bankSummary} monthly={monthly} money={money} formatMonth={formatMonth}/>
 }
 
 function DataCenterPage(){

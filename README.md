@@ -934,3 +934,18 @@ Nova aparência baseada em módulos com composições diferentes:
 - Um único design system aplicado também a Atividades, Fornecedores, Contas, Perfis, Peças, Qualidade, Relatórios, Dados, Backup, Configurações, modais e formulários.
 - Dois temas calibrados: Claro em off-white/cinza e Escuro em grafite.
 - Regras explícitas impedem cabeçalhos brancos em tema escuro.
+
+## v10.1.0 — revisão visual integral
+
+- Mantém como referência oficial a paleta clara aprovada na Dashboard.
+- Corrige classes V10 ausentes que causavam textos sobrepostos em Hoje, Lote, Smartphones e Anúncios.
+- Central de Atividades reconstruída em timeline V10.
+- Relatórios reconstruído em painéis V10.
+- Configurações/Aparência compactada e convertida integralmente para classes V10.
+- Fornecedores, Contas, Perfis, Peças, Qualidade, Central de dados, Backup, tabelas, formulários e modais receberam regras completas do Design System V10.
+- Tema escuro revisado para eliminar fundos brancos herdados.
+- Regras de fluxo de texto e responsividade adicionadas globalmente para impedir sobreposição.
+
+### Auditoria adicional da v10.1.0
+- Componentes legados ainda usados por funções internas (editor de anúncios, detalhes de aparelho, criação em massa, perfis, peças, pesquisa, modais, restauradores e personalizador de colunas) receberam neutralização explícita no Design System V10.
+- O objetivo desta versão é impedir que regras de `styles.css` apareçam visualmente sem uma regra V10 posterior.
