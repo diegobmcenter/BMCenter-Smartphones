@@ -94,7 +94,7 @@ function App({cloudUser,onCloudLogout}){
   const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
   if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
   if(config.autoSnapshot!==false){
-   const version='5.6.0',last=localStorage.getItem('bmcenter-last-version');
+   const version='6.1.2',last=localStorage.getItem('bmcenter-last-version');
    if(last!==version){
     try{
      const snapshots=normalizeSnapshotList(load(SNAPKEY));
@@ -141,43 +141,49 @@ function App({cloudUser,onCloudLogout}){
  function saveVisible(next){const safe={...next,phones:true};setVisibleMenus(safe);save(MENUKEY,safe)}
  function saveConfig(next){setConfig(next);save(CFGKEY,next)}
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
+ const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
- return <div className={`shell global-dark-shell theme-${config.accent||'blue'} mode-${config.themeMode||'dark'} ${config.density==='compact'||config.compact?'compact-mode':''} ${config.density==='professional'?'professional-density':''} ${config.themeTransitions!==false?'theme-transitions':''} ${config.showProductCode===false?'hide-product-code':''}`} style={{'--app-primary':config.primaryColor||'#3b82f6','--app-secondary':config.secondaryColor||'#1e40af','--app-highlight':config.highlightColor||'#10b981','--app-surface':config.surfaceColor||'#0d1a2b','--app-panel':config.panelColor||'#111827','--app-card':config.cardColor||'#1a1f2e','--app-border':config.borderColor||'#2a3344','--app-text':config.textColor||'#f8fafc','--app-muted':config.mutedTextColor||'#94a3b8','--app-radius':`${config.borderRadius??10}px`}}>
-  <aside className={`global-sidebar ${mobileMenuOpen?'mobile-open':''}`}>
-   <div className="brand-block" onClick={()=>navigate(config.homePage||'dashboard')} title="Ir para a página inicial">
+ return <div className={`shell global-dark-shell bm-v61-shell theme-${config.accent||'blue'} mode-${config.themeMode||'dark'} ${config.showProductCode===false?'hide-product-code':''}`} style={{'--app-primary':config.primaryColor||'#3b82f6','--app-secondary':config.secondaryColor||'#1e40af','--app-highlight':config.highlightColor||'#10b981','--app-text':config.textColor||'#f8fafc','--app-muted':config.mutedTextColor||'#94a3b8'}}>
+  <aside className={`global-sidebar bm-v61-sidebar ${mobileMenuOpen?'mobile-open':''}`}>
+   <div className="bm-v61-brand" onClick={()=>navigate(config.homePage||'dashboard')}>
     <div className="brand-mark"><span/><span/><span/></div>
     <div><b>BM<span>CENTER</span></b><small>SMARTPHONES</small></div>
    </div>
-   <button className="mobile-sidebar-close" type="button" onClick={()=>setMobileMenuOpen(false)} aria-label="Fechar menu"><X/></button>
+   <button className="mobile-sidebar-close" type="button" onClick={()=>setMobileMenuOpen(false)}><X/></button>
 
-   <nav className="sidebar-nav modern-sidebar-nav">
-    <div className="sidebar-menu-card">
-     {primaryMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} badge={id==='today'?getOperationalAlerts().length:null} onClick={()=>navigate(id)}/>})}
-    </div>
-    <div className="sidebar-section-label">CENTRAL DE DADOS</div>
-    <div className="sidebar-data-menu">
-     {dataMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} onClick={()=>navigate(id)}/>})}
-    </div>
+   <nav className="sidebar-nav bm-v61-nav">
+    <small className="bm-v61-nav-label">OPERAÇÃO</small>
+    {primaryMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} badge={id==='today'?getOperationalAlerts().length:null} onClick={()=>navigate(id)}/>})}
+    <small className="bm-v61-nav-label data-label">DADOS E SISTEMA</small>
+    {dataMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} onClick={()=>navigate(id)}/>})}
    </nav>
 
-   <div className="sidebar-user">
+   <div className="bm-v61-account">
     <div className="user-avatar">DM</div>
     <div><b>Diego Moraes</b><small>Administrador</small></div>
-    <button className="logout-icon" title="Sair" onClick={onCloudLogout}><LogOut/></button>
+    <button title="Sair" onClick={onCloudLogout}><LogOut size={15}/></button>
    </div>
   </aside>
 
-  <main className="global-main">
-   <header className="global-topbar">
-    <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v6.0.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+  <main className="global-main bm-v61-main">
+   <header className="global-topbar bm-v61-topbar">
+    <div className="bm-v61-top-left">
+     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)}>☰</button>
+     <span className="bm-v61-page-icon">{currentMenu.icon}</span>
+     <div><b>{currentMenu.text}</b><small>BMCenter Smartphones</small></div>
+    </div>
+    <div className="topbar-right">
+     <button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button>
+     <span className="version-pill">v6.1.2</span>
+     <div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div>
+    </div>
    </header>
-   <section className="page global-page">
-    {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
+   <section className="page global-page bm-v61-canvas">
+    {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>}
    </section>
   </main>
   <UniversalTableCustomizer page={page}/>
-  {mobileMenuOpen&&<button className="mobile-sidebar-backdrop" onClick={()=>setMobileMenuOpen(false)} aria-label="Fechar menu"/>}
+  {mobileMenuOpen&&<button className="mobile-sidebar-backdrop" onClick={()=>setMobileMenuOpen(false)}/>}
  </div>
 }
 
@@ -268,7 +274,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v6.0.1</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v6.1.2</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -510,32 +516,19 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <div className="premium-page modern-page batch-modern-page">
-  <Title t="Ações em lote" s="Selecione aparelhos e aplique mudanças de forma rápida."/>
-  <div className="premium-filterbar batch-filterbar">
-   <label className="premium-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar modelo, IMEI ou etiqueta"/></label>
-   <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Ativos</option><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
-   <span className="premium-result-count">{selected.length}</span>
-  </div>
-
-  <div className="premium-batch-actions">
-   <label>Status<select value={newStatus} onChange={e=>setNewStatus(e.target.value)}><option value="">Não alterar</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
-   <Field label="Adicionar etiqueta" value={newTag} onChange={setNewTag}/>
-   <button className="primary" onClick={applyBatch}>Aplicar em {selected.length}</button>
-   {!!selected.length&&<button className="quiet-button" onClick={()=>setSelected([])}>Limpar</button>}
-  </div>
-
-  <div className="premium-select-all"><label><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/> Selecionar todos</label></div>
-
-  <div className="premium-batch-grid">
-   {rows.map(p=><article className={selected.includes(p.id)?'premium-batch-card selected':'premium-batch-card'} key={p.id} onClick={()=>toggle(p.id)}>
+ return <div className="bm-v61-page bm-v61-batch">
+  <div className="bm-v61-pagehead"><div><span>EDIÇÃO RÁPIDA</span><h1>Ações em lote</h1><p>Selecione aparelhos e aplique a mesma mudança de uma vez.</p></div></div>
+  <div className="bm-v61-filterline bm-v61-batch-filter"><label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label><select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Ativos</option><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select><em>{selected.length} selecionado(s)</em></div>
+  <div className="bm-v61-batch-dock"><label>Status<select value={newStatus} onChange={e=>setNewStatus(e.target.value)}><option value="">Não alterar</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><Field label="Etiqueta" value={newTag} onChange={setNewTag}/><button className="primary" onClick={applyBatch}>Aplicar</button>{!!selected.length&&<button onClick={()=>setSelected([])}>Limpar</button>}</div>
+  <label className="bm-v61-selectall"><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/> Selecionar todos</label>
+  <div className="bm-v61-batch-grid">
+   {rows.map(p=><article className={selected.includes(p.id)?'selected':''} key={p.id} onClick={()=>toggle(p.id)}>
     <input type="checkbox" checked={selected.includes(p.id)} onChange={()=>toggle(p.id)} onClick={e=>e.stopPropagation()}/>
-    <div className="premium-batch-device"><span><Smartphone size={17}/></span><div><b>{phoneDisplayName(p)}</b><small>{[p.color,p.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small></div></div>
-    <span className="premium-status">{p.status}</span>
-    <div className="premium-tag-row">{(p.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}{!(p.tags||[]).length&&<em>Sem etiquetas</em>}</div>
-    <small className="premium-age">{daysSince(p.lastActivityAt||p.date)} dias sem alteração</small>
+    <span className="bm-v61-mini-phone"><Smartphone size={17}/></span>
+    <div><b>{phoneDisplayName(p)}</b><small>{[p.color,p.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small></div>
+    <em>{p.status}</em>
+    <small>{daysSince(p.lastActivityAt||p.date)} dias</small>
    </article>)}
-   {!rows.length&&<div className="premium-empty"><CheckSquare size={30}/><b>Nenhum aparelho encontrado</b></div>}
   </div>
  </div>
 }
@@ -730,65 +723,55 @@ function Phones(){
    default:return null
   }
  }
- return <div className="premium-page modern-page phones-modern-page">
-  <Title t="Smartphones" s="Estoque, custos e status em uma visão limpa.">
-   <div className="premium-toolbar-actions">
-    <button className="quiet-button" onClick={()=>setColumnEditor(true)}><Settings size={15}/> Exibição</button>
-    <button className="quiet-button" onClick={()=>setBatchCreate(true)}><Plus size={15}/> Cadastro em massa</button>
-    <button className="primary" onClick={()=>setEdit(blankPhone(items.length+1))}><Plus size={15}/> Novo aparelho</button>
+ return <div className="bm-v61-page bm-v61-phones">
+  <div className="bm-v61-pagehead">
+   <div><span>ESTOQUE</span><h1>Smartphones</h1><p>Veja o que está pronto, parado e disponível para venda.</p></div>
+   <div className="bm-v61-page-actions">
+    <button onClick={()=>setColumnEditor(true)}><Settings size={14}/> Exibição</button>
+    <button onClick={()=>setBatchCreate(true)}><Plus size={14}/> Em massa</button>
+    <button className="primary" onClick={()=>setEdit(blankPhone(items.length+1))}><Plus size={14}/> Novo aparelho</button>
    </div>
-  </Title>
-
-  <div className="premium-filterbar">
-   <label className="premium-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho, IMEI, serial ou etiqueta"/></label>
-   <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
-   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
-   <label className="premium-toggle"><input type="checkbox" checked={onlyFavorites} onChange={e=>setOnlyFavorites(e.target.checked)}/><span>Favoritos</span></label>
-   <span className="premium-result-count">{filtered.length}</span>
   </div>
 
-  <div className="premium-phone-grid">
+  <div className="bm-v61-filterline">
+   <label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho, IMEI ou etiqueta"/></label>
+   <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
+   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
+   <button className={onlyFavorites?'active':''} onClick={()=>setOnlyFavorites(v=>!v)}><Star size={14}/> Favoritos</button>
+   <em>{filtered.length}</em>
+  </div>
+
+  <div className="bm-v61-phone-grid">
    {filtered.map(x=>{
     const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost;
     const published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));
     const show=id=>visibleColumns.some(c=>c.id===id);
-    return <article className="premium-phone-card" key={x.id}>
-     <div className="premium-phone-top">
-      <div className="premium-device-art">{x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={28}/>}</div>
-      <div className="premium-device-copy">
-       <div className="premium-device-title"><h3>{x.brand} {x.model}</h3>{showProductCode()&&show('code')&&<small>{x.code}</small>}</div>
-       <p>{[x.color,x.storage,x.ram&&`${x.ram} RAM`].filter(Boolean).join(' · ')||'Sem detalhes'}</p>
+    return <article className="bm-v61-phone" key={x.id}>
+     <div className="bm-v61-phone-visual">{x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={27}/>}<button className={x.favorite?'active':''} onClick={()=>toggleFavorite(x)}><Star size={13}/></button></div>
+     <div className="bm-v61-phone-body">
+      <div className="bm-v61-phone-name"><h3>{x.brand} {x.model}</h3>{showProductCode()&&show('code')&&<small>{x.code}</small>}</div>
+      <p>{[x.color,x.storage,x.ram&&`${x.ram} RAM`].filter(Boolean).join(' · ')||'Sem detalhes cadastrados'}</p>
+      <div className="bm-v61-statusline">{show('status')&&<select value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select>}<div>{published.length?published.slice(0,3).map(profile=><span key={profile.id}>{String(profile.name).slice(0,2).toUpperCase()}</span>):<em>Sem anúncio</em>}</div></div>
+      <div className="bm-v61-money">
+       {show('cost')&&<div><span>Custo</span><b>{money(cost)}</b></div>}
+       {show('expected')&&<div><span>Venda</span><b>{money(x.expected)}</b></div>}
+       {show('profit')&&<div><span>Lucro</span><b className={profit>=0?'good':'bad'}>{money(profit)}</b></div>}
       </div>
-      <button className={x.favorite?'premium-star active':'premium-star'} onClick={()=>toggleFavorite(x)}><Star size={15}/></button>
      </div>
-
-     <div className="premium-phone-status">
-      {show('status')&&<select value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select>}
-      <div className="premium-profile-stack">{show('profiles')&&(published.length?published.slice(0,3).map(profile=><span key={profile.id}>{String(profile.name).slice(0,2).toUpperCase()}</span>):<em>Sem anúncio</em>)}</div>
-     </div>
-
-     <div className="premium-phone-metrics">
-      {show('cost')&&<div><span>Custo</span><strong>{money(cost)}</strong></div>}
-      {show('expected')&&<div><span>Venda</span><strong>{money(x.expected)}</strong></div>}
-      {show('profit')&&<div><span>Lucro</span><strong className={profit>=0?'good':'bad'}>{money(profit)}</strong></div>}
-     </div>
-
-     {!!(x.tags||[]).length&&<div className="premium-tag-row">{(x.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}</div>}
-
-     <div className="premium-card-actions">
-      <button className="quiet-button" onClick={()=>setDetail(x)}><Eye size={14}/> Ver</button>
-      <button className="quiet-button" onClick={()=>setEdit(x)}><FileText size={14}/> Editar</button>
+     <div className="bm-v61-phone-footer">
+      <button onClick={()=>setDetail(x)}><Eye size={13}/> Abrir</button>
+      <button onClick={()=>setEdit(x)}><FileText size={13}/> Editar</button>
       <div className="phone-inline-menu-wrap">
-       <button className="icon-only quiet-button" onClick={e=>{e.stopPropagation();setActionPhone(current=>current?.phone?.id===x.id?null:{phone:x})}}>•••</button>
-       {actionPhone?.phone?.id===x.id&&<div className="phone-inline-menu premium-menu">
-        <button onClick={()=>{setSalePhone(x);setActionPhone(null)}}><WalletCards size={14}/> {x.sale?.soldAt?'Editar venda':'Registrar venda'}</button>
+       <button onClick={()=>setActionPhone(current=>current?.phone?.id===x.id?null:{phone:x})}>•••</button>
+       {actionPhone?.phone?.id===x.id&&<div className="phone-inline-menu bm-v61-popmenu">
+        <button onClick={()=>{setSalePhone(x);setActionPhone(null)}}><WalletCards size={14}/> Registrar venda</button>
         <button className="danger" onClick={()=>{if(confirm('Excluir aparelho?'))persist(items.filter(i=>i.id!==x.id));setActionPhone(null)}}><X size={14}/> Excluir</button>
        </div>}
       </div>
      </div>
     </article>
    })}
-   {!filtered.length&&<div className="premium-empty"><Smartphone size={30}/><b>Nenhum aparelho encontrado</b><span>Altere os filtros ou cadastre um novo smartphone.</span></div>}
+   {!filtered.length&&<div className="bm-v61-empty"><Smartphone size={28}/><b>Nenhum aparelho encontrado</b><span>Altere os filtros ou cadastre um novo aparelho.</span></div>}
   </div>
 
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>setBatchCreate(false)} onSave={created=>{persist([...created,...items]);setBatchCreate(false)}}/>}
@@ -1370,49 +1353,30 @@ function Ads(){
   <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
 
   {view==='matrix'&&<>
-   <div className="premium-ad-toolbar">
-    <label className="premium-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho ou anúncio"/></label>
-    <select><option>Mais recentes</option><option>Nome do aparelho</option><option>Maior valor</option><option>Menor valor</option></select>
+   <div className="bm-v61-ad-controls">
+    <label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar anúncio ou aparelho"/></label>
+    <button><Settings size={14}/> Filtros</button>
+    <select><option>Mais recentes</option><option>Nome do aparelho</option><option>Maior valor</option></select>
    </div>
 
-   <div className="premium-ad-grid">
+   <div className="bm-v61-ad-list">
     {filtered.map(({phone:itemPhone,ad:itemAd})=>{
      const published=profiles.filter(p=>itemAd.publications[p.id]?.status==='published').length;
      const pct=profiles.length?Math.round(published/profiles.length*100):0;
-     return <article className="premium-ad-card" key={itemAd.id}>
-      <div className="premium-ad-head">
-       <div className="premium-ad-image">{itemPhone.photos?.[0]?<img src={itemPhone.photos[0].dataUrl} alt=""/>:<Smartphone size={26}/>}</div>
-       <div className="premium-ad-copy">
-        <div><h3>{itemPhone.brand} {itemPhone.model}</h3>{showProductCode()&&itemPhone.code&&<small>{itemPhone.code}</small>}</div>
-        <p>{[itemPhone.color,itemPhone.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</p>
-        <strong>{money(itemPhone.expected)}</strong>
-       </div>
-       <div className="premium-progress" style={{'--progress':`${pct*3.6}deg`}}><div><b>{pct}%</b><span>{published}/{profiles.length}</span></div></div>
+     return <article className="bm-v61-ad" key={itemAd.id}>
+      <div className="bm-v61-ad-device">
+       <div>{itemPhone.photos?.[0]?<img src={itemPhone.photos[0].dataUrl} alt=""/>:<Smartphone size={24}/>}</div>
+       <section><h3>{itemPhone.brand} {itemPhone.model}</h3><p>{[itemPhone.color,itemPhone.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</p><strong>{money(itemPhone.expected)}</strong></section>
       </div>
-
-      <div className="premium-ad-publications">
-       <span>Publicações</span>
-       <div>{profiles.map(profile=>{const pub=itemAd.publications[profile.id]||{status:'not_published'};return <button key={profile.id} className={`premium-publication-chip ${pub.status}`} onClick={()=>cyclePublication(itemPhone.id,itemAd.id,profile.id)}><span>{String(profile.name||'?').slice(0,2).toUpperCase()}</span><b>{profile.name}</b><em>{publicationLabel(pub.status)}</em></button>})}</div>
+      <div className="bm-v61-ad-channels">
+       {profiles.map(profile=>{const pub=itemAd.publications[profile.id]||{status:'not_published'};return <button key={profile.id} className={pub.status} onClick={()=>cyclePublication(itemPhone.id,itemAd.id,profile.id)}><span>{String(profile.name||'?').slice(0,2).toUpperCase()}</span><b>{profile.name}</b><em>{publicationLabel(pub.status)}</em></button>})}
       </div>
-
-      <div className="premium-ad-actions">
-       <button className="quiet-button" onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id)}}>Detalhes</button>
-       <button className="primary" onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id);setView('editor')}}>Editar anúncio</button>
-      </div>
+      <div className="bm-v61-ad-score"><b>{pct}%</b><span>{published} de {profiles.length}</span><i><u style={{width:`${pct}%`}}/></i></div>
+      <div className="bm-v61-ad-actions"><button onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id)}}>Detalhes</button><button className="primary" onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id);setView('editor')}}>Editar</button></div>
      </article>
     })}
-    {!filtered.length&&<div className="premium-empty"><Search size={28}/><b>Nenhum anúncio encontrado</b></div>}
    </div>
-
-   {!!noAds.length&&<button className="premium-awaiting" onClick={()=>setShowNoAds(true)}><Smartphone size={18}/><span><b>{noAds.length} aparelho{noAds.length!==1?'s':''} aguardando anúncio</b><small>Ver aparelhos sem anúncio</small></span><strong>Ver</strong></button>}
-
-   {phone&&ad&&<aside className="premium-sidepanel">
-    <div className="ads-detail-head"><div><h2>{phone.brand} {phone.model}</h2>{showProductCode()&&<span>{phone.code}</span>}</div><button onClick={()=>{setSelectedPhone('');setSelectedAd('')}}><X size={17}/></button></div>
-    <div className="ads-detail-device"><div>{phone.photos?.[0]?<img src={phone.photos[0].dataUrl}/>:<Smartphone size={28}/>}</div><span>{[phone.color,phone.storage].filter(Boolean).join(' · ')}</span><strong>{money(phone.expected)}</strong></div>
-    <div className="ads-detail-block"><small>Anúncio</small><b>{ad.name||'Sem nome'}</b><span>{ad.title||'Título ainda não preparado'}</span></div>
-    <div className="ads-detail-block"><small>Publicações</small>{profiles.map(p=>{const pub=ad.publications[p.id]||{status:'not_published'};return <div className={`ads-detail-profile ${pub.status!=='published'?'muted':''}`} key={p.id}><span>{String(p.name).slice(0,2).toUpperCase()}</span><b>{p.name}</b><small>{publicationLabel(pub.status)}</small></div>})}</div>
-    <div className="ads-detail-actions"><button className="primary" onClick={()=>setView('editor')}>Editar anúncio</button><button onClick={()=>duplicateAd(phone.id,ad.id)}>Duplicar</button><button className="danger" onClick={deleteAd}>Excluir</button></div>
-   </aside>}
+   {!!noAds.length&&<button className="bm-v61-awaiting" onClick={()=>setShowNoAds(true)}><Smartphone size={17}/><span>{noAds.length} aguardando anúncio</span><b>Ver</b></button>}
   </>}
   {showNoAds&&<div className="ads-drawer-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setShowNoAds(false)}>
    <aside className="ads-awaiting-drawer">

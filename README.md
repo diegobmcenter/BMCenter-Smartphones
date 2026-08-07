@@ -809,3 +809,17 @@ Reconstrução visual do sistema com novo design system:
 ## v6.0.1
 
 - Corrigido encoding do PUBLICAR-ATUALIZACAO.bat para Windows CMD, sem BOM UTF-8.
+
+## v6.1.0
+
+Nova composição visual: shell, navegação, Smartphones, Anúncios e Ações em lote reconstruídos; demais módulos recebem o mesmo design system.
+
+## v6.1.1
+
+- Publicador BAT refeito para Windows.
+- npm install não interrompe mais o fluxo por código de retorno inconsistente; a presença do Vite e o build são a validação real.
+- Mensagens de erro separadas por etapa.
+
+## v6.1.2
+
+- Corrigido erro JSX na navegação lateral (`primaryMenuIds.map` e `dataMenuIds.map`) que impedia o Vite de compilar.
