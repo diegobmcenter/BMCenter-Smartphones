@@ -892,3 +892,12 @@ Nova aparência baseada em módulos com composições diferentes:
 - Configurações > Aparência agora controla de verdade as variáveis visuais da interface V8.
 - Cores primária/secundária/destaque, fundos, cards, texto, bordas, raio, densidade e transições passam a refletir imediatamente.
 - Modo claro/escuro conectado ao AppFrame V8.
+
+## v8.0.6 — legibilidade, temas e Personalizado
+
+- Eliminados os últimos cabeçalhos brancos da Dashboard e regras defensivas para módulos legados.
+- Fonte do menu lateral aumentada discretamente.
+- Tipografia de Smartphones, Anúncios, Hoje, Dashboard e demais módulos aumentada globalmente.
+- Novos temas: Grafite, Oceano, Índigo, Floresta e Vinho.
+- Editor Personalizado agora usa um rascunho de cores próprio e botão “Aplicar personalizado”.
+- Campos HEX incompletos não quebram mais o tema enquanto estão sendo digitados.

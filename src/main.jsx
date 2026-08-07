@@ -11,7 +11,7 @@ import SmartphonesV8 from './v8/pages/SmartphonesV8.jsx';
 import AdsV8 from './v8/pages/AdsV8.jsx';
 import BatchV8 from './v8/pages/BatchV8.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='8.0.5';
+const APP_VERSION='8.0.6';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -206,6 +206,19 @@ function loadMenuSettings(){
 
 function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChange}){
  const[tab,setTab]=useState('appearance');
+ const[customTheme,setCustomTheme]=useState(()=>({
+  primaryColor:config.primaryColor||'#3b82f6',
+  secondaryColor:config.secondaryColor||'#1e40af',
+  highlightColor:config.highlightColor||'#10b981',
+  surfaceColor:config.surfaceColor||'#0f172a',
+  panelColor:config.panelColor||'#111827',
+  cardColor:config.cardColor||'#1a1f2e',
+  textColor:config.textColor||'#f8fafc',
+  mutedTextColor:config.mutedTextColor||'#94a3b8',
+  borderColor:config.borderColor||'#2a3344'
+ }));
+ const updateCustom=(key,value)=>setCustomTheme(prev=>({...prev,[key]:value}));
+ const applyCustom=()=>onConfigChange({...config,...customTheme,accent:'custom',themeMode:'dark',applyThemeGlobally:true,appearanceSavedAt:new Date().toISOString()});
  const showAll=()=>onChange(Object.fromEntries(menuItems.map(x=>[x.id,true])));
  const hideOptional=()=>{const keep=['dashboard','today','globalSearch','phones','batch','dataQuality','activity','ads','renewals','profileAnalytics','operations','sales'];onChange(Object.fromEntries(menuItems.map(x=>[x.id,keep.includes(x.id)])))};
  const presets={
@@ -216,8 +229,14 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
   red:{accent:'red',primaryColor:'#ef4444',secondaryColor:'#991b1b',highlightColor:'#f59e0b',surfaceColor:'#1c1012',panelColor:'#271417',cardColor:'#34191d',borderColor:'#663039',textColor:'#fff1f2',mutedTextColor:'#c6a2a7'},
   cyan:{accent:'cyan',primaryColor:'#06b6d4',secondaryColor:'#0e7490',highlightColor:'#22c55e',surfaceColor:'#0b171a',panelColor:'#0e2025',cardColor:'#132a30',borderColor:'#285362',textColor:'#ecfeff',mutedTextColor:'#9bbcc2'},
   pink:{accent:'pink',primaryColor:'#ec4899',secondaryColor:'#9d174d',highlightColor:'#8b5cf6',surfaceColor:'#1b1017',panelColor:'#26131e',cardColor:'#321827',borderColor:'#64304d',textColor:'#fdf2f8',mutedTextColor:'#c7a0b5'},
-  orange:{accent:'orange',primaryColor:'#f97316',secondaryColor:'#c2410c',highlightColor:'#10b981',surfaceColor:'#1b120d',panelColor:'#261811',cardColor:'#321f15',borderColor:'#67412a',textColor:'#fff7ed',mutedTextColor:'#c9ad99'}
+  orange:{accent:'orange',primaryColor:'#f97316',secondaryColor:'#c2410c',highlightColor:'#10b981',surfaceColor:'#1b120d',panelColor:'#261811',cardColor:'#321f15',borderColor:'#67412a',textColor:'#fff7ed',mutedTextColor:'#c9ad99'},
+  graphite:{accent:'graphite',primaryColor:'#94a3b8',secondaryColor:'#475569',highlightColor:'#38bdf8',surfaceColor:'#0b0f14',panelColor:'#111821',cardColor:'#18212c',borderColor:'#334155',textColor:'#f8fafc',mutedTextColor:'#a8b3c2'},
+  ocean:{accent:'ocean',primaryColor:'#0ea5e9',secondaryColor:'#0369a1',highlightColor:'#2dd4bf',surfaceColor:'#07141d',panelColor:'#0b1e2a',cardColor:'#102a38',borderColor:'#24536a',textColor:'#f0f9ff',mutedTextColor:'#9dc0d1'},
+  indigo:{accent:'indigo',primaryColor:'#6366f1',secondaryColor:'#4338ca',highlightColor:'#22d3ee',surfaceColor:'#0d1020',panelColor:'#14182c',cardColor:'#1b2140',borderColor:'#3d4679',textColor:'#f5f3ff',mutedTextColor:'#b0b3d6'},
+  forest:{accent:'forest',primaryColor:'#22c55e',secondaryColor:'#166534',highlightColor:'#fbbf24',surfaceColor:'#09140d',panelColor:'#0e1d13',cardColor:'#14291a',borderColor:'#2f5a3b',textColor:'#f0fdf4',mutedTextColor:'#a4c7ae'},
+  wine:{accent:'wine',primaryColor:'#e11d48',secondaryColor:'#881337',highlightColor:'#f59e0b',surfaceColor:'#17090f',panelColor:'#220d16',cardColor:'#30121f',borderColor:'#653047',textColor:'#fff1f2',mutedTextColor:'#c9a2ae'}
  };
+ const presetLabels={blue:'Azul',green:'Verde',purple:'Roxo',amber:'Âmbar',red:'Vermelho',cyan:'Ciano',pink:'Rosa',orange:'Laranja',graphite:'Grafite',ocean:'Oceano',indigo:'Índigo',forest:'Floresta',wine:'Vinho'};
  const applyPreset=id=>onConfigChange({...config,...presets[id],themeMode:'dark',applyThemeGlobally:true});
  const restore=()=>onConfigChange({...config,...presets.blue,themeMode:'dark',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true});
  return <>
@@ -230,8 +249,8 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
    <section className="panel appearance-left-card">
     <h2>Tema do sistema</h2><p>Escolha uma paleta de cores para todo o sistema.</p>
     <div className="theme-preset-grid">
-     {Object.keys(presets).map(id=><button key={id} className={config.accent===id?'selected':''} onClick={()=>applyPreset(id)}><i style={{background:presets[id].primaryColor}}/><span>{id==='blue'?'Azul':id==='green'?'Verde':id==='purple'?'Roxo':id==='amber'?'Âmbar':id==='red'?'Vermelho':id==='cyan'?'Ciano':id==='pink'?'Rosa':'Laranja'}</span>{config.accent===id&&<b>✓</b>}</button>)}
-     <button onClick={()=>onConfigChange({...config,accent:'custom'})}><i className="custom-theme-swatch">✎</i><span>Personalizado</span></button>
+     {Object.keys(presets).map(id=><button key={id} className={config.accent===id?'selected':''} onClick={()=>applyPreset(id)}><i style={{background:`linear-gradient(135deg,${presets[id].primaryColor},${presets[id].highlightColor})`}}/><span>{presetLabels[id]}</span>{config.accent===id&&<b>✓</b>}</button>)}
+     <button className={config.accent==='custom'?'selected':''} onClick={()=>onConfigChange({...config,accent:'custom'})}><i className="custom-theme-swatch">✎</i><span>Personalizado</span>{config.accent==='custom'&&<b>✓</b>}</button>
     </div>
     <h3>Modo da interface</h3><p>Escolha o modo de exibição do sistema.</p>
     <div className="interface-mode-grid">
@@ -244,8 +263,9 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
    <section className="panel appearance-right-card">
     <h2>Personalização avançada</h2><p>Ajuste detalhes específicos do tema. As alterações são aplicadas em todo o sistema.</p>
     <div className="advanced-color-grid">
-     {[['primaryColor','Cor primária'],['secondaryColor','Cor secundária'],['highlightColor','Cor de destaque'],['surfaceColor','Fundo principal'],['panelColor','Fundo dos painéis'],['cardColor','Fundo dos cards'],['textColor','Cor do texto'],['mutedTextColor','Texto secundário'],['borderColor','Bordas']].map(([key,label])=><label key={key}>{label}<div className="color-field"><input type="color" value={config[key]||'#000000'} onChange={e=>onConfigChange({...config,[key]:e.target.value,accent:'custom'})}/><input value={config[key]||''} onChange={e=>/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)&&onConfigChange({...config,[key]:e.target.value,accent:'custom'})}/></div></label>)}
+     {[['primaryColor','Cor primária'],['secondaryColor','Cor secundária'],['highlightColor','Cor de destaque'],['surfaceColor','Fundo principal'],['panelColor','Fundo dos painéis'],['cardColor','Fundo dos cards'],['textColor','Cor do texto'],['mutedTextColor','Texto secundário'],['borderColor','Bordas']].map(([key,label])=><label key={key}>{label}<div className="color-field"><input type="color" value={/^#[0-9a-fA-F]{6}$/.test(customTheme[key]||'')?customTheme[key]:'#000000'} onChange={e=>updateCustom(key,e.target.value)}/><input value={customTheme[key]||''} onChange={e=>updateCustom(key,e.target.value)} onBlur={e=>{if(!/^#[0-9a-fA-F]{6}$/.test(e.target.value))updateCustom(key,config[key]||'#000000')}}/></div></label>)}
     </div>
+    <div className="custom-theme-actions"><div><b>Tema personalizado</b><small>Escolha as cores acima e clique em aplicar. O sistema inteiro será atualizado.</small></div><button className="primary" onClick={applyCustom}>Aplicar personalizado</button></div>
     <div className="appearance-controls-grid">
      <label>Raio das bordas<input type="range" min="0" max="24" value={config.borderRadius??10} onChange={e=>onConfigChange({...config,borderRadius:Number(e.target.value)})}/><span>{config.borderRadius??10}px</span></label>
      <label>Densidade da interface<select value={config.density||'comfortable'} onChange={e=>onConfigChange({...config,density:e.target.value,compact:e.target.value==='compact'})}><option value="comfortable">Confortável</option><option value="professional">Profissional</option><option value="compact">Compacta</option></select></label>
@@ -263,7 +283,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.5</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.6</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
