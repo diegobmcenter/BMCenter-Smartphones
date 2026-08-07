@@ -688,3 +688,11 @@ A autenticação real, sincronização entre vários dispositivos e autorizaçã
 - Configurações antigas ou backups que tenham Smartphones desativado são corrigidos automaticamente.
 - A sincronização na nuvem não consegue mais remover esse menu.
 - A opção permanece visível nas configurações, marcada como “Essencial”.
+
+## v5.3.0 — Edição enxuta
+
+Removidos da interface: Prioridade e Planejamento, Agenda, Metas, Central de renovações, Arquivados, Pesquisa global/Ctrl+K, Vendedores, Vendedor da compra, Fornecedor da compra, Acessórios e Controle de fotos.
+
+O cadastro em massa foi simplificado da mesma forma. A galeria de arquivos de fotos continua disponível; somente o checklist/controle de fotos foi removido.
+
+PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é essencial e permanece sempre disponível.

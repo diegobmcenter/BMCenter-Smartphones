@@ -3244,3 +3244,13 @@ body.hide-product-code .internal-product-code{display:none!important}
     justify-content:flex-start!important;
   }
 }
+
+/* =========================================================
+   v5.3.0 — interface enxuta e menu único desktop/mobile
+   ========================================================= */
+@media(max-width:760px){
+  .global-sidebar.mobile-open .sidebar-menu-card{display:flex!important;flex-direction:column!important;width:100%!important;gap:5px!important}
+  .global-sidebar.mobile-open .sidebar-menu-card>.nav{display:flex!important;width:100%!important;min-height:50px!important;flex:0 0 auto!important;opacity:1!important;visibility:visible!important}
+  .global-sidebar.mobile-open .sidebar-menu-card>.nav:nth-child(3){display:flex!important}
+}
+.priority-select,.priority-filter,.agenda-toolbar,.agenda-layout,.goal-grid,.goal-config,.renewal-metrics,.renewal-list{display:none!important}
