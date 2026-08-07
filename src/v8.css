@@ -263,3 +263,59 @@ html,body,#root{background:var(--8-bg)!important;color:var(--8-text)!important}
     right:-42px!important;
   }
 }
+
+/* ==============================================================
+   v8.0.3 — Scrollbar invisível / hover-only na sidebar
+   ============================================================== */
+
+/* Firefox */
+.v8-rail-nav{
+  scrollbar-width:thin!important;
+  scrollbar-color:transparent transparent!important;
+}
+
+.v8-rail-nav:hover{
+  scrollbar-color:rgba(135,148,164,.26) transparent!important;
+}
+
+/* Chromium / Edge */
+.v8-rail-nav::-webkit-scrollbar{
+  width:4px!important;
+  height:0!important;
+}
+
+.v8-rail-nav::-webkit-scrollbar-track{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.v8-rail-nav::-webkit-scrollbar-thumb{
+  background:transparent!important;
+  border-radius:999px!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.v8-rail-nav:hover::-webkit-scrollbar-thumb{
+  background:rgba(135,148,164,.24)!important;
+}
+
+.v8-rail-nav::-webkit-scrollbar-thumb:hover{
+  background:rgba(135,148,164,.42)!important;
+}
+
+.v8-rail-nav::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+
+/* impede qualquer scrollbar visual no container externo */
+.v8-rail{
+  scrollbar-width:none!important;
+}
+
+.v8-rail::-webkit-scrollbar{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}

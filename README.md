@@ -870,3 +870,16 @@ Nova aparência baseada em módulos com composições diferentes:
 - Removida rolagem horizontal da navegação.
 - Scroll vertical preservado apenas quando necessário.
 - Ajustado comportamento do menu no mobile.
+
+## v8.0.3
+- Barra de rolagem lateral quase invisível.
+- Trilho removido.
+- Indicador fino aparece apenas ao passar o mouse sobre o menu.
+- Container externo da sidebar sem scrollbar visível.
+
+## v8.0.4 — correção definitiva do número da versão
+
+- Criado `APP_VERSION` como fonte única de versão.
+- O selo no topo passa a usar `APP_VERSION`.
+- O snapshot automático passa a usar a mesma versão.
+- Evita divergência entre `package.json` e a versão exibida na interface.
