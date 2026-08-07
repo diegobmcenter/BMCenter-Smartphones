@@ -696,3 +696,9 @@ Removidos da interface: Prioridade e Planejamento, Agenda, Metas, Central de ren
 O cadastro em massa foi simplificado da mesma forma. A galeria de arquivos de fotos continua disponível; somente o checklist/controle de fotos foi removido.
 
 PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é essencial e permanece sempre disponível.
+
+## v5.3.1 — Hotfix da inicialização
+
+- Corrigida a tela preta causada pela leitura de `removedPages` antes da inicialização.
+- Mantida integralmente a interface enxuta da v5.3.0.
+- Smartphones continua obrigatório no menu de PC e celular.
