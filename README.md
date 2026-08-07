@@ -924,3 +924,13 @@ Nova aparência baseada em módulos com composições diferentes:
 - Ações em lote redesenhado.
 - Padrão visual V9 aplicado aos módulos legados, tabelas, formulários e modais.
 - Tipografia e contraste aumentados para leitura.
+
+## v10.0.0 — reconstrução visual unificada
+
+- Nova árvore visual V10.
+- Novo AppFrameV10.
+- Dashboard, Hoje, Smartphones, Anúncios e Lote isolados em componentes V10.
+- CSS V6/V7/V8/V9 não é mais carregado.
+- Um único design system aplicado também a Atividades, Fornecedores, Contas, Perfis, Peças, Qualidade, Relatórios, Dados, Backup, Configurações, modais e formulários.
+- Dois temas calibrados: Claro em off-white/cinza e Escuro em grafite.
+- Regras explícitas impedem cabeçalhos brancos em tema escuro.

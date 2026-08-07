@@ -4,14 +4,14 @@ import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
 import AppFrame from './components/v7/AppFrame.jsx';
-import AppFrameV9 from './v9/AppFrameV9.jsx';
-import DashboardV9 from './v9/pages/DashboardV9.jsx';
-import TodayV9 from './v9/pages/TodayV9.jsx';
-import SmartphonesV9 from './v9/pages/SmartphonesV9.jsx';
-import AdsV9 from './v9/pages/AdsV9.jsx';
-import BatchV9 from './v9/pages/BatchV9.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';import'./v9.css';
+import AppFrameV10 from './v10/AppFrameV10.jsx';
+import DashboardV10 from './v10/pages/DashboardV10.jsx';
+import TodayV10 from './v10/pages/TodayV10.jsx';
+import SmartphonesV10 from './v10/pages/SmartphonesV10.jsx';
+import AdsV10 from './v10/pages/AdsV10.jsx';
+import BatchV10 from './v10/pages/BatchV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='9.0.0';
+const APP_VERSION='10.0.0';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -91,12 +91,7 @@ function App({cloudUser,onCloudLogout}){
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
  useEffect(()=>{document.body.classList.toggle('hide-product-code',config.showProductCode===false)},[config.showProductCode]);
- useEffect(()=>{
-  if(localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1'){
-   localStorage.setItem(BALANCED_THEME_MIGRATION_KEY,'1');
-   save(CFGKEY,config);
-  }
- },[]);
+
  useEffect(()=>{
   if(!mobileMenuOpen)return;
   requestAnimationFrame(()=>{
@@ -160,7 +155,7 @@ function App({cloudUser,onCloudLogout}){
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
- return <AppFrameV9
+ return <AppFrameV10
   mobileOpen={mobileMenuOpen}
   setMobileOpen={setMobileMenuOpen}
   menuItems={menuItems}
@@ -174,13 +169,13 @@ function App({cloudUser,onCloudLogout}){
   config={config}
   onConfigChange={saveConfig}
  >
-  <section className={`v9-route v9-route-${page}`}>
+  <section className={`v10-route v10-route-${page}`}>
    {page==='settings'
     ?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>
     :<PageContent page={page}/>}
   </section>
   <UniversalTableCustomizer page={page}/>
- </AppFrameV9>
+ </AppFrameV10>
 }
 
 const BALANCED_THEME={
@@ -314,7 +309,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v9.0.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v10.0.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -415,7 +410,7 @@ function TodayPage(){
   {title:'Reparar e testar',items:active.filter(p=>['Em reparo','Em testes','Aguardando peças'].includes(p.status))},
   {title:'Prontos para anunciar',items:active.filter(p=>['Pronto','Para fotografar','Anúncio preparado'].includes(p.status)&&!(p.ads||migrateLegacyAds(p)).length)}
  ];
- return <TodayV9 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
+ return <TodayV10 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
 
 }
 
@@ -544,7 +539,7 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <BatchV9
+ return <BatchV10
   rows={rows} selected={selected} setSelected={setSelected} query={query} setQuery={setQuery}
   statusFilter={statusFilter} setStatusFilter={setStatusFilter} statuses={statuses}
   newStatus={newStatus} setNewStatus={setNewStatus} newTag={newTag} setNewTag={setNewTag}
@@ -658,7 +653,7 @@ function Dashboard(){
   {label:'Cadastros incompletos',value:dataIssues,detail:'precisam de revisão',kind:'amber'},
   {label:'Parados há 7+ dias',value:stale.length,detail:'sem movimentação',kind:'red'}
  ];
- return <DashboardV9 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
+ return <DashboardV10 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
 }
 
 
@@ -704,7 +699,7 @@ function Phones(){
   }
  }
  return <>
-  <SmartphonesV9
+  <SmartphonesV10
     filtered={filtered} statuses={statuses} statusFilter={statusFilter} setStatusFilter={setStatusFilter}
     allTags={allTags} tagFilter={tagFilter} setTagFilter={setTagFilter}
     query={query} setQuery={setQuery} onlyFavorites={onlyFavorites} setOnlyFavorites={setOnlyFavorites}
@@ -1292,7 +1287,7 @@ function Ads(){
   </div>
   <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
 
-  {view==='matrix'&&<AdsV9
+  {view==='matrix'&&<AdsV10
     filtered={filtered} profiles={profiles} noAds={noAds} setShowNoAds={setShowNoAds}
     query={query} setQuery={setQuery} money={money} showProductCode={showProductCode}
     publicationLabel={publicationLabel} cyclePublication={cyclePublication}
