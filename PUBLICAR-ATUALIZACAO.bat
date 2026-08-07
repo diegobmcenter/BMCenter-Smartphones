@@ -1,8 +1,8 @@
-﻿@echo off
+@echo off
 setlocal EnableExtensions
-chcp 65001 >nul
 title BMCenter Smartphones - Publicar Atualizacao
 cd /d "%~dp0"
+
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
 
@@ -18,46 +18,50 @@ pause
 
 where git >nul 2>&1
 if errorlevel 1 (
- echo [ERRO] Git nao encontrado.
- pause
- exit /b 1
+    echo.
+    echo [ERRO] Git nao encontrado.
+    pause
+    exit /b 1
 )
+
 where npm >nul 2>&1
 if errorlevel 1 (
- echo [ERRO] NPM/Node.js nao encontrado.
- pause
- exit /b 1
+    echo.
+    echo [ERRO] NPM/Node.js nao encontrado.
+    pause
+    exit /b 1
 )
 
 echo.
 echo [1/8] Instalando/verificando dependencias...
 call npm install
-if errorlevel 1 goto :build_error
+if errorlevel 1 goto :erro
 
 echo.
-echo [2/8] Testando compilacao da versao...
+echo [2/8] Validando build de producao...
 call npm run build
-if errorlevel 1 goto :build_error
+if errorlevel 1 goto :erro
 
 echo.
-echo ============================================================
-echo   BUILD APROVADO - agora a versao pode ser publicada.
-echo ============================================================
+echo BUILD APROVADO.
 echo.
 
+echo [3/8] Preparando repositorio Git...
 if not exist ".git" (
- echo [3/8] Criando repositorio local...
- git init
- if errorlevel 1 goto :erro
-) else (
- echo [3/8] Repositorio local encontrado.
+    git init
+    if errorlevel 1 goto :erro
 )
 
 git branch -M %BRANCH% >nul 2>&1
-git remote get-url origin >nul 2>&1
-if errorlevel 1 (git remote add origin "%REPO%") else (git remote set-url origin "%REPO%")
 
-echo [4/8] Buscando a versao atual do GitHub...
+git remote get-url origin >nul 2>&1
+if errorlevel 1 (
+    git remote add origin "%REPO%"
+) else (
+    git remote set-url origin "%REPO%"
+)
+
+echo [4/8] Buscando versao atual do GitHub...
 git fetch origin %BRANCH%
 if errorlevel 1 goto :erro
 
@@ -72,19 +76,21 @@ if errorlevel 1 goto :erro
 
 git diff --cached --quiet
 if not errorlevel 1 (
- echo.
- echo Nenhuma alteracao nova encontrada. Esta versao parece ja estar publicada.
- pause
- exit /b 0
+    echo.
+    echo Nenhuma alteracao nova encontrada. Esta versao parece ja estar publicada.
+    echo.
+    pause
+    exit /b 0
 )
 
 git config user.name >nul 2>&1
 if errorlevel 1 git config user.name "BMCenter Updater"
+
 git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando commit...
-git commit -m "BMCenter v5.9.0 - Calm UI"
+git commit -m "BMCenter v6.0.1 - Premium UI"
 if errorlevel 1 goto :erro
 
 echo [8/8] Enviando para o GitHub...
@@ -93,31 +99,21 @@ if errorlevel 1 goto :erro
 
 echo.
 echo ============================================================
-echo   ATUALIZACAO VALIDADA E ENVIADA COM SUCESSO!
+echo          ATUALIZACAO ENVIADA COM SUCESSO!
 echo ============================================================
 echo.
-echo A Vercel deve iniciar um novo deploy automaticamente.
+echo A Vercel deve iniciar o deploy automaticamente.
+echo.
 pause
 exit /b 0
-
-:build_error
-echo.
-echo ============================================================
-echo   BUILD FALHOU - A ATUALIZACAO NAO FOI PUBLICADA
-echo ============================================================
-echo.
-echo Copie a mensagem de erro acima e envie ao ChatGPT.
-echo Nenhum arquivo foi enviado ao GitHub.
-pause
-exit /b 1
 
 :erro
 echo.
 echo ============================================================
-echo   ERRO DURANTE A PUBLICACAO
+echo       ERRO - A ATUALIZACAO NAO FOI PUBLICADA
 echo ============================================================
 echo.
-echo Leia a mensagem acima. O build havia sido aprovado,
-echo mas ocorreu uma falha no Git/GitHub.
+echo Leia a mensagem acima.
+echo.
 pause
 exit /b 1

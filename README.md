@@ -805,3 +805,7 @@ Reconstrução visual do sistema com novo design system:
 - Mobile com layouts próprios e melhor aproveitamento horizontal.
 - Menos bordas, menos blocos gigantes e menos aparência de ERP/tabela.
 - Mantida a lógica funcional, Supabase, sincronização e backup.
+
+## v6.0.1
+
+- Corrigido encoding do PUBLICAR-ATUALIZACAO.bat para Windows CMD, sem BOM UTF-8.
