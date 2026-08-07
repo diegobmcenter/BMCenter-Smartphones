@@ -949,3 +949,18 @@ Nova aparência baseada em módulos com composições diferentes:
 ### Auditoria adicional da v10.1.0
 - Componentes legados ainda usados por funções internas (editor de anúncios, detalhes de aparelho, criação em massa, perfis, peças, pesquisa, modais, restauradores e personalizador de colunas) receberam neutralização explícita no Design System V10.
 - O objetivo desta versão é impedir que regras de `styles.css` apareçam visualmente sem uma regra V10 posterior.
+
+
+## v10.2.0 — revisão visual completa
+- Dashboard: KPIs reconstruídos sem sobreposição.
+- Hoje: layout compacto em quatro etapas.
+- Smartphones: lista densa sem área de foto.
+- Anúncios: linhas compactas de publicação.
+- Ações em lote: comando compacto e lista densa.
+- Atividades: timeline compacta.
+- Peças e acessórios: nova visão por grupos, sem aparência de tabela.
+- Fornecedores e Contas bancárias movidos para Configurações.
+- Busca lateral removida; tema Claro/Escuro movido para o topo.
+- Barra visual de rolagem lateral removida.
+- Backup em nuvem agora pode ser baixado localmente.
+- Backup completo auditado para capturar todas as chaves BMCenter presentes no navegador.
