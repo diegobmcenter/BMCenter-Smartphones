@@ -11,7 +11,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.1';
+const APP_VERSION='10.2.2';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -199,7 +199,7 @@ const BALANCED_THEME_MIGRATION_KEY='bmcenter-balanced-theme-v807';
 
 function loadSystemConfig(){
  const defaults={
-  homePage:'dashboard',compact:false,autoSnapshot:true,showProductCode:true,
+  homePage:'dashboard',compact:false,autoSnapshot:true,showProductCode:true,brightness:100,readingMode:false,
   dashboardWidgets:['metrics','profiles','workflow'],...BALANCED_THEME
  };
  const saved=load(CFGKEY);
@@ -237,24 +237,26 @@ function loadMenuSettings(){
 }
 
 
+function ThemeDashboardPreview({mode}){return <div className={`v102-live-preview ${mode}`} aria-hidden="true"><aside><span className="logo-dot"/><i/><i/><i/><i/></aside><section><header><span/><b/><b/></header><main><div className="preview-title"><i/><strong/><small/></div><div className="preview-kpis"><article/><article/><article/><article/></div><div className="preview-content"><article><i/><i/><i/><i/></article><aside><i/><i/></aside></div></main></section></div>}
+
 function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChange}){
  const[tab,setTab]=useState('appearance');
  const showAll=()=>onChange(Object.fromEntries(menuItems.map(x=>[x.id,true])));
  const hideOptional=()=>{const keep=['dashboard','today','phones','batch','dataQuality','activity','ads','profileAnalytics'];onChange(Object.fromEntries(menuItems.map(x=>[x.id,keep.includes(x.id)])))};
- const restore=()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true,borderRadius:12,density:'comfortable'});
+ const restore=()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true,borderRadius:12,density:'comfortable',brightness:100,readingMode:false});
  const tabs=[['general','Geral','⚙'],['appearance','Aparência','◉'],['suppliers','Fornecedores','▣'],['banks','Contas bancárias','▤'],['notifications','Notificações','♟'],['system','Sistema','⚙'],['about','Sobre','ⓘ']];
  return <div className="v102-settings-page">
   <Title t="Configurações" s="Preferências, cadastros auxiliares e opções do sistema."><button onClick={restore}><RefreshCw/> Restaurar padrões</button></Title>
   <div className="v102-settings-tabs">{tabs.map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><span>{icon}</span>{label}</button>)}</div>
-  {tab==='appearance'&&<section className="v102-settings-section"><header><span>APARÊNCIA</span><h2>Dois temas. Nenhuma configuração complicada.</h2><p>Escolha Claro ou Escuro. O restante das cores é ajustado automaticamente para manter a leitura.</p></header><div className="v102-theme-grid">
-    <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true})}><div className="v102-theme-sample light"><aside/><main><header/><div><i/><i/><i/></div><footer/></main></div><div><b>Claro</b><span>Base suave, cards claros e azul apenas para ações.</span></div>{config.themeMode==='light'&&<em>✓ Em uso</em>}</button>
-    <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v102',applyThemeGlobally:true})}><div className="v102-theme-sample dark"><aside/><main><header/><div><i/><i/><i/></div><footer/></main></div><div><b>Escuro</b><span>Grafite, contraste confortável e sem preto puro.</span></div>{config.themeMode!=='light'&&<em>✓ Em uso</em>}</button>
-   </div><div className="v102-theme-note"><ShieldCheck/><div><b>Paleta fixa aprovada</b><p>As cores escolhidas para Dashboard serão mantidas como padrão em todo o sistema.</p></div></div></section>}
+  {tab==='appearance'&&<section className="v102-settings-section v102-appearance-section"><header><span>APARÊNCIA</span><h2>Escolha o ambiente que combina com o seu uso.</h2><p>As prévias abaixo reproduzem a estrutura real do BMCenter. Brilho e modo leitura ficam disponíveis no topo em qualquer tela.</p></header><div className="v102-theme-grid">
+    <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="light"/><div className="v102-theme-copy"><b>Claro</b><span>Fundo suave, cartões claros e azul reservado para ações.</span></div>{config.themeMode==='light'&&<em>✓ Em uso</em>}</button>
+    <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="dark"/><div className="v102-theme-copy"><b>Escuro</b><span>Grafite confortável, superfícies discretas e sem faixas brancas.</span></div>{config.themeMode!=='light'&&<em>✓ Em uso</em>}</button>
+   </div><div className="v102-theme-note"><ShieldCheck/><div><b>Paleta fixa aprovada</b><p>O ajuste de brilho não modifica sua paleta; ele apenas reduz a luminosidade da interface. O modo leitura acrescenta conforto para uso noturno.</p></div></div></section>}
   {tab==='general'&&<section className="v102-settings-section"><header><span>GERAL</span><h2>Preferências do sistema</h2></header><div className="v102-settings-card"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/><span><b>Exibir código interno dos aparelhos</b><small>Quando desligado, BM-000000 desaparece de todo o sistema.</small></span></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/><span><b>Ponto automático antes de uma nova versão</b><small>Mantém uma restauração rápida em caso de atualização.</small></span></label></div><div className="v102-settings-card"><h3>Menus visíveis</h3><div className="v102-settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Somente essenciais</button></div><div className="v102-menu-settings">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div></section>}
   {tab==='suppliers'&&<section className="v102-settings-embedded"><Suppliers/></section>}
   {tab==='banks'&&<section className="v102-settings-embedded"><Banks/></section>}
   {tab==='notifications'&&<section className="v102-settings-section"><header><span>NOTIFICAÇÕES</span><h2>Notificações</h2></header><div className="v102-settings-card"><Empty text="As configurações de notificações serão centralizadas aqui."/></div></section>}
-  {tab==='system'&&<section className="v102-settings-section"><header><span>SISTEMA</span><h2>Informações do sistema</h2></header><div className="v102-settings-card"><p>Versão atual: v10.2.1</p><p>Armazenamento local e sincronização em nuvem ativos.</p></div></section>}
+  {tab==='system'&&<section className="v102-settings-section"><header><span>SISTEMA</span><h2>Informações do sistema</h2></header><div className="v102-settings-card"><p>Versão atual: v10.2.2</p><p>Armazenamento local e sincronização em nuvem ativos.</p></div></section>}
   {tab==='about'&&<section className="v102-settings-section"><header><span>SOBRE</span><h2>BMCenter Smartphones</h2></header><div className="v102-settings-card"><p>Sistema de gestão operacional para compra, reparo, anúncio e venda de smartphones.</p></div></section>}
  </div>
 }
@@ -908,22 +910,15 @@ function Parts(){
     return acc;
   },{});
 
-  const renderQuoteSelect=row=><select
-    className={
-      row.chosen?.id===row.cheapest?.id
-        ? 'quote-select quote-select-low'
-        : row.quotes.length>1&&row.chosen?.id===row.mostExpensive?.id
-          ? 'quote-select quote-select-high'
-          : 'quote-select'
-    }
-    value={row.chosen?.id||''}
+  const renderQuoteSelect=row=>{const chosen=row.chosen;const isLowest=chosen?.id===row.cheapest?.id;return <div className={`v102-quote-choice ${isLowest?'best':''}`}><div className="v102-quote-choice-top"><Store size={14}/><div><small>Fornecedor escolhido</small><b>{chosen?.supplier||'Escolher fornecedor'}</b></div>{chosen&&<strong>{money(chosen.price)}</strong>}</div><select
+    className={row.quotes.length>1&&chosen?.id===row.mostExpensive?.id?'quote-select quote-select-high':'quote-select'}
+    value={chosen?.id||''}
     onChange={e=>choose(row.phone.id,row.part.id,e.target.value)}
+    aria-label="Fornecedor escolhido"
   >
-    <option value="">Selecione</option>
-    {row.quotes.map(q=><option value={q.id} key={q.id} style={{color:optionColor(row,q),fontWeight:700}}>
-      {optionLabel(row,q)}
-    </option>)}
-  </select>;
+    <option value="">Escolher fornecedor</option>
+    {row.quotes.map(q=><option value={q.id} key={q.id}>{optionLabel(row,q)}</option>)}
+  </select>{chosen&&<span className="v102-quote-hint">{isLowest?'✓ Melhor cotação disponível':row.quotes.length>1&&chosen?.id===row.mostExpensive?.id?'Cotação mais alta':'Cotação selecionada'}</span>}</div>}
 
   const renderOrderSelect=row=><select
     className={`order-status order-${(row.part.orderStatus||'Não pedido').replaceAll(' ','-').toLowerCase()}`}
@@ -946,7 +941,7 @@ function Parts(){
         {viewMode==='supplier'&&<div className="v102-part-device"><small>APARELHO</small><b>{phoneDisplayName(row.phone,{includeCode:false})}</b></div>}
         <div><small>PEÇA</small><b>{row.part.name}</b></div>
         <div><small>MELHOR COTAÇÃO</small><b className="good">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</b></div>
-        <label><small>FORNECEDOR ESCOLHIDO</small>{renderQuoteSelect(row)}</label>
+        <div className="v102-part-supplier">{renderQuoteSelect(row)}</div>
         <label><small>PEDIDO</small>{renderOrderSelect(row)}</label>
         <div className="v102-part-actions"><button onClick={()=>markReceived(row)}>Receber</button></div>
       </div>)}</div>
