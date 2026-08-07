@@ -3273,3 +3273,687 @@ body.hide-product-code .internal-product-code{display:none!important}
 }
 .recovery-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 @media(max-width:600px){.recovery-actions{width:100%;flex-direction:column}.recovery-actions button{width:100%}}
+
+/* =========================================================
+   v5.4.0 — Modern Compact UI
+   Reforma visual global sem alterar regras de negócio
+   ========================================================= */
+
+/* ---------- Base / escala visual ---------- */
+:root{
+  --ui-gap-1:4px;
+  --ui-gap-2:7px;
+  --ui-gap-3:10px;
+  --ui-gap-4:14px;
+  --ui-control-h:34px;
+  --ui-control-h-sm:30px;
+  --ui-font:12px;
+  --ui-font-sm:10px;
+  --ui-title:21px;
+  --ui-section:13px;
+}
+.global-main{
+  min-width:0!important;
+}
+.global-page{
+  padding:16px 18px 22px!important;
+  font-size:var(--ui-font)!important;
+  line-height:1.35!important;
+}
+.global-page h1{
+  font-size:var(--ui-title)!important;
+  line-height:1.1!important;
+  letter-spacing:-.35px!important;
+}
+.global-page h2{
+  font-size:15px!important;
+  line-height:1.2!important;
+}
+.global-page h3{
+  font-size:var(--ui-section)!important;
+  line-height:1.2!important;
+}
+.global-page p,
+.global-page small{
+  line-height:1.35!important;
+}
+.title{
+  min-height:48px!important;
+  margin:0 0 12px!important;
+  gap:12px!important;
+  align-items:center!important;
+}
+.title>div{
+  display:grid!important;
+  gap:2px!important;
+}
+.title h1{
+  margin:0!important;
+}
+.title p{
+  margin:0!important;
+  font-size:10px!important;
+}
+.title>button,
+.title>div:last-child button{
+  min-height:34px!important;
+}
+
+/* ---------- Controles ---------- */
+.global-page button,
+.modal button{
+  min-height:var(--ui-control-h)!important;
+  padding:6px 10px!important;
+  font-size:10px!important;
+  font-weight:650!important;
+  border-radius:8px!important;
+  gap:6px!important;
+}
+.global-page button svg,
+.modal button svg{
+  width:15px!important;
+  height:15px!important;
+}
+.global-page input,
+.global-page select,
+.global-page textarea,
+.modal input,
+.modal select,
+.modal textarea{
+  min-height:var(--ui-control-h)!important;
+  padding:6px 9px!important;
+  font-size:11px!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+.global-page textarea,
+.modal textarea{
+  min-height:68px!important;
+  line-height:1.4!important;
+}
+.global-page label,
+.modal label{
+  gap:4px!important;
+  font-size:10px!important;
+}
+.global-page .field-help,
+.modal .field-help{
+  font-size:9px!important;
+}
+
+/* ---------- Painéis e cards ---------- */
+.panel,
+.dashboard-panel,
+.settings-card,
+.summary-card{
+  padding:13px!important;
+  border-radius:11px!important;
+  box-shadow:none!important;
+}
+.grid{
+  gap:9px 10px!important;
+}
+.section-row{
+  min-height:40px!important;
+  margin:5px 0 9px!important;
+}
+.section-row h2{
+  margin:0!important;
+}
+.tabs{
+  gap:4px!important;
+  padding:4px!important;
+  margin-bottom:10px!important;
+}
+.tabs button{
+  min-height:31px!important;
+  padding:5px 9px!important;
+}
+
+/* ---------- Filtros ---------- */
+.filter-bar{
+  min-height:auto!important;
+  padding:8px!important;
+  gap:7px!important;
+  margin-bottom:10px!important;
+  border-radius:10px!important;
+  align-items:end!important;
+}
+.filter-bar label{
+  gap:3px!important;
+}
+.filter-bar input,
+.filter-bar select{
+  min-height:32px!important;
+}
+.filter-bar svg{
+  width:14px!important;
+  height:14px!important;
+}
+
+/* ---------- Tabelas globais ---------- */
+.table-wrap{
+  border-radius:10px!important;
+}
+.global-page table{
+  font-size:10px!important;
+}
+.global-page table th{
+  height:34px!important;
+  padding:6px 8px!important;
+  font-size:9px!important;
+  font-weight:750!important;
+  letter-spacing:.12px!important;
+}
+.global-page table td{
+  height:42px!important;
+  padding:6px 8px!important;
+  font-size:10px!important;
+  line-height:1.25!important;
+}
+.global-page table td small{
+  font-size:8.5px!important;
+  margin-top:2px!important;
+}
+.global-page table td button{
+  min-height:28px!important;
+  padding:4px 7px!important;
+  font-size:9px!important;
+}
+
+/* ---------- Sidebar mais limpa ---------- */
+.global-sidebar{
+  font-size:11px!important;
+}
+.global-sidebar .nav{
+  min-height:39px!important;
+  padding:7px 10px!important;
+  border-radius:8px!important;
+}
+.global-sidebar .nav svg{
+  width:16px!important;
+  height:16px!important;
+}
+.sidebar-section-label{
+  font-size:8px!important;
+  letter-spacing:.7px!important;
+  margin-top:8px!important;
+}
+.sidebar-user{
+  padding:9px!important;
+}
+
+/* =========================================================
+   ANÚNCIOS — dashboard compacto / editorial
+   ========================================================= */
+.ads-v11{
+  padding:0!important;
+}
+.ads-v11-head{
+  margin:0 0 11px!important;
+  gap:10px!important;
+  align-items:center!important;
+}
+.ads-v11-head h1{
+  font-size:22px!important;
+  letter-spacing:-.4px!important;
+}
+.ads-v11-head p{
+  margin-top:2px!important;
+  font-size:10px!important;
+}
+.ads-v11-actions{
+  gap:5px!important;
+  flex-wrap:wrap!important;
+}
+.ads-v11-actions button{
+  min-height:32px!important;
+  padding:5px 9px!important;
+  font-size:9.5px!important;
+}
+.ads-v11-metrics{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin-bottom:10px!important;
+}
+.ads-v11-metrics>div{
+  min-height:70px!important;
+  padding:10px 11px!important;
+  gap:1px!important;
+  border-radius:10px!important;
+  background:color-mix(in srgb,var(--app-card) 94%,var(--app-primary))!important;
+  border-color:var(--app-border)!important;
+  box-shadow:none!important;
+}
+.ads-v11-metrics span{
+  font-size:9px!important;
+  font-weight:700!important;
+}
+.ads-v11-metrics strong{
+  font-size:21px!important;
+  line-height:1!important;
+  margin:3px 0!important;
+}
+.ads-v11-metrics small{
+  font-size:8px!important;
+}
+.ads-v11-layout{
+  gap:10px!important;
+}
+.ads-v11-layout.with-detail{
+  grid-template-columns:minmax(0,1fr) 270px!important;
+}
+.ads-v11-toolbar{
+  min-height:38px!important;
+  margin-bottom:7px!important;
+  padding:6px 8px!important;
+  border:1px solid var(--app-border)!important;
+  border-radius:9px!important;
+  background:var(--app-panel)!important;
+}
+.ads-v11-toolbar label{
+  flex:1!important;
+}
+.ads-v11-toolbar input{
+  min-height:28px!important;
+  padding:4px 3px!important;
+}
+.ads-v11-toolbar>span{
+  font-size:9px!important;
+}
+.ads-v11-table-wrap{
+  border-radius:9px!important;
+}
+.ads-v11-table th,
+.ads-v11-table td{
+  padding:6px 7px!important;
+}
+.ads-v11-table th{
+  height:32px!important;
+  font-size:8.5px!important;
+}
+.ads-v11-table th.device-col{
+  min-width:235px!important;
+}
+.ads-device-cell{
+  grid-template-columns:30px minmax(0,1fr)!important;
+  gap:7px!important;
+}
+.ads-device-thumb{
+  width:29px!important;
+  height:38px!important;
+  border-radius:6px!important;
+}
+.ads-device-thumb svg{
+  width:17px!important;
+}
+.ads-device-cell b{
+  font-size:10px!important;
+}
+.ads-device-cell span{
+  font-size:9px!important;
+}
+.ads-device-cell small{
+  font-size:8px!important;
+  max-width:190px!important;
+}
+.ads-price{
+  font-size:10px!important;
+}
+.ads-status-cell{
+  min-width:72px!important;
+}
+.ads-status-cell button{
+  min-height:46px!important;
+  padding:4px!important;
+  border-radius:0!important;
+}
+.ads-status-cell button b{
+  font-size:15px!important;
+}
+.ads-status-cell button span,
+.ads-status-cell button small{
+  font-size:7.5px!important;
+}
+.ads-progress{
+  min-width:86px!important;
+  gap:2px!important;
+}
+.ads-progress>div{
+  height:4px!important;
+}
+.ads-progress b,
+.ads-progress small{
+  font-size:8px!important;
+}
+.ads-v11-detail{
+  padding:11px!important;
+  border-radius:10px!important;
+  top:66px!important;
+}
+.ads-detail-head h2{
+  font-size:13px!important;
+}
+.ads-detail-head span{
+  font-size:8px!important;
+}
+.ads-detail-device{
+  gap:4px!important;
+  padding:10px 0!important;
+}
+.ads-detail-device>div{
+  width:44px!important;
+  height:56px!important;
+}
+.ads-detail-device strong{
+  font-size:17px!important;
+}
+.ads-detail-block{
+  gap:5px!important;
+  padding:9px 0!important;
+}
+.ads-detail-block>small{
+  font-size:8px!important;
+}
+.ads-detail-profile{
+  grid-template-columns:23px 1fr auto!important;
+  gap:5px!important;
+}
+.ads-detail-profile>span{
+  width:22px!important;
+  height:22px!important;
+  font-size:8px!important;
+}
+.ads-v11-noads{
+  margin-top:9px!important;
+  padding:10px!important;
+  border-radius:10px!important;
+}
+.ads-v11-noads>div:first-child h2{
+  font-size:12px!important;
+  margin:0!important;
+}
+.ads-v11-noads-grid{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin-top:7px!important;
+}
+.ads-v11-noads-grid button{
+  min-height:70px!important;
+  padding:7px!important;
+  gap:2px!important;
+}
+.ads-v11-noads-grid button>div{
+  width:28px!important;
+  height:36px!important;
+}
+.ads-v11-noads-grid b{
+  font-size:8.5px!important;
+}
+.ads-v11-noads-grid small{
+  font-size:7.5px!important;
+}
+
+/* Editor / modelos de anúncio */
+.ads-v11-editor{
+  grid-template-columns:minmax(0,1fr) 220px!important;
+  gap:10px!important;
+}
+.ads-v11-editor>section,
+.ads-v11-editor>aside,
+.ads-v11-templates{
+  padding:12px!important;
+  border-radius:10px!important;
+}
+.ads-editor-title{
+  margin:9px 0!important;
+}
+.ads-editor-grid{
+  gap:7px!important;
+}
+.ads-editor-buttons{
+  gap:5px!important;
+  margin:7px 0!important;
+}
+.ads-profile-editor{
+  gap:6px!important;
+}
+.ads-profile-editor>div{
+  padding:8px!important;
+  gap:5px!important;
+  border-radius:8px!important;
+}
+
+/* =========================================================
+   NOVO / EDITAR APARELHO — formulário compacto
+   ========================================================= */
+.back>.modal.phone-editor-modal{
+  width:min(920px,calc(100vw - 40px))!important;
+  max-width:920px!important;
+  max-height:calc(100dvh - 36px)!important;
+}
+.phone-editor-modal>.modalhead{
+  min-height:50px!important;
+  padding:10px 14px!important;
+}
+.phone-editor-modal>.modalhead h2{
+  font-size:16px!important;
+  letter-spacing:-.2px!important;
+}
+.phone-editor-modal>.modalbody{
+  padding:12px 14px!important;
+}
+.phone-editor-modal .section-title{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  margin:14px 0 8px!important;
+  padding:0 0 6px!important;
+  font-size:11px!important;
+  letter-spacing:.1px!important;
+}
+.phone-editor-modal .section-title:first-child{
+  margin-top:0!important;
+}
+.phone-editor-modal .section-title svg{
+  width:14px!important;
+  height:14px!important;
+}
+.phone-editor-modal .grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+.phone-editor-modal label{
+  gap:3px!important;
+  font-size:9px!important;
+}
+.phone-editor-modal input,
+.phone-editor-modal select{
+  min-height:31px!important;
+  padding:5px 7px!important;
+  font-size:10px!important;
+}
+.phone-editor-modal textarea{
+  min-height:58px!important;
+  padding:7px!important;
+}
+.phone-editor-modal>.modalbody>label{
+  margin-top:8px!important;
+}
+.phone-editor-modal .tag-editor,
+.phone-editor-modal .parts,
+.phone-editor-modal .photo-upload-box,
+.phone-editor-modal .price-history-section{
+  margin-top:8px!important;
+}
+.phone-editor-modal .tag-editor .add,
+.phone-editor-modal .parts .add{
+  gap:6px!important;
+}
+.phone-editor-modal .tag-list{
+  gap:4px!important;
+  margin-top:5px!important;
+}
+.phone-editor-modal .tag-list span{
+  padding:4px 6px!important;
+  font-size:8px!important;
+}
+.phone-editor-modal .parts{
+  padding:10px!important;
+  border:1px solid var(--app-border)!important;
+  border-radius:9px!important;
+  background:color-mix(in srgb,var(--app-card) 72%,transparent)!important;
+}
+.phone-editor-modal .parts>h3{
+  margin:0 0 7px!important;
+  font-size:11px!important;
+}
+.phone-editor-modal .quote-box{
+  padding:8px!important;
+  margin-top:7px!important;
+  border-radius:8px!important;
+}
+.phone-editor-modal .part-head{
+  grid-template-columns:minmax(0,1fr) 130px auto!important;
+  gap:6px!important;
+}
+.phone-editor-modal .quote-row{
+  gap:6px!important;
+}
+.phone-editor-modal .quotes-title{
+  margin:7px 0 5px!important;
+  font-size:8px!important;
+}
+.phone-editor-modal .quote-add-button{
+  min-height:28px!important;
+  margin-top:5px!important;
+}
+.phone-editor-modal .photo-upload-box{
+  padding:9px!important;
+}
+.phone-editor-modal .phone-photo-gallery{
+  gap:6px!important;
+}
+.phone-editor-modal .label-preview{
+  transform:scale(.88);
+  transform-origin:left top;
+  margin-bottom:-8px!important;
+}
+.phone-editor-modal .actions{
+  min-height:56px!important;
+  padding:10px 14px!important;
+  margin:14px -14px -12px!important;
+}
+
+/* ---------- Modais genéricos ---------- */
+.back>.modal:not(.phone-editor-modal){
+  width:min(760px,calc(100vw - 40px))!important;
+  max-height:calc(100dvh - 40px)!important;
+}
+.back>.modal:not(.phone-editor-modal)>.modalhead{
+  min-height:50px!important;
+  padding:10px 14px!important;
+}
+.back>.modal:not(.phone-editor-modal)>.modalhead h2{
+  font-size:16px!important;
+}
+.back>.modal:not(.phone-editor-modal)>.modalbody{
+  padding:12px 14px!important;
+}
+.back>.modal:not(.phone-editor-modal) .grid{
+  gap:8px!important;
+}
+
+/* =========================================================
+   MOBILE — compacto sem sacrificar toque
+   ========================================================= */
+@media(max-width:760px){
+  :root{--ui-control-h:38px;--ui-font:12px;--ui-title:19px}
+  .global-page{
+    padding:12px 11px 18px!important;
+  }
+  .title{
+    min-height:42px!important;
+    margin-bottom:9px!important;
+  }
+  .title h1,
+  .ads-v11-head h1{
+    font-size:19px!important;
+  }
+  .filter-bar{
+    padding:7px!important;
+  }
+
+  .ads-v11-head{
+    display:grid!important;
+    margin-bottom:8px!important;
+  }
+  .ads-v11-actions{
+    display:grid!important;
+    grid-template-columns:repeat(2,1fr)!important;
+  }
+  .ads-v11-actions button:first-child{
+    grid-column:1/-1!important;
+  }
+  .ads-v11-metrics{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:6px!important;
+  }
+  .ads-v11-metrics>div{
+    min-height:58px!important;
+    padding:8px!important;
+  }
+  .ads-v11-metrics strong{
+    font-size:18px!important;
+  }
+  .ads-v11-layout.with-detail{
+    grid-template-columns:1fr!important;
+  }
+  .ads-v11-table-wrap{
+    width:100%!important;
+    overflow-x:auto!important;
+  }
+  .ads-v11-table{
+    min-width:max-content!important;
+  }
+  .ads-v11-noads-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .ads-v11-editor{
+    grid-template-columns:1fr!important;
+  }
+
+  .back>.modal.phone-editor-modal{
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:none!important;
+    max-height:none!important;
+  }
+  .phone-editor-modal>.modalhead{
+    min-height:52px!important;
+    padding:10px 12px!important;
+  }
+  .phone-editor-modal>.modalbody{
+    padding:10px 11px!important;
+  }
+  .phone-editor-modal .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  .phone-editor-modal .part-head,
+  .phone-editor-modal .quote-row{
+    grid-template-columns:1fr!important;
+  }
+  .phone-editor-modal .actions{
+    margin:12px -11px -10px!important;
+    padding:10px 11px!important;
+  }
+}
+@media(max-width:460px){
+  .phone-editor-modal .grid{
+    grid-template-columns:1fr!important;
+  }
+  .ads-v11-metrics{
+    grid-template-columns:1fr 1fr!important;
+  }
+}

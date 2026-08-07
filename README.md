@@ -712,3 +712,16 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Tela de recuperação substitui a tela preta caso outro erro de dados aconteça.
 - Pontos de restauração usam o novo formato de backup corretamente.
 - Removido bloco residual de relatório de vendedores que poderia causar erro ao abrir Relatórios.
+
+## v5.4.0 — Modern Compact UI
+
+- Reforma visual global sem alteração das regras de negócio.
+- Tipografia, botões, campos, cards e espaçamentos reduzidos e padronizados.
+- Tabelas mais densas e profissionais.
+- Página de Anúncios redesenhada para aproveitar melhor a tela.
+- Indicadores, tabela, painel lateral e editor de anúncios compactados.
+- Modal Novo/Editar aparelho reduzido e reorganizado.
+- Formulário de aparelho usa quatro colunas no desktop, duas no celular largo e uma em telas estreitas.
+- Modais genéricos também foram reduzidos.
+- Sidebar, filtros, tabs e painéis seguem a nova escala visual.
+- Responsividade mobile preserva área mínima de toque.
