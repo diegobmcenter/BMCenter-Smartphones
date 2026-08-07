@@ -750,3 +750,14 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Sidebar, topbar, botões, campos, modais, configurações e painéis agora seguem o mesmo design system.
 - Personalização de colunas deixa de repetir botões dentro de cada tabela; um único controle é mostrado por página.
 - Layout responsivo revisado para desktop, tablet e celular.
+
+## v5.7.0 — Reconstrução estrutural da interface
+
+- Smartphones deixou de usar tabela como visão principal; agora usa cards reais por aparelho.
+- Ações em lote deixou de usar tabela e virou lista selecionável em cards.
+- Peças e acessórios deixou de usar tabelas como interface principal; agora utiliza grupos e linhas de ação em cards.
+- Fornecedores e contas bancárias foram reconstruídos como cards de entidade.
+- Anúncios recebeu cabeçalho e resumo simplificados e cards ajustados ao modelo visual aprovado.
+- Perfis e Relatórios foram integrados ao mesmo design system.
+- A configuração de exibição de Smartphones continua funcionando, agora controlando informações dos cards.
+- Toda a lógica funcional existente foi preservada.

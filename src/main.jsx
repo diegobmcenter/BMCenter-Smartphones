@@ -170,7 +170,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.6.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.7.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -268,7 +268,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.6.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.7.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -433,7 +433,7 @@ function ProfileAnalyticsPage(){
   if(index<0||target<0||target>=profiles.length)return;
   const next=[...profiles],[item]=next.splice(index,1);next.splice(target,0,item);persist(next)
  }
- return <>
+ return <div className="modern-page profiles-modern-page">
   <Title t="Perfis do Facebook" s="Cadastre, organize e acompanhe os perfis usados nas publicações e vendas.">
    <button className="primary" onClick={()=>setEditing({id:crypto.randomUUID(),name:'',platform:'Facebook Marketplace',facebookUrl:'',color:'#1877f2',notes:'',active:true})}><Plus/> Novo perfil</button>
   </Title>
@@ -478,7 +478,7 @@ function ProfileAnalyticsPage(){
   </>}
 
   {editing&&<FacebookProfileModal item={editing} onClose={()=>setEditing(null)} onSave={value=>{persist(profiles.some(p=>p.id===value.id)?profiles.map(p=>p.id===value.id?value:p):[...profiles,value]);setEditing(null)}}/>}
- </>
+ </div>
 }
 
 function FacebookProfileModal({item,onClose,onSave}){
@@ -510,11 +510,14 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <div className="modern-module batch-modern"><Title t="Ações em lote" s="Atualize vários aparelhos sem abrir cadastro por cadastro."/>
-  <div className="batch-toolbar panel"><div className="batch-filter-row"><label><Search size={16}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo, IMEI ou etiqueta"/></label><label>Status<select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Ativos</option><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label></div>
-  <div className="batch-action-grid"><label>Novo status<select value={newStatus} onChange={e=>setNewStatus(e.target.value)}><option value="">Não alterar</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><Field label="Adicionar etiqueta" value={newTag} onChange={setNewTag}/><button className="primary batch-apply" onClick={applyBatch}>Aplicar em {selected.length}</button></div>
-  {!!selectedTags.length&&<div className="batch-tags"><span>Remover etiquetas:</span>{selectedTags.map(t=><button key={t} onClick={()=>removeTag(t)}>{t} ×</button>)}</div>}</div>
-  <div className="table-wrap"><table><thead><tr><th><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/></th><th>Aparelho</th><th>Status</th><th>Etiquetas</th><th>Parado</th></tr></thead><tbody>{rows.map(p=><tr className={selected.includes(p.id)?'batch-selected':''} key={p.id}><td><input type="checkbox" checked={selected.includes(p.id)} onChange={()=>toggle(p.id)}/></td><td><b>{phoneDisplayName(p)}</b></td><td>{p.status}</td><td><div className="mini-tags">{(p.tags||[]).map(t=><span key={t}>{t}</span>)}</div></td><td>{daysSince(p.lastActivityAt||p.date)} dias</td></tr>)}</tbody></table>{!rows.length&&<Empty text="Nenhum aparelho encontrado."/>}</div></div>
+ return <div className="modern-page batch-modern-page">
+ <Title t="Ações em lote" s="Selecione aparelhos e aplique alterações sem abrir cada cadastro."/>
+ <div className="batch-modern-toolbar"><label className="modern-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar modelo, IMEI ou etiqueta..."/></label><select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Ativos</option><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select><span className="modern-count">{selected.length} selecionado(s)</span></div>
+ <div className="batch-modern-actionbar"><label>Status<select value={newStatus} onChange={e=>setNewStatus(e.target.value)}><option value="">Não alterar</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><Field label="Adicionar etiqueta" value={newTag} onChange={setNewTag}/><button className="primary" onClick={applyBatch}>Aplicar em {selected.length}</button>{!!selected.length&&<button onClick={()=>setSelected([])}>Limpar seleção</button>}</div>
+ {!!selectedTags.length&&<div className="batch-modern-tags"><small>Etiquetas dos selecionados</small>{selectedTags.map(t=><button key={t} onClick={()=>removeTag(t)}>{t} ×</button>)}</div>}
+ <div className="batch-select-all"><label><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/> Selecionar todos os resultados</label></div>
+ <div className="batch-card-list">{rows.map(p=><article className={selected.includes(p.id)?'batch-modern-card selected':'batch-modern-card'} key={p.id} onClick={()=>toggle(p.id)}><input type="checkbox" checked={selected.includes(p.id)} onChange={()=>toggle(p.id)} onClick={e=>e.stopPropagation()}/><div className="batch-card-device"><div className="mini-device-icon"><Smartphone size={18}/></div><div><b>{phoneDisplayName(p)}</b><small>{[p.color,p.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small></div></div><span className="modern-status-pill">{p.status}</span><div className="mini-tags">{(p.tags||[]).slice(0,4).map(t=><span key={t}>{t}</span>)}{!(p.tags||[]).length&&<em>Sem etiquetas</em>}</div><div className="batch-age"><small>Sem alteração</small><b>{daysSince(p.lastActivityAt||p.date)} dias</b></div></article>)}{!rows.length&&<div className="modern-empty-card"><CheckSquare size={30}/><b>Nenhum aparelho encontrado</b></div>}</div>
+ </div>
 }
 
 function DataQualityPage(){
@@ -707,17 +710,21 @@ function Phones(){
    default:return null
   }
  }
- return <>
-  <Title t="Smartphones" s="Pesquisa rápida por IMEI, serial, modelo ou etiqueta."><div className="phone-title-actions"><button onClick={()=>setColumnEditor(true)}><Settings size={17}/> Editar colunas</button><button onClick={()=>setBatchCreate(true)}><Plus/> Cadastro em massa</button><button className="primary" onClick={()=>setEdit(blankPhone(items.length+1))}><Plus/> Novo aparelho</button></div></Title>
-  <div className="filter-bar phones-filter-bar"><label><Search size={17}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo, IMEI, serial, etiqueta..."/></label><label>Status<select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><label>Etiqueta<select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select></label><label className="favorite-filter"><input type="checkbox" checked={onlyFavorites} onChange={e=>setOnlyFavorites(e.target.checked)}/> Somente favoritos</label><span className="filter-count">{filtered.length} aparelho(s)</span></div>
-  <div ref={tableWrapRef} className="table smartphones-table-wrap"><table className="smartphones-table configurable-phone-table"><colgroup>{visibleColumns.map(c=><col key={c.id} style={{width:c.width,minWidth:c.width}}/>)}</colgroup><thead><tr>{visibleColumns.map(c=><th data-column-id={c.id} className={`column-header align-${columnAlign(c.id)}`} draggable={c.id!=='actions'} onDragStart={e=>e.dataTransfer.setData('text/column-id',c.id)} onDragOver={e=>e.preventDefault()} onDrop={e=>moveColumn(e.dataTransfer.getData('text/column-id'),c.id)} key={c.id}><span>{c.label}</span>{c.id!=='actions'&&<i className="excel-column-resizer" onPointerDown={e=>{if(e.detail>=2){e.preventDefault();e.stopPropagation();autoFitPhoneColumn(c.id)}else startColumnResize(e,c)}} onDoubleClick={e=>{e.preventDefault();e.stopPropagation();autoFitPhoneColumn(c.id)}} title="Arraste para redimensionar; dê dois cliques para ajustar ao conteúdo"/>}</th>)}</tr></thead><tbody>{filtered.map(x=><tr key={x.id}>{visibleColumns.map(c=><React.Fragment key={c.id}>{cell(c,x)}</React.Fragment>)}</tr>)}</tbody></table>{!filtered.length&&<Empty text="Nenhum aparelho encontrado."/>}</div>
-  {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>setBatchCreate(false)} onSave={created=>{persist([...created,...items]);setBatchCreate(false)}}/>}
-  {columnEditor&&<PhoneColumnsModal columns={columns} onClose={()=>setColumnEditor(false)} onChange={persistColumns}/>} 
+ return <div className="modern-page phones-modern-page">
+  <Title t="Smartphones" s="Seu estoque em uma visão simples, rápida e organizada."><div className="phone-title-actions"><button onClick={()=>setColumnEditor(true)}><Settings size={16}/> Exibição</button><button onClick={()=>setBatchCreate(true)}><Plus/> Cadastro em massa</button><button className="primary" onClick={()=>setEdit(blankPhone(items.length+1))}><Plus/> Novo aparelho</button></div></Title>
+  <div className="modern-filter-strip phones-modern-filters"><label className="modern-search"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar modelo, IMEI, serial ou etiqueta..."/></label><select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select><select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select><label className="modern-check"><input type="checkbox" checked={onlyFavorites} onChange={e=>setOnlyFavorites(e.target.checked)}/> Favoritos</label><span className="modern-count">{filtered.length} aparelho(s)</span></div>
+  <div className="phone-card-list">{filtered.map(x=>{const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost;const published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));const show=id=>visibleColumns.some(c=>c.id===id);return <article className="phone-modern-card" key={x.id}>
+   <div className="phone-modern-media"><div className="phone-modern-photo">{x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={28}/>}</div><button className={x.favorite?'phone-modern-favorite active':'phone-modern-favorite'} onClick={()=>toggleFavorite(x)}><Star size={15}/></button></div>
+   <div className="phone-modern-main"><div className="phone-modern-title-row"><div><h3>{x.brand} {x.model}</h3>{showProductCode()&&show('code')&&<span className="phone-modern-code">{x.code}</span>}</div>{show('status')&&<select className="phone-modern-status" value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select>}</div><p>{[x.color,x.storage,x.ram&&`${x.ram} RAM`].filter(Boolean).join(' · ')||'Sem detalhes cadastrados'}</p>{!!(x.tags||[]).length&&<div className="phone-modern-tags">{(x.tags||[]).slice(0,4).map(t=><span key={t}>{t}</span>)}</div>}{show('profiles')&&<div className="phone-modern-profiles"><small>Anúncios</small>{published.length?published.map(profile=><span key={profile.id}>{profile.name}</span>):<em>Não anunciado</em>}</div>}</div>
+   <div className="phone-modern-finance">{show('cost')&&<div><span>Custo</span><b>{money(cost)}</b></div>}{show('expected')&&<div><span>Venda prevista</span><b>{money(x.expected)}</b></div>}{show('profit')&&<div><span>Lucro previsto</span><b className={profit>=0?'profit-positive':'profit-negative'}>{money(profit)}</b></div>}</div>
+   <div className="phone-modern-actions"><button onClick={()=>setDetail(x)}><Eye size={15}/> Ver</button><button onClick={()=>setEdit(x)}><FileText size={15}/> Editar</button><button className="icon-only" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}}>•••</button></div>
+  </article>})}{!filtered.length&&<div className="modern-empty-card"><Smartphone size={30}/><b>Nenhum aparelho encontrado</b><span>Altere os filtros ou cadastre um novo smartphone.</span></div>}</div>
+  {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>setBatchCreate(false)} onSave={created=>{persist([...created,...items]);setBatchCreate(false)}}/>}{columnEditor&&<PhoneColumnsModal columns={columns} onClose={()=>setColumnEditor(false)} onChange={persistColumns}/>}
   {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
   {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>setEdit(null)} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);let saved=touchPhone(addTimeline(v,'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null)}}/>}
   {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>x.id!==salePhone.id?x:touchPhone(addTimeline({...x,status:'Vendido',sale},`Venda registrada por ${money(sale.value)}`))));setSalePhone(null)}}/>}
   {actionPhone&&<PhoneActionsPopover data={actionPhone} onClose={()=>setActionPhone(null)} onSale={()=>{setSalePhone(actionPhone.phone);setActionPhone(null)}} onDelete={()=>{if(confirm('Excluir aparelho?'))persist(items.filter(i=>i.id!==actionPhone.phone.id));setActionPhone(null)}}/>}
- </>
+ </div>
 }
 
 function PhoneActionsPopover({data,onClose,onSale,onDelete}){
@@ -783,23 +790,7 @@ function PhoneColumnsModal({columns,onClose,onChange}){const[list,setList]=useSt
 function Sellers(){const[items,setItems]=useState(load(VKEY)),[edit,setEdit]=useState(null);const persist=v=>{setItems(v);save(VKEY,v)};return <><Title t="Vendedores" s="Registre de quem comprou cada aparelho."><button className="primary" onClick={()=>setEdit({id:crypto.randomUUID(),name:'',phone:'',city:'',address:'',notes:''})}><Plus/> Novo vendedor</button></Title><div className="list">{items.map(x=><div className="seller" key={x.id}><div><b>{x.name}</b><span>{x.phone||'Sem telefone'}</span><small>{x.city} · {x.address}</small></div><div><button onClick={()=>setEdit(x)}>Editar</button> <button className="danger" onClick={()=>confirm('Excluir?')&&persist(items.filter(i=>i.id!==x.id))}>Excluir</button></div></div>)}</div>{!items.length&&<Empty/>}{edit&&<SellerModal item={edit} onClose={()=>setEdit(null)} onSave={v=>{persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?v:x):[v,...items]);setEdit(null)}}/>}</>}
 
 
-function Suppliers(){
-  const[items,setItems]=useState(load(FKEY)),[edit,setEdit]=useState(null);
-  const persist=v=>{setItems(v);save(FKEY,v)};
-  return <>
-    <Title t="Fornecedores" s="Cadastre fornecedores de aparelhos e peças.">
-      <button className="primary" onClick={()=>setEdit({id:crypto.randomUUID(),name:'',phone:'',whatsapp:'',city:'',address:'',category:'Peças',notes:''})}><Plus/> Novo fornecedor</button>
-    </Title>
-    <div className="list">
-      {items.map(x=><div className="seller" key={x.id}>
-        <div><b>{x.name}</b><span>{x.phone||x.whatsapp||'Sem telefone'}</span><small>{x.category} · {x.city}</small></div>
-        <div><button onClick={()=>setEdit(x)}>Editar</button> <button className="danger" onClick={()=>confirm('Excluir fornecedor?')&&persist(items.filter(i=>i.id!==x.id))}>Excluir</button></div>
-      </div>)}
-    </div>
-    {!items.length&&<Empty text="Nenhum fornecedor cadastrado."/>}
-    {edit&&<SupplierModal item={edit} onClose={()=>setEdit(null)} onSave={v=>{persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?v:x):[v,...items]);setEdit(null)}}/>}
-  </>
-}
+function Suppliers(){const[items,setItems]=useState(load(FKEY)),[edit,setEdit]=useState(null);const persist=v=>{setItems(v);save(FKEY,v)};return <div className="modern-page suppliers-modern-page"><Title t="Fornecedores" s="Contatos e parceiros usados na compra de peças e aparelhos."><button className="primary" onClick={()=>setEdit({id:crypto.randomUUID(),name:'',phone:'',whatsapp:'',city:'',address:'',category:'Peças',notes:''})}><Plus/> Novo fornecedor</button></Title><div className="entity-card-grid">{items.map(x=><article className="entity-modern-card" key={x.id}><div className="entity-icon"><Store size={20}/></div><div className="entity-copy"><h3>{x.name}</h3><span>{x.category||'Fornecedor'}</span><p>{x.city||'Cidade não informada'}</p>{(x.whatsapp||x.phone)&&<small>{x.whatsapp||x.phone}</small>}</div><div className="entity-actions"><button onClick={()=>setEdit(x)}>Editar</button><button className="danger icon-only" onClick={()=>confirm('Excluir fornecedor?')&&persist(items.filter(i=>i.id!==x.id))}><X size={15}/></button></div></article>)}</div>{!items.length&&<div className="modern-empty-card"><Store size={30}/><b>Nenhum fornecedor cadastrado</b></div>}{edit&&<SupplierModal item={edit} onClose={()=>setEdit(null)} onSave={v=>{persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?v:x):[v,...items]);setEdit(null)}}/>}</div>}
 function SupplierModal({item,onClose,onSave}){
   const[f,setF]=useState(item),set=(k,v)=>setF({...f,[k]:v});
   return <Modal title="Cadastro de fornecedor" onClose={onClose}>
@@ -816,7 +807,7 @@ function SupplierModal({item,onClose,onSave}){
   </Modal>
 }
 
-function Banks(){const[items,setItems]=useState(load(BKEY)),[edit,setEdit]=useState(null);const persist=v=>{setItems(v);save(BKEY,v)};return <><Title t="Contas bancárias" s="Cadastre as contas usadas para pagar os aparelhos."><button className="primary" onClick={()=>setEdit({id:crypto.randomUUID(),bank:'',accountName:'',type:'Conta corrente',notes:''})}><Plus/> Nova conta</button></Title><div className="list">{items.map(x=><div className="seller" key={x.id}><div><b>{x.bank}</b><span>{x.accountName}</span><small>{x.type}</small></div><div><button onClick={()=>setEdit(x)}>Editar</button> <button className="danger" onClick={()=>confirm('Excluir conta?')&&persist(items.filter(i=>i.id!==x.id))}>Excluir</button></div></div>)}</div>{!items.length&&<Empty text="Nenhuma conta bancária cadastrada."/>}{edit&&<BankModal item={edit} onClose={()=>setEdit(null)} onSave={v=>{persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?v:x):[v,...items]);setEdit(null)}}/>}</>}
+function Banks(){const[items,setItems]=useState(load(BKEY)),[edit,setEdit]=useState(null);const persist=v=>{setItems(v);save(BKEY,v)};return <div className="modern-page banks-modern-page"><Title t="Contas bancárias" s="Contas e meios usados nos pagamentos e recebimentos."><button className="primary" onClick={()=>setEdit({id:crypto.randomUUID(),bank:'',accountName:'',type:'Conta corrente',notes:''})}><Plus/> Nova conta</button></Title><div className="entity-card-grid">{items.map(x=><article className="entity-modern-card bank-modern-card" key={x.id}><div className="entity-icon"><WalletCards size={20}/></div><div className="entity-copy"><h3>{x.bank||'Banco não informado'}</h3><span>{x.accountName||'Conta sem nome'}</span><p>{x.type}</p></div><div className="entity-actions"><button onClick={()=>setEdit(x)}>Editar</button><button className="danger icon-only" onClick={()=>confirm('Excluir conta?')&&persist(items.filter(i=>i.id!==x.id))}><X size={15}/></button></div></article>)}</div>{!items.length&&<div className="modern-empty-card"><WalletCards size={30}/><b>Nenhuma conta cadastrada</b></div>}{edit&&<BankModal item={edit} onClose={()=>setEdit(null)} onSave={v=>{persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?v:x):[v,...items]);setEdit(null)}}/>}</div>}
 function BankModal({item,onClose,onSave}){const[f,setF]=useState(item),set=(k,v)=>setF({...f,[k]:v});return <Modal title="Cadastro de conta bancária" onClose={onClose}><div className="grid"><Field label="Banco" value={f.bank} onChange={v=>set('bank',v)}/><Field label="Nome da conta" value={f.accountName} onChange={v=>set('accountName',v)}/><label>Tipo<select value={f.type} onChange={e=>set('type',e.target.value)}><option>Conta corrente</option><option>Poupança</option><option>Carteira digital</option><option>Dinheiro</option><option>Outro</option></select></label></div><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label><div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave(f)}>Salvar conta</button></div></Modal>}
 
 function Parts(){
@@ -863,196 +854,12 @@ function Parts(){
 
   function changeOrderStatus(phoneId,partId,orderStatus){
     const next=phones.map(phone=>{
-      if(phone.id!==phoneId) return phone;
-      const parts=(phone.parts||[]).map(part=>part.id!==partId?part:{...part,orderStatus});
-      const pendingOrder=parts.some(part=>['Pedido realizado','Pedido enviado'].includes(part.orderStatus||'Não pedido'));
-      const allDelivered=parts.length>0&&parts.every(part=>['Pedido entregue','Instalada'].includes(part.orderStatus||'Não pedido'));
-      let status=phone.status;
-      if(pendingOrder) status='Aguardando peças';
-      else if(allDelivered&&phone.status==='Aguardando peças') status='Em reparo';
-      return{...phone,parts,status};
-    });
-    savePhones(next);
-  }
-
-  function markSupplierOrderDone(supplierName,list){
-    if(!confirm(`Marcar todas as peças deste pedido em ${supplierName} como “Pedido realizado”?`)) return;
-    const targets=new Set(list.map(row=>`${row.phone.id}::${row.part.id}`));
-    const next=phones.map(phone=>{
-      let changed=false;
-      const parts=(phone.parts||[]).map(part=>{
-        if(!targets.has(`${phone.id}::${part.id}`)) return part;
-        changed=true;
-        const selected=(part.quotes||[]).find(q=>q.id===part.selectedQuoteId);
-        const cheapest=[...(part.quotes||[])].sort((a,b)=>Number(a.price)-Number(b.price))[0];
-        const chosen=selected||cheapest;
-        if(chosen?.supplier!==supplierName) return part;
-        return{...part,orderStatus:'Pedido realizado'};
-      });
-      return changed?{...phone,parts,status:'Aguardando peças'}:phone;
-    });
-    savePhones(next);
-  }
-
-  function persistInventory(next){setInventory(next);save(IKEY,next)}
-  function addInventoryMovement(movement){save(MKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),...movement},...load(MKEY)])}
-
-  function receiveIntoInventory(row){
-    const quote=row.chosen;
-    if(!quote)return alert('Escolha primeiro o fornecedor.');
-    const compatibility=`${row.phone.brand} ${row.phone.model}`.trim();
-    const match=inventory.find(item=>item.name.toLowerCase()===row.part.name.toLowerCase()&&(item.compatibility||'').toLowerCase()===compatibility.toLowerCase());
-    let next;
-    if(match){
-      next=inventory.map(item=>item.id===match.id?{...item,quantity:Number(item.quantity||0)+1,unitCost:Number(quote.price||item.unitCost||0),updatedAt:new Date().toISOString()}:item);
-    }else{
-      const supplier=load(FKEY).find(s=>s.name===quote.supplier);
-      next=[{id:crypto.randomUUID(),name:row.part.name,compatibility,supplierId:supplier?.id||'',quantity:1,minimum:0,unitCost:Number(quote.price||0),location:'',notes:`Recebida para ${row.phone.code}`,updatedAt:new Date().toISOString()},...inventory];
-    }
-    persistInventory(next);
-    addInventoryMovement({itemId:match?.id||next[0]?.id,itemName:row.part.name,type:'Entrada',quantity:1,before:Number(match?.quantity||0),after:Number(match?.quantity||0)+1,reason:`Recebimento para ${row.phone.code}`,unitCost:Number(quote.price||0)});
-    changeOrderStatus(row.phone.id,row.part.id,'Pedido entregue');
-    alert('Peça recebida e adicionada ao estoque.');
-  }
-
-  function installFromInventory(row){
-    const compatibility=`${row.phone.brand} ${row.phone.model}`.trim().toLowerCase();
-    const match=inventory.find(item=>item.name.toLowerCase()===row.part.name.toLowerCase()&&(!item.compatibility||(item.compatibility||'').toLowerCase()===compatibility)&&Number(item.quantity||0)>0);
-    if(!match)return alert('Não existe esta peça disponível no estoque.');
-    persistInventory(inventory.map(item=>item.id===match.id?{...item,quantity:Number(item.quantity)-1,updatedAt:new Date().toISOString()}:item));
-    addInventoryMovement({itemId:match.id,itemName:match.name,type:'Saída',quantity:1,before:Number(match.quantity),after:Number(match.quantity)-1,reason:`Instalada no ${row.phone.code}`,unitCost:Number(match.unitCost||0)});
-    const nextPhones=phones.map(phone=>phone.id!==row.phone.id?phone:{
-      ...phone,
-      parts:(phone.parts||[]).map(part=>part.id!==row.part.id?part:{...part,status:'Instalada',orderStatus:'Pedido entregue'}),
-      lastActivityAt:new Date().toISOString(),
-      timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Peça instalada usando estoque: ${row.part.name}`}]
-    });
-    savePhones(nextPhones);
-    alert('Peça baixada do estoque e marcada como instalada.');
-  }
-
-  function supplierQuote(row){
-    if(supplierFilter==='Todos') return row.chosen;
-    return row.quotes.find(q=>q.supplier===supplierFilter)||null;
-  }
-
-  function totalForRows(list){
-    return list.reduce((sum,row)=>sum+(Number(supplierQuote(row)?.price)||0),0);
-  }
-
-  function optionColor(row,q){
-    if(q.id===row.cheapest?.id) return '#1d4ed8';
-    if(row.quotes.length>1&&q.id===row.mostExpensive?.id) return '#b91c1c';
-    return '#111827';
-  }
-
-  function optionLabel(row,q){
-    const tags=[];
-    if(q.id===row.cheapest?.id) tags.push('menor preço');
-    if(row.quotes.length>1&&q.id===row.mostExpensive?.id) tags.push('maior preço');
-    return `${q.supplier} · ${money(q.price)}${tags.length?` (${tags.join(' / ')})`:''}`;
-  }
-
-  function copySupplierList(){
-    if(supplierFilter==='Todos'){
-      alert('Selecione um fornecedor específico para copiar a lista.');
-      return;
-    }
-    const list=filteredRows.map(r=>{
-      const quote=supplierQuote(r);
-      if(!quote) return '';
-      return `${r.phone.code} - ${r.phone.brand} ${r.phone.model} | ${r.part.name} | ${money(quote.price)} | ${r.part.orderStatus||'Não pedido'}`;
-    }).filter(Boolean).join('\n');
-    if(!list){alert('Nenhuma peça encontrada para este fornecedor.');return;}
-    const finalText=`${list}\n\nTOTAL: ${money(totalForRows(filteredRows))}`;
-    navigator.clipboard.writeText(finalText)
-      .then(()=>alert('Lista copiada para a área de transferência.'))
-      .catch(()=>prompt('Copie a lista abaixo:',finalText));
-  }
-
-  const groupedBySupplier=filteredRows.reduce((acc,row)=>{
-    const quote=supplierQuote(row);
-    const key=supplierFilter==='Todos'?(row.chosen?.supplier||'Fornecedor não definido'):supplierFilter;
-    if(!quote&&supplierFilter!=='Todos') return acc;
-    (acc[key]??=[]).push(row);
-    return acc;
-  },{});
-
-  const groupedByPhone=filteredRows.reduce((acc,row)=>{
-    const key=`${row.phone.code} · ${row.phone.brand} ${row.phone.model}`;
-    (acc[key]??=[]).push(row);
-    return acc;
-  },{});
-
-  const renderQuoteSelect=row=><select
-    className={
-      row.chosen?.id===row.cheapest?.id
-        ? 'quote-select quote-select-low'
-        : row.quotes.length>1&&row.chosen?.id===row.mostExpensive?.id
-          ? 'quote-select quote-select-high'
-          : 'quote-select'
-    }
-    value={row.chosen?.id||''}
-    onChange={e=>choose(row.phone.id,row.part.id,e.target.value)}
-  >
-    <option value="">Selecione</option>
-    {row.quotes.map(q=><option value={q.id} key={q.id} style={{color:optionColor(row,q),fontWeight:700}}>
-      {optionLabel(row,q)}
-    </option>)}
-  </select>;
-
-  const renderOrderSelect=row=><select
-    className={`order-status order-${(row.part.orderStatus||'Não pedido').replaceAll(' ','-').toLowerCase()}`}
-    value={row.part.orderStatus||'Não pedido'}
-    onChange={e=>changeOrderStatus(row.phone.id,row.part.id,e.target.value)}
-  >
-    <option>Não pedido</option>
-    <option>Pedido realizado</option>
-    <option>Pedido enviado</option>
-    <option>Pedido entregue</option>
-  </select>;
-
-  return <div className="modern-module parts-modern">
-    <Title t="Peças e acessórios" s="Controle cotações, pedidos e recebimentos com uma visão mais simples."/>
-    <div className="purchase-toolbar">
-      <label>Filtrar por fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label>
-      <label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label>
-      <button type="button" className="primary" onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista do fornecedor</button>
-    </div>
-    <div className="price-legend">
-      <span className="legend-item cheapest-legend">Azul: menor preço</span>
-      <span className="legend-item expensive-legend">Vermelho: maior preço</span>
-    </div>
-    {!filteredRows.length&&<Empty text="Nenhuma peça encontrada para este filtro."/>}
-
-    {viewMode==='supplier'
-      ? Object.entries(groupedBySupplier).map(([group,list])=><div className="panel" key={group}>
-          <h2 className="group-title"><span>{group}</span><span className="group-title-actions"><span className="group-total">{money(totalForRows(list))}</span>{group!=='Fornecedor não definido'&&<button type="button" className="order-all-button" onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</span></h2>
-          <div className="table-wrap"><table><thead><tr><th>Aparelho</th><th>Peça</th><th>Menor cotação</th><th>Fornecedor escolhido</th><th>Pedido</th><th>Peça</th><th>Ações</th></tr></thead>
-          <tbody>{list.map(row=><tr key={row.part.id}>
-            <td>{phoneDisplayName(row.phone)}</td>
-            <td>{row.part.name}</td>
-            <td><span className="price-low">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</span></td>
-            <td>{renderQuoteSelect(row)}</td>
-            <td>{renderOrderSelect(row)}</td>
-            <td><span className="badge">{row.part.status}</span></td>
-            <td><div className="row-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar do estoque</button></div></td>
-          </tr>)}</tbody></table></div>
-        </div>)
-      : Object.entries(groupedByPhone).map(([group,list])=><div className="panel" key={group}>
-          <h2 className="group-title"><span>{group}</span><span className="group-total">{money(totalForRows(list))}</span></h2>
-          <div className="table-wrap"><table><thead><tr><th>Peça</th><th>Menor cotação</th><th>Fornecedor escolhido</th><th>Pedido</th><th>Peça</th><th>Ações</th></tr></thead>
-          <tbody>{list.map(row=><tr key={row.part.id}>
-            <td>{row.part.name}</td>
-            <td><span className="price-low">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</span></td>
-            <td>{renderQuoteSelect(row)}</td>
-            <td>{renderOrderSelect(row)}</td>
-            <td><span className="badge">{row.part.status}</span></td>
-            <td><div className="row-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar do estoque</button></div></td>
-          </tr>)}</tbody></table></div>
-        </div>)
-    }
-  </div>
+      if(phone.id!==phoneId) return <div className="modern-page parts-card-page">
+ <Title t="Peças e acessórios" s="Cotações, pedidos e recebimentos organizados por fornecedor."/>
+ <div className="modern-filter-strip parts-modern-filters"><label>Fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label><label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label><button onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista</button></div>
+ {!filteredRows.length&&<div className="modern-empty-card"><ShoppingCart size={30}/><b>Nenhuma peça encontrada</b></div>}
+ <div className="parts-group-list">{viewMode==='supplier'?Object.entries(groupedBySupplier).map(([group,list])=><section className="parts-modern-group" key={group}><header><div><h3>{group}</h3><small>{list.length} peça(s)</small></div><div><strong>{money(totalForRows(list))}</strong>{group!=='Fornecedor não definido'&&<button onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</div></header><div className="parts-modern-items">{list.map(row=><article className="part-modern-row" key={row.part.id}><div className="part-device"><Smartphone size={17}/><div><b>{phoneDisplayName(row.phone)}</b><small>{row.part.name}</small></div></div><div className="part-best"><span>Melhor cotação</span><b>{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</b></div><div className="part-control"><span>Fornecedor</span>{renderQuoteSelect(row)}</div><div className="part-control"><span>Pedido</span>{renderOrderSelect(row)}</div><span className="modern-status-pill">{row.part.status}</span><div className="part-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar</button></div></article>)}</div></section>):Object.entries(groupedByPhone).map(([group,list])=><section className="parts-modern-group" key={group}><header><div><h3>{group}</h3><small>{list.length} peça(s)</small></div><strong>{money(totalForRows(list))}</strong></header><div className="parts-modern-items">{list.map(row=><article className="part-modern-row" key={row.part.id}><div className="part-device"><Package size={17}/><div><b>{row.part.name}</b><small>{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</small></div></div><div className="part-control"><span>Fornecedor</span>{renderQuoteSelect(row)}</div><div className="part-control"><span>Pedido</span>{renderOrderSelect(row)}</div><span className="modern-status-pill">{row.part.status}</span><div className="part-actions"><button onClick={()=>receiveIntoInventory(row)}>Receber</button><button onClick={()=>installFromInventory(row)}>Instalar</button></div></article>)}</div></section>)}</div>
+</div>
 }
 
 
@@ -1300,23 +1107,11 @@ function Ads(){
  const notPublishedTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>!['published','pending'].includes(x.ad.publications[p.id]?.status||'not_published')).length,0);
 
  return <div className="ads-v11 ads-premium-page">
-  <div className="ads-v11-head">
-   <div className="ads-page-heading"><span className="ads-heading-icon"><FileText/></span><div><h1>Anúncios</h1><p>Gerencie e acompanhe todos os anúncios dos seus aparelhos.</p></div></div>
-   <div className="ads-v11-actions">
-    {view!=='matrix'&&<button onClick={()=>setView('matrix')}>Visão geral</button>}
-    <button className={view==='templates'?'active':''} onClick={()=>setView('templates')}>Modelos</button>
-    <button className={view==='library'?'active':''} onClick={()=>setView('library')}>Biblioteca</button>
-    <button className="primary" onClick={()=>setView('editor')}><Plus/> Novo anúncio</button>
-   </div>
+  <div className="ads-v11-head ads-clean-head">
+   <div><span className="ads-section-kicker">GESTÃO DE PUBLICAÇÕES</span><h1>Anúncios</h1><p>Acompanhe cada aparelho e o status das publicações em um só lugar.</p></div>
+   <div className="ads-v11-actions">{view!=='matrix'&&<button onClick={()=>setView('matrix')}>Visão geral</button>}<button className={view==='templates'?'active':''} onClick={()=>setView('templates')}>Modelos</button><button className={view==='library'?'active':''} onClick={()=>setView('library')}>Biblioteca</button><button className="primary" onClick={()=>setView('editor')}><Plus/> Novo anúncio</button></div>
   </div>
-
-  <div className="ads-v11-metrics ads-premium-metrics">
-   <div className="metric-blue"><span>Total de anúncios</span><strong>{allAds.length}</strong><small>aparelhos anunciados</small></div>
-   <div className="metric-green"><span>Publicado(s)</span><strong>{publishedTotal}</strong><small>{publicationRate}% do possível</small></div>
-   <div className="metric-amber"><span>Pendente(s)</span><strong>{pendingTotal}</strong><small>aguardando publicação</small></div>
-   <div className="metric-purple"><span>Não publicado(s)</span><strong>{notPublishedTotal}</strong><small>canais disponíveis</small></div>
-   <div className="metric-slate"><span>Aguardando anúncio</span><strong>{noAds.length}</strong><small>aparelhos</small></div>
-  </div>
+  <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
 
   {view==='matrix'&&<>
    <div className="ads-modern-toolbar">
@@ -1822,7 +1617,7 @@ function ReportsPage(){
 
  const channelSummary={};sales.forEach(p=>{const key=p.sale.saleChannel||'Não informado';channelSummary[key]=(channelSummary[key]||0)+saleNetValue(p.sale)});
  const bankSummary={};sales.forEach(p=>{const bank=load(BKEY).find(b=>b.id===p.sale.bankAccountId)?.name||'Não informado';bankSummary[bank]=(bankSummary[bank]||0)+saleReceivedValue(p.sale)});
- return <div className="reports-page"><Title t="Relatórios" s="Vendas, compras, fornecedores, etiquetas e previsão."/>
+ return <div className="reports-page modern-page reports-modern-page"><Title t="Relatórios" s="Vendas, compras, fornecedores, etiquetas e previsão."/>
  <div className="sales-totals"><div><span>Previsão 7 dias</span><strong>{money(forecast7)}</strong></div><div><span>Previsão 30 dias</span><strong>{money(forecast30)}</strong></div><div><span>Estoque previsto</span><strong>{money(active.reduce((a,p)=>a+Number(p.expected||0),0))}</strong></div></div>
  <div className="report-grid">
   <section className="panel"><h2>Desempenho por perfil</h2>{!profileData.some(x=>x.qty)?<Empty text="Sem vendas por perfil."/>:<div className="report-list">{profileData.filter(x=>x.qty).map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>{x.qty} venda(s)</small></div><div><b>{money(x.revenue)}</b><small>Lucro {money(x.profit)}</small></div></div>)}</div>}</section>
@@ -1925,7 +1720,7 @@ function captureCompleteBackup(options={}){
   audit,
   format:BACKUP_FORMAT,
   formatVersion:BACKUP_FORMAT_VERSION,
-  appVersion:'5.6.0',
+  appVersion:'5.7.0',
   exportedAt:new Date().toISOString(),
   storage,
   summary:{
