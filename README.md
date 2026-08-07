@@ -725,3 +725,16 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Modais genéricos também foram reduzidos.
 - Sidebar, filtros, tabs e painéis seguem a nova escala visual.
 - Responsividade mobile preserva área mínima de toque.
+
+## v5.5.0 — Modern UI
+
+- Página de Anúncios deixa de usar matriz/tabela como visão principal.
+- Cada anúncio agora é um card horizontal com aparelho, canais, status, progresso e ações.
+- Status de publicação continua editável diretamente clicando no canal.
+- Indicador de progresso circular.
+- Aparelhos sem anúncio viram uma barra discreta e um drawer lateral.
+- Painel de detalhes do anúncio preservado.
+- Editor, Modelos e Biblioteca preservados.
+- Tabelas do restante do sistema passam a ter aparência de linhas/cards, com menos grades e divisórias.
+- Painéis, formulários, modais, configurações e métricas recebem identidade visual unificada.
+- Responsividade adaptada para desktop, tablet e celular.

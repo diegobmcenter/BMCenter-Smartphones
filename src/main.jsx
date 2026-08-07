@@ -94,7 +94,7 @@ function App({cloudUser,onCloudLogout}){
   const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
   if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
   if(config.autoSnapshot!==false){
-   const version='5.4.0',last=localStorage.getItem('bmcenter-last-version');
+   const version='5.5.0',last=localStorage.getItem('bmcenter-last-version');
    if(last!==version){
     try{
      const snapshots=normalizeSnapshotList(load(SNAPKEY));
@@ -170,7 +170,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.4.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.5.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -268,7 +268,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.4.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.5.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -1180,6 +1180,7 @@ function Ads(){
  const[query,setQuery]=useState('');
  const[selectedPhone,setSelectedPhone]=useState('');
  const[selectedAd,setSelectedAd]=useState('');
+ const[showNoAds,setShowNoAds]=useState(false);
  const[templateId,setTemplateId]=useState('');
  const[editTemplate,setEditTemplate]=useState(null);
  const profiles=load(PKEY);
@@ -1316,74 +1317,96 @@ function Ads(){
    <div><span>Sem anúncio</span><strong>{noAds.length}</strong><small>aparelhos</small></div>
   </div>
 
-  {view==='matrix'&&<div className={`ads-v11-layout ${phone&&ad?'with-detail':''}`}>
-   <main className="ads-v11-main">
-    <div className="ads-v11-toolbar">
-     <label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho, anúncio ou modelo..."/></label>
-     <span>{filtered.length} anúncio(s)</span>
-    </div>
+  {view==='matrix'&&<>
+   <div className="ads-modern-toolbar">
+    <label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar por aparelho, anúncio ou modelo..."/></label>
+    <button><Settings size={15}/> Filtros</button>
+    <select aria-label="Ordenar anúncios"><option>Mais recentes</option><option>Nome do aparelho</option><option>Maior valor</option><option>Menor valor</option></select>
+   </div>
 
-    <div className="ads-v11-table-wrap">
-     <table className="ads-v11-table">
-      <thead><tr>
-       <th className="device-col">Aparelho / anúncio</th>
-       <th>Valor</th>
-       {profiles.map(p=><th key={p.id}><span className="profile-avatar">{String(p.name||'?').slice(0,2).toUpperCase()}</span><small>{p.name}</small></th>)}
-       <th>Progresso</th>
-      </tr></thead>
-      <tbody>{filtered.map(({phone,ad})=>{
-       const published=profiles.filter(p=>ad.publications[p.id]?.status==='published').length;
-       const pct=profiles.length?Math.round(published/profiles.length*100):0;
-       return <tr className={selectedAd===ad.id?'selected':''} key={ad.id} onClick={()=>{setSelectedPhone(phone.id);setSelectedAd(ad.id)}}>
-        <td><div className="ads-device-cell">
-         <div className="ads-device-thumb">{phone.photos?.[0]?<img src={phone.photos[0].dataUrl}/>:<Smartphone size={21}/>}</div>
-         <div><b>{phone.brand} {phone.model}</b><span>{phone.code} · {ad.name||'Anúncio'}</span><small>{ad.title||'Título ainda não preparado'}</small></div>
-        </div></td>
-        <td><strong className="ads-price">{money(phone.expected)}</strong></td>
-        {profiles.map(profile=>{
-         const pub=ad.publications[profile.id]||{status:'not_published'};
-         return <td className={`ads-status-cell ${pub.status}`} key={profile.id} onClick={e=>{e.stopPropagation();cyclePublication(phone.id,ad.id,profile.id)}}>
-          <button title="Clique para alterar">
-           <b>{publicationIcon(pub.status)}</b>
-           <span>{publicationLabel(pub.status)}</span>
-           {pub.date&&<small>{formatDate(pub.date)}</small>}
+   <div className={`ads-modern-layout ${phone&&ad?'with-detail':''}`}>
+    <main className="ads-modern-list">
+     {filtered.map(({phone:itemPhone,ad:itemAd})=>{
+      const published=profiles.filter(p=>itemAd.publications[p.id]?.status==='published').length;
+      const pct=profiles.length?Math.round(published/profiles.length*100):0;
+      const updated=itemAd.updatedAt||itemPhone.lastActivityAt||itemPhone.date;
+      return <article className={`ads-modern-card ${selectedAd===itemAd.id?'selected':''}`} key={itemAd.id}>
+       <div className="ads-modern-device">
+        <div className="ads-modern-thumb">{itemPhone.photos?.[0]?<img src={itemPhone.photos[0].dataUrl} alt=""/>:<Smartphone size={28}/>}</div>
+        <div className="ads-modern-device-copy">
+         <div className="ads-modern-name"><h3>{itemPhone.brand} {itemPhone.model}</h3>{showProductCode()&&itemPhone.code&&<span>{itemPhone.code}</span>}</div>
+         <p>{[itemPhone.storage,itemPhone.color,itemPhone.ram&&`${itemPhone.ram} RAM`].filter(Boolean).join(' · ')||'Sem detalhes cadastrados'}</p>
+         <strong>{money(itemPhone.expected)}</strong>
+         <small>{updated?`Atualizado em ${new Date(updated).toLocaleString('pt-BR')}`:'Sem atualização registrada'}</small>
+        </div>
+       </div>
+
+       <div className="ads-modern-channels">
+        <small className="ads-modern-label">Canais de anúncio</small>
+        <div className="ads-channel-list">
+         {profiles.map((profile,index)=>{
+          const pub=itemAd.publications[profile.id]||{status:'not_published'};
+          return <button className={`ads-channel-row ${pub.status}`} key={profile.id} onClick={()=>cyclePublication(itemPhone.id,itemAd.id,profile.id)} title="Clique para alterar o status">
+           <span className="ads-channel-avatar">{String(profile.name||'?').slice(0,2).toUpperCase()}</span>
+           <b>{profile.name}</b>
+           <em>{publicationLabel(pub.status)}</em>
+           <small>{pub.date?formatDate(pub.date):'—'}</small>
           </button>
-         </td>
-        })}
-        <td><div className="ads-progress"><b>{published}/{profiles.length}</b><div><i style={{width:`${pct}%`}}/></div><small>{pct}%</small></div></td>
-       </tr>
-      })}</tbody>
-     </table>
-     {!filtered.length&&<Empty text="Nenhum anúncio encontrado."/>}
-    </div>
+         })}
+         {!profiles.length&&<span className="ads-channel-empty">Cadastre perfis para controlar as publicações.</span>}
+        </div>
+       </div>
 
-    {!!noAds.length&&<section className="ads-v11-noads">
-     <div><h2>Aparelhos sem anúncio</h2><span>{noAds.length}</span></div>
-     <div className="ads-v11-noads-grid">{noAds.map(p=><button key={p.id} onClick={()=>createAd(p.id)}>
-      <div>{p.photos?.[0]?<img src={p.photos[0].dataUrl}/>:<Smartphone size={22}/>}</div>
-      <b>{p.brand} {p.model}</b><small>{p.code}</small><i>+</i>
-     </button>)}</div>
-    </section>}
-   </main>
+       <div className="ads-modern-progress-area">
+        <small className="ads-modern-label">Progresso</small>
+        <div className="ads-progress-ring" style={{'--progress':`${pct*3.6}deg`}}>
+         <div><b>{published}/{profiles.length}</b><span>{pct}%</span></div>
+        </div>
+       </div>
 
-   {phone&&ad&&<aside className="ads-v11-detail">
-    <div className="ads-detail-head"><div><h2>{phone.brand} {phone.model}</h2><span>{phone.code}</span></div><button onClick={()=>{setSelectedPhone('');setSelectedAd('')}}><X size={18}/></button></div>
-    <div className="ads-detail-device">
-     <div>{phone.photos?.[0]?<img src={phone.photos[0].dataUrl}/>:<Smartphone size={32}/>}</div>
-     <span>{phone.color} · {phone.storage}</span><strong>{money(phone.expected)}</strong>
-    </div>
-    <div className="ads-detail-block"><small>Anúncio</small><b>{ad.name||'Sem nome'}</b><span>{ad.title||'Título ainda não preparado'}</span></div>
-    <div className="ads-detail-block"><small>Publicado em</small>{profiles.filter(p=>ad.publications[p.id]?.status==='published').map(p=><div className="ads-detail-profile" key={p.id}><span>{String(p.name).slice(0,2).toUpperCase()}</span><b>{p.name}</b><small>{formatDate(ad.publications[p.id]?.date)}</small></div>)}{!profiles.some(p=>ad.publications[p.id]?.status==='published')&&<em>Nenhum perfil.</em>}</div>
-    <div className="ads-detail-block"><small>Pendente / não publicado</small>{profiles.filter(p=>ad.publications[p.id]?.status!=='published').map(p=><div className="ads-detail-profile muted" key={p.id}><span>{String(p.name).slice(0,2).toUpperCase()}</span><b>{p.name}</b><small>{publicationLabel(ad.publications[p.id]?.status||'not_published')}</small></div>)}</div>
-    <div className="ads-detail-actions">
-     <button className="primary" onClick={()=>setView('editor')}>Editar anúncio</button>
-     <button onClick={()=>markAll(phone.id,ad.id)}>Marcar todos</button>
-     <button onClick={()=>duplicateAd(phone.id,ad.id)}>Duplicar</button>
-     <button className="danger" onClick={deleteAd}>Excluir anúncio</button>
-    </div>
-   </aside>}
+       <div className="ads-modern-actions">
+        <button className="ads-modern-edit" onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id);setView('editor')}}>Editar</button>
+        <button className="ads-modern-more" aria-label="Mais opções" onClick={()=>{setSelectedPhone(itemPhone.id);setSelectedAd(itemAd.id)}}>•••</button>
+       </div>
+      </article>
+     })}
+     {!filtered.length&&<div className="ads-modern-empty"><Search size={28}/><b>Nenhum anúncio encontrado</b><span>Tente alterar a pesquisa ou crie um novo anúncio.</span></div>}
+
+     {!!noAds.length&&<button className="ads-awaiting-bar" onClick={()=>setShowNoAds(true)}>
+      <span className="ads-awaiting-icon"><Smartphone size={18}/></span>
+      <span><b>{noAds.length} aparelho{noAds.length!==1?'s':''} aguardando anúncio</b><small>Existem aparelhos sem anúncios ativos.</small></span>
+      <strong>Ver aparelhos</strong>
+     </button>}
+    </main>
+
+    {phone&&ad&&<aside className="ads-modern-detail">
+     <div className="ads-detail-head"><div><h2>{phone.brand} {phone.model}</h2>{showProductCode()&&<span>{phone.code}</span>}</div><button onClick={()=>{setSelectedPhone('');setSelectedAd('')}}><X size={17}/></button></div>
+     <div className="ads-detail-device">
+      <div>{phone.photos?.[0]?<img src={phone.photos[0].dataUrl}/>:<Smartphone size={28}/>}</div>
+      <span>{[phone.color,phone.storage].filter(Boolean).join(' · ')}</span><strong>{money(phone.expected)}</strong>
+     </div>
+     <div className="ads-detail-block"><small>Anúncio</small><b>{ad.name||'Sem nome'}</b><span>{ad.title||'Título ainda não preparado'}</span></div>
+     <div className="ads-detail-block"><small>Publicações</small>{profiles.map(p=>{const pub=ad.publications[p.id]||{status:'not_published'};return <div className={`ads-detail-profile ${pub.status!=='published'?'muted':''}`} key={p.id}><span>{String(p.name).slice(0,2).toUpperCase()}</span><b>{p.name}</b><small>{publicationLabel(pub.status)}</small></div>})}</div>
+     <div className="ads-detail-actions">
+      <button className="primary" onClick={()=>setView('editor')}>Editar anúncio</button>
+      <button onClick={()=>markAll(phone.id,ad.id)}>Marcar todos</button>
+      <button onClick={()=>duplicateAd(phone.id,ad.id)}>Duplicar</button>
+      <button className="danger" onClick={deleteAd}>Excluir</button>
+     </div>
+    </aside>}
+   </div>
+  </>}
+
+  {showNoAds&&<div className="ads-drawer-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setShowNoAds(false)}>
+   <aside className="ads-awaiting-drawer">
+    <header><div><h2>Aguardando anúncio</h2><p>{noAds.length} aparelho{noAds.length!==1?'s':''} sem anúncio cadastrado.</p></div><button onClick={()=>setShowNoAds(false)}><X/></button></header>
+    <div className="ads-awaiting-list">{noAds.map(p=><article key={p.id}>
+     <div className="ads-awaiting-thumb">{p.photos?.[0]?<img src={p.photos[0].dataUrl} alt=""/>:<Smartphone size={22}/>}</div>
+     <div><b>{p.brand} {p.model}</b><small>{[p.storage,p.color].filter(Boolean).join(' · ')||'Sem detalhes'}</small><strong>{money(p.expected)}</strong></div>
+     <button className="primary" onClick={()=>{createAd(p.id);setShowNoAds(false)}}><Plus/> Criar anúncio</button>
+    </article>)}</div>
+   </aside>
   </div>}
-
   {view==='editor'&&<div className="ads-v11-editor">
    <section>
     <label>Aparelho<select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setSelectedAd('')}}><option value="">Escolha um aparelho</option>{phones.filter(p=>p.status!=='Vendido').map(p=><option value={p.id} key={p.id}>{phoneDisplayName(p)}</option>)}</select></label>
