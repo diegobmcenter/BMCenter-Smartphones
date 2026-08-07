@@ -4,6 +4,57 @@
 .v102-app *{box-sizing:border-box}.v102-app button,.v102-app input,.v102-app select,.v102-app textarea{font:inherit}.v102-app button{cursor:pointer}
 body:has(.v102-app){margin:0;background:#eef2f6!important}.v102-app.theme-dark,.v102-app.theme-dark .v102-stage,.v102-app.theme-dark .v102-main,.v102-app.theme-dark .v102-route{background:#101317!important}
 
+
+/* ================================================================
+   ROOT RESET — v10.2.1
+   styles.css has a historical global `header { background:#fff; ... }`
+   rule. Never let legacy element selectors style V102 component headers.
+   :where() keeps specificity at zero so the component rules below remain
+   free to define their intended layout/background.
+   ================================================================ */
+:where(.v102-app) header{
+  height:auto;
+  min-height:0;
+  padding:0;
+  position:static;
+  top:auto;
+  z-index:auto;
+  display:block;
+  justify-content:initial;
+  align-items:initial;
+  background:transparent;
+  border:0;
+  border-bottom:0;
+  box-shadow:none;
+}
+:where(.v102-app) header span{
+  font-size:inherit;
+  color:inherit;
+}
+
+/* The application canvas, not only its inner route, owns the theme.
+   This prevents a light body/html background from ever appearing below
+   a short dark page. */
+html:has(.v102-app.theme-dark),
+body:has(.v102-app.theme-dark){
+  background:#101317!important;
+  color-scheme:dark;
+}
+html:has(.v102-app.theme-light),
+body:has(.v102-app.theme-light){
+  background:#eef2f6!important;
+  color-scheme:light;
+}
+.v102-app.theme-dark,
+.v102-app.theme-dark .v102-stage,
+.v102-app.theme-dark .v102-main,
+.v102-app.theme-dark .v102-route,
+.v102-app.theme-dark .v102-page,
+.v102-app.theme-dark .v102-publications,
+.v102-app.theme-dark .v102-settings-page{
+  background:var(--bg)!important;
+}
+
 /* Shell: no duplicate search, no sidebar theme selector, no visible scrollbar. */
 .v102-sidebar{position:sticky;top:0;height:100vh;min-height:0;display:flex;flex-direction:column;padding:18px 14px 14px;background:var(--sidebar);border-right:1px solid var(--line);z-index:120;overflow:hidden}
 .v102-brand-row{display:flex;align-items:center;gap:8px;padding:0 4px 18px}.v102-brand{display:flex;align-items:center;gap:11px;flex:1;border:0;background:transparent;color:var(--text);text-align:left}.v102-mark{position:relative;width:36px;height:36px;flex:0 0 36px}.v102-mark i{position:absolute;left:3px;height:6px;border-radius:99px;background:var(--accent);transform:rotate(-14deg)}.v102-mark i:nth-child(1){top:5px;width:29px}.v102-mark i:nth-child(2){top:14px;width:24px}.v102-mark i:nth-child(3){top:23px;width:18px}.v102-brand b{display:block;font-size:15px}.v102-brand small{display:block;margin-top:2px;font-size:8px;letter-spacing:1.4px;color:var(--faint)}.v102-close{display:none}
@@ -67,3 +118,81 @@ body:has(.v102-app){margin:0;background:#eef2f6!important}.v102-app.theme-dark,.
 .v102-app .back{background:rgba(8,12,18,.52)!important;backdrop-filter:blur(5px)!important}.v102-app .modal{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:0 24px 70px rgba(0,0,0,.22)!important}.v102-app .modalhead{position:sticky;top:0;z-index:3;background:var(--surface)!important;border-bottom:1px solid var(--line)!important}.v102-app .modalbody{background:var(--surface)!important}.v102-app .modal input,.v102-app .modal select,.v102-app .modal textarea{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--line)!important}.v102-app .modal .parts,.v102-app .modal .quote-box,.v102-app .modal .timeline-item,.v102-app .modal .label-preview{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--line)!important}
 @media(max-width:980px){.v102-route .facebook-profile-grid,.v102-route .profile-analytics-grid,.v102-route .entity-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.v102-route .quality-list{grid-template-columns:1fr!important}.v102-route .data-actions-grid{grid-template-columns:1fr 1fr!important}}
 @media(max-width:720px){.v102-route .facebook-profile-page,.v102-route .profile-analytics-page,.v102-route .modern-page,.v102-route .v10-reports-page,.v102-route .ads-v11{padding:18px 12px 28px!important}.v102-route .facebook-profile-grid,.v102-route .profile-analytics-grid,.v102-route .entity-card-grid,.v102-route .v10-report-grid,.v102-route .data-actions-grid,.v102-route .complete-backup-grid{grid-template-columns:1fr!important}.v102-route .quality-metrics{grid-template-columns:repeat(2,1fr)!important}.v102-route .ads-summary-strip{grid-template-columns:repeat(2,1fr)!important}}
+
+
+/* ================================================================
+   DARK THEME REGRESSION GUARD
+   No legacy light page surface is allowed to leak into dark mode.
+   Explicit semantic exceptions (inputs/previews/statuses) keep their
+   component styling through more specific V102 rules.
+   ================================================================ */
+.v102-app.theme-dark .v102-route :is(
+  .title,
+  .panel,
+  .settings-card,
+  .dashboard-panel,
+  .entity-modern-card,
+  .facebook-profile-card,
+  .parts-modern-group,
+  .backup-card,
+  .backup-section,
+  .backup-integrity-banner,
+  .cloud-backup-panel,
+  .complete-backup-grid,
+  .data-action-card,
+  .report-grid,
+  .report-row,
+  .filter-bar,
+  .timeline-item,
+  .diagnostic-card,
+  .template-card,
+  .ad-side-panel,
+  .ad-legend,
+  .phone-ad-summary
+){
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.v102-app.theme-dark .v102-route :is(
+  .panel,
+  .settings-card,
+  .dashboard-panel,
+  .entity-modern-card,
+  .facebook-profile-card,
+  .parts-modern-group,
+  .backup-card,
+  .backup-section,
+  .backup-integrity-banner,
+  .cloud-backup-panel,
+  .data-action-card,
+  .report-row,
+  .filter-bar,
+  .timeline-item,
+  .diagnostic-card,
+  .template-card,
+  .ad-side-panel,
+  .ad-legend,
+  .phone-ad-summary
+){
+  background:var(--surface)!important;
+}
+.v102-app.theme-dark .v102-route :is(
+  .empty,
+  .empty-state,
+  .filter-count
+){
+  background:var(--surface2)!important;
+  color:var(--muted)!important;
+}
+/* Inline white declarations from legacy JSX are also neutralized. */
+.v102-app.theme-dark .v102-route [style*="background-color: white"],
+.v102-app.theme-dark .v102-route [style*="background-color:white"],
+.v102-app.theme-dark .v102-route [style*="background-color: #fff"],
+.v102-app.theme-dark .v102-route [style*="background-color:#fff"],
+.v102-app.theme-dark .v102-route [style*="background: white"],
+.v102-app.theme-dark .v102-route [style*="background:white"],
+.v102-app.theme-dark .v102-route [style*="background: #fff"],
+.v102-app.theme-dark .v102-route [style*="background:#fff"]{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+}
