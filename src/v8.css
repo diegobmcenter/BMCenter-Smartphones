@@ -825,3 +825,230 @@ html,body,#root{background:var(--8-bg)!important;color:var(--8-text)!important}
   .v8-route input,.v8-route select,.v8-route textarea{font-size:11px!important}
   .custom-theme-actions{display:grid}
 }
+
+
+/* =====================================================================
+   BMCenter v8.0.7 — BALANCED / LOW VISUAL LOAD
+   A calmer default product palette focused on reading.
+   ===================================================================== */
+
+/* One neutral visual plane. Surfaces differ mostly by luminance, not hue. */
+.v8-shell{
+  --8-red:#e27b80;
+  --8-amber:#d5a756;
+  --8-green:#63c68c;
+}
+.v8-route{
+  background:var(--8-bg)!important;
+}
+.v8-page{
+  color:var(--8-text)!important;
+}
+
+/* Sidebar: neutral by default, accent only as a navigation cue. */
+.v8-rail-nav button{
+  color:color-mix(in srgb,var(--8-muted) 78%,transparent)!important;
+  background:transparent!important;
+}
+.v8-rail-nav button:hover{
+  background:color-mix(in srgb,var(--8-card, var(--8-surface2)) 78%,transparent)!important;
+  color:var(--8-text)!important;
+}
+.v8-rail-nav button.active{
+  background:var(--8-surface2)!important;
+  color:var(--8-text)!important;
+  box-shadow:inset 2px 0 0 var(--8-accent)!important;
+}
+.v8-rail-nav button.active span{
+  color:var(--8-text)!important;
+}
+.v8-rail-nav em{
+  background:var(--8-accent)!important;
+}
+
+/* Header and page title: remove tinted/gradient blocks. */
+.v8-page-intro,
+.v8-route .title,
+.v8-route .page-title,
+.v8-route .section-title-bar{
+  background:var(--8-surface)!important;
+  border:1px solid var(--8-line)!important;
+  box-shadow:none!important;
+}
+.v8-page-intro>div:first-child>span,
+.v8-eyebrow{
+  color:var(--8-muted)!important;
+}
+.v8-page-intro h1{
+  color:var(--8-text)!important;
+}
+.v8-page-intro p{
+  color:var(--8-muted)!important;
+}
+
+/* Primary actions: one calm blue. No blue gradient. */
+.v8-route button.primary,
+.v8-route .primary{
+  background:var(--8-accent)!important;
+  color:#ffffff!important;
+  border-color:transparent!important;
+}
+.v8-route button.primary:hover,
+.v8-route .primary:hover{
+  background:color-mix(in srgb,var(--8-accent) 86%,white 14%)!important;
+}
+
+/* Secondary controls look neutral. */
+.v8-route button:not(.primary):not(.danger){
+  background:var(--8-surface2)!important;
+  color:var(--8-text)!important;
+  border-color:var(--8-line)!important;
+}
+.v8-route button:not(.primary):not(.danger):hover{
+  background:var(--8-surface3)!important;
+}
+
+/* Dashboard: remove purple/blue decorative emphasis. */
+.v8-bento>article{
+  background:var(--8-surface)!important;
+  border-color:var(--8-line)!important;
+}
+.v8-bento-primary{
+  background:var(--8-surface)!important;
+}
+.v8-bento-icon,
+.v8-bento-compact>svg{
+  background:var(--8-surface2)!important;
+  color:var(--8-muted)!important;
+}
+.v8-bento-spark i{
+  background:var(--8-accent)!important;
+  opacity:.42!important;
+}
+.v8-bento-spark i:nth-child(5),
+.v8-bento-spark i:nth-child(6){
+  opacity:.62!important;
+}
+.v8-flow-list i,
+.v8-progress-cell>i{
+  background:var(--8-surface3)!important;
+}
+.v8-flow-list u,
+.v8-progress-cell u{
+  background:var(--8-accent)!important;
+}
+.v8-bento-profit svg{
+  color:var(--8-green)!important;
+}
+
+/* Today: all group headers neutral. Color remains only on small icon. */
+.v8-focus-group>header,
+.v8-focus-group.tone-blue>header,
+.v8-focus-group.tone-amber>header,
+.v8-focus-group.tone-violet>header,
+.v8-focus-group.tone-green>header{
+  background:var(--8-surface2)!important;
+}
+.v8-focus-icon{
+  background:var(--8-surface3)!important;
+}
+.tone-blue .v8-focus-icon,
+.tone-violet .v8-focus-icon{color:var(--8-accent)!important}
+.tone-amber .v8-focus-icon{color:var(--8-amber)!important}
+.tone-green .v8-focus-icon{color:var(--8-green)!important}
+
+/* Inventory and publications: neutral headers instead of blue bands. */
+.v8-list-caption,
+.v8-publication-surface>header,
+.v8-route table thead,
+.v8-route table thead tr,
+.v8-route table thead th,
+.v8-route .table-head,
+.v8-route .list-head{
+  background:var(--8-surface2)!important;
+  color:var(--8-muted)!important;
+  border-color:var(--8-line)!important;
+}
+.v8-inventory-surface,
+.v8-publication-surface,
+.v8-batch-surface{
+  background:var(--8-surface)!important;
+  border-color:var(--8-line)!important;
+}
+.v8-inventory-row:hover,
+.v8-publication-row:hover{
+  background:var(--8-surface2)!important;
+}
+
+/* Keep finance colors semantic and restrained. */
+.v8-finance-cell .good{color:var(--8-green)!important}
+.v8-finance-cell .bad{color:var(--8-red)!important}
+
+/* Profile/channel circles no longer shout blue everywhere. */
+.v8-channel-strip i,
+.v8-publish-cell i,
+.v8-profile-avatar,
+.v8-route .avatar{
+  background:var(--8-surface3)!important;
+  color:var(--8-muted)!important;
+}
+
+/* Settings cards and presets also neutral. */
+.v8-route-settings .settings-top-tabs button.active{
+  background:var(--8-surface3)!important;
+  border-color:var(--8-line2)!important;
+  color:var(--8-text)!important;
+}
+.theme-preset-grid button.selected{
+  background:var(--8-surface3)!important;
+  border-color:var(--8-accent)!important;
+}
+.global-theme-success{
+  background:var(--8-surface2)!important;
+  border-color:var(--8-line)!important;
+}
+
+/* Softer borders everywhere: separation without visual noise. */
+.v8-route .panel,
+.v8-route article,
+.v8-route .card,
+.v8-route .settings-card,
+.v8-route .dashboard-panel,
+.v8-inventory-surface,
+.v8-publication-surface,
+.v8-focus-group,
+.v8-alert-stream{
+  border-color:var(--8-line)!important;
+  box-shadow:none!important;
+}
+
+/* Inputs: slightly lighter than the page, not black holes. */
+.v8-route input,
+.v8-route select,
+.v8-route textarea,
+.v8-wide-search,
+.v8-publication-tools label,
+.v8-global-search{
+  background:var(--8-surface2)!important;
+  border-color:var(--8-line)!important;
+  color:var(--8-text)!important;
+}
+
+/* Less intense command/top bar. */
+.v8-commandbar{
+  background:color-mix(in srgb,var(--8-bg) 96%,transparent)!important;
+}
+.v8-bell,
+.v8-version{
+  background:var(--8-surface2)!important;
+}
+
+/* Readability: medium weight instead of excessive bold contrast. */
+.v8-route h1,.v8-route h2,.v8-route h3{
+  font-weight:680!important;
+}
+.v8-row-title b,
+.v8-publication-device b,
+.v8-focus-items b{
+  font-weight:650!important;
+}

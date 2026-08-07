@@ -901,3 +901,13 @@ Nova aparência baseada em módulos com composições diferentes:
 - Novos temas: Grafite, Oceano, Índigo, Floresta e Vinho.
 - Editor Personalizado agora usa um rascunho de cores próprio e botão “Aplicar personalizado”.
 - Campos HEX incompletos não quebram mais o tema enquanto estão sendo digitados.
+
+## v8.0.7 — Tema Equilíbrio
+
+- Novo tema padrão Equilíbrio, aplicado automaticamente uma única vez nesta versão.
+- Paleta neutra escura, com menos saturação e maior foco em leitura.
+- Azul suave restrito a ações e navegação.
+- Verde/vermelho usados apenas como cores semânticas.
+- Cabeçalhos, tabelas, filtros, cards e Dashboard neutralizados.
+- Gradientes decorativos e excesso de superfícies azuis reduzidos.
+- Restaurar padrões agora retorna ao tema Equilíbrio.

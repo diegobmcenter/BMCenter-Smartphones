@@ -11,7 +11,7 @@ import SmartphonesV8 from './v8/pages/SmartphonesV8.jsx';
 import AdsV8 from './v8/pages/AdsV8.jsx';
 import BatchV8 from './v8/pages/BatchV8.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';import'./v8.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='8.0.6';
+const APP_VERSION='8.0.7';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -91,6 +91,12 @@ function App({cloudUser,onCloudLogout}){
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
  useEffect(()=>{document.body.classList.toggle('hide-product-code',config.showProductCode===false)},[config.showProductCode]);
+ useEffect(()=>{
+  if(localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1'){
+   localStorage.setItem(BALANCED_THEME_MIGRATION_KEY,'1');
+   save(CFGKEY,config);
+  }
+ },[]);
  useEffect(()=>{
   if(!mobileMenuOpen)return;
   requestAnimationFrame(()=>{
@@ -176,7 +182,38 @@ function App({cloudUser,onCloudLogout}){
  </AppFrameV8>
 }
 
-function loadSystemConfig(){const saved=load(CFGKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow'],...saved}:{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow']}}
+const BALANCED_THEME={
+ accent:'balanced',
+ themeMode:'dark',
+ primaryColor:'#6f8cf6',
+ secondaryColor:'#475a7c',
+ highlightColor:'#58b7a8',
+ surfaceColor:'#0d1117',
+ panelColor:'#121820',
+ cardColor:'#171e27',
+ borderColor:'#2a3440',
+ textColor:'#e8edf3',
+ mutedTextColor:'#98a4b3',
+ borderRadius:11,
+ density:'comfortable',
+ themeTransitions:true,
+ applyThemeGlobally:true
+};
+const BALANCED_THEME_MIGRATION_KEY='bmcenter-balanced-theme-v807';
+
+function loadSystemConfig(){
+ const defaults={
+  homePage:'dashboard',compact:false,autoSnapshot:true,showProductCode:true,
+  dashboardWidgets:['metrics','profiles','workflow'],...BALANCED_THEME
+ };
+ const saved=load(CFGKEY);
+ const merged=saved&&typeof saved==='object'&&!Array.isArray(saved)?{...defaults,...saved}:defaults;
+ // One-time visual migration requested for v8.0.7.
+ if(localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1'){
+  return {...merged,...BALANCED_THEME}
+ }
+ return merged
+}
 
 function showProductCode(){return loadSystemConfig().showProductCode!==false}
 function phoneDisplayName(phone,options={}){
@@ -222,6 +259,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
  const showAll=()=>onChange(Object.fromEntries(menuItems.map(x=>[x.id,true])));
  const hideOptional=()=>{const keep=['dashboard','today','globalSearch','phones','batch','dataQuality','activity','ads','renewals','profileAnalytics','operations','sales'];onChange(Object.fromEntries(menuItems.map(x=>[x.id,keep.includes(x.id)])))};
  const presets={
+  balanced:{accent:'balanced',primaryColor:'#6f8cf6',secondaryColor:'#475a7c',highlightColor:'#58b7a8',surfaceColor:'#0d1117',panelColor:'#121820',cardColor:'#171e27',borderColor:'#2a3440',textColor:'#e8edf3',mutedTextColor:'#98a4b3'},
   blue:{accent:'blue',primaryColor:'#0066ff',secondaryColor:'#0052cc',highlightColor:'#00c896',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8'},
   green:{accent:'green',primaryColor:'#10b981',secondaryColor:'#047857',highlightColor:'#38bdf8',surfaceColor:'#0d1713',panelColor:'#102019',cardColor:'#14271f',borderColor:'#2b4639',textColor:'#f0fdf4',mutedTextColor:'#9fb9ab'},
   purple:{accent:'purple',primaryColor:'#8b5cf6',secondaryColor:'#6d28d9',highlightColor:'#ec4899',surfaceColor:'#161225',panelColor:'#1c1730',cardColor:'#251d3d',borderColor:'#47366d',textColor:'#faf5ff',mutedTextColor:'#b6a6cc'},
@@ -236,9 +274,9 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
   forest:{accent:'forest',primaryColor:'#22c55e',secondaryColor:'#166534',highlightColor:'#fbbf24',surfaceColor:'#09140d',panelColor:'#0e1d13',cardColor:'#14291a',borderColor:'#2f5a3b',textColor:'#f0fdf4',mutedTextColor:'#a4c7ae'},
   wine:{accent:'wine',primaryColor:'#e11d48',secondaryColor:'#881337',highlightColor:'#f59e0b',surfaceColor:'#17090f',panelColor:'#220d16',cardColor:'#30121f',borderColor:'#653047',textColor:'#fff1f2',mutedTextColor:'#c9a2ae'}
  };
- const presetLabels={blue:'Azul',green:'Verde',purple:'Roxo',amber:'Âmbar',red:'Vermelho',cyan:'Ciano',pink:'Rosa',orange:'Laranja',graphite:'Grafite',ocean:'Oceano',indigo:'Índigo',forest:'Floresta',wine:'Vinho'};
+ const presetLabels={balanced:'Equilíbrio',blue:'Azul',green:'Verde',purple:'Roxo',amber:'Âmbar',red:'Vermelho',cyan:'Ciano',pink:'Rosa',orange:'Laranja',graphite:'Grafite',ocean:'Oceano',indigo:'Índigo',forest:'Floresta',wine:'Vinho'};
  const applyPreset=id=>onConfigChange({...config,...presets[id],themeMode:'dark',applyThemeGlobally:true});
- const restore=()=>onConfigChange({...config,...presets.blue,themeMode:'dark',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true});
+ const restore=()=>onConfigChange({...config,...presets.balanced,themeMode:'dark',borderRadius:11,density:'comfortable',themeTransitions:true,applyThemeGlobally:true});
  return <>
   <Title t="Configurações" s="Gerencie todas as configurações do sistema."><button className="primary" onClick={restore}><RefreshCw/> Restaurar padrões</button></Title>
   <div className="settings-top-tabs">
@@ -283,7 +321,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.6</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v8.0.7</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
