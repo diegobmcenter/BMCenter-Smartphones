@@ -94,7 +94,7 @@ function App({cloudUser,onCloudLogout}){
   const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
   if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
   if(config.autoSnapshot!==false){
-   const version='5.5.0',last=localStorage.getItem('bmcenter-last-version');
+   const version='5.6.0',last=localStorage.getItem('bmcenter-last-version');
    if(last!==version){
     try{
      const snapshots=normalizeSnapshotList(load(SNAPKEY));
@@ -170,7 +170,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.5.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.6.0</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -268,7 +268,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.5.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.6.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -510,11 +510,11 @@ function BatchActionsPage(){
  }
  const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
  function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
- return <><Title t="Ações em lote" s="Atualize vários aparelhos sem abrir cadastro por cadastro."/>
+ return <div className="modern-module batch-modern"><Title t="Ações em lote" s="Atualize vários aparelhos sem abrir cadastro por cadastro."/>
   <div className="batch-toolbar panel"><div className="batch-filter-row"><label><Search size={16}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo, IMEI ou etiqueta"/></label><label>Status<select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Ativos</option><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label></div>
   <div className="batch-action-grid"><label>Novo status<select value={newStatus} onChange={e=>setNewStatus(e.target.value)}><option value="">Não alterar</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><Field label="Adicionar etiqueta" value={newTag} onChange={setNewTag}/><button className="primary batch-apply" onClick={applyBatch}>Aplicar em {selected.length}</button></div>
   {!!selectedTags.length&&<div className="batch-tags"><span>Remover etiquetas:</span>{selectedTags.map(t=><button key={t} onClick={()=>removeTag(t)}>{t} ×</button>)}</div>}</div>
-  <div className="table-wrap"><table><thead><tr><th><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/></th><th>Aparelho</th><th>Status</th><th>Etiquetas</th><th>Parado</th></tr></thead><tbody>{rows.map(p=><tr className={selected.includes(p.id)?'batch-selected':''} key={p.id}><td><input type="checkbox" checked={selected.includes(p.id)} onChange={()=>toggle(p.id)}/></td><td><b>{phoneDisplayName(p)}</b></td><td>{p.status}</td><td><div className="mini-tags">{(p.tags||[]).map(t=><span key={t}>{t}</span>)}</div></td><td>{daysSince(p.lastActivityAt||p.date)} dias</td></tr>)}</tbody></table>{!rows.length&&<Empty text="Nenhum aparelho encontrado."/>}</div></>
+  <div className="table-wrap"><table><thead><tr><th><input type="checkbox" checked={allSelected} onChange={()=>setSelected(allSelected?[]:rows.map(p=>p.id))}/></th><th>Aparelho</th><th>Status</th><th>Etiquetas</th><th>Parado</th></tr></thead><tbody>{rows.map(p=><tr className={selected.includes(p.id)?'batch-selected':''} key={p.id}><td><input type="checkbox" checked={selected.includes(p.id)} onChange={()=>toggle(p.id)}/></td><td><b>{phoneDisplayName(p)}</b></td><td>{p.status}</td><td><div className="mini-tags">{(p.tags||[]).map(t=><span key={t}>{t}</span>)}</div></td><td>{daysSince(p.lastActivityAt||p.date)} dias</td></tr>)}</tbody></table>{!rows.length&&<Empty text="Nenhum aparelho encontrado."/>}</div></div>
 }
 
 function DataQualityPage(){
@@ -736,8 +736,8 @@ function UniversalTableCustomizer({page}){
   const enhance=()=>{
    scheduled=false;
    const heading=document.querySelector('.global-page h1')?.textContent?.trim()||page;
-   const tables=[...document.querySelectorAll('.global-page .table-wrap table,.global-page .ads-v11-table-wrap table')].filter(t=>!t.classList.contains('configurable-phone-table'));
-   tables.forEach((table,index)=>prepareUniversalTable(table,`${page}-${tableSlug(heading)}-${index}`,key=>setActive({key,table})));
+   const tables=[...document.querySelectorAll('.global-page .table-wrap table')].filter(t=>!t.classList.contains('configurable-phone-table'));
+   tables.forEach(table=>{const signature=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim()).join('-');prepareUniversalTable(table,`${page}-${tableSlug(heading)}-${tableSlug(signature)}`,key=>setActive({key,table}))});
   };
   const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(enhance)}};
   schedule();
@@ -761,10 +761,9 @@ function prepareUniversalTable(table,key,openEditor){
  const layouts=getTableLayouts(),settings=layouts[key]||readUniversalColumns(table);
  if(!layouts[key])saveTableLayouts({...layouts,[key]:settings});
  applyUniversalLayout(table,settings);
- const configHost=table.closest('.table-wrap')||table.parentElement;
- const existingButtons=[...configHost.querySelectorAll(':scope > .universal-table-config-button')];
- existingButtons.slice(1).forEach(button=>button.remove());
- if(!existingButtons.length){const button=document.createElement('button');button.type='button';button.className='universal-table-config-button';button.textContent='⚙ Colunas';button.onclick=e=>{e.preventDefault();e.stopPropagation();openEditor(key)};configHost.appendChild(button)}
+ const pageHost=table.closest('.global-page')||table.parentElement;
+ const existingButton=pageHost.querySelector(':scope > .universal-table-config-button');
+ if(!existingButton){const button=document.createElement('button');button.type='button';button.className='universal-table-config-button universal-page-columns';button.textContent='Personalizar colunas';button.onclick=e=>{e.preventDefault();e.stopPropagation();openEditor(key)};pageHost.appendChild(button)}
  headers.forEach(th=>{
   if(!th.querySelector('.universal-resize-handle')){const handle=document.createElement('i');handle.className='universal-resize-handle';handle.onpointerdown=e=>{if(e.detail>=2){e.preventDefault();e.stopPropagation();autoFitUniversalColumn(table,key,th.dataset.columnId)}else startUniversalResize(e,table,key,th.dataset.columnId)};handle.ondblclick=e=>{e.preventDefault();e.stopPropagation();autoFitUniversalColumn(table,key,th.dataset.columnId)};handle.title='Arraste para redimensionar; dê dois cliques para ajustar ao conteúdo';th.appendChild(handle)}
   th.draggable=true;th.ondragstart=e=>e.dataTransfer.setData('text/universal-column',th.dataset.columnId);th.ondragover=e=>e.preventDefault();th.ondrop=e=>{const from=e.dataTransfer.getData('text/universal-column'),layouts=getTableLayouts(),list=layouts[key]||readUniversalColumns(table),fromIndex=list.findIndex(x=>x.id===from),toIndex=list.findIndex(x=>x.id===th.dataset.columnId);if(fromIndex<0||toIndex<0||fromIndex===toIndex)return;const next=[...list],item=next.splice(fromIndex,1)[0];next.splice(toIndex,0,item);saveTableLayouts({...layouts,[key]:next});applyUniversalLayout(table,next)}
@@ -1013,8 +1012,8 @@ function Parts(){
     <option>Pedido entregue</option>
   </select>;
 
-  return <>
-    <Title t="Comprar peças" s="Controle cotações, pedidos realizados e entregas."/>
+  return <div className="modern-module parts-modern">
+    <Title t="Peças e acessórios" s="Controle cotações, pedidos e recebimentos com uma visão mais simples."/>
     <div className="purchase-toolbar">
       <label>Filtrar por fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label>
       <label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label>
@@ -1053,7 +1052,7 @@ function Parts(){
           </tr>)}</tbody></table></div>
         </div>)
     }
-  </>
+  </div>
 }
 
 
@@ -1298,23 +1297,25 @@ function Ads(){
  const possible=allAds.length*profiles.length;
  const publicationRate=possible?Math.round(publishedTotal/possible*100):0;
  const pendingTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>x.ad.publications[p.id]?.status==='pending').length,0);
+ const notPublishedTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>!['published','pending'].includes(x.ad.publications[p.id]?.status||'not_published')).length,0);
 
- return <div className="ads-v11">
+ return <div className="ads-v11 ads-premium-page">
   <div className="ads-v11-head">
-   <div><h1>Anúncios</h1><p>Controle onde cada aparelho está publicado.</p></div>
+   <div className="ads-page-heading"><span className="ads-heading-icon"><FileText/></span><div><h1>Anúncios</h1><p>Gerencie e acompanhe todos os anúncios dos seus aparelhos.</p></div></div>
    <div className="ads-v11-actions">
+    {view!=='matrix'&&<button onClick={()=>setView('matrix')}>Visão geral</button>}
+    <button className={view==='templates'?'active':''} onClick={()=>setView('templates')}>Modelos</button>
+    <button className={view==='library'?'active':''} onClick={()=>setView('library')}>Biblioteca</button>
     <button className="primary" onClick={()=>setView('editor')}><Plus/> Novo anúncio</button>
-    <button className={view==='matrix'?'active':''} onClick={()=>setView('matrix')}>Visão geral</button>
-    <button className={view==='editor'?'active':''} onClick={()=>setView('editor')}>Editor</button>
-    <button className={view==='templates'?'active':''} onClick={()=>setView('templates')}>Modelos</button><button className={view==='library'?'active':''} onClick={()=>setView('library')}>Biblioteca</button>
    </div>
   </div>
 
-  <div className="ads-v11-metrics">
-   <div><span>Total</span><strong>{allAds.length}</strong><small>anúncios</small></div>
-   <div><span>Publicações</span><strong>{publishedTotal}</strong><small>{publicationRate}% do possível</small></div>
-   <div><span>Pendentes</span><strong>{pendingTotal}</strong><small>aguardando</small></div>
-   <div><span>Sem anúncio</span><strong>{noAds.length}</strong><small>aparelhos</small></div>
+  <div className="ads-v11-metrics ads-premium-metrics">
+   <div className="metric-blue"><span>Total de anúncios</span><strong>{allAds.length}</strong><small>aparelhos anunciados</small></div>
+   <div className="metric-green"><span>Publicado(s)</span><strong>{publishedTotal}</strong><small>{publicationRate}% do possível</small></div>
+   <div className="metric-amber"><span>Pendente(s)</span><strong>{pendingTotal}</strong><small>aguardando publicação</small></div>
+   <div className="metric-purple"><span>Não publicado(s)</span><strong>{notPublishedTotal}</strong><small>canais disponíveis</small></div>
+   <div className="metric-slate"><span>Aguardando anúncio</span><strong>{noAds.length}</strong><small>aparelhos</small></div>
   </div>
 
   {view==='matrix'&&<>
@@ -1924,7 +1925,7 @@ function captureCompleteBackup(options={}){
   audit,
   format:BACKUP_FORMAT,
   formatVersion:BACKUP_FORMAT_VERSION,
-  appVersion:'5.3.2',
+  appVersion:'5.6.0',
   exportedAt:new Date().toISOString(),
   storage,
   summary:{

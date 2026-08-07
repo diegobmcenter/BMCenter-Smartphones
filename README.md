@@ -738,3 +738,15 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Tabelas do restante do sistema passam a ter aparência de linhas/cards, com menos grades e divisórias.
 - Painéis, formulários, modais, configurações e métricas recebem identidade visual unificada.
 - Responsividade adaptada para desktop, tablet e celular.
+
+## v5.6.0 — Premium Product UI
+
+- Redesign visual profundo do BMCenter.
+- Página de Anúncios reconstruída para seguir o mock aprovado: cabeçalho, cinco métricas, busca/filtros, cards largos por anúncio, canais em lista, progresso circular e ações.
+- Cards de anúncio com proporções maiores, tipografia legível e superfícies neutras.
+- Ações em lote recebeu visual de lista operacional em vez de grade pesada.
+- Peças e acessórios usa cartões por fornecedor com tabelas visualmente leves.
+- Relatórios recebeu métricas maiores, rankings e painéis de analytics.
+- Sidebar, topbar, botões, campos, modais, configurações e painéis agora seguem o mesmo design system.
+- Personalização de colunas deixa de repetir botões dentro de cada tabela; um único controle é mostrado por página.
+- Layout responsivo revisado para desktop, tablet e celular.
