@@ -830,3 +830,18 @@ Nova composição visual: shell, navegação, Smartphones, Anúncios e Ações e
 - Criadas views separadas em `src/pages` para Smartphones, Anúncios e Ações em lote.
 - O `main.jsx` mantém a lógica e passa dados/ações para essas views.
 - Novo CSS isolado `v62.css`, carregado por último, referente apenas aos novos componentes.
+
+## v7.0.0 — Nova identidade visual
+
+Esta versão abandona a evolução visual da linha 6.x e cria uma nova interface global:
+- novo AppFrame;
+- nova sidebar;
+- novo topbar;
+- novo canvas;
+- nova hierarquia visual;
+- Smartphones em cards horizontais;
+- Anúncios em cards editoriais;
+- Ações em lote em mini-cards;
+- novo padrão para Dashboard, Hoje, Fornecedores, Contas, Perfis, Peças, Qualidade e Relatórios;
+- novos modais e formulários;
+- nova composição mobile.

@@ -2,7 +2,8 @@ import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}fr
 import{QRCodeSVG}from'qrcode.react';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
-import BatchActionsView from './pages/BatchActionsView.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';
+import BatchActionsView from './pages/BatchActionsView.jsx';
+import AppFrame from './components/v7/AppFrame.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v62.css';import'./v7.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
@@ -97,7 +98,7 @@ function App({cloudUser,onCloudLogout}){
   const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
   if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
   if(config.autoSnapshot!==false){
-   const version='6.2.0',last=localStorage.getItem('bmcenter-last-version');
+   const version='7.0.0',last=localStorage.getItem('bmcenter-last-version');
    if(last!==version){
     try{
      const snapshots=normalizeSnapshotList(load(SNAPKEY));
@@ -146,48 +147,25 @@ function App({cloudUser,onCloudLogout}){
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
- return <div className={`shell global-dark-shell bm-v61-shell theme-${config.accent||'blue'} mode-${config.themeMode||'dark'} ${config.showProductCode===false?'hide-product-code':''}`} style={{'--app-primary':config.primaryColor||'#3b82f6','--app-secondary':config.secondaryColor||'#1e40af','--app-highlight':config.highlightColor||'#10b981','--app-text':config.textColor||'#f8fafc','--app-muted':config.mutedTextColor||'#94a3b8'}}>
-  <aside className={`global-sidebar bm-v61-sidebar ${mobileMenuOpen?'mobile-open':''}`}>
-   <div className="bm-v61-brand" onClick={()=>navigate(config.homePage||'dashboard')}>
-    <div className="brand-mark"><span/><span/><span/></div>
-    <div><b>BM<span>CENTER</span></b><small>SMARTPHONES</small></div>
-   </div>
-   <button className="mobile-sidebar-close" type="button" onClick={()=>setMobileMenuOpen(false)}><X/></button>
-
-   <nav className="sidebar-nav bm-v61-nav">
-    <small className="bm-v61-nav-label">OPERAÇÃO</small>
-    {primaryMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} badge={id==='today'?getOperationalAlerts().length:null} onClick={()=>navigate(id)}/>})}
-    <small className="bm-v61-nav-label data-label">DADOS E SISTEMA</small>
-    {dataMenuIds.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!isVisible(id))return null;return <Nav key={id} icon={item.icon} text={item.text} active={page===id} onClick={()=>navigate(id)}/>})}
-   </nav>
-
-   <div className="bm-v61-account">
-    <div className="user-avatar">DM</div>
-    <div><b>Diego Moraes</b><small>Administrador</small></div>
-    <button title="Sair" onClick={onCloudLogout}><LogOut size={15}/></button>
-   </div>
-  </aside>
-
-  <main className="global-main bm-v61-main">
-   <header className="global-topbar bm-v61-topbar">
-    <div className="bm-v61-top-left">
-     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)}>☰</button>
-     <span className="bm-v61-page-icon">{currentMenu.icon}</span>
-     <div><b>{currentMenu.text}</b><small>BMCenter Smartphones</small></div>
-    </div>
-    <div className="topbar-right">
-     <button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button>
-     <span className="version-pill">v6.2.0</span>
-     <div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div>
-    </div>
-   </header>
-   <section className="page global-page bm-v61-canvas">
-    {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>}
-   </section>
-  </main>
+ return <AppFrame
+  mobileOpen={mobileMenuOpen}
+  setMobileOpen={setMobileMenuOpen}
+  menuItems={menuItems}
+  visibleMenus={visibleMenus}
+  page={page}
+  navigate={navigate}
+  alerts={getOperationalAlerts().length}
+  version="7.0.0"
+  userEmail={cloudUser?.email}
+  onLogout={onCloudLogout}
+ >
+  <section className={`v7-page v7-page-${page}`}>
+   {page==='settings'
+    ?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>
+    :<PageContent page={page}/>}
+  </section>
   <UniversalTableCustomizer page={page}/>
-  {mobileMenuOpen&&<button className="mobile-sidebar-backdrop" onClick={()=>setMobileMenuOpen(false)}/>}
- </div>
+ </AppFrame>
 }
 
 function loadSystemConfig(){const saved=load(CFGKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow'],...saved}:{homePage:'dashboard',compact:false,autoSnapshot:true,accent:'blue',themeMode:'dark',primaryColor:'#3b82f6',secondaryColor:'#1e40af',highlightColor:'#10b981',surfaceColor:'#0f172a',panelColor:'#111827',cardColor:'#1a1f2e',borderColor:'#2a3344',textColor:'#f8fafc',mutedTextColor:'#94a3b8',borderRadius:10,density:'comfortable',themeTransitions:true,applyThemeGlobally:true,showProductCode:true,dashboardWidgets:['metrics','profiles','workflow']}}
@@ -277,7 +255,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v6.2.0</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v7.0.0</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
