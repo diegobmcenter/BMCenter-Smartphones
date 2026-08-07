@@ -785,3 +785,12 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Smartphones em três cards por linha no desktop.
 - Menos bordas, menos altura, mais respiro e hierarquia.
 - Formulário Novo aparelho reduzido e organizado em quatro colunas no desktop.
+
+## v5.10.0
+
+- Menu de três pontos de Smartphones agora fica dentro do próprio card e acompanha a rolagem.
+- Botões Exibição, Cadastro em massa e Novo aparelho aproveitam a largura no mobile.
+- Anúncios recebeu nova estrutura de cards compactos: dados, progresso e perfis sem barras gigantes.
+- Ações em lote usa cards menores em grade.
+- Controles e filtros mobile foram compactados para aproveitar melhor a tela.
+- Redução global de espaçamentos e aparência de grade/planilha.
