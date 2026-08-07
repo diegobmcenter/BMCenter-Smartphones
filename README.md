@@ -794,3 +794,14 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Ações em lote usa cards menores em grade.
 - Controles e filtros mobile foram compactados para aproveitar melhor a tela.
 - Redução global de espaçamentos e aparência de grade/planilha.
+
+## v6.0.0 — Premium UI
+
+Reconstrução visual do sistema com novo design system:
+- Smartphones em cards compactos premium.
+- Anúncios em cards modernos, sem matriz/tabela como visão principal.
+- Ações em lote em grade compacta.
+- Botões, filtros, modais e formulários reorganizados.
+- Mobile com layouts próprios e melhor aproveitamento horizontal.
+- Menos bordas, menos blocos gigantes e menos aparência de ERP/tabela.
+- Mantida a lógica funcional, Supabase, sincronização e backup.
