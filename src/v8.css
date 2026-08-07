@@ -119,3 +119,147 @@ html,body,#root{background:var(--8-bg)!important;color:var(--8-text)!important}
 @media(max-width:560px){
  .v8-stage{grid-template-rows:50px minmax(0,1fr)}.v8-commandbar{height:50px}.v8-page{padding:13px 9px 24px}.v8-page-intro{display:block;margin-bottom:14px}.v8-page-intro h1{font-size:22px!important}.v8-page-intro .v8-header-actions{display:grid;grid-template-columns:repeat(3,1fr);margin-top:9px}.v8-header-actions button{min-width:0;padding:5px 3px;font-size:6.5px}.v8-focus-score{display:none}.v8-bento{grid-template-columns:1fr}.v8-bento-primary,.v8-bento-flow,.v8-bento-attention,.v8-bento-ranking{grid-column:auto}.v8-bento-ranking>div{grid-template-columns:1fr 1fr}.v8-inventory-tools{grid-template-columns:1fr 1fr}.v8-inventory-tools .v8-wide-search{grid-column:1/-1}.v8-inventory-tools>button{grid-column:1/-1}.v8-publication-tools{grid-template-columns:1fr}.v8-batch-command{grid-template-columns:1fr}.phone-editor-modal .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+/* ==============================================================
+   v8.0.2 — Sidebar navigation usability fix
+   ============================================================== */
+
+.v8-shell{
+  grid-template-columns:190px minmax(0,1fr)!important;
+}
+
+.v8-rail{
+  width:190px!important;
+  align-items:stretch!important;
+  padding:14px 10px 10px!important;
+  overflow:hidden!important;
+}
+
+.v8-brand-button{
+  width:100%!important;
+  height:58px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  padding:0 8px!important;
+}
+
+.v8-brand-button b{
+  font-size:11px!important;
+  letter-spacing:.3px!important;
+  color:#f3f6f9!important;
+}
+
+.v8-brand-glyph{
+  width:31px!important;
+  min-width:31px!important;
+  height:28px!important;
+}
+
+.v8-rail-nav{
+  width:100%!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:9px 0 4px!important;
+  gap:2px!important;
+}
+
+.v8-rail-nav button{
+  width:100%!important;
+  min-height:38px!important;
+  display:grid!important;
+  grid-template-columns:28px minmax(0,1fr) auto!important;
+  place-items:initial!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:6px 9px!important;
+  margin:0!important;
+  text-align:left!important;
+  border-radius:9px!important;
+}
+
+.v8-rail-nav button span{
+  display:grid!important;
+  place-items:center!important;
+}
+
+.v8-rail-nav button svg{
+  width:15px!important;
+  height:15px!important;
+}
+
+.v8-rail-nav small{
+  display:block!important;
+  max-width:none!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:7.5px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+}
+
+.v8-rail-nav em{
+  position:static!important;
+  min-width:17px!important;
+  height:17px!important;
+  font-size:5.5px!important;
+}
+
+.v8-rail-user{
+  width:100%!important;
+  display:flex!important;
+  justify-content:flex-start!important;
+  padding:9px 8px 0!important;
+}
+
+.v8-rail-user button{
+  width:34px!important;
+  height:34px!important;
+}
+
+.v8-stage{
+  min-width:0!important;
+}
+
+/* remove qualquer scrollbar horizontal herdada dentro do menu */
+.v8-rail,
+.v8-rail *,
+.v8-rail-nav,
+.v8-rail-nav *{
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.v8-rail::-webkit-scrollbar,
+.v8-rail-nav::-webkit-scrollbar{
+  width:6px!important;
+  height:0!important;
+}
+
+.v8-rail-nav::-webkit-scrollbar-thumb{
+  background:#2a313a!important;
+  border-radius:99px!important;
+}
+
+@media(max-width:900px){
+  .v8-shell{
+    grid-template-columns:1fr!important;
+  }
+
+  .v8-rail{
+    left:-220px!important;
+    width:200px!important;
+    align-items:stretch!important;
+    transition:left .2s ease!important;
+  }
+
+  .v8-rail.open{
+    left:0!important;
+  }
+
+  .v8-mobile-close{
+    right:-42px!important;
+  }
+}

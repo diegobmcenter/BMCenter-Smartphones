@@ -863,3 +863,10 @@ Nova aparência baseada em módulos com composições diferentes:
 ## v8.0.1
 
 - Corrigido fechamento da função Dashboard que causava `Unexpected end of file` no build.
+
+## v8.0.2
+- Sidebar ampliada para 190px no desktop.
+- Nomes dos menus passam a aparecer por extenso.
+- Removida rolagem horizontal da navegação.
+- Scroll vertical preservado apenas quando necessário.
+- Ajustado comportamento do menu no mobile.
