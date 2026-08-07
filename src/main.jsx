@@ -15,6 +15,64 @@ function phoneTotalCost(phone){return Number(phone.paid||0)+phoneSelectedPartsCo
 function formatDate(value){if(!value)return'—';const[y,m,d]=value.split('-');return d&&m&&y?`${d}/${m}/${y}`:value}
 function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');return m&&y?`${m}/${y}`:value}
 const statuses=['Aguardando análise','Aguardando peças','Em reparo','Em testes','Pronto','Para fotografar','Anúncio preparado','Anunciado','Reservado','Vendido'];
+
+function normalizeSnapshotList(value){
+ if(!Array.isArray(value))return[];
+ return value.filter(item=>item&&typeof item==='object'&&item.id&&item.date).slice(0,5)
+}
+function captureSnapshotData(){
+ return captureCompleteBackup({excludeKeys:[SNAPKEY]})
+}
+function repairSnapshotStorage(){
+ try{
+  const raw=localStorage.getItem(SNAPKEY);
+  if(!raw)return;
+  const parsed=JSON.parse(raw);
+  const clean=normalizeSnapshotList(parsed).map(item=>{
+   if(item?.data?.storage&&Object.prototype.hasOwnProperty.call(item.data.storage,SNAPKEY)){
+    const storage={...item.data.storage};
+    delete storage[SNAPKEY];
+    return{...item,data:{...item.data,storage}}
+   }
+   return item
+  }).slice(0,3);
+  localStorage.setItem(SNAPKEY,JSON.stringify(clean))
+ }catch(error){
+  console.warn('Pontos de restauração antigos foram descartados para recuperar o sistema.',error);
+  localStorage.removeItem(SNAPKEY)
+ }
+}
+
+class AppErrorBoundary extends React.Component{
+ constructor(props){super(props);this.state={error:null}}
+ static getDerivedStateFromError(error){return{error}}
+ componentDidCatch(error,info){console.error('BMCenter fatal error',error,info)}
+ render(){
+  if(!this.state.error)return this.props.children;
+  const resetSnapshots=()=>{
+   localStorage.removeItem(SNAPKEY);
+   localStorage.setItem('bmcenter-last-version','5.3.2');
+   location.reload()
+  };
+  const openPhones=()=>{
+   sessionStorage.setItem('bmcenter-current-page','phones');
+   location.reload()
+  };
+  return <div className="bmcenter-recovery-screen">
+   <div>
+    <AlertTriangle size={42}/>
+    <h1>O BMCenter encontrou um dado incompatível</h1>
+    <p>Seus dados na nuvem continuam preservados. A aplicação impediu a tela preta e pode recuperar a interface.</p>
+    <code>{String(this.state.error?.message||this.state.error)}</code>
+    <div className="recovery-actions">
+     <button className="primary" onClick={resetSnapshots}>Corrigir pontos de restauração e recarregar</button>
+     <button onClick={openPhones}>Abrir diretamente em Smartphones</button>
+    </div>
+   </div>
+  </div>
+ }
+}
+
 function App({cloudUser,onCloudLogout}){
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
@@ -31,7 +89,31 @@ function App({cloudUser,onCloudLogout}){
    if(sidebar)sidebar.scrollTop=0;
   });
  },[mobileMenuOpen]);
- useEffect(()=>{const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));if(config.autoSnapshot!==false){const version='5.3.1',last=localStorage.getItem('bmcenter-last-version');if(last!==version){const snapshots=load(SNAPKEY);save(SNAPKEY,[{id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:collectAllData()},...snapshots].slice(0,10));localStorage.setItem('bmcenter-last-version',version)}}const fn=e=>{if(e.key==='Escape')setCommandOpen(false)};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn)},[]);
+ useEffect(()=>{
+  repairSnapshotStorage();
+  const savedScroll=Number(sessionStorage.getItem('bmcenter-scroll-y')||0);
+  if(savedScroll)requestAnimationFrame(()=>window.scrollTo(0,savedScroll));
+  if(config.autoSnapshot!==false){
+   const version='5.3.2',last=localStorage.getItem('bmcenter-last-version');
+   if(last!==version){
+    try{
+     const snapshots=normalizeSnapshotList(load(SNAPKEY));
+     const snapshot={id:crypto.randomUUID(),date:new Date().toISOString(),label:`Antes da versão ${version}`,data:captureSnapshotData()};
+     const next=[snapshot,...snapshots].slice(0,3);
+     localStorage.setItem(SNAPKEY,JSON.stringify(next));
+     queueCloudSave(SNAPKEY,next);
+    }catch(error){
+     console.warn('Auto snapshot ignorado para manter o sistema disponível.',error);
+     localStorage.removeItem(SNAPKEY);
+    }finally{
+     localStorage.setItem('bmcenter-last-version',version)
+    }
+   }
+  }
+  const fn=e=>{if(e.key==='Escape')setCommandOpen(false)};
+  window.addEventListener('keydown',fn);
+  return()=>window.removeEventListener('keydown',fn)
+ },[]);
 
  const menuItems=[
   {id:'dashboard',icon:<LayoutDashboard/>,text:'Dashboard'},
@@ -88,7 +170,7 @@ function App({cloudUser,onCloudLogout}){
   <main className="global-main">
    <header className="global-topbar">
     <button className="mobile-menu-button" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Abrir menu">☰</button><div><b>BMCenter Smartphones</b><small>Sistema de gestão operacional</small></div>
-    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.3.1</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
+    <div className="topbar-right"><button className="notification-button" title="Pendências" onClick={()=>navigate('pending')}><Bell/><span>{getOperationalAlerts().length}</span></button><span className="version-pill">v5.3.2</span><div className="top-user" title={cloudUser?.email||'Usuário conectado'}>DM<span/></div></div>
    </header>
    <section className="page global-page">
     {page==='settings'?<SystemSettingsPage visibleMenus={visibleMenus} onChange={saveVisible} menuItems={menuItems.filter(x=>x.id!=='settings')} config={config} onConfigChange={saveConfig}/>:<PageContent page={page}/>} 
@@ -186,7 +268,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
 
   {tab==='general'&&<div className="panel"><h2>Preferências gerais</h2><div className="grid"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="settings-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/> Exibir código interno dos aparelhos</label><label className="settings-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/> Criar ponto automático ao abrir uma nova versão</label></div><h2>Menus visíveis</h2><div className="settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Exibir somente essenciais</button></div><div className="menu-settings-list">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id} title={essential?'Menu essencial do sistema':''}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div>}
   {tab==='notifications'&&<div className="panel"><h2>Notificações</h2><Empty text="As configurações de notificações serão centralizadas aqui."/></div>}
-  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.3.1</p><p>Armazenamento local ativo.</p></div>}
+  {tab==='system'&&<div className="panel"><h2>Sistema</h2><p>Versão atual: v5.3.2</p><p>Armazenamento local ativo.</p></div>}
   {tab==='integrations'&&<div className="panel"><h2>Integrações</h2><Empty text="Integrações externas poderão ser configuradas aqui."/></div>}
   {tab==='about'&&<div className="panel"><h2>Sobre o BMCenter</h2><p>Sistema de gestão operacional para smartphones.</p></div>}
  </>
@@ -214,8 +296,8 @@ function CommandPalette({menuItems,onNavigate,onClose}){
 function reloadPreservingContext(){sessionStorage.setItem('bmcenter-scroll-y',String(window.scrollY||0));location.reload()}
 function CloudGate(){
  const[session,setSession]=useState(null),[ready,setReady]=useState(false),[syncing,setSyncing]=useState(false),[status,setStatus]=useState('');
- useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);unsubscribe=subscribeCloudState(key=>{setStatus(key==='__BM_RESET__'?'Dados apagados em outro dispositivo':'Alteração recebida de outro dispositivo');setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
- async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);subscribeCloudState(key=>setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450));setSyncing(false)}
+ useEffect(()=>{let unsubscribe=()=>{};(async()=>{if(!cloudConfigured()){setReady(true);return}const current=await getCloudSession();setSession(current);if(current?.user){setSyncing(true);setStatus('Sincronizando dados...');await initializeCloudState(ALL_CLOUD_KEYS);repairSnapshotStorage();unsubscribe=subscribeCloudState(key=>{setStatus(key==='__BM_RESET__'?'Dados apagados em outro dispositivo':'Alteração recebida de outro dispositivo');setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450)});setSyncing(false)}setReady(true)})();return()=>unsubscribe()},[]);
+ async function authenticated(next){setSession(next);setSyncing(true);setStatus('Preparando sua área na nuvem...');await initializeCloudState(ALL_CLOUD_KEYS);repairSnapshotStorage();subscribeCloudState(key=>setTimeout(()=>key==='__BM_RESET__'?location.reload():reloadPreservingContext(),450));setSyncing(false)}
  if(!ready||syncing)return <CloudLoading text={status||'Carregando BMCenter...'}/>;
  if(!cloudConfigured())return <CloudSetupRequired/>;
  if(!session?.user)return <CloudLogin onAuthenticated={authenticated}/>;
@@ -1720,7 +1802,6 @@ function ReportsPage(){
  <div className="sales-totals"><div><span>Previsão 7 dias</span><strong>{money(forecast7)}</strong></div><div><span>Previsão 30 dias</span><strong>{money(forecast30)}</strong></div><div><span>Estoque previsto</span><strong>{money(active.reduce((a,p)=>a+Number(p.expected||0),0))}</strong></div></div>
  <div className="report-grid">
   <section className="panel"><h2>Desempenho por perfil</h2>{!profileData.some(x=>x.qty)?<Empty text="Sem vendas por perfil."/>:<div className="report-list">{profileData.filter(x=>x.qty).map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>{x.qty} venda(s)</small></div><div><b>{money(x.revenue)}</b><small>Lucro {money(x.profit)}</small></div></div>)}</div>}</section>
-  <section className="panel"><h2>Compras por vendedor</h2>{!sellerData.length?<Empty text="Sem dados."/>:<div className="report-list">{sellerData.map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>{x.qty} aparelho(s)</small></div><strong>{money(x.invested)}</strong></div>)}</div>}</section>
   <section className="panel"><h2>Gastos por fornecedor de peças</h2>{!supplierData.length?<Empty text="Sem peças selecionadas."/>:<div className="report-list">{supplierData.map((x,i)=><div className="report-row" key={x.name}><span className="ranking-position">{i+1}</span><div><b>{x.name}</b><small>Peças escolhidas</small></div><strong>{money(x.value)}</strong></div>)}</div>}</section>
   <section className="panel"><h2>Etiquetas mais usadas</h2>{!tags.length?<Empty text="Sem etiquetas."/>:<div className="tag-cloud">{tags.map(([name,count])=><span key={name}>{name} <b>{count}</b></span>)}</div>}</section>
   <section className="panel"><h2>Vendas por canal</h2><div className="report-list">{Object.entries(channelSummary).sort((a,b)=>b[1]-a[1]).map(([name,value],i)=><div className="report-row" key={name}><span className="ranking-position">{i+1}</span><div><b>{name}</b><small>Valor líquido</small></div><strong>{money(value)}</strong></div>)}</div>{!Object.keys(channelSummary).length&&<Empty text="Sem dados por canal."/>}</section>
@@ -1731,15 +1812,18 @@ function ReportsPage(){
 }
 
 function DataCenterPage(){
- const[snapshots,setSnapshots]=useState(load(SNAPKEY));
+ const[snapshots,setSnapshots]=useState(()=>normalizeSnapshotList(load(SNAPKEY)));
  function makeSnapshot(){
-  const data=collectAllData();
-  const next=[{id:crypto.randomUUID(),date:new Date().toISOString(),data},...snapshots].slice(0,10);
-  setSnapshots(next);save(SNAPKEY,next);alert('Ponto de restauração criado.');
+  try{
+   const data=captureSnapshotData();
+   const next=[{id:crypto.randomUUID(),date:new Date().toISOString(),data},...normalizeSnapshotList(snapshots)].slice(0,5);
+   setSnapshots(next);localStorage.setItem(SNAPKEY,JSON.stringify(next));queueCloudSave(SNAPKEY,next);alert('Ponto de restauração criado.');
+  }catch(error){alert(`Não foi possível criar o ponto de restauração: ${error.message||error}`)}
  }
- function restore(snapshot){
+ async function restore(snapshot){
   if(!confirm(`Restaurar os dados de ${new Date(snapshot.date).toLocaleString('pt-BR')}?`))return;
-  restoreAllData(snapshot.data);alert('Dados restaurados. A página será recarregada.');location.reload();
+  try{await restoreAllData(snapshot.data);alert('Dados restaurados. A página será recarregada.');location.reload()}
+  catch(error){alert(`Não foi possível restaurar: ${error.message||error}`)}
  }
  function exportCsv(){
   const phones=load(SKEY);
@@ -1788,7 +1872,7 @@ function DataCenterPage(){
    <div className="panel data-action-card"><Download size={36}/><h2>Exportações CSV</h2><p>Gere arquivos separados para usar no Excel.</p><div className="data-export-buttons"><button onClick={exportCsv}>Smartphones</button><button onClick={exportAdsCsv}>Anúncios</button><button onClick={exportPartsCsv}>Peças</button><button onClick={exportProfilesCsv}>Perfis</button></div></div>
    <div className="panel data-action-card danger-zone"><AlertTriangle size={36}/><h2>Limpar sistema</h2><p>Apaga todos os dados locais deste endereço.</p><button className="danger" onClick={clearAll}>Apagar tudo</button></div>
   </div>
-  <div className="panel"><h2>Pontos de restauração</h2>{!snapshots.length?<Empty text="Nenhum ponto criado."/>:<div className="snapshot-list">{snapshots.map(s=><div className="snapshot-row" key={s.id}><div><b>{new Date(s.date).toLocaleString('pt-BR')}</b><small>{(s.data.smartphones||[]).length} smartphone(s)</small></div><button onClick={()=>restore(s)}>Restaurar</button></div>)}</div>}</div>
+  <div className="panel"><h2>Pontos de restauração</h2>{!snapshots.length?<Empty text="Nenhum ponto criado."/>:<div className="snapshot-list">{snapshots.map(s=><div className="snapshot-row" key={s.id}><div><b>{new Date(s.date).toLocaleString('pt-BR')}</b><small>{Array.isArray(s.data?.storage?.[SKEY])?s.data.storage[SKEY].length:Array.isArray(s.data?.smartphones)?s.data.smartphones.length:0} smartphone(s)</small></div><button onClick={()=>restore(s)}>Restaurar</button></div>)}</div>}</div>
  </>
 }
 
@@ -1797,11 +1881,11 @@ const BACKUP_FORMAT_VERSION=2;
 function backupEligibleKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session'].includes(key);
 }
-function captureCompleteBackup(){
- const storage={};
+function captureCompleteBackup(options={}){
+ const storage={},excludeKeys=new Set(options.excludeKeys||[]);
  for(let index=0;index<localStorage.length;index++){
   const key=localStorage.key(index);
-  if(!key||!backupEligibleKey(key))continue;
+  if(!key||!backupEligibleKey(key)||excludeKeys.has(key))continue;
   const raw=localStorage.getItem(key);
   try{storage[key]=JSON.parse(raw)}catch{storage[key]=raw}
  }
@@ -1817,7 +1901,7 @@ function captureCompleteBackup(){
   audit,
   format:BACKUP_FORMAT,
   formatVersion:BACKUP_FORMAT_VERSION,
-  appVersion:'5.1.0',
+  appVersion:'5.3.2',
   exportedAt:new Date().toISOString(),
   storage,
   summary:{
@@ -2220,4 +2304,4 @@ async function restoreAllData(data){return applyCompleteBackup(data,{replace:tru
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
 function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',imei1:'',imei2:'',serial:'',devicePassword:'',date:new Date().toISOString().slice(0,10),sellerId:'',origin:'',payment:'',bankAccountId:'',purchaseSupplierId:'',paid:0,expected:0,status:'Aguardando análise',priority:'Média',nextAction:'',nextActionDate:'',expectedSaleDate:'',tasks:'',notes:'',tags:[],accessories:defaultAccessories(),photoChecklist:defaultPhotoChecklist(),photoNotes:'',photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
-createRoot(document.getElementById('root')).render(<CloudGate/>);
+createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);

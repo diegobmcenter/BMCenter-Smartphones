@@ -3254,3 +3254,22 @@ body.hide-product-code .internal-product-code{display:none!important}
   .global-sidebar.mobile-open .sidebar-menu-card>.nav:nth-child(3){display:flex!important}
 }
 .priority-select,.priority-filter,.agenda-toolbar,.agenda-layout,.goal-grid,.goal-config,.renewal-metrics,.renewal-list{display:none!important}
+
+/* v5.3.2 — recuperação contra tela preta */
+.bmcenter-recovery-screen{
+  position:fixed;inset:0;z-index:999999;display:grid;place-items:center;
+  padding:24px;background:#07111f;color:#f8fafc
+}
+.bmcenter-recovery-screen>div{
+  width:min(620px,100%);display:grid;justify-items:center;gap:12px;padding:26px;
+  border:1px solid #334155;border-radius:16px;background:#0f1b2e;text-align:center;
+  box-shadow:0 30px 90px rgba(0,0,0,.55)
+}
+.bmcenter-recovery-screen svg{color:#f59e0b}
+.bmcenter-recovery-screen h1,.bmcenter-recovery-screen p{margin:0}
+.bmcenter-recovery-screen code{
+  width:100%;max-height:110px;overflow:auto;padding:10px;border-radius:9px;
+  background:#07111f;color:#fca5a5;text-align:left;white-space:pre-wrap
+}
+.recovery-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+@media(max-width:600px){.recovery-actions{width:100%;flex-direction:column}.recovery-actions button{width:100%}}

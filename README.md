@@ -702,3 +702,13 @@ PC e celular agora renderizam o menu a partir da mesma lista. Smartphones é ess
 - Corrigida a tela preta causada pela leitura de `removedPages` antes da inicialização.
 - Mantida integralmente a interface enxuta da v5.3.0.
 - Smartphones continua obrigatório no menu de PC e celular.
+
+## v5.3.2 — Correção definitiva da tela preta
+
+- Pontos de restauração automáticos não incluem mais o próprio histórico de snapshots.
+- Corrigido crescimento recursivo que podia estourar o LocalStorage após sincronização.
+- Snapshots antigos são compactados/reparados automaticamente.
+- Auto snapshot nunca mais pode derrubar a interface.
+- Tela de recuperação substitui a tela preta caso outro erro de dados aconteça.
+- Pontos de restauração usam o novo formato de backup corretamente.
+- Removido bloco residual de relatório de vendedores que poderia causar erro ao abrir Relatórios.
