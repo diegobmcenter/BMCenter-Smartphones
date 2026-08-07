@@ -883,3 +883,12 @@ Nova aparência baseada em módulos com composições diferentes:
 - O selo no topo passa a usar `APP_VERSION`.
 - O snapshot automático passa a usar a mesma versão.
 - Evita divergência entre `package.json` e a versão exibida na interface.
+
+## v8.0.5 — acabamento visual + Aparência funcional
+
+- Removidos blocos brancos residuais de Dashboard, Hoje, Smartphones, Anúncios, Perfis, Backup e Configurações.
+- Cabeçalhos, captions, estados vazios e cartões passam a respeitar o dark premium aprovado.
+- Fonte do menu lateral aumentada discretamente.
+- Configurações > Aparência agora controla de verdade as variáveis visuais da interface V8.
+- Cores primária/secundária/destaque, fundos, cards, texto, bordas, raio, densidade e transições passam a refletir imediatamente.
+- Modo claro/escuro conectado ao AppFrame V8.
