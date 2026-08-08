@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.14';
+const APP_VERSION='10.3.15';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
@@ -548,7 +548,7 @@ function FacebookProfileModal({item,onClose,onSave}){
    <label>Plataforma<select value={f.platform||'Facebook Marketplace'} onChange={e=>setF({...f,platform:e.target.value})}><option>Facebook Marketplace</option><option>Facebook perfil pessoal</option><option>Facebook Página</option><option>Instagram</option><option>Outro</option></select></label>
    <Field label="Link do perfil ou página" value={f.facebookUrl||''} onChange={v=>setF({...f,facebookUrl:v})}/>
    <label>Cor de identificação<input type="color" value={f.color||'#1877f2'} onChange={e=>setF({...f,color:e.target.value})}/></label>
-   <label className="profile-active-check"><input type="checkbox" checked={f.active!==false} onChange={e=>setF({...f,active:e.target.checked})}/> Perfil ativo para novos anúncios</label>
+   <label className="profile-active-check"><input type="checkbox" checked={f.active!==false} onChange={e=>setF({...f,active:e.target.checked})}/><span>Perfil ativo para novos anúncios</span></label>
    <label className="profile-notes-field">Observações<textarea value={f.notes||''} onChange={e=>setF({...f,notes:e.target.value})} placeholder="Informações internas, celular usado, localização, responsável..."/></label>
   </div>
   <div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>{if(!f.name?.trim())return alert('Informe o nome do perfil.');onSave({...f,name:f.name.trim()})}}>Salvar perfil</button></div>
@@ -1504,7 +1504,7 @@ function SaleModal({item,profiles,onClose,onSave}){
   else setF({...f,paymentStatus:status,receivedAmount:Math.min(Number(f.receivedAmount||0),net)});
  }
 
- return <Modal title={`Registrar venda · ${showProductCode()?item.code:item.brand+' '+item.model}`} onClose={onClose}>
+ return <Modal title={`Registrar venda · ${showProductCode()?item.code:item.brand+' '+item.model}`} onClose={onClose} className="sale-register-modal">
   <div className="sale-summary-modal sale-summary-four">
    <div><span>Valor bruto</span><strong>{money(f.value)}</strong></div>
    <div><span>Taxas e frete</span><strong>{money(Number(f.marketplaceFee||0)+Number(f.shippingCost||0))}</strong></div>
@@ -1519,7 +1519,7 @@ function SaleModal({item,profiles,onClose,onSave}){
    <Field label="Data da venda" type="date" value={f.soldAt} onChange={v=>set('soldAt',v)}/>
    <label>Canal da venda<select value={f.saleChannel||''} onChange={e=>set('saleChannel',e.target.value)}><option>Facebook Marketplace</option><option>Grupo do Facebook</option><option>WhatsApp</option><option>Instagram</option><option>Mercado Livre</option><option>Indicação</option><option>Outro</option></select></label>
    <Field label="Forma de pagamento" value={f.paymentMethod||''} onChange={v=>set('paymentMethod',v)}/>
-   <label>Conta de recebimento<select value={f.bankAccountId||''} onChange={e=>set('bankAccountId',e.target.value)}><option value="">Não informado</option>{banks.map(b=><option value={b.id} key={b.id}>{b.name}</option>)}</select></label>
+   <label>Conta de recebimento<select value={f.bankAccountId||''} onChange={e=>set('bankAccountId',e.target.value)}><option value="">Não informado</option>{banks.map(b=><option value={b.id} key={b.id}>{[b.bank,b.accountName].filter(Boolean).join(' · ')||'Conta sem identificação'}</option>)}</select></label>
    <Field label="Taxa da plataforma" type="number" value={f.marketplaceFee||0} onChange={v=>set('marketplaceFee',Number(v))}/>
    <Field label="Custo de frete/entrega" type="number" value={f.shippingCost||0} onChange={v=>set('shippingCost',Number(v))}/>
    <label>Entrega<select value={f.deliveryType||''} onChange={e=>set('deliveryType',e.target.value)}><option>Retirada</option><option>Entrega local</option><option>Envio por transportadora</option><option>Correios</option><option>Outro</option></select></label>
@@ -1639,7 +1639,7 @@ function SalesPage(){
     <td>{p.sale.buyerName||'—'}<small>{p.sale.buyerPhone||''}</small></td>
     <td>{p.sale.saleChannel||'—'}</td>
     <td>{profiles.find(x=>x.id===p.sale.profileId)?.name||'—'}</td>
-    <td>{banks.find(x=>x.id===p.sale.bankAccountId)?.name||'—'}</td>
+    <td>{(()=>{const bank=banks.find(x=>x.id===p.sale.bankAccountId);return bank?([bank.bank,bank.accountName].filter(Boolean).join(' · ')||'Conta sem identificação'):'—'})()}</td>
     <td><span className={`payment-badge payment-${status.toLowerCase()}`}>{status}</span></td>
     <td>{money(net)}</td><td>{money(received)}</td><td>{money(pending)}</td>
     <td><span className={gain>=0?'profit-positive':'profit-negative'}>{money(gain)}</span></td>

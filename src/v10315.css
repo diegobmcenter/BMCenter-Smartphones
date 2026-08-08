@@ -1,0 +1,228 @@
+/* BMCenter v10.3.15 — light-theme consistency + compact forms + 3-column batch */
+
+/* =========================================================
+   LIGHT THEME: never inherit old hard-coded dark cards
+   ========================================================= */
+.v102-app.theme-light .sale-summary-modal>div,
+.v102-app.theme-light .pending-metrics>div,
+.v102-app.theme-light .receivable-metrics>div,
+.v102-app.theme-light .inventory-current,
+.v102-app.theme-light .pending-row{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.v102-app.theme-light .sale-summary-modal span,
+.v102-app.theme-light .pending-metrics span,
+.v102-app.theme-light .receivable-metrics span,
+.v102-app.theme-light .inventory-current span,
+.v102-app.theme-light .pending-row small{
+  color:var(--muted)!important;
+}
+.v102-app.theme-light .sale-summary-modal strong,
+.v102-app.theme-light .pending-metrics strong,
+.v102-app.theme-light .receivable-metrics strong,
+.v102-app.theme-light .inventory-current strong,
+.v102-app.theme-light .pending-row b{
+  color:var(--text)!important;
+}
+
+/* Modal fields must always follow the current theme. */
+.v102-app.theme-light .modal input,
+.v102-app.theme-light .modal select,
+.v102-app.theme-light .modal textarea,
+.v102-app.theme-light .phone-editor-modal input,
+.v102-app.theme-light .phone-editor-modal select,
+.v102-app.theme-light .phone-editor-modal textarea{
+  background:var(--surface2)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.v102-app.theme-light .modal option,
+.v102-app.theme-light .phone-editor-modal option{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+}
+
+/* =========================================================
+   REGISTER SALE — compact and readable
+   ========================================================= */
+.sale-summary-modal.sale-summary-four{
+  gap:7px!important;
+  margin-bottom:10px!important;
+}
+.sale-summary-modal.sale-summary-four>div{
+  min-height:64px!important;
+  padding:8px 10px!important;
+  border-radius:9px!important;
+}
+.sale-summary-modal.sale-summary-four span{font-size:8px!important}
+.sale-summary-modal.sale-summary-four strong{font-size:14px!important;margin-top:2px!important}
+
+.modal .section-title{
+  margin:10px 0 6px!important;
+  font-size:12px!important;
+}
+.modal .grid{
+  gap:7px!important;
+}
+.modal .grid>label{
+  min-width:0!important;
+}
+.modal .grid input,
+.modal .grid select{
+  min-height:34px!important;
+  height:34px!important;
+}
+
+/* =========================================================
+   FACEBOOK PROFILE — widths based on content, not giant columns
+   ========================================================= */
+.facebook-profile-form{
+  display:grid!important;
+  grid-template-columns:minmax(190px,1.15fr) minmax(180px,.9fr) minmax(190px,1.15fr)!important;
+  gap:8px!important;
+  align-items:end!important;
+}
+.facebook-profile-form>label:nth-child(1){grid-column:span 1!important}
+.facebook-profile-form>label:nth-child(2){grid-column:span 1!important}
+.facebook-profile-form>label:nth-child(3){grid-column:span 1!important}
+.facebook-profile-form>label:nth-child(4){
+  width:150px!important;
+  max-width:150px!important;
+}
+.facebook-profile-form input,
+.facebook-profile-form select{
+  min-height:34px!important;
+  height:34px!important;
+}
+.facebook-profile-form input[type=color]{
+  width:92px!important;
+  min-width:92px!important;
+  max-width:92px!important;
+  min-height:34px!important;
+  height:34px!important;
+  padding:3px!important;
+}
+.profile-active-check{
+  grid-column:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:7px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-height:34px!important;
+  padding:0!important;
+}
+.profile-active-check input[type=checkbox]{
+  appearance:auto!important;
+  width:16px!important;
+  min-width:16px!important;
+  max-width:16px!important;
+  height:16px!important;
+  min-height:16px!important;
+  margin:0!important;
+  padding:0!important;
+  accent-color:var(--accent);
+  flex:0 0 16px!important;
+}
+.profile-active-check span{
+  font-size:8px!important;
+  color:var(--text)!important;
+  white-space:nowrap;
+}
+.profile-notes-field{
+  grid-column:1/-1!important;
+}
+.profile-notes-field textarea{
+  min-height:58px!important;
+  height:58px!important;
+}
+
+/* =========================================================
+   BATCH ACTIONS — 3 devices per row on desktop
+   ========================================================= */
+.v102-batch-list{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v102-batch-list article{
+  display:grid!important;
+  grid-template-columns:18px minmax(0,1fr) auto!important;
+  grid-template-areas:
+    "check name days"
+    "check status days"!important;
+  gap:3px 7px!important;
+  align-items:center!important;
+  min-height:58px!important;
+  padding:7px 8px!important;
+}
+.v102-batch-list article>input{
+  grid-area:check!important;
+  width:16px!important;
+  min-width:16px!important;
+  height:16px!important;
+  min-height:16px!important;
+}
+.v102-batch-list article>div{grid-area:name!important;min-width:0!important}
+.v102-batch-list article>div b{
+  font-size:8.5px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.v102-batch-list article>div small{
+  font-size:7px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.v102-batch-list .v102-status-badge{
+  grid-area:status!important;
+  justify-self:start!important;
+  font-size:7px!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.v102-batch-list em{
+  grid-area:days!important;
+  align-self:center!important;
+  font-size:7px!important;
+  white-space:nowrap!important;
+}
+
+/* Make command row compact without stealing unnecessary width. */
+.v102-batch-command{
+  grid-template-columns:150px minmax(180px,240px) minmax(220px,1fr) 96px!important;
+  gap:6px!important;
+}
+.v102-batch-toolbar{
+  grid-template-columns:minmax(280px,1fr) minmax(150px,210px)!important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media(max-width:1120px){
+  .v102-batch-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .facebook-profile-form{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .profile-notes-field{grid-column:1/-1!important}
+}
+@media(max-width:760px){
+  .v102-batch-list{grid-template-columns:1fr!important}
+  .v102-batch-command{grid-template-columns:1fr 1fr!important}
+  .v102-batch-command>label,.v102-batch-command>button{grid-column:1/-1!important}
+  .v102-batch-toolbar{grid-template-columns:1fr!important}
+  .facebook-profile-form{grid-template-columns:1fr!important}
+  .facebook-profile-form>label:nth-child(n),
+  .profile-active-check,.profile-notes-field{
+    grid-column:1!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+  .profile-active-check{width:max-content!important}
+}
