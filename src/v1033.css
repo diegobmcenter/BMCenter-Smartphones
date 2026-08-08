@@ -1,0 +1,47 @@
+/* BMCenter v10.3.3 — batch add buttons moved to bottom */
+.batch-add-more{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:8px;
+  padding:8px 10px;
+  border:1px dashed var(--line);
+  border-radius:10px;
+  background:var(--surface2);
+}
+.batch-add-more>span{
+  font-size:8px;
+  color:var(--muted);
+  font-weight:700;
+}
+.batch-add-more>div{
+  display:flex;
+  gap:6px;
+}
+.batch-add-more button{
+  min-height:32px!important;
+  padding:0 10px!important;
+  border:1px solid var(--line)!important;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-radius:8px!important;
+  font-size:8px!important;
+  font-weight:750!important;
+}
+.batch-add-more button:hover{
+  border-color:var(--accent)!important;
+  color:var(--accent)!important;
+}
+@media(max-width:620px){
+  .batch-add-more{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .batch-add-more>div{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+  }
+  .batch-add-more button{width:100%!important}
+}

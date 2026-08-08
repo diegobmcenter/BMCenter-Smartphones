@@ -1,0 +1,54 @@
+/* BMCenter v10.3.1 — rascunhos de cadastro */
+
+.draft-recovered-banner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));
+  border-radius:10px;
+  background:var(--accent-soft);
+  color:var(--text);
+}
+.draft-recovered-banner>div{display:grid;gap:2px;min-width:0}
+.draft-recovered-banner b{font-size:10px!important;color:var(--text)!important}
+.draft-recovered-banner small{font-size:8px!important;color:var(--muted)!important}
+.draft-recovered-banner button{
+  flex:0 0 auto;
+  min-height:31px!important;
+  padding:0 9px!important;
+  border:1px solid var(--line)!important;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-radius:8px!important;
+  font-size:8px!important;
+}
+.draft-recovered-banner button:hover{border-color:var(--red)!important;color:var(--red)!important}
+
+.draft-actions{flex-wrap:wrap!important}
+.draft-save-button{
+  border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line))!important;
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+  font-weight:750!important;
+}
+.draft-save-button:hover{border-color:var(--accent)!important}
+
+@media(max-width:620px){
+ .draft-recovered-banner{align-items:flex-start;flex-direction:column}
+ .draft-recovered-banner button{width:100%!important}
+ .draft-actions{
+   display:grid!important;
+   grid-template-columns:1fr 1fr!important;
+   gap:6px!important;
+   width:100%!important;
+ }
+ .draft-actions .primary{grid-column:1/-1!important}
+ .draft-actions button{width:100%!important;min-width:0!important}
+}
+@media(max-width:420px){
+ .draft-actions{grid-template-columns:1fr!important}
+ .draft-actions .primary{grid-column:auto!important}
+}

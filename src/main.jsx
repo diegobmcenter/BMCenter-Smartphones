@@ -9,11 +9,14 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';
-const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.0';
-const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';
+const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',AKEY='bmcenter-auth';
+const APP_VERSION='10.3.3';
+const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
+const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
+const saveDraft=(k,v)=>{const payload={...v,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
+const clearDraft=k=>{localStorage.removeItem(k);queueCloudSave(k,null)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
 function phoneSelectedPartsCost(phone){
  return (phone.parts||[]).reduce((sum,part)=>{
@@ -26,7 +29,7 @@ function phoneTotalCost(phone){return Number(phone.paid||0)+phoneSelectedPartsCo
 function formatDate(value){if(!value)return'—';const[y,m,d]=value.split('-');return d&&m&&y?`${d}/${m}/${y}`:value}
 function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');return m&&y?`${m}/${y}`:value}
 function capacityLabel(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
-function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||''].filter(Boolean).join(' · ')||'Sem detalhes'}
+function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':''].filter(Boolean).join(' · ')||'Sem detalhes'}
 const statuses=['Aguardando análise','Aguardando peças','Em reparo','Em testes','Pronto','Para fotografar','Anúncio preparado','Anunciado','Reservado','Vendido'];
 
 function normalizeSnapshotList(value){
@@ -1794,6 +1797,8 @@ function backupCriticalAudit(storage){
   fontScales:storage[FONT_SCALE_KEY]!==undefined,
   menuVisibility:storage[MENUKEY]!==undefined,
   snapshots:storage[SNAPKEY]!==undefined,
+  phoneDraftCaptured:storage[PHONE_DRAFT_KEY]!==undefined,
+  batchPhoneDraftCaptured:storage[BATCH_DRAFT_KEY]!==undefined,
   counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts}
  }
 }
@@ -2075,14 +2080,29 @@ function InfoRow({label,value}){return <div className="info-row"><span>{label}</
 
 
 function BatchPhoneModal({existing,banks,onClose,onSave}){
- const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
- const[shared,setShared]=useState({date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
- const[rows,setRows]=useState([emptyRow(),emptyRow(),emptyRow()]);
+ const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
+ const initialDraft=loadDraft(BATCH_DRAFT_KEY);
+ const[shared,setShared]=useState(()=>initialDraft?.shared||{date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
+ const[rows,setRows]=useState(()=>Array.isArray(initialDraft?.rows)&&initialDraft.rows.length?initialDraft.rows:[emptyRow(),emptyRow(),emptyRow()]);
  const[busy,setBusy]=useState(false);
+ const[draftRecovered,setDraftRecovered]=useState(Boolean(initialDraft));
  const setSharedField=(key,value)=>setShared(current=>({...current,[key]:value}));
  const setRow=(id,key,value)=>setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));
  const addRows=(amount=1)=>setRows(current=>[...current,...Array.from({length:amount},emptyRow)]);
  const removeRow=id=>setRows(current=>current.length===1?current:current.filter(row=>row.id!==id));
+ function saveBatchDraft(){
+  saveDraft(BATCH_DRAFT_KEY,{kind:'batch-phone-registration',shared,rows});
+  setDraftRecovered(true);
+  alert('Rascunho do cadastro em massa salvo. Você pode continuar depois.');
+  onClose()
+ }
+ function discardBatchDraft(){
+  if(!confirm('Descartar o rascunho deste cadastro em massa?'))return;
+  clearDraft(BATCH_DRAFT_KEY);
+  setDraftRecovered(false);
+  setShared({date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
+  setRows([emptyRow(),emptyRow(),emptyRow()])
+ }
  function saveBatch(){
   const valid=rows.filter(row=>row.brand.trim()||row.model.trim());
   if(!valid.length)return alert('Informe pelo menos a marca ou o modelo de um aparelho.');
@@ -2110,10 +2130,11 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      timeline:[{id:crypto.randomUUID(),date:now,message:'Aparelho cadastrado em compra em massa'}]
     }
    });
-   onSave(created.map(sanitizePhoneForLeanMode))
+   clearDraft(BATCH_DRAFT_KEY);onSave(created.map(sanitizePhoneForLeanMode))
   }finally{setBusy(false)}
  }
  return <Modal className="batch-phone-modal" title="Cadastro em massa de aparelhos" onClose={onClose}>
+  {draftRecovered&&<div className="draft-recovered-banner"><div><b>Rascunho recuperado</b><small>{initialDraft?.savedAt?`Salvo em ${new Date(initialDraft.savedAt).toLocaleString('pt-BR')}`:'Continue de onde parou.'}</small></div><button type="button" onClick={discardBatchDraft}>Descartar rascunho</button></div>}
   <section className="batch-shared-section">
    <header><div><h3>Dados compartilhados da compra</h3><p>Estas informações serão aplicadas a todos os aparelhos deste lote.</p></div><span>{rows.filter(r=>r.brand||r.model).length} preenchido(s)</span></header>
    <div className="grid">
@@ -2125,7 +2146,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
    <label>Observações gerais da compra<textarea value={shared.buyerNotes} onChange={e=>setSharedField('buyerNotes',e.target.value)} placeholder="Nome, telefone, endereço ou outras informações de quem vendeu o lote..."/></label>
   </section>
   <section className="batch-phone-list">
-   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha apenas o necessário. Desbloqueio pode ser adicionado depois.</p></div><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
+   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha apenas o necessário. Desbloqueio pode ser adicionado depois.</p></div></div>
    {rows.map((row,index)=><article className="batch-phone-row" key={row.id}>
     <header><b>Aparelho {index+1}</b><button type="button" className="danger" onClick={()=>removeRow(row.id)} disabled={rows.length===1}>Remover</button></header>
     <div className="batch-phone-fields">
@@ -2135,6 +2156,8 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <Field label="Armazenamento" value={row.storage} onChange={v=>setRow(row.id,'storage',v)}/>
      <Field label="RAM" value={row.ram} onChange={v=>setRow(row.id,'ram',v)}/>
      <label>NFC<select value={row.nfc===true?'sim':row.nfc===false?'nao':''} onChange={e=>setRow(row.id,'nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+     <label>Película<select value={row.screenProtector===true?'sim':row.screenProtector===false?'nao':''} onChange={e=>setRow(row.id,'screenProtector',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+     <label>Capinha<select value={row.caseIncluded===true?'sim':row.caseIncluded===false?'nao':''} onChange={e=>setRow(row.id,'caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Conector<select value={row.connector||''} onChange={e=>setRow(row.id,'connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
      <Field label="Valor pago" type="number" value={row.paid} onChange={v=>setRow(row.id,'paid',v)}/>
      <Field label="Valor de venda" type="number" value={row.expected} onChange={v=>setRow(row.id,'expected',v)}/>
@@ -2143,20 +2166,36 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
     </div>
     <details className="batch-unlock"><summary>Desbloqueio · {(row.unlockCredentials||[]).length} alternativa(s)</summary><UnlockCredentialsEditor compact value={row.unlockCredentials||[]} onChange={v=>setRow(row.id,'unlockCredentials',v)}/></details>
    </article>)}
+   <div className="batch-add-more"><span>Adicionar mais aparelhos</span><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
   </section>
-  <div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" disabled={busy} onClick={saveBatch}>Salvar {rows.filter(r=>r.brand||r.model).length||''} aparelho(s)</button></div>
+  <div className="actions draft-actions"><button onClick={onClose}>Cancelar</button><button className="draft-save-button" disabled={busy} onClick={saveBatchDraft}>Salvar e continuar depois</button><button className="primary" disabled={busy} onClick={saveBatch}>Finalizar {rows.filter(r=>r.brand||r.model).length||''} aparelho(s)</button></div>
  </Modal>
 }
 
 function PhoneModal({item,banks,suppliers,onClose,onSave}){
-  const normalizedParts=(item.parts||[]).map(p=>({
+  const isNewPhone=!load(SKEY).some(phone=>phone.id===item.id);
+  const savedPhoneDraft=isNewPhone?loadDraft(PHONE_DRAFT_KEY):null;
+  const sourcePhone=savedPhoneDraft?.phone?{...item,...savedPhoneDraft.phone,id:item.id,code:item.code}:item;
+  const normalizedParts=(sourcePhone.parts||[]).map(p=>({
     ...p,
     status:p.status||'Cotando',
     quotes:p.quotes||((p.supplier||p.price)?[{id:crypto.randomUUID(),supplier:p.supplier||'',price:Number(p.price)||0,notes:''}]:[]),
     selectedQuoteId:p.selectedQuoteId||'',
     orderStatus:p.orderStatus||'Não pedido'
   }));
-  const[f,setF]=useState({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),bankAccountId:item.bankAccountId||'',parts:normalizedParts,diagnostics:item.diagnostics||[],timeline:item.timeline||[],ad:item.ad||{},tags:item.tags||[],priceHistory:item.priceHistory||[],photos:item.photos||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
+  const[f,setF]=useState({...sourcePhone,nfc:sourcePhone.nfc===true?true:sourcePhone.nfc===false?false:null,screenProtector:sourcePhone.screenProtector===true?true:sourcePhone.screenProtector===false?false:null,caseIncluded:sourcePhone.caseIncluded===true?true:sourcePhone.caseIncluded===false?false:null,unlockCredentials:normalizeUnlockCredentials(sourcePhone),bankAccountId:sourcePhone.bankAccountId||'',parts:normalizedParts,diagnostics:sourcePhone.diagnostics||[],timeline:sourcePhone.timeline||[],ad:sourcePhone.ad||{},tags:sourcePhone.tags||[],priceHistory:sourcePhone.priceHistory||[],photos:sourcePhone.photos||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
+  const[draftRecovered,setDraftRecovered]=useState(Boolean(savedPhoneDraft));
+  function savePhoneDraft(){
+   saveDraft(PHONE_DRAFT_KEY,{kind:'single-phone-registration',phone:sanitizePhoneForLeanMode(f)});
+   setDraftRecovered(true);
+   alert('Rascunho salvo. Ao abrir Novo aparelho novamente, você continuará de onde parou.');
+   onClose()
+  }
+  function discardPhoneDraft(){
+   if(!confirm('Descartar o rascunho deste aparelho?'))return;
+   clearDraft(PHONE_DRAFT_KEY);setDraftRecovered(false);onClose()
+  }
+  function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);onSave(f)}
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
   const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]={...parts[i],[k]:v};return{...current,parts}});
   const addPartNow=()=>{if(!part.trim())return;setF(current=>({...current,parts:[...current.parts,{id:crypto.randomUUID(),name:part.trim(),status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}]}));setPart('')};
@@ -2165,10 +2204,13 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
   const updateQuote=(partIndex,quoteIndex,key,value)=>setF(current=>{const parts=[...current.parts],quotes=[...(parts[partIndex].quotes||[])];quotes[quoteIndex]={...quotes[quoteIndex],[key]:key==='price'?Number(value):value};parts[partIndex]={...parts[partIndex],quotes};return{...current,parts}});
   const removeQuote=(partIndex,quoteId)=>setF(current=>{const parts=[...current.parts],part=parts[partIndex];parts[partIndex]={...part,quotes:(part.quotes||[]).filter(q=>q.id!==quoteId),selectedQuoteId:part.selectedQuoteId===quoteId?'':part.selectedQuoteId};return{...current,parts}});
   return <Modal className="phone-editor-modal" title={showProductCode()?(f.code||'Novo aparelho'):([f.brand,f.model].filter(Boolean).join(' ')||'Novo aparelho')} onClose={onClose}>
+    {isNewPhone&&draftRecovered&&<div className="draft-recovered-banner"><div><b>Rascunho recuperado</b><small>{savedPhoneDraft?.savedAt?`Salvo em ${new Date(savedPhoneDraft.savedAt).toLocaleString('pt-BR')}`:'Continue de onde parou.'}</small></div><button type="button" onClick={discardPhoneDraft}>Descartar rascunho</button></div>}
     <h3 className="section-title">Dados do aparelho</h3>
     <div className="grid phone-core-fields">
       {[['Marca','brand'],['Modelo','model'],['Cor','color'],['Armazenamento','storage'],['RAM','ram']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>) }
       <label>NFC<select value={f.nfc===true?'sim':f.nfc===false?'nao':''} onChange={e=>set('nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+      <label>Película<select value={f.screenProtector===true?'sim':f.screenProtector===false?'nao':''} onChange={e=>set('screenProtector',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+      <label>Capinha<select value={f.caseIncluded===true?'sim':f.caseIncluded===false?'nao':''} onChange={e=>set('caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Conector de carga<select value={f.connector||''} onChange={e=>set('connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
     </div>
     <details className="compact-editor-section"><summary>Desbloqueio <span>{(f.unlockCredentials||[]).length} alternativa(s)</span></summary><UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/></details>
@@ -2231,7 +2273,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       <div className="timeline-list">{[...(f.timeline||[])].reverse().map(t=><div className="timeline-item" key={t.id}><b>{new Date(t.date).toLocaleString('pt-BR')}</b><span>{t.message}</span></div>)}</div>
     </div>
     </details>
-    <div className="actions sticky-modal-actions"><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={()=>onSave(f)}>Salvar</button></div>
+    <div className="actions sticky-modal-actions draft-actions"><button type="button" onClick={onClose}>Cancelar</button>{isNewPhone&&<button type="button" className="draft-save-button" onClick={savePhoneDraft}>Salvar e continuar depois</button>}<button type="button" className="primary" onClick={finishPhone}>{isNewPhone?'Finalizar cadastro':'Salvar alterações'}</button></div>
   </Modal>
 }
 
@@ -2294,5 +2336,5 @@ function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);
