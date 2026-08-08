@@ -1,0 +1,198 @@
+/* BMCenter v10.2.8 — no visible inner scrollbars + fluid compact forms */
+
+/* Global rule: scrolling remains available with mouse/touch, but visual scrollbars are removed. */
+html,body,.v102-app,.v102-app *{
+  scrollbar-width:none!important;
+}
+html::-webkit-scrollbar,body::-webkit-scrollbar,.v102-app::-webkit-scrollbar,.v102-app *::-webkit-scrollbar{
+  width:0!important;height:0!important;display:none!important;
+}
+.v102-navigation,.v102-sidebar,.v102-main,.modalbody,.batch-phone-modal .modalbody{
+  scrollbar-width:none!important;
+}
+.v102-navigation::-webkit-scrollbar,.v102-sidebar::-webkit-scrollbar,.v102-main::-webkit-scrollbar,
+.modalbody::-webkit-scrollbar,.batch-phone-modal .modalbody::-webkit-scrollbar{
+  display:none!important;width:0!important;height:0!important;
+}
+
+/* Modals must never create horizontal scroll. */
+.back{overflow:hidden!important}
+.modal{
+  max-width:calc(100vw - 28px)!important;
+  max-height:calc(100vh - 34px)!important;
+  overflow:hidden!important;
+}
+.modalbody{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  max-width:100%!important;
+  padding-right:14px!important;
+}
+.phone-editor-modal,.batch-phone-modal{
+  width:min(1040px,calc(100vw - 34px))!important;
+}
+.batch-phone-modal{width:min(1120px,calc(100vw - 34px))!important}
+
+/* Phone registration: use a fluid wrapping row instead of oversized/fixed grid columns. */
+.v102-app .phone-editor-modal .phone-core-fields{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  gap:7px!important;
+  width:100%!important;
+}
+.v102-app .phone-editor-modal .phone-core-fields>label{
+  flex:0 1 auto!important;
+  max-width:none!important;
+  min-width:0!important;
+}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(1){width:150px!important} /* Marca */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(2){width:180px!important} /* Modelo */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(3){width:105px!important} /* Cor */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(4){width:105px!important} /* Armazenamento */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(5){width:82px!important}  /* RAM */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(6){width:112px!important} /* NFC */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(7){width:135px!important} /* Conector */
+
+.v102-app .phone-editor-modal .compact-purchase-grid{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  gap:7px!important;
+  width:100%!important;
+}
+.v102-app .phone-editor-modal .compact-purchase-grid>label{
+  flex:0 1 auto!important;
+  max-width:none!important;
+  min-width:0!important;
+}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(1){width:132px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(2){width:155px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(3){width:155px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(4){width:190px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(5){width:115px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(6){width:120px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(7){width:150px!important}
+
+/* Less vertical waste in phone modal. */
+.v102-app .phone-editor-modal .modalbody{padding-top:9px!important;padding-bottom:66px!important}
+.v102-app .phone-editor-modal .section-title{margin:8px 0 4px!important}
+.v102-app .phone-editor-modal input,.v102-app .phone-editor-modal select{
+  height:31px!important;min-height:31px!important;padding-top:0!important;padding-bottom:0!important;
+}
+.v102-app .phone-editor-modal textarea{min-height:44px!important;max-height:72px!important}
+.compact-notes-grid{gap:7px!important;margin:6px 0 7px!important}
+.compact-editor-section{margin:5px 0!important}
+.compact-editor-section>summary{min-height:34px!important}
+
+/* Batch registration: compact two-line form per phone, no horizontal overflow. */
+.v102-app .batch-phone-modal .modalbody{
+  padding:8px 12px 64px!important;
+  overflow-x:hidden!important;
+}
+.v102-app .batch-shared-section{padding:7px 9px!important}
+.v102-app .batch-shared-section>.grid{
+  display:flex!important;flex-wrap:wrap!important;gap:6px!important;align-items:flex-end!important;
+}
+.v102-app .batch-shared-section>.grid>label:nth-child(1){width:130px!important}
+.v102-app .batch-shared-section>.grid>label:nth-child(2){width:165px!important}
+.v102-app .batch-shared-section>.grid>label:nth-child(3){width:165px!important}
+.v102-app .batch-shared-section>.grid>label:nth-child(4){width:210px!important}
+.v102-app .batch-shared-section textarea{min-height:38px!important;max-height:52px!important}
+
+.v102-app .batch-phone-list{gap:6px!important;margin-top:6px!important}
+.v102-app .batch-phone-list-head{min-height:46px!important;padding:6px 9px!important}
+.v102-app .batch-phone-row{padding:6px 9px!important}
+.v102-app .batch-phone-row>header{
+  min-height:23px!important;margin-bottom:5px!important;padding-bottom:5px!important;
+}
+.v102-app .batch-phone-fields{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  gap:6px!important;
+  width:100%!important;
+}
+.v102-app .batch-phone-fields>label{
+  flex:0 1 auto!important;
+  max-width:none!important;
+  min-width:0!important;
+}
+.v102-app .batch-phone-fields>label:nth-child(1){width:105px!important}
+.v102-app .batch-phone-fields>label:nth-child(2){width:120px!important}
+.v102-app .batch-phone-fields>label:nth-child(3){width:88px!important}
+.v102-app .batch-phone-fields>label:nth-child(4){width:100px!important}
+.v102-app .batch-phone-fields>label:nth-child(5){width:76px!important}
+.v102-app .batch-phone-fields>label:nth-child(6){width:104px!important}
+.v102-app .batch-phone-fields>label:nth-child(7){width:118px!important}
+.v102-app .batch-phone-fields>label:nth-child(8){width:105px!important}
+.v102-app .batch-phone-fields>label:nth-child(9){width:112px!important}
+.v102-app .batch-phone-fields>label:nth-child(10){width:145px!important}
+.v102-app .batch-phone-fields>label.batch-phone-notes{
+  width:min(100%,620px)!important;
+  flex:1 1 420px!important;
+}
+.v102-app .batch-phone-fields input,.v102-app .batch-phone-fields select{
+  height:30px!important;min-height:30px!important;padding-top:0!important;padding-bottom:0!important;
+}
+.v102-app .batch-phone-notes textarea{
+  min-height:36px!important;max-height:48px!important;
+}
+.v102-app .batch-unlock{margin-top:4px!important;padding-top:4px!important}
+.v102-app .batch-unlock>summary{min-height:26px!important}
+.v102-app .batch-phone-modal .actions{
+  margin-top:7px!important;padding-top:8px!important;padding-bottom:8px!important;
+}
+
+/* Generic form normalization for all principal pages and subwindows. */
+.v102-app .modalbody .grid:not(.phone-core-fields):not(.compact-purchase-grid){
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  gap:7px!important;
+  width:100%!important;
+}
+.v102-app .modalbody .grid:not(.phone-core-fields):not(.compact-purchase-grid)>label{
+  width:min(210px,100%)!important;
+  flex:0 1 210px!important;
+  max-width:210px!important;
+}
+.v102-app :is(.entity-form,.settings-form,.editor-grid,.form-grid){
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:flex-end!important;
+  gap:7px!important;
+}
+.v102-app :is(.entity-form,.settings-form,.editor-grid,.form-grid)>label{
+  flex:0 1 205px!important;
+  max-width:205px!important;
+}
+
+/* Don't let controls themselves force overflow. */
+.v102-app input,.v102-app select,.v102-app textarea,.v102-app button{
+  max-width:100%;
+  box-sizing:border-box;
+}
+.v102-app label{min-width:0!important}
+
+/* Side menu and content never show legacy scroll tracks. */
+.v102-sidebar,.v102-navigation{overflow-x:hidden!important}
+.v102-stage,.v102-main{overflow-x:hidden!important}
+
+/* At narrower widths, wrap sooner instead of adding scrollbars. */
+@media(max-width:900px){
+ .v102-app .phone-editor-modal .phone-core-fields>label:nth-child(n),
+ .v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(n){
+   width:calc(50% - 4px)!important;flex:1 1 calc(50% - 4px)!important;
+ }
+ .v102-app .batch-phone-fields>label:nth-child(n):not(.batch-phone-notes){
+   width:calc(33.333% - 5px)!important;flex:1 1 calc(33.333% - 5px)!important;
+ }
+}
+@media(max-width:620px){
+ .v102-app .phone-editor-modal .phone-core-fields>label:nth-child(n),
+ .v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(n),
+ .v102-app .batch-phone-fields>label:nth-child(n){
+   width:100%!important;flex:1 1 100%!important;max-width:none!important;
+ }
+}
