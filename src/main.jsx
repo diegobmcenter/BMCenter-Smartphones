@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.6';
+const APP_VERSION='10.2.7';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -86,6 +86,11 @@ class AppErrorBoundary extends React.Component{
  }
 }
 
+const FONT_SCALE_KEY='bmcenter-font-scales';
+function loadFontScales(){try{const value=JSON.parse(localStorage.getItem(FONT_SCALE_KEY)||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return{}}}
+function fontScaleId(kind,name){return `${kind}:${String(name||'default').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'default'}`}
+function getFontScale(id){const value=Number(loadFontScales()[id]??1);return Math.min(1.15,Math.max(.9,Number.isFinite(value)?value:1))}
+function saveFontScale(id,value){const next={...loadFontScales(),[id]:Math.min(1.15,Math.max(.9,Number(value)||1))};localStorage.setItem(FONT_SCALE_KEY,JSON.stringify(next));return next[id]}
 function App({cloudUser,onCloudLogout}){
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
@@ -1773,6 +1778,7 @@ function captureCompleteBackup(options={}){
    colorsAndTheme:!!storage[CFGKEY],
    phoneColumns:!!storage[PHONECOLKEY],
    tableLayouts:!!storage[TABLELAYOUTKEY],
+   fontScales:!!storage[FONT_SCALE_KEY],
    menuVisibility:!!storage[MENUKEY],
    savedViews:!!storage[VIEWKEY],
    allBmcenterKeys:Object.keys(storage).length,
@@ -2177,7 +2183,14 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
 }
 
 function SellerModal({item,onClose,onSave}){const[f,setF]=useState(item),set=(k,v)=>setF({...f,[k]:v});return <Modal title="Cadastro de vendedor" onClose={onClose}><div className="grid"><Field label="Nome" value={f.name} onChange={v=>set('name',v)}/><Field label="Telefone" value={f.phone} onChange={v=>set('phone',v)}/><Field label="Cidade" value={f.city} onChange={v=>set('city',v)}/><Field label="Endereço" value={f.address} onChange={v=>set('address',v)}/></div><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label><div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave(f)}>Salvar</button></div></Modal>}
-function Modal({title,onClose,children,className=''}){return <div className="back" onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`}><div className="modalhead"><h2>{title}</h2><button type="button" onClick={onClose}><X/></button></div><div className="modalbody">{children}</div></div></div>}
+function Modal({title,onClose,children,className=''}) {
+ const currentPage=sessionStorage.getItem('bmcenter-current-page')||'dashboard';
+ const pageScale=getFontScale(fontScaleId('page',currentPage));
+ const scaleKey=fontScaleId('modal',title);
+ const[fontScale,setFontScale]=useState(()=>getFontScale(scaleKey));
+ const changeFont=delta=>setFontScale(current=>saveFontScale(scaleKey,Math.round((current+delta)*100)/100));
+ return <div className="back" style={{zoom:1/pageScale}} onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`} style={{zoom:fontScale}}><div className="modalhead"><h2>{title}</h2><div className="modalhead-tools"><div className="font-scale-controls" title="Tamanho da fonte desta janela"><button type="button" onClick={()=>changeFont(-.05)} disabled={fontScale<=.9}>−</button><span>{Math.round(fontScale*100)}%</span><button type="button" onClick={()=>changeFont(.05)} disabled={fontScale>=1.15}>+</button></div><button type="button" onClick={onClose}><X/></button></div></div><div className="modalbody">{children}</div></div></div>
+}
 function Field({label,value,onChange,type='text'}){return <label>{label}<input type={type} value={value??''} onChange={e=>onChange(e.target.value)}/></label>}
 function Title({t,s,children}){return <div className="title"><div><h1>{t}</h1><p>{s}</p></div>{children}</div>}
 function Empty({text='Nenhum registro cadastrado.'}){return <div className="empty">{text}</div>}

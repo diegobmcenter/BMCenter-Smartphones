@@ -1,0 +1,84 @@
+/* BMCenter v10.2.7 — per-screen font scale + compact form sizing */
+
+/* Small +/- controls are always available in page topbar and modal headers */
+.font-scale-controls{display:inline-flex;align-items:center;gap:2px;padding:2px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);white-space:nowrap}
+.font-scale-controls button{width:27px!important;height:28px!important;min-width:27px!important;min-height:28px!important;padding:0!important;border:0!important;border-radius:7px!important;background:transparent!important;color:var(--text)!important;font-size:16px!important;font-weight:700!important;line-height:1!important}
+.font-scale-controls button:hover:not(:disabled){background:var(--surface3)!important;color:var(--accent)!important}
+.font-scale-controls button:disabled{opacity:.3!important;cursor:not-allowed!important}
+.font-scale-controls span{min-width:35px;text-align:center;font-size:7px!important;color:var(--muted)!important;font-weight:700}
+.top-font-scale{margin-left:1px}
+.modalhead-tools{display:flex;align-items:center;gap:7px}
+.modalhead .font-scale-controls{padding:1px}.modalhead .font-scale-controls button{width:24px!important;height:25px!important;min-width:24px!important;min-height:25px!important}.modalhead .font-scale-controls span{min-width:32px}
+
+/* Main forms: stop stretching short fields across the whole dialog */
+.v102-app .modalbody .grid{
+  grid-template-columns:repeat(auto-fit,minmax(135px,220px))!important;
+  justify-content:start!important;
+  align-items:end!important;
+}
+.v102-app .modalbody .grid>label{width:100%!important;max-width:220px!important}
+
+/* Phone identity: only brand/model get flexible space. Short technical values remain short. */
+.v102-app .phone-editor-modal .phone-core-fields{
+  display:grid!important;
+  grid-template-columns:minmax(150px,1.25fr) minmax(170px,1.45fr) minmax(105px,.75fr) 112px 98px 118px 138px!important;
+  gap:7px!important;
+  align-items:end!important;
+}
+.v102-app .phone-editor-modal .phone-core-fields>label{max-width:none!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(4){max-width:112px!important} /* armazenamento */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(5){max-width:98px!important}  /* RAM */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(6){max-width:118px!important} /* NFC */
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(7){max-width:138px!important} /* conector */
+
+/* Purchase data: dates/payment/amounts don't need giant widths */
+.v102-app .phone-editor-modal .compact-purchase-grid{
+  display:grid!important;
+  grid-template-columns:135px minmax(150px,210px) minmax(150px,200px) minmax(170px,240px) 120px 125px minmax(155px,220px)!important;
+  justify-content:start!important;
+  gap:7px!important;
+}
+.v102-app .phone-editor-modal .compact-purchase-grid>label{max-width:240px!important}
+
+/* Batch form follows the same compact logic. */
+.v102-app .batch-phone-fields{
+  grid-template-columns:minmax(105px,1fr) minmax(120px,1.15fr) 90px 100px 82px 106px 122px 105px 112px minmax(130px,1fr)!important;
+  justify-content:start!important;
+}
+.v102-app .batch-phone-fields>label{max-width:none!important}
+.v102-app .batch-phone-fields>label:nth-child(4){max-width:100px!important}
+.v102-app .batch-phone-fields>label:nth-child(5){max-width:82px!important}
+.v102-app .batch-phone-fields>label:nth-child(6){max-width:106px!important}
+.v102-app .batch-phone-fields>label:nth-child(7){max-width:122px!important}
+
+/* Generic compact form treatment used across principal pages and subwindows */
+.v102-app :is(.settings-form,.entity-form,.filter-form,.editor-grid,.form-grid) {
+  grid-template-columns:repeat(auto-fit,minmax(135px,220px))!important;
+  justify-content:start!important;
+}
+.v102-app :is(.settings-form,.entity-form,.filter-form,.editor-grid,.form-grid)>label{max-width:220px!important}
+
+/* Selects with naturally short content shouldn't visually become full-screen fields */
+.v102-app .modalbody select{max-width:100%!important}
+.v102-app .phone-editor-modal select,.v102-app .batch-phone-modal select{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+/* Keep the topbar usable when page font is enlarged */
+.v102-top-right{gap:6px!important}
+
+@media(max-width:1180px){
+ .v102-app .phone-editor-modal .phone-core-fields{grid-template-columns:repeat(4,minmax(120px,1fr))!important}
+ .v102-app .phone-editor-modal .compact-purchase-grid{grid-template-columns:repeat(4,minmax(130px,1fr))!important}
+ .v102-app .phone-editor-modal .phone-core-fields>label,.v102-app .phone-editor-modal .compact-purchase-grid>label{max-width:none!important}
+ .v102-app .batch-phone-fields{grid-template-columns:repeat(5,minmax(110px,1fr))!important}
+ .v102-app .batch-phone-fields>label{max-width:none!important}
+}
+@media(max-width:760px){
+ .top-font-scale span{display:none}.top-font-scale button{width:25px!important;min-width:25px!important}
+ .v102-app .phone-editor-modal .phone-core-fields,.v102-app .phone-editor-modal .compact-purchase-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v102-app .batch-phone-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v102-app .modalbody .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v102-app .modalbody .grid>label{max-width:none!important}
+}
+@media(max-width:440px){
+ .v102-app .phone-editor-modal .phone-core-fields,.v102-app .phone-editor-modal .compact-purchase-grid,.v102-app .batch-phone-fields,.v102-app .modalbody .grid{grid-template-columns:1fr!important}
+}
