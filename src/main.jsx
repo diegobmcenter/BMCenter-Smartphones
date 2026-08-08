@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.3';
+const APP_VERSION='10.3.4';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
@@ -635,10 +635,17 @@ function defaultPhoneColumns(){return[
 ]}
 function loadPhoneColumns(){const saved=load(PHONECOLKEY);if(!Array.isArray(saved)||!saved.length)return defaultPhoneColumns();const defaults=defaultPhoneColumns(),byId=Object.fromEntries(saved.map(x=>[x.id,x]));return defaults.map(d=>({...d,...byId[d.id]})).sort((a,b)=>{const ao=saved.findIndex(x=>x.id===a.id),bo=saved.findIndex(x=>x.id===b.id);return (ao<0?999:ao)-(bo<0?999:bo)})}
 function Phones(){
- const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState('Todos'),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false);
+ const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState('Todos'),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
  const tableWrapRef=useRef(null);
  useEffect(()=>{if(tableWrapRef.current)tableWrapRef.current.scrollLeft=0},[query,statusFilter,tagFilter,onlyFavorites]);
  const banks=load(BKEY),suppliers=load(FKEY),profiles=load(PKEY);
+ void draftRevision;
+ const phoneDraft=loadDraft(PHONE_DRAFT_KEY),batchDraft=loadDraft(BATCH_DRAFT_KEY);
+ const refreshDrafts=()=>setDraftRevision(value=>value+1);
+ const continuePhoneDraft=()=>setEdit(blankPhone(items.length+1));
+ const continueBatchDraft=()=>setBatchCreate(true);
+ const deletePhoneDraft=()=>{if(!confirm('Excluir o rascunho do aparelho?'))return;clearDraft(PHONE_DRAFT_KEY);refreshDrafts()};
+ const deleteBatchDraft=()=>{if(!confirm('Excluir o rascunho do cadastro em massa?'))return;clearDraft(BATCH_DRAFT_KEY);refreshDrafts()};
  const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setItems(lean);save(SKEY,lean)};
  const persistColumns=v=>{setColumns(v);save(PHONECOLKEY,v)};
  const allTags=[...new Set(items.flatMap(x=>x.tags||[]))].sort();
@@ -686,11 +693,14 @@ function Phones(){
     blankPhone={blankPhone} items={items} actionPhone={actionPhone} setActionPhone={setActionPhone}
     setSalePhone={setSalePhone} persist={persist} updateFinancial={updateFinancial}
     totalExpected={items.filter(x=>x.status!=='Vendido').reduce((sum,x)=>sum+Number(x.expected||0),0)}
+    phoneDraft={phoneDraft} batchDraft={batchDraft}
+    continuePhoneDraft={continuePhoneDraft} continueBatchDraft={continueBatchDraft}
+    deletePhoneDraft={deletePhoneDraft} deleteBatchDraft={deleteBatchDraft}
   />
-  {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>setBatchCreate(false)} onSave={created=>{persist([...created,...items]);setBatchCreate(false)}}/>}
+  {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>{setBatchCreate(false);refreshDrafts()}} onSave={created=>{persist([...created,...items]);setBatchCreate(false);refreshDrafts()}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
   {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
-  {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>setEdit(null)} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);let saved=touchPhone(addTimeline(v,'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null)}}/>}
+  {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);let saved=touchPhone(addTimeline(v,'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
   {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>x.id!==salePhone.id?x:touchPhone(addTimeline({...x,status:'Vendido',sale},`Venda registrada por ${money(sale.value)}`))));setSalePhone(null)}}/>}
  </>
 }
