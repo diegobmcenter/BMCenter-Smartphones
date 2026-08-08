@@ -11,7 +11,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.9';
+const APP_VERSION='10.3.10';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
@@ -31,6 +31,7 @@ function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');re
 function capacityLabel(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
 function stripUnit(value,unit){return String(value??'').replace(new RegExp(`\\s*${unit}\\s*$`,'i'),'').trim()}
 function normalizeCapacityInput(value){return stripUnit(value,'GB').replace(/[^0-9.,]/g,'')}
+function normalizeRamInput(value){return stripUnit(value,'GB').replace(/[^0-9+.,\s]/g,'').replace(/\s*\+\s*/g,'+').replace(/\+{2,}/g,'+')}
 function normalizeMoneyInput(value){return String(value??'').replace(/^\s*R\$\s*/i,'').replace(/[^0-9.,]/g,'').trim()}
 function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':'',phone?.likeNew===true?'Estado de novo':'',phone?.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
 const statuses=['Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
@@ -2167,7 +2168,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <Field label="Modelo" value={row.model} onChange={v=>setRow(row.id,'model',v)}/>
      <Field label="Cor" value={row.color} onChange={v=>setRow(row.id,'color',v)}/>
      <Field label="Armazenamento" value={normalizeCapacityInput(row.storage)} suffix="GB" inputMode="numeric" onChange={v=>setRow(row.id,'storage',normalizeCapacityInput(v))}/>
-     <Field label="RAM" value={normalizeCapacityInput(row.ram)} suffix="GB" inputMode="numeric" onChange={v=>setRow(row.id,'ram',normalizeCapacityInput(v))}/>
+     <Field label="RAM" value={normalizeRamInput(row.ram)} suffix="GB" inputMode="text" onChange={v=>setRow(row.id,'ram',normalizeRamInput(v))}/>
      <label>NFC<select value={row.nfc===true?'sim':row.nfc===false?'nao':''} onChange={e=>setRow(row.id,'nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Película<select value={row.screenProtector===true?'sim':row.screenProtector===false?'nao':''} onChange={e=>setRow(row.id,'screenProtector',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Capinha<select value={row.caseIncluded===true?'sim':row.caseIncluded===false?'nao':''} onChange={e=>setRow(row.id,'caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
@@ -2222,7 +2223,9 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     {isNewPhone&&draftRecovered&&<div className="draft-recovered-banner"><div><b>Rascunho recuperado</b><small>{savedPhoneDraft?.savedAt?`Salvo em ${new Date(savedPhoneDraft.savedAt).toLocaleString('pt-BR')}`:'Continue de onde parou.'}</small></div><button type="button" onClick={discardPhoneDraft}>Descartar rascunho</button></div>}
     <h3 className="section-title">Dados do aparelho</h3>
     <div className="grid phone-core-fields">
-      {[['Marca','brand'],['Modelo','model'],['Cor','color'],['Armazenamento','storage'],['RAM','ram']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>) }
+      {[['Marca','brand'],['Modelo','model'],['Cor','color']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>)}
+      <Field label="Armazenamento" value={normalizeCapacityInput(f.storage)} suffix="GB" inputMode="numeric" onChange={v=>set('storage',normalizeCapacityInput(v))}/>
+      <Field label="RAM" value={normalizeRamInput(f.ram)} suffix="GB" inputMode="text" onChange={v=>set('ram',normalizeRamInput(v))}/>
       <label>NFC<select value={f.nfc===true?'sim':f.nfc===false?'nao':''} onChange={e=>set('nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Película<select value={f.screenProtector===true?'sim':f.screenProtector===false?'nao':''} onChange={e=>set('screenProtector',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Capinha<select value={f.caseIncluded===true?'sim':f.caseIncluded===false?'nao':''} onChange={e=>set('caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
