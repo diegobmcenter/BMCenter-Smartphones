@@ -9,10 +9,10 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';
-const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.10';
-const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';
+const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
+const APP_VERSION='10.3.11';
+const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
 const saveDraft=(k,v)=>{const payload={...v,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
@@ -34,7 +34,11 @@ function normalizeCapacityInput(value){return stripUnit(value,'GB').replace(/[^0
 function normalizeRamInput(value){return stripUnit(value,'GB').replace(/[^0-9+.,\s]/g,'').replace(/\s*\+\s*/g,'+').replace(/\+{2,}/g,'+')}
 function normalizeMoneyInput(value){return String(value??'').replace(/^\s*R\$\s*/i,'').replace(/[^0-9.,]/g,'').trim()}
 function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':'',phone?.likeNew===true?'Estado de novo':'',phone?.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
-const statuses=['Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
+const DEFAULT_PHONE_STATUSES=['Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
+function sortPhoneStatuses(list){return [...new Set((Array.isArray(list)?list:[]).map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}))}
+function loadPhoneStatuses(){try{const saved=JSON.parse(localStorage.getItem(STATUSKEY)||'null');return saved&&Array.isArray(saved)&&saved.length?sortPhoneStatuses(saved):sortPhoneStatuses(DEFAULT_PHONE_STATUSES)}catch{return sortPhoneStatuses(DEFAULT_PHONE_STATUSES)}}
+function savePhoneStatuses(list){const next=sortPhoneStatuses(list);localStorage.setItem(STATUSKEY,JSON.stringify(next));queueCloudSave(STATUSKEY,next);return next}
+const statuses=loadPhoneStatuses();
 
 function normalizeSnapshotList(value){
  if(!Array.isArray(value))return[];
@@ -269,6 +273,57 @@ function loadMenuSettings(){
 
 function ThemeDashboardPreview({mode}){return <div className={`v102-live-preview ${mode}`} aria-hidden="true"><aside><span className="logo-dot"/><i/><i/><i/><i/></aside><section><header><span/><b/><b/></header><main><div className="preview-title"><i/><strong/><small/></div><div className="preview-kpis"><article/><article/><article/><article/></div><div className="preview-content"><article><i/><i/><i/><i/></article><aside><i/><i/></aside></div></main></section></div>}
 
+function StatusManager(){
+ const[items,setItems]=useState(()=>loadPhoneStatuses().map(name=>({id:crypto.randomUUID(),name,original:name})));
+ const[newStatus,setNewStatus]=useState('');
+ const phones=load(SKEY);
+ const addStatus=()=>{
+  const name=newStatus.trim();
+  if(!name)return;
+  if(items.some(item=>item.name.trim().localeCompare(name,'pt-BR',{sensitivity:'base'})===0)){alert('Esse status já existe.');return}
+  setItems(current=>sortPhoneStatuses([...current.map(x=>x.name),name]).map(statusName=>{
+   const existing=items.find(x=>x.name===statusName);
+   return existing||{id:crypto.randomUUID(),name:statusName,original:''}
+  }));
+  setNewStatus('')
+ };
+ const updateName=(id,name)=>setItems(current=>current.map(item=>item.id===id?{...item,name}:item));
+ const removeStatus=item=>{
+  const used=phones.filter(phone=>phone.status===item.original||phone.status===item.name).length;
+  if(used){alert(`Não é possível remover "${item.name}" porque ${used} aparelho(s) ainda usam esse status. Renomeie o status ou altere esses aparelhos primeiro.`);return}
+  if(!confirm(`Remover o status "${item.name}"?`))return;
+  setItems(current=>current.filter(x=>x.id!==item.id))
+ };
+ const saveAll=()=>{
+  const clean=items.map(item=>({...item,name:item.name.trim()})).filter(item=>item.name);
+  const names=clean.map(item=>item.name);
+  if(new Set(names.map(x=>x.toLocaleLowerCase('pt-BR'))).size!==names.length){alert('Existem status duplicados. Corrija antes de salvar.');return}
+  let updatedPhones=phones;
+  clean.forEach(item=>{
+   if(item.original&&item.original!==item.name){
+    updatedPhones=updatedPhones.map(phone=>phone.status===item.original?{...phone,status:item.name}:phone)
+   }
+  });
+  if(JSON.stringify(updatedPhones)!==JSON.stringify(phones))save(SKEY,updatedPhones);
+  savePhoneStatuses(names);
+  alert('Status salvos. O sistema será atualizado para aplicar a nova lista em todas as telas.');
+  reloadPreservingContext()
+ };
+ const resetDefaults=()=>{
+  if(!confirm('Restaurar a lista padrão de Status? Status personalizados serão removidos se não estiverem em uso.'))return;
+  const used=new Set(phones.map(phone=>phone.status).filter(Boolean));
+  const merged=sortPhoneStatuses([...DEFAULT_PHONE_STATUSES,...[...used].filter(status=>!DEFAULT_PHONE_STATUSES.includes(status))]);
+  setItems(merged.map(name=>({id:crypto.randomUUID(),name,original:name})))
+ };
+ const sorted=[...items].sort((a,b)=>a.name.localeCompare(b.name,'pt-BR',{sensitivity:'base'}));
+ return <div className="v103-status-manager">
+  <div className="v103-status-manager-head"><div><h3>Status dos aparelhos</h3><p>Adicione, renomeie ou remova status. A lista é exibida em ordem alfabética em todo o sistema.</p></div><button type="button" onClick={resetDefaults}>Restaurar padrão</button></div>
+  <div className="v103-status-add"><input value={newStatus} onChange={e=>setNewStatus(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addStatus()}}} placeholder="Novo status"/><button type="button" className="primary" onClick={addStatus}>+ Adicionar</button></div>
+  <div className="v103-status-list">{sorted.map(item=><div className="v103-status-row" key={item.id}><input value={item.name} onChange={e=>updateName(item.id,e.target.value)} /><button type="button" className="danger" onClick={()=>removeStatus(item)}>Remover</button></div>)}</div>
+  <div className="v103-status-footer"><small>{items.length} status configurado(s)</small><button type="button" className="primary" onClick={saveAll}>Salvar status</button></div>
+ </div>
+}
+
 function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChange}){
  const[tab,setTab]=useState('appearance');
  const showAll=()=>onChange(Object.fromEntries(menuItems.map(x=>[x.id,true])));
@@ -282,11 +337,11 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
     <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="light"/><div className="v102-theme-copy"><b>Claro</b><span>Fundo suave, cartões claros e azul reservado para ações.</span></div>{config.themeMode==='light'&&<em>✓ Em uso</em>}</button>
     <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="dark"/><div className="v102-theme-copy"><b>Escuro</b><span>Grafite confortável, superfícies discretas e sem faixas brancas.</span></div>{config.themeMode!=='light'&&<em>✓ Em uso</em>}</button>
    </div><div className="v102-theme-note"><ShieldCheck/><div><b>Paleta fixa aprovada</b><p>O ajuste de brilho não modifica sua paleta; ele apenas reduz a luminosidade da interface. O modo leitura acrescenta conforto para uso noturno.</p></div></div></section>}
-  {tab==='general'&&<section className="v102-settings-section"><header><span>GERAL</span><h2>Preferências do sistema</h2></header><div className="v102-settings-card"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/><span><b>Exibir código interno dos aparelhos</b><small>Quando desligado, BM-000000 desaparece de todo o sistema.</small></span></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/><span><b>Ponto automático antes de uma nova versão</b><small>Mantém uma restauração rápida em caso de atualização.</small></span></label></div><div className="v102-settings-card"><h3>Menus visíveis</h3><div className="v102-settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Somente essenciais</button></div><div className="v102-menu-settings">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div></section>}
+  {tab==='general'&&<section className="v102-settings-section"><header><span>GERAL</span><h2>Preferências do sistema</h2></header><div className="v102-settings-card"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/><span><b>Exibir código interno dos aparelhos</b><small>Quando desligado, BM-000000 desaparece de todo o sistema.</small></span></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/><span><b>Ponto automático antes de uma nova versão</b><small>Mantém uma restauração rápida em caso de atualização.</small></span></label></div><div className="v102-settings-card"><StatusManager/></div><div className="v102-settings-card"><h3>Menus visíveis</h3><div className="v102-settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Somente essenciais</button></div><div className="v102-menu-settings">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div></section>}
   {tab==='suppliers'&&<section className="v102-settings-embedded"><Suppliers/></section>}
   {tab==='banks'&&<section className="v102-settings-embedded"><Banks/></section>}
   {tab==='notifications'&&<section className="v102-settings-section"><header><span>NOTIFICAÇÕES</span><h2>Notificações</h2></header><div className="v102-settings-card"><Empty text="As configurações de notificações serão centralizadas aqui."/></div></section>}
-  {tab==='system'&&<section className="v102-settings-section"><header><span>SISTEMA</span><h2>Informações do sistema</h2></header><div className="v102-settings-card"><p>Versão atual: v10.3.0</p><p>Armazenamento local e sincronização em nuvem ativos.</p></div></section>}
+  {tab==='system'&&<section className="v102-settings-section"><header><span>SISTEMA</span><h2>Informações do sistema</h2></header><div className="v102-settings-card"><p>Versão atual: v10.3.11</p><p>Armazenamento local e sincronização em nuvem ativos.</p></div></section>}
   {tab==='about'&&<section className="v102-settings-section"><header><span>SOBRE</span><h2>BMCenter Smartphones</h2></header><div className="v102-settings-card"><p>Sistema de gestão operacional para compra, reparo, anúncio e venda de smartphones.</p></div></section>}
  </div>
 }
@@ -1813,6 +1868,7 @@ function backupCriticalAudit(storage){
   snapshots:storage[SNAPKEY]!==undefined,
   phoneDraftCaptured:storage[PHONE_DRAFT_KEY]!==undefined,
   batchPhoneDraftCaptured:storage[BATCH_DRAFT_KEY]!==undefined,
+  phoneStatuses:storage[STATUSKEY]!==undefined,
   counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts}
  }
 }

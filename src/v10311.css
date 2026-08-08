@@ -1,0 +1,47 @@
+/* BMCenter v10.3.11 — configurable phone statuses */
+.v103-status-manager{display:grid;gap:10px}
+.v103-status-manager-head{
+ display:flex;align-items:flex-start;justify-content:space-between;gap:12px
+}
+.v103-status-manager-head h3{margin:0 0 3px!important;font-size:12px!important}
+.v103-status-manager-head p{margin:0!important;color:var(--muted)!important;font-size:8px!important;line-height:1.45!important}
+.v103-status-manager-head>button{flex:0 0 auto;min-height:31px!important;padding:0 9px!important;font-size:8px!important}
+.v103-status-add{
+ display:grid;grid-template-columns:minmax(180px,320px) auto;gap:7px;justify-content:start;align-items:center
+}
+.v103-status-add input{height:34px!important;min-height:34px!important}
+.v103-status-add button{min-height:34px!important;padding:0 12px!important}
+.v103-status-list{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px
+}
+.v103-status-row{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:center;
+ padding:5px;border:1px solid var(--line);border-radius:9px;background:var(--surface2)
+}
+.v103-status-row input{
+ width:100%!important;height:31px!important;min-height:31px!important;padding:0 8px!important;
+ border:1px solid transparent!important;background:var(--surface)!important;font-size:9px!important
+}
+.v103-status-row input:focus{border-color:var(--accent)!important}
+.v103-status-row button{
+ min-height:31px!important;padding:0 8px!important;font-size:7.5px!important
+}
+.v103-status-footer{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ padding-top:8px;border-top:1px solid var(--line)
+}
+.v103-status-footer small{font-size:8px!important;color:var(--muted)!important}
+.v103-status-footer button{min-height:34px!important;padding:0 13px!important}
+
+@media(max-width:700px){
+ .v103-status-manager-head{flex-direction:column}
+ .v103-status-manager-head>button{width:100%!important}
+ .v103-status-add{grid-template-columns:1fr auto}
+ .v103-status-list{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+ .v103-status-add{grid-template-columns:1fr}
+ .v103-status-add button{width:100%!important}
+ .v103-status-footer{align-items:stretch;flex-direction:column}
+ .v103-status-footer button{width:100%!important}
+}
