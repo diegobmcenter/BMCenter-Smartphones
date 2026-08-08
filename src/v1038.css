@@ -1,0 +1,114 @@
+/* BMCenter v10.3.8 — unidades automáticas e compactação de campos */
+
+.field-affix{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  width:100%;
+  min-height:31px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--surface2);
+  overflow:hidden;
+}
+.field-affix:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px var(--accent-soft);
+}
+.field-affix input{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:100%!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0 7px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+.field-prefix,.field-suffix{
+  flex:0 0 auto;
+  padding:0 7px;
+  font-size:8px;
+  font-weight:750;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.field-prefix{border-right:1px solid var(--line)}
+.field-suffix{border-left:1px solid var(--line)}
+
+/* Individual phone form: short technical fields stay short. */
+.v102-app .phone-editor-modal .phone-core-fields{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  align-items:flex-end!important;
+}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(1){width:145px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(2){width:170px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(3){width:100px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(4){width:92px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(5){width:76px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(6){width:100px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(7){width:112px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(8){width:112px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(9){width:112px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(10){width:112px!important}
+.v102-app .phone-editor-modal .phone-core-fields>label:nth-child(11){width:132px!important}
+
+/* Purchase data: values compact, Status gets more room. */
+.v102-app .phone-editor-modal .compact-purchase-grid{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  align-items:flex-end!important;
+}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(1){width:125px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(2){width:145px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(3){width:145px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(4){width:175px!important}
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(5){width:102px!important} /* Valor pago */
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(6){width:108px!important} /* Valor venda */
+.v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(7){width:165px!important} /* Status */
+
+/* Batch: keep financial fields narrow and Status wide enough. */
+.v102-app .batch-phone-fields{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  align-items:flex-end!important;
+}
+.v102-app .batch-phone-fields>label:nth-child(1){width:96px!important}
+.v102-app .batch-phone-fields>label:nth-child(2){width:112px!important}
+.v102-app .batch-phone-fields>label:nth-child(3){width:82px!important}
+.v102-app .batch-phone-fields>label:nth-child(4){width:88px!important}  /* storage */
+.v102-app .batch-phone-fields>label:nth-child(5){width:72px!important}  /* ram */
+.v102-app .batch-phone-fields>label:nth-child(6){width:94px!important}  /* nfc */
+.v102-app .batch-phone-fields>label:nth-child(7){width:104px!important} /* pelicula */
+.v102-app .batch-phone-fields>label:nth-child(8){width:104px!important} /* capinha */
+.v102-app .batch-phone-fields>label:nth-child(9){width:108px!important} /* estado novo */
+.v102-app .batch-phone-fields>label:nth-child(10){width:104px!important}/* biometria */
+.v102-app .batch-phone-fields>label:nth-child(11){width:122px!important}/* conector */
+.v102-app .batch-phone-fields>label:nth-child(12){width:96px!important} /* valor pago */
+.v102-app .batch-phone-fields>label:nth-child(13){width:104px!important}/* valor venda */
+.v102-app .batch-phone-fields>label:nth-child(14){width:158px!important}/* status */
+.v102-app .batch-phone-fields>label.batch-phone-notes{
+  width:min(100%,620px)!important;
+  flex:1 1 420px!important;
+}
+
+@media(max-width:760px){
+  .field-prefix,.field-suffix{font-size:8px;padding:0 6px}
+  .v102-app .phone-editor-modal .phone-core-fields>label:nth-child(n),
+  .v102-app .phone-editor-modal .compact-purchase-grid>label:nth-child(n),
+  .v102-app .batch-phone-fields>label:nth-child(n){
+    width:calc(50% - 4px)!important;
+    flex:1 1 calc(50% - 4px)!important;
+    max-width:none!important;
+  }
+  .v102-app .batch-phone-fields>label.batch-phone-notes{
+    width:100%!important;flex:1 1 100%!important;
+  }
+}

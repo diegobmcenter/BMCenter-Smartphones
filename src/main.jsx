@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.7';
+const APP_VERSION='10.3.8';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
@@ -29,8 +29,11 @@ function phoneTotalCost(phone){return Number(phone.paid||0)+phoneSelectedPartsCo
 function formatDate(value){if(!value)return'—';const[y,m,d]=value.split('-');return d&&m&&y?`${d}/${m}/${y}`:value}
 function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');return m&&y?`${m}/${y}`:value}
 function capacityLabel(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
+function stripUnit(value,unit){return String(value??'').replace(new RegExp(`\\s*${unit}\\s*$`,'i'),'').trim()}
+function normalizeCapacityInput(value){return stripUnit(value,'GB').replace(/[^0-9.,]/g,'')}
+function normalizeMoneyInput(value){return String(value??'').replace(/^\s*R\$\s*/i,'').replace(/[^0-9.,]/g,'').trim()}
 function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':'',phone?.likeNew===true?'Estado de novo':'',phone?.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
-const statuses=['Aguardando análise','Conta Google/FRP','Preparar sistema','Aguardando peças','Em reparo','Em testes','Pronto','Para fotografar','Anúncio preparado','Anunciado','Reservado','Vendido'];
+const statuses=['Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
 
 function normalizeSnapshotList(value){
  if(!Array.isArray(value))return[];
@@ -2163,16 +2166,16 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <Field label="Marca" value={row.brand} onChange={v=>setRow(row.id,'brand',v)}/>
      <Field label="Modelo" value={row.model} onChange={v=>setRow(row.id,'model',v)}/>
      <Field label="Cor" value={row.color} onChange={v=>setRow(row.id,'color',v)}/>
-     <Field label="Armazenamento" value={row.storage} onChange={v=>setRow(row.id,'storage',v)}/>
-     <Field label="RAM" value={row.ram} onChange={v=>setRow(row.id,'ram',v)}/>
+     <Field label="Armazenamento" value={normalizeCapacityInput(row.storage)} suffix="GB" inputMode="numeric" onChange={v=>setRow(row.id,'storage',normalizeCapacityInput(v))}/>
+     <Field label="RAM" value={normalizeCapacityInput(row.ram)} suffix="GB" inputMode="numeric" onChange={v=>setRow(row.id,'ram',normalizeCapacityInput(v))}/>
      <label>NFC<select value={row.nfc===true?'sim':row.nfc===false?'nao':''} onChange={e=>setRow(row.id,'nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Película<select value={row.screenProtector===true?'sim':row.screenProtector===false?'nao':''} onChange={e=>setRow(row.id,'screenProtector',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Capinha<select value={row.caseIncluded===true?'sim':row.caseIncluded===false?'nao':''} onChange={e=>setRow(row.id,'caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Estado de novo<select value={row.likeNew===true?'sim':row.likeNew===false?'nao':''} onChange={e=>setRow(row.id,'likeNew',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Biometria<select value={row.biometrics===true?'sim':row.biometrics===false?'nao':''} onChange={e=>setRow(row.id,'biometrics',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Conector<select value={row.connector||''} onChange={e=>setRow(row.id,'connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
-     <Field label="Valor pago" type="number" value={row.paid} onChange={v=>setRow(row.id,'paid',v)}/>
-     <Field label="Valor de venda" type="number" value={row.expected} onChange={v=>setRow(row.id,'expected',v)}/>
+     <Field label="Valor pago" value={normalizeMoneyInput(row.paid)} prefix="R$" inputMode="decimal" onChange={v=>setRow(row.id,'paid',normalizeMoneyInput(v))}/>
+     <Field label="Valor de venda" value={normalizeMoneyInput(row.expected)} prefix="R$" inputMode="decimal" onChange={v=>setRow(row.id,'expected',normalizeMoneyInput(v))}/>
      <label>Status<select value={row.status} onChange={e=>setRow(row.id,'status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
      <label className="batch-phone-notes">Observações individuais<textarea value={row.notes} onChange={e=>setRow(row.id,'notes',e.target.value)} placeholder="Ex.: tela quebrada, não funciona câmera..."/></label>
     </div>
@@ -2240,8 +2243,8 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
         </select>
         {!banks.length&&<small className="field-help">Cadastre primeiro uma conta em Configurações → Contas bancárias.</small>}
       </label>
-      <Field label="Valor pago" type="number" value={f.paid} onChange={v=>set('paid',v)}/>
-      <Field label="Valor de venda" type="number" value={f.expected} onChange={v=>set('expected',v)}/>
+      <Field label="Valor pago" value={normalizeMoneyInput(f.paid)} prefix="R$" inputMode="decimal" onChange={v=>set('paid',normalizeMoneyInput(v))}/>
+      <Field label="Valor de venda" value={normalizeMoneyInput(f.expected)} prefix="R$" inputMode="decimal" onChange={v=>set('expected',normalizeMoneyInput(v))}/>
       <label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
     </div>
     <div className="compact-notes-grid"><label>Tarefas pendentes<textarea value={f.tasks} onChange={e=>set('tasks',e.target.value)} placeholder="Trocar tela, limpar, testar câmera..."/></label><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label></div>
@@ -2300,7 +2303,7 @@ function Modal({title,onClose,children,className=''}) {
  const changeFont=delta=>setFontScale(current=>saveFontScale(scaleKey,Math.round((current+delta)*100)/100));
  return <div className="back" style={{zoom:1/pageScale}} onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`} style={{zoom:fontScale}}><div className="modalhead"><h2>{title}</h2><div className="modalhead-tools"><div className="font-scale-controls" title="Tamanho da fonte desta janela"><button type="button" onClick={()=>changeFont(-.05)} disabled={fontScale<=.9}>−</button><span>{Math.round(fontScale*100)}%</span><button type="button" onClick={()=>changeFont(.05)} disabled={fontScale>=1.15}>+</button></div><button type="button" onClick={onClose}><X/></button></div></div><div className="modalbody">{children}</div></div></div>
 }
-function Field({label,value,onChange,type='text'}){return <label>{label}<input type={type} value={value??''} onChange={e=>onChange(e.target.value)}/></label>}
+function Field({label,value,onChange,type='text',prefix='',suffix='',inputMode}){return <label>{label}<div className={`field-affix ${prefix?'has-prefix':''} ${suffix?'has-suffix':''}`}>{prefix&&<span className="field-prefix">{prefix}</span>}<input type={type} inputMode={inputMode} value={value??''} onChange={e=>onChange(e.target.value)}/>{suffix&&<span className="field-suffix">{suffix}</span>}</div></label>}
 function Title({t,s,children}){return <div className="title"><div><h1>{t}</h1><p>{s}</p></div>{children}</div>}
 function Empty({text='Nenhum registro cadastrado.'}){return <div className="empty">{text}</div>}
 
