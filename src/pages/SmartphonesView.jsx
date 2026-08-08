@@ -23,12 +23,12 @@ export default function SmartphonesView({
       </>}
     />
 
-    <SearchToolbar query={query} onQueryChange={setQuery} count={filtered.length} placeholder="Buscar aparelho, IMEI, serial ou etiqueta">
+    <SearchToolbar query={query} onQueryChange={setQuery} count={filtered.length} placeholder="Buscar aparelho ou etiqueta">
       <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}>
         <option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}
       </select>
       <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}>
-        <option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}
+        <option value="Todas">Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}
       </select>
       <button className={onlyFavorites?'active':''} onClick={()=>setOnlyFavorites(v=>!v)}><Star size={14}/> Favoritos</button>
     </SearchToolbar>

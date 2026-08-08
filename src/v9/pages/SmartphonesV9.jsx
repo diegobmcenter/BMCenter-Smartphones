@@ -19,9 +19,9 @@ export default function SmartphonesV9({
   </header>
 
   <section className="v9-filterbar">
-   <label><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar modelo, IMEI, serial ou etiqueta"/></label>
-   <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos os status</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
-   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas as etiquetas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
+   <label><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar modelo ou etiqueta"/></label>
+   <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option value="Todos">Todos os status</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
+   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option value="Todas">Todas as etiquetas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
    <button className={onlyFavorites?'active':''} onClick={()=>setOnlyFavorites(v=>!v)}><Star size={15}/> Favoritos</button>
   </section>
 

@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.3';
+const APP_VERSION='10.2.4';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -89,6 +89,7 @@ function App({cloudUser,onCloudLogout}){
  const[config,setConfig]=useState(()=>loadSystemConfig());
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
  useEffect(()=>{const key='bmcenter-lean-phone-v102';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const lean=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(lean));queueCloudSave(SKEY,lean)}localStorage.setItem(key,'1')},[]);
+ useEffect(()=>{const key='bmcenter-phone-schema-v1024';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const migrated=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}localStorage.setItem(key,'1')},[]);
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
  useEffect(()=>{document.body.classList.toggle('hide-product-code',config.showProductCode===false)},[config.showProductCode]);
@@ -220,9 +221,24 @@ function phoneDisplayName(phone,options={}){
 function phoneShortName(phone){
  return showProductCode()&&phone?.code?phone.code:([phone?.brand,phone?.model].filter(Boolean).join(' ').trim()||'Aparelho')
 }
+function normalizeUnlockCredentials(phone){
+ const source=Array.isArray(phone?.unlockCredentials)?phone.unlockCredentials.filter(Boolean):[];
+ const normalized=source.map((entry,index)=>({
+  id:entry.id||crypto.randomUUID(),
+  type:entry.type==='pattern'?'pattern':'text',
+  label:entry.label||`Alternativa ${index+1}`,
+  value:entry.type==='pattern'?'':String(entry.value||''),
+  pattern:Array.isArray(entry.pattern)?entry.pattern.map(Number).filter(n=>n>=1&&n<=9):[],
+  note:String(entry.note||'')
+ }));
+ if(!normalized.length&&phone?.devicePassword){
+  normalized.push({id:crypto.randomUUID(),type:'text',label:'Alternativa 1',value:String(phone.devicePassword),pattern:[],note:'Migrada da senha antiga'})
+ }
+ return normalized
+}
 function sanitizePhoneForLeanMode(phone){
- const {priority,nextAction,nextActionDate,expectedSaleDate,sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,archived,archivedAt,...clean}=phone||{};
- return clean
+ const {priority,nextAction,nextActionDate,expectedSaleDate,sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,archived,archivedAt,imei1,imei2,serial,devicePassword,...clean}=phone||{};
+ return {...clean,nfc:phone?.nfc===true?true:phone?.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(phone)}
 }
 
 function loadMenuSettings(){
@@ -265,7 +281,7 @@ function CommandPalette({menuItems,onNavigate,onClose}){
  const[q,setQ]=useState(''),phones=load(SKEY),profiles=load(PKEY);
  const query=q.trim().toLowerCase();
  const menus=menuItems.filter(x=>x.text.toLowerCase().includes(query));
- const devices=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${p.imei1||''} ${(p.tags||[]).join(' ')}`.toLowerCase().includes(query)).slice(0,6):[];
+ const devices=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')}`.toLowerCase().includes(query)).slice(0,6):[];
  const ads=query?phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)}))).filter(x=>`${x.phone.code} ${x.phone.brand} ${x.phone.model} ${x.ad.name||''} ${x.ad.title||''}`.toLowerCase().includes(query)).slice(0,5):[];
  return <div className="command-backdrop" onMouseDown={e=>e.target===e.currentTarget&&onClose()}>
   <div className="command-palette">
@@ -363,16 +379,16 @@ function GlobalSearchPage(){
  const[q,setQ]=useState('');
  const phones=load(SKEY),sellers=load(VKEY),suppliers=load(FKEY),profiles=load(PKEY);
  const query=q.trim().toLowerCase();
- const phoneResults=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${p.imei1||''} ${p.imei2||''} ${p.serial||''} ${(p.tags||[]).join(' ')} ${p.tasks||''} ${p.notes||''}`.toLowerCase().includes(query)):[];
+ const phoneResults=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')} ${p.tasks||''} ${p.notes||''}`.toLowerCase().includes(query)):[];
  const sellerResults=query?sellers.filter(x=>`${x.name} ${x.phone||''} ${x.city||''} ${x.address||''}`.toLowerCase().includes(query)):[];
  const supplierResults=query?suppliers.filter(x=>`${x.name} ${x.phone||''} ${x.whatsapp||''} ${x.city||''}`.toLowerCase().includes(query)):[];
  const adResults=query?phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)}))).filter(x=>`${x.ad.name||''} ${x.ad.title||''} ${x.ad.description||''} ${x.phone.code} ${x.phone.brand} ${x.phone.model}`.toLowerCase().includes(query)):[];
  return <>
-  <Title t="Pesquisa global" s="Encontre aparelhos, IMEIs, anúncios, vendedores e fornecedores em uma única busca."/>
-  <div className="global-search-box"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Digite modelo, IMEI, nome, telefone, etiqueta..."/><span>{phoneResults.length+sellerResults.length+supplierResults.length+adResults.length} resultado(s)</span></div>
+  <Title t="Pesquisa global" s="Encontre aparelhos, anúncios, vendedores e fornecedores em uma única busca."/>
+  <div className="global-search-box"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Digite modelo, nome, telefone, etiqueta..."/><span>{phoneResults.length+sellerResults.length+supplierResults.length+adResults.length} resultado(s)</span></div>
   {!query?<div className="search-welcome"><Search size={38}/><b>Comece digitando acima</b><span>A pesquisa consulta todas as áreas do BMCenter.</span></div>:
   <div className="global-results">
-   <SearchSection title="Smartphones" count={phoneResults.length}>{phoneResults.map(p=><div className="search-result" key={p.id}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><small>{p.imei1||'Sem IMEI'} · {p.status}</small></div><strong>{money(p.expected)}</strong></div>)}</SearchSection>
+   <SearchSection title="Smartphones" count={phoneResults.length}>{phoneResults.map(p=><div className="search-result" key={p.id}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><small>{p.nfc===true?'NFC · ':''}{p.status}</small></div><strong>{money(p.expected)}</strong></div>)}</SearchSection>
    <SearchSection title="Anúncios" count={adResults.length}>{adResults.map(x=><div className="search-result" key={x.ad.id}><FileText/><div><b>{showProductCode()&&<>{x.phone.code} · </>}{x.ad.name}</b><small>{x.ad.title||'Sem título'}</small></div><strong>{publishedCountForAd(x.ad)}/{profiles.length}</strong></div>)}</SearchSection>
    <SearchSection title="Vendedores" count={sellerResults.length}>{sellerResults.map(x=><div className="search-result" key={x.id}><Users/><div><b>{x.name}</b><small>{x.phone||'Sem telefone'} · {x.city||''}</small></div></div>)}</SearchSection>
    <SearchSection title="Fornecedores" count={supplierResults.length}>{supplierResults.map(x=><div className="search-result" key={x.id}><Store/><div><b>{x.name}</b><small>{x.phone||x.whatsapp||'Sem telefone'} · {x.category||''}</small></div></div>)}</SearchSection>
@@ -473,7 +489,7 @@ function FacebookProfileModal({item,onClose,onSave}){
 function BatchActionsPage(){
  const[phones,setPhones]=useState(load(SKEY)),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState('Ativos'),[selected,setSelected]=useState([]),[newStatus,setNewStatus]=useState(''),[newTag,setNewTag]=useState('');
  const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setPhones(lean);save(SKEY,lean)};
- const rows=phones.filter(p=>{const text=`${p.code} ${p.brand} ${p.model} ${p.imei1||''} ${(p.tags||[]).join(' ')}`.toLowerCase();const statusOk=statusFilter==='Todos'||(statusFilter==='Ativos'?p.status!=='Vendido':p.status===statusFilter);return text.includes(query.toLowerCase())&&statusOk});
+ const rows=phones.filter(p=>{const text=`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')}`.toLowerCase();const statusOk=statusFilter==='Todos'||(statusFilter==='Ativos'?p.status!=='Vendido':p.status===statusFilter);return text.includes(query.toLowerCase())&&statusOk});
  const allSelected=rows.length>0&&rows.every(p=>selected.includes(p.id));
  function toggle(id){setSelected(selected.includes(id)?selected.filter(x=>x!==id):[...selected,id])}
  function applyBatch(){
@@ -494,11 +510,11 @@ function BatchActionsPage(){
 }
 
 function DataQualityPage(){
- const[phones,setPhones]=useState(load(SKEY)),[filter,setFilter]=useState('Todos');const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setPhones(lean);save(SKEY,lean)};const duplicateImeis={};phones.forEach(p=>[p.imei1,p.imei2].filter(Boolean).forEach(imei=>duplicateImeis[imei]=(duplicateImeis[imei]||[]).concat(p.id)));
- const issues=phones.flatMap(phone=>{const list=[];if(!phone.brand||!phone.model)list.push(['Cadastro','Alta','Marca ou modelo não informado']);if(!phone.imei1)list.push(['Identificação','Média','IMEI principal não informado']);if(phone.imei1&&duplicateImeis[phone.imei1]?.length>1)list.push(['Duplicidade','Alta',`IMEI duplicado: ${phone.imei1}`]);if(!Number(phone.expected||0)&&phone.status!=='Vendido')list.push(['Valor','Média','Previsão de venda não informada']);if(['Pronto','Para fotografar','Anúncio preparado','Anunciado'].includes(phone.status)&&!(phone.ads||migrateLegacyAds(phone)).length)list.push(['Anúncios','Alta','Aparelho pronto sem anúncio']);return list.map(([type,severity,message])=>({phone,type,severity,message}))});
+ const[phones,setPhones]=useState(load(SKEY)),[filter,setFilter]=useState('Todos');const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setPhones(lean);save(SKEY,lean)};
+ const issues=phones.flatMap(phone=>{const list=[];if(!phone.brand||!phone.model)list.push(['Cadastro','Alta','Marca ou modelo não informado']);if(phone.nfc===null||phone.nfc===undefined)list.push(['Recursos','Baixa','NFC ainda não informado']);if(!normalizeUnlockCredentials(phone).length)list.push(['Acesso','Baixa','Nenhuma alternativa de desbloqueio registrada']);if(!Number(phone.expected||0)&&phone.status!=='Vendido')list.push(['Valor','Média','Previsão de venda não informada']);if(['Pronto','Para fotografar','Anúncio preparado','Anunciado'].includes(phone.status)&&!(phone.ads||migrateLegacyAds(phone)).length)list.push(['Anúncios','Alta','Aparelho pronto sem anúncio']);return list.map(([type,severity,message])=>({phone,type,severity,message}))});
  const filtered=issues.filter(x=>filter==='Todos'||x.severity===filter),affected=new Set(issues.map(x=>x.phone.id)).size;
  function suggest(phone){const text=phone.status==='Aguardando análise'?'Realizar diagnóstico':phone.status==='Aguardando peças'?'Acompanhar pedido de peças':phone.status==='Pronto'?'Preparar anúncio':'Revisar próxima etapa';persist(phones.map(p=>p.id===phone.id?addTimeline({...p,lastActivityAt:new Date().toISOString()},`Ação sugerida: ${text}`):p))}
- return <><Title t="Qualidade dos dados" s="Encontre cadastros incompletos e duplicidades."/><div className="quality-metrics"><div><span>Problemas</span><strong>{issues.length}</strong></div><div><span>Aparelhos afetados</span><strong>{affected}</strong></div><div><span>Problemas graves</span><strong>{issues.filter(x=>x.severity==='Alta').length}</strong></div><div><span>IMEIs duplicados</span><strong>{Object.values(duplicateImeis).filter(x=>x.length>1).length}</strong></div></div>
+ return <><Title t="Qualidade dos dados" s="Encontre cadastros incompletos e informações úteis ausentes."/><div className="quality-metrics"><div><span>Problemas</span><strong>{issues.length}</strong></div><div><span>Aparelhos afetados</span><strong>{affected}</strong></div><div><span>Problemas graves</span><strong>{issues.filter(x=>x.severity==='Alta').length}</strong></div><div><span>Cadastros completos</span><strong>{Math.max(0,phones.length-affected)}</strong></div></div>
  <div className="tabs">{['Todos','Alta','Média','Baixa'].map(x=><button className={filter===x?'active':''} onClick={()=>setFilter(x)} key={x}>{x}</button>)}</div><div className="quality-list">{filtered.map((x,i)=><article key={`${x.phone.id}-${i}`}><span className={`quality-severity severity-${x.severity.toLowerCase().replace('é','e')}`}>{x.severity}</span><div><b>{showProductCode()&&<>{x.phone.code} · </>}{x.phone.brand} {x.phone.model}</b><small>{x.type} · {x.message}</small></div>{x.type==='Operação'&&<button onClick={()=>suggest(x.phone)}>Sugerir ação</button>}</article>)}{!filtered.length&&<Empty text="Nenhum problema nesta categoria."/>}</div></>
 }
 
@@ -544,12 +560,12 @@ function classifyActivity(message=''){
 function ArchivedPhonesPage(){
  const[phones,setPhones]=useState(load(SKEY)),[query,setQuery]=useState('');
  const persist=v=>{setPhones(v);save(SKEY,v)};
- const rows=phones.filter(p=>p.archived&&`${p.code} ${p.brand} ${p.model} ${p.imei1||''}`.toLowerCase().includes(query.toLowerCase()));
+ const rows=phones.filter(p=>p.archived&&`${p.code} ${p.brand} ${p.model}`.toLowerCase().includes(query.toLowerCase()));
  function restore(phone){persist(phones.map(p=>p.id===phone.id?addTimeline({...p,archived:false,archivedAt:'',lastActivityAt:new Date().toISOString()},'Aparelho restaurado do arquivo'):p))}
  function removeForever(phone){if(!confirm(`Excluir definitivamente ${phone.code}? Esta ação não pode ser desfeita.`))return;persist(phones.filter(p=>p.id!==phone.id))}
  return <>
   <Title t="Aparelhos arquivados" s="Itens retirados da operação principal, mas ainda preservados no histórico."/>
-  <div className="filter-bar"><label><Search size={16}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo ou IMEI"/></label></div>
+  <div className="filter-bar"><label><Search size={16}/> Pesquisa<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo"/></label></div>
   <div className="table-wrap"><table><thead><tr><th>Aparelho</th><th>Status anterior</th><th>Arquivado em</th><th>Compra</th><th>Valor previsto</th><th></th></tr></thead><tbody>{rows.map(p=><tr key={p.id}><td><b>{phoneDisplayName(p)}</b></td><td>{p.status}</td><td>{p.archivedAt?new Date(p.archivedAt).toLocaleString('pt-BR'):'—'}</td><td>{formatDate(p.date)}</td><td>{money(p.expected)}</td><td><button onClick={()=>restore(p)}>Restaurar</button>{' '}<button className="danger" onClick={()=>removeForever(p)}>Excluir definitivamente</button></td></tr>)}</tbody></table>{!rows.length&&<Empty text="Nenhum aparelho arquivado."/>}</div>
  </>
 }
@@ -561,7 +577,7 @@ function Dashboard(){
  const pendingReceivables=sales.reduce((a,p)=>a+salePendingValue(p.sale),0);
  const allAds=phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)})));
  const prepared=allAds.filter(x=>x.ad.title&&x.ad.description);
- const dataIssues=active.filter(p=>!p.imei1||!Number(p.expected||0)).length;
+ const dataIssues=active.filter(p=>(p.nfc===null||p.nfc===undefined)||!Number(p.expected||0)).length;
  const publishedCount=allAds.reduce((sum,x)=>sum+Object.values(x.ad.publications||{}).filter(v=>v.status==='published').length,0);
  const invested=active.reduce((a,x)=>a+phoneTotalCost(x),0);
  const expected=active.reduce((a,x)=>a+Number(x.expected||0),0);
@@ -617,9 +633,9 @@ function Phones(){
  const persistColumns=v=>{setColumns(v);save(PHONECOLKEY,v)};
  const allTags=[...new Set(items.flatMap(x=>x.tags||[]))].sort();
  const changeStatus=(id,status)=>persist(items.map(x=>x.id===id?touchPhone(addTimeline({...x,status},`Status alterado para ${status}`)):x));
- const filtered=items.filter(x=>{const text=`${x.code} ${x.brand} ${x.model} ${x.imei1||''} ${x.imei2||''} ${x.serial||''} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();return text.includes(query.toLowerCase())&&(statusFilter==='Todos'||x.status===statusFilter)&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
+ const filtered=items.filter(x=>{const text=`${x.code} ${x.brand} ${x.model} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();return text.includes(query.toLowerCase())&&(statusFilter==='Todos'||x.status===statusFilter)&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
  function toggleFavorite(phone){persist(items.map(x=>x.id===phone.id?touchPhone({...x,favorite:!x.favorite}):x))}
- function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),imei1:'',imei2:'',serial:'',status:'Aguardando análise',sale:null,ads:[],photos:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
+ function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),status:'Aguardando análise',sale:null,ads:[],photos:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
  function moveColumn(draggedId,targetId){if(!draggedId||draggedId===targetId)return;const from=columns.findIndex(c=>c.id===draggedId),to=columns.findIndex(c=>c.id===targetId);if(from<0||to<0)return;const next=[...columns],item=next.splice(from,1)[0];next.splice(to,0,item);persistColumns(next)}
  function startColumnResize(e,column){e.preventDefault();e.stopPropagation();const startX=e.clientX,startWidth=column.width;document.body.classList.add('column-resizing');const move=event=>{const width=Math.max(12,Math.min(1600,startWidth+event.clientX-startX));setColumns(current=>current.map(c=>c.id===column.id?{...c,width}:c))};const up=event=>{const width=Math.max(12,Math.min(1600,startWidth+event.clientX-startX));const next=columns.map(c=>c.id===column.id?{...c,width}:c);persistColumns(next);document.body.classList.remove('column-resizing');window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up)};window.addEventListener('pointermove',move);window.addEventListener('pointerup',up)}
  function autoFitPhoneColumn(columnId){const table=document.querySelector('.configurable-phone-table');if(!table)return;const cells=[...table.querySelectorAll(`[data-column-id="${columnId}"]`)];let max=12;cells.forEach(cell=>{const clone=cell.cloneNode(true);clone.querySelectorAll('button,input,select,.excel-column-resizer,.universal-resize-handle').forEach(x=>x.remove());clone.style.cssText='position:absolute;visibility:hidden;width:max-content;max-width:none;white-space:nowrap;display:block;padding:0;font:inherit';document.body.appendChild(clone);max=Math.max(max,Math.ceil(clone.scrollWidth+10));clone.remove()});persistColumns(columns.map(c=>c.id===columnId?{...c,width:Math.min(1600,max)}:c))}
@@ -627,7 +643,7 @@ function Phones(){
  const visibleColumns=columns.filter(c=>c.visible&&(c.id!=='code'||showProductCode()));
  function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,photoCount=Object.values(x.photoChecklist||{}).filter(Boolean).length,accessories=(x.accessories||[]).filter(a=>a.included).length,published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));
   switch(column.id){
-   case'code':return <td className="product-code"><b>{x.code}</b><small>{x.serial||''}</small></td>;
+   case'code':return <td className="product-code"><b>{x.code}</b></td>;
    case'device':return <td className="smartphone-device-cell"><b>{x.brand} {x.model}</b><small>{[x.color,x.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small><div className="tag-line">{(x.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}</div></td>;
    case'profiles':return <td><div className="profile-publication-list">{published.map(profile=><span key={profile.id}>{profile.name}</span>)}{!published.length&&<small>Não anunciado</small>}</div></td>;
    case'status':return <td><select className="inline-status-select" value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></td>;
@@ -1678,8 +1694,8 @@ function DataCenterPage(){
  function exportCsv(){
   const phones=load(SKEY);
   const profiles=load(PKEY);
-  const rows=[showProductCode()?['Código','Marca','Modelo','IMEI 1','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']:['Marca','Modelo','IMEI 1','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']];
-  phones.forEach(p=>rows.push(showProductCode()?[p.code,p.brand,p.model,p.imei1||'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']:[p.brand,p.model,p.imei1||'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']));
+  const rows=[showProductCode()?['Código','Marca','Modelo','NFC','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']:['Marca','Modelo','NFC','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']];
+  phones.forEach(p=>rows.push(showProductCode()?[p.code,p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']:[p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']));
   downloadText('bmcenter-smartphones.csv',rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
  function exportAdsCsv(){
@@ -1891,8 +1907,30 @@ function copyText(text){
 }
 
 
+function UnlockCredentialsEditor({value,onChange,compact=false}){
+ const items=Array.isArray(value)?value:[];
+ const update=(id,patch)=>onChange(items.map(x=>x.id===id?{...x,...patch}:x));
+ const remove=id=>onChange(items.filter(x=>x.id!==id));
+ const add=type=>onChange([...items,{id:crypto.randomUUID(),type,label:`Alternativa ${items.length+1}`,value:'',pattern:[],note:''}]);
+ const pushPattern=(item,n)=>{const seq=Array.isArray(item.pattern)?item.pattern:[];if(seq.includes(n))return;update(item.id,{pattern:[...seq,n]})};
+ return <div className={`unlock-credentials ${compact?'compact':''}`}>
+  <div className="unlock-head"><div><b>Desbloqueio do aparelho</b><small>Cadastre quantas alternativas precisar. Pode misturar senha/PIN e padrão.</small></div><div><button type="button" onClick={()=>add('text')}>+ Senha/PIN</button><button type="button" onClick={()=>add('pattern')}>+ Padrão</button></div></div>
+  {!items.length&&<div className="unlock-empty">Nenhuma alternativa cadastrada.</div>}
+  <div className="unlock-list">{items.map((item,index)=><article key={item.id} className={`unlock-item type-${item.type}`}>
+   <header><input className="unlock-label" value={item.label||`Alternativa ${index+1}`} onChange={e=>update(item.id,{label:e.target.value})}/><select value={item.type} onChange={e=>update(item.id,{type:e.target.value,value:'',pattern:[]})}><option value="text">Senha / PIN</option><option value="pattern">Padrão de desenho</option></select><button type="button" className="danger" onClick={()=>remove(item.id)}>Remover</button></header>
+   {item.type==='pattern'?<div className="pattern-editor"><div className="pattern-grid">{[1,2,3,4,5,6,7,8,9].map(n=><button type="button" key={n} className={(item.pattern||[]).includes(n)?'selected':''} onClick={()=>pushPattern(item,n)}><span>{n}</span><small>{(item.pattern||[]).indexOf(n)>=0?(item.pattern||[]).indexOf(n)+1:''}</small></button>)}</div><div className="pattern-summary"><span>Sequência:</span><b>{(item.pattern||[]).length?(item.pattern||[]).join(' → '):'Toque nos pontos na ordem correta'}</b><button type="button" onClick={()=>update(item.id,{pattern:[]})}>Limpar padrão</button></div></div>:<label className="unlock-value">Senha, PIN ou texto<input value={item.value||''} onChange={e=>update(item.id,{value:e.target.value})} placeholder="Ex.: 2580, abc123, 0000..."/></label>}
+   <label className="unlock-note">Observação opcional<input value={item.note||''} onChange={e=>update(item.id,{note:e.target.value})} placeholder="Ex.: cliente não tem certeza; tentar primeiro esta opção"/></label>
+  </article>)}</div>
+ </div>
+}
+function UnlockCredentialsSummary({phone}){
+ const items=normalizeUnlockCredentials(phone);
+ if(!items.length)return <InfoRow label="Desbloqueio" value="Não informado"/>;
+ return <div className="unlock-summary"><span>Desbloqueio</span><div>{items.map((item,index)=><div key={item.id}><b>{item.label||`Alternativa ${index+1}`}</b><small>{item.type==='pattern'?`Padrão: ${(item.pattern||[]).join(' → ')||'não definido'}`:`${item.value||'não informado'}`}{item.note?` · ${item.note}`:''}</small></div>)}</div></div>
+}
+
 function PhoneDetailModal({item,profiles,onClose,onSave}){
- const[f,setF]=useState(()=>({...item,photos:Array.isArray(item.photos)?item.photos:[],timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
+ const[f,setF]=useState(()=>({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),photos:Array.isArray(item.photos)?item.photos:[],timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
  const[tab,setTab]=useState('summary'),[tag,setTag]=useState(''),[checkText,setCheckText]=useState(''),[commentText,setCommentText]=useState('');
  const set=(k,v)=>setF({...f,[k]:v});
  const publishedProfiles=[...new Set((f.ads||[]).flatMap(ad=>profiles.filter(p=>normalizeAd(ad).publications[p.id]?.status==='published').map(p=>p.name)))];
@@ -1912,7 +1950,7 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
   <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>
 
   {tab==='summary'&&<div className="phone-detail-grid">
-   <section><h3>Identificação</h3>{showProductCode()&&<InfoRow label="Código" value={f.code}/>}<InfoRow label="IMEI 1" value={f.imei1}/><InfoRow label="IMEI 2" value={f.imei2}/><InfoRow label="Serial" value={f.serial}/><InfoRow label="Senha do aparelho" value={f.devicePassword}/><InfoRow label="Compra" value={formatDate(f.date)}/></section>
+   <section><h3>Identificação</h3>{showProductCode()&&<InfoRow label="Código" value={f.code}/>}<InfoRow label="NFC" value={f.nfc===true?'Sim':f.nfc===false?'Não':'Não informado'}/><UnlockCredentialsSummary phone={f}/><InfoRow label="Compra" value={formatDate(f.date)}/></section>
    <section><h3>Situação</h3><label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><InfoRow label="Parado há" value={`${daysSince(f.lastActivityAt||f.date)} dias`}/><InfoRow label="Próxima ação" value={f.nextAction}/></section>
    <section><h3>Resumo operacional</h3><InfoRow label="Peças necessárias" value={f.parts.length}/><InfoRow label="Anúncios" value={f.ads.length}/><InfoRow label="Publicado em" value={publishedProfiles.join(', ')||'Nenhum perfil'}/></section>
   </div>}
@@ -1945,7 +1983,7 @@ function InfoRow({label,value}){return <div className="info-row"><span>{label}</
 
 
 function BatchPhoneModal({existing,banks,onClose,onSave}){
- const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',imei1:'',imei2:'',serial:'',devicePassword:'',paid:'',expected:'',notes:'',status:'Aguardando análise'});
+ const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
  const[shared,setShared]=useState({date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
  const[rows,setRows]=useState([emptyRow(),emptyRow(),emptyRow()]);
  const[busy,setBusy]=useState(false);
@@ -1995,7 +2033,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
    <label>Observações gerais da compra<textarea value={shared.buyerNotes} onChange={e=>setSharedField('buyerNotes',e.target.value)} placeholder="Nome, telefone, endereço ou outras informações de quem vendeu o lote..."/></label>
   </section>
   <section className="batch-phone-list">
-   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha cada aparelho separadamente. Senha e observações permanecem individuais.</p></div><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
+   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha cada aparelho separadamente. As alternativas de desbloqueio podem ser adicionadas depois na ficha de cada aparelho.</p></div><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
    {rows.map((row,index)=><article className="batch-phone-row" key={row.id}>
     <header><b>Aparelho {index+1}</b><button type="button" className="danger" onClick={()=>removeRow(row.id)} disabled={rows.length===1}>Remover</button></header>
     <div className="batch-phone-fields">
@@ -2004,14 +2042,13 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <Field label="Cor" value={row.color} onChange={v=>setRow(row.id,'color',v)}/>
      <Field label="Armazenamento" value={row.storage} onChange={v=>setRow(row.id,'storage',v)}/>
      <Field label="RAM" value={row.ram} onChange={v=>setRow(row.id,'ram',v)}/>
-     <Field label="IMEI 1" value={row.imei1} onChange={v=>setRow(row.id,'imei1',v)}/>
-     <Field label="Serial" value={row.serial} onChange={v=>setRow(row.id,'serial',v)}/>
-     <Field label="Senha do aparelho" value={row.devicePassword} onChange={v=>setRow(row.id,'devicePassword',v)}/>
+     <label>NFC<select value={row.nfc===true?'sim':row.nfc===false?'nao':''} onChange={e=>setRow(row.id,'nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <Field label="Valor pago" type="number" value={row.paid} onChange={v=>setRow(row.id,'paid',v)}/>
      <Field label="Venda prevista" type="number" value={row.expected} onChange={v=>setRow(row.id,'expected',v)}/>
      <label>Status<select value={row.status} onChange={e=>setRow(row.id,'status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
-     <label className="batch-phone-notes">Observações individuais<textarea value={row.notes} onChange={e=>setRow(row.id,'notes',e.target.value)} placeholder="Ex.: tela quebrada, senha 0101, não funciona câmera..."/></label>
+     <label className="batch-phone-notes">Observações individuais<textarea value={row.notes} onChange={e=>setRow(row.id,'notes',e.target.value)} placeholder="Ex.: tela quebrada, não funciona câmera..."/></label>
     </div>
+    <details className="batch-unlock"><summary>Desbloqueio · {(row.unlockCredentials||[]).length} alternativa(s)</summary><UnlockCredentialsEditor compact value={row.unlockCredentials||[]} onChange={v=>setRow(row.id,'unlockCredentials',v)}/></details>
    </article>)}
   </section>
   <div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" disabled={busy} onClick={saveBatch}>Salvar {rows.filter(r=>r.brand||r.model).length||''} aparelho(s)</button></div>
@@ -2026,7 +2063,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     selectedQuoteId:p.selectedQuoteId||'',
     orderStatus:p.orderStatus||'Não pedido'
   }));
-  const[f,setF]=useState({...item,bankAccountId:item.bankAccountId||'',parts:normalizedParts,diagnostics:item.diagnostics||[],timeline:item.timeline||[],ad:item.ad||{},tags:item.tags||[],priceHistory:item.priceHistory||[],photos:item.photos||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
+  const[f,setF]=useState({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),bankAccountId:item.bankAccountId||'',parts:normalizedParts,diagnostics:item.diagnostics||[],timeline:item.timeline||[],ad:item.ad||{},tags:item.tags||[],priceHistory:item.priceHistory||[],photos:item.photos||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
   const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]={...parts[i],[k]:v};return{...current,parts}});
   const addPartNow=()=>{if(!part.trim())return;setF(current=>({...current,parts:[...current.parts,{id:crypto.randomUUID(),name:part.trim(),status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}]}));setPart('')};
@@ -2036,9 +2073,11 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
   const removeQuote=(partIndex,quoteId)=>setF(current=>{const parts=[...current.parts],part=parts[partIndex];parts[partIndex]={...part,quotes:(part.quotes||[]).filter(q=>q.id!==quoteId),selectedQuoteId:part.selectedQuoteId===quoteId?'':part.selectedQuoteId};return{...current,parts}});
   return <Modal className="phone-editor-modal" title={showProductCode()?(f.code||'Novo aparelho'):([f.brand,f.model].filter(Boolean).join(' ')||'Novo aparelho')} onClose={onClose}>
     <h3 className="section-title">Dados do aparelho</h3>
-    <div className="grid">
-      {[['Marca','brand'],['Modelo','model'],['Cor','color'],['Armazenamento','storage'],['RAM','ram'],['IMEI 1','imei1'],['IMEI 2','imei2'],['Serial','serial'],['Senha do aparelho','devicePassword']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>)}
+    <div className="grid phone-core-fields">
+      {[['Marca','brand'],['Modelo','model'],['Cor','color'],['Armazenamento','storage'],['RAM','ram']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>) }
+      <label>NFC<select value={f.nfc===true?'sim':f.nfc===false?'nao':''} onChange={e=>set('nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
     </div>
+    <UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/>
     <h3 className="section-title">Dados da compra</h3>
     <div className="grid">
       <Field label="Data da compra" type="date" value={f.date} onChange={v=>set('date',v)}/>
@@ -2082,7 +2121,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     </div>
 
     <h3 className="section-title"><Tags size={18}/> Etiqueta do aparelho</h3>
-    <div className="label-preview" id={`label-${f.id}`}><div>{showProductCode()&&<b>{f.code}</b>}<span>{f.brand} {f.model}</span><small>{f.color} · {f.storage}</small></div><QRCodeSVG value={`${showProductCode()?f.code:''}|${f.imei1||''}|${f.brand} ${f.model}`} size={92}/></div>
+    <div className="label-preview" id={`label-${f.id}`}><div>{showProductCode()&&<b>{f.code}</b>}<span>{f.brand} {f.model}</span><small>{f.color} · {f.storage}</small></div><QRCodeSVG value={`${showProductCode()?f.code:''}|${f.brand} ${f.model}`} size={92}/></div>
     <button type="button" onClick={()=>printPhoneLabel(f)}>Imprimir etiqueta</button>
 
     <div className="price-history-section">
@@ -2113,7 +2152,7 @@ function daysUntil(value){if(!value)return 99999;return Math.ceil((new Date(valu
 function printPhoneLabel(phone){
  const code=showProductCode()&&phone.code?`<b>${phone.code}</b>`:'';
  const qr=showProductCode()&&phone.code?`<div>QR: ${phone.code}</div>`:'';
- const html=`<!doctype html><html><head><title>${showProductCode()?phone.code:'BMCenter'}</title><style>body{font-family:Arial;margin:20px}.label{width:330px;border:2px solid #111;padding:14px;display:flex;justify-content:space-between;align-items:center}.label b{font-size:28px}.label span,.label small{display:block;margin-top:5px}</style></head><body><div class="label"><div>${code}<span>${phone.brand||''} ${phone.model||''}</span><small>${phone.color||''} · ${phone.storage||''}</small><small>IMEI: ${phone.imei1||'não informado'}</small></div>${qr}</div><script>print();</script></body></html>`;
+ const html=`<!doctype html><html><head><title>${showProductCode()?phone.code:'BMCenter'}</title><style>body{font-family:Arial;margin:20px}.label{width:330px;border:2px solid #111;padding:14px;display:flex;justify-content:space-between;align-items:center}.label b{font-size:28px}.label span,.label small{display:block;margin-top:5px}</style></head><body><div class="label"><div>${code}<span>${phone.brand||''} ${phone.model||''}</span><small>${phone.color||''} · ${phone.storage||''}</small><small>NFC: ${phone.nfc===true?'Sim':phone.nfc===false?'Não':'não informado'}</small></div>${qr}</div><script>print();</script></body></html>`;
  const w=window.open('','_blank','width=500,height=400');w.document.write(html);w.document.close();
 }
 
@@ -2149,5 +2188,5 @@ function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',imei1:'',imei2:'',serial:'',devicePassword:'',date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);

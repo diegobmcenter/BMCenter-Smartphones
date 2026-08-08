@@ -19,9 +19,9 @@ export default function SmartphonesV8({
   </header>
 
   <div className="v8-inventory-tools">
-   <label className="v8-wide-search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo, IMEI, serial ou etiqueta"/></label>
+   <label className="v8-wide-search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Modelo ou etiqueta"/></label>
    <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>Todos</option>{statuses.map(s=><option key={s}>{s}</option>)}</select>
-   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option>Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
+   <select value={tagFilter} onChange={e=>setTagFilter(e.target.value)}><option value="Todas">Todas</option>{allTags.map(t=><option key={t}>{t}</option>)}</select>
    <button className={onlyFavorites?'active':''} onClick={()=>setOnlyFavorites(v=>!v)}><Star size={14}/><span>Favoritos</span></button>
   </div>
 
