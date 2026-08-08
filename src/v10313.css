@@ -1,0 +1,85 @@
+/* BMCenter v10.3.13 — filtros avançados compactos em Smartphones */
+
+.v10313-main-toolbar{
+  grid-template-columns:minmax(250px,1.7fr) minmax(145px,.62fr) minmax(145px,.62fr) auto auto!important;
+  gap:6px!important;
+}
+.v10313-more-filters{
+  position:relative!important;
+  white-space:nowrap!important;
+  min-width:104px!important;
+}
+.v10313-more-filters>span{
+  display:grid;place-items:center;
+  min-width:17px;height:17px;padding:0 4px;
+  margin-left:2px;border-radius:99px;
+  background:var(--accent);color:#fff;
+  font-size:7px;font-weight:850;
+}
+.v10313-more-filters.active{
+  border-color:color-mix(in srgb,var(--accent) 55%,var(--line))!important;
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+
+.v10313-extra-filters{
+  margin:-2px 0 10px;
+  padding:8px 9px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--surface);
+}
+.v10313-filter-fields{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(95px,1fr));
+  gap:6px;
+  align-items:end;
+}
+.v10313-filter-fields label{
+  display:grid!important;
+  gap:3px!important;
+  min-width:0!important;
+  margin:0!important;
+}
+.v10313-filter-fields label>span{
+  font-size:7px!important;
+  font-weight:750!important;
+  color:var(--muted)!important;
+  white-space:nowrap;
+}
+.v10313-filter-fields select{
+  width:100%!important;
+  min-width:0!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 25px 0 8px!important;
+  border-radius:8px!important;
+  font-size:8px!important;
+}
+.v10313-filter-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
+}
+.v10313-filter-footer small{
+  font-size:7px!important;color:var(--muted)!important;
+}
+.v10313-filter-footer button{
+  display:flex!important;align-items:center!important;gap:4px!important;
+  min-height:28px!important;padding:0 8px!important;
+  border-radius:7px!important;font-size:7px!important;
+}
+
+@media(max-width:1180px){
+ .v10313-filter-fields{grid-template-columns:repeat(4,minmax(110px,1fr))}
+ .v10313-main-toolbar{grid-template-columns:minmax(220px,1.5fr) repeat(2,minmax(135px,.7fr)) auto auto!important}
+}
+@media(max-width:820px){
+ .v10313-main-toolbar{grid-template-columns:1fr 1fr!important}
+ .v10313-main-toolbar>label{grid-column:1/-1}
+ .v10313-filter-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:470px){
+ .v10313-filter-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .v10313-filter-footer{align-items:flex-start;flex-direction:column}
+ .v10313-filter-footer button{width:100%!important;justify-content:center!important}
+}
