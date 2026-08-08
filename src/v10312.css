@@ -1,0 +1,138 @@
+/* BMCenter v10.3.12 — compact Configurações > Geral */
+
+/* STATUS: 4 por linha no desktop, sem caixas gigantes */
+.v103-status-list{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v103-status-row{
+  min-width:0!important;
+  padding:4px!important;
+  gap:4px!important;
+  border-radius:8px!important;
+}
+.v103-status-row input{
+  min-width:0!important;
+  width:100%!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0 7px!important;
+  font-size:8.5px!important;
+}
+.v103-status-row button{
+  min-width:auto!important;
+  width:auto!important;
+  min-height:30px!important;
+  padding:0 7px!important;
+  font-size:7px!important;
+}
+.v103-status-add{
+  grid-template-columns:minmax(160px,240px) auto!important;
+  gap:6px!important;
+}
+.v103-status-add input{max-width:240px!important}
+.v103-status-manager-head p{max-width:620px!important}
+.v103-status-manager-head>button{padding:0 8px!important}
+
+/* MENUS VISÍVEIS: 4 por linha e cards compactos */
+.v102-settings-card .menu-settings-grid,
+.v102-settings-card .menu-visibility-grid,
+.v102-settings-card .menu-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v102-settings-card .menu-settings-grid>label,
+.v102-settings-card .menu-visibility-grid>label,
+.v102-settings-card .menu-grid>label{
+  min-width:0!important;
+  min-height:40px!important;
+  height:auto!important;
+  padding:7px 8px!important;
+  border-radius:8px!important;
+}
+
+/* Fallback para a estrutura atual dos menus visíveis */
+.v102-settings-card:has(>h3) .settings-menu-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v102-settings-card:has(>h3) .settings-menu-grid>label{
+  min-height:40px!important;
+  padding:7px 8px!important;
+}
+
+/* Tenta compactar diretamente o bloco de checkboxes atual */
+.v102-settings-card .settings-checkbox-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v102-settings-card .settings-checkbox-grid label{
+  min-height:40px!important;
+  padding:7px 8px!important;
+}
+
+/* Regra ampla, limitada apenas à área Geral de Configurações */
+.v102-settings-section .v102-settings-card .menu-setting-item{
+  min-height:40px!important;
+  padding:7px 8px!important;
+}
+
+/* Menus visíveis no projeto atual usam labels dentro de um grid genérico */
+.v102-settings-section .v102-settings-card .v102-menu-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.v102-settings-section .v102-settings-card .v102-menu-grid>label{
+  min-height:40px!important;
+  padding:7px 8px!important;
+}
+
+/* Seletor de menus: reduzir exageros gerais */
+.v102-settings-section .v102-settings-card{
+  padding:10px!important;
+}
+.v102-settings-section .v102-settings-card h3{
+  margin-bottom:8px!important;
+}
+
+/* responsive */
+@media(max-width:1100px){
+  .v103-status-list{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .v102-settings-card .menu-settings-grid,
+  .v102-settings-card .menu-visibility-grid,
+  .v102-settings-card .menu-grid,
+  .v102-settings-card .settings-checkbox-grid,
+  .v102-settings-section .v102-settings-card .v102-menu-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:760px){
+  .v103-status-list{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .v102-settings-card .menu-settings-grid,
+  .v102-settings-card .menu-visibility-grid,
+  .v102-settings-card .menu-grid,
+  .v102-settings-card .settings-checkbox-grid,
+  .v102-settings-section .v102-settings-card .v102-menu-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:430px){
+  .v103-status-list{
+    grid-template-columns:1fr!important;
+  }
+  .v102-settings-card .menu-settings-grid,
+  .v102-settings-card .menu-visibility-grid,
+  .v102-settings-card .menu-grid,
+  .v102-settings-card .settings-checkbox-grid,
+  .v102-settings-section .v102-settings-card .v102-menu-grid{
+    grid-template-columns:1fr!important;
+  }
+}
