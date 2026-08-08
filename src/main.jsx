@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.8';
+const APP_VERSION='10.2.9';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -1762,32 +1762,68 @@ function DataCenterPage(){
 }
 
 const BACKUP_FORMAT='bmcenter-complete-backup';
-const BACKUP_FORMAT_VERSION=3;
+const BACKUP_FORMAT_VERSION=4;
 function backupEligibleKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session'].includes(key);
 }
+function backupEligibleSessionKey(key){
+ return key.startsWith('bmcenter-')&&!['bmcenter-client-id'].includes(key);
+}
+function backupCriticalAudit(storage){
+ const phones=Array.isArray(storage[SKEY])?storage[SKEY]:[];
+ const phoneAds=phones.reduce((sum,phone)=>sum+(Array.isArray(phone?.ads)?phone.ads.length:0),0);
+ const phoneTimeline=phones.reduce((sum,phone)=>sum+(Array.isArray(phone?.timeline)?phone.timeline.length:0),0);
+ const phoneParts=phones.reduce((sum,phone)=>sum+(Array.isArray(phone?.parts)?phone.parts.length:0),0);
+ return{
+  smartphones:storage[SKEY]!==undefined,
+  adsInsideSmartphones:storage[SKEY]!==undefined,
+  profiles:storage[PKEY]!==undefined,
+  suppliers:storage[FKEY]!==undefined,
+  bankAccounts:storage[BKEY]!==undefined,
+  partsInventory:storage[IKEY]!==undefined,
+  inventoryMovements:storage[MKEY]!==undefined,
+  adTemplates:storage[TKEY]!==undefined,
+  adTitleLibrary:storage[ATITLEKEY]!==undefined,
+  adDescriptionLibrary:storage[ADESCKEY]!==undefined,
+  customChecklists:storage[CHECKKEY]!==undefined,
+  operationalGoals:storage[GOALKEY]!==undefined,
+  savedViews:storage[VIEWKEY]!==undefined,
+  colorsAndTheme:storage[CFGKEY]!==undefined,
+  phoneColumns:storage[PHONECOLKEY]!==undefined,
+  tableLayouts:storage[TABLELAYOUTKEY]!==undefined,
+  fontScales:storage[FONT_SCALE_KEY]!==undefined,
+  menuVisibility:storage[MENUKEY]!==undefined,
+  snapshots:storage[SNAPKEY]!==undefined,
+  counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts}
+ }
+}
 function captureCompleteBackup(options={}){
- const storage={},excludeKeys=new Set(options.excludeKeys||[]);
+ const storage={},sessionStorageData={},excludeKeys=new Set(options.excludeKeys||[]);
  for(let index=0;index<localStorage.length;index++){
   const key=localStorage.key(index);
   if(!key||!backupEligibleKey(key)||excludeKeys.has(key))continue;
   const raw=localStorage.getItem(key);
   try{storage[key]=JSON.parse(raw)}catch{storage[key]=raw}
  }
- const audit={
-   colorsAndTheme:!!storage[CFGKEY],
-   phoneColumns:!!storage[PHONECOLKEY],
-   tableLayouts:!!storage[TABLELAYOUTKEY],
-   fontScales:!!storage[FONT_SCALE_KEY],
-   menuVisibility:!!storage[MENUKEY],
-   savedViews:!!storage[VIEWKEY],
-   allBmcenterKeys:Object.keys(storage).length,
-   capturedKeys:Object.keys(storage).sort()
-  };
+ for(let index=0;index<sessionStorage.length;index++){
+  const key=sessionStorage.key(index);
+  if(!key||!backupEligibleSessionKey(key))continue;
+  const raw=sessionStorage.getItem(key);
+  try{sessionStorageData[key]=JSON.parse(raw)}catch{sessionStorageData[key]=raw}
+ }
  const eligibleLocalKeys=[];
  for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&backupEligibleKey(key)&&!excludeKeys.has(key))eligibleLocalKeys.push(key)}
  const missingKeys=eligibleLocalKeys.filter(key=>!Object.prototype.hasOwnProperty.call(storage,key));
  if(missingKeys.length)throw new Error(`Backup incompleto: ${missingKeys.join(', ')}`);
+ const critical=backupCriticalAudit(storage);
+ const audit={
+   ...critical,
+   allBmcenterKeys:Object.keys(storage).length,
+   capturedKeys:Object.keys(storage).sort(),
+   capturedSessionKeys:Object.keys(sessionStorageData).sort(),
+   missingKeys,
+   verifiedAt:new Date().toISOString()
+  };
  return{
   audit,
   format:BACKUP_FORMAT,
@@ -1795,6 +1831,7 @@ function captureCompleteBackup(options={}){
   appVersion:APP_VERSION,
   exportedAt:new Date().toISOString(),
   storage,
+  sessionStorage:sessionStorageData,
   summary:{
    smartphones:Array.isArray(storage[SKEY])?storage[SKEY].length:0,
    suppliers:Array.isArray(storage[FKEY])?storage[FKEY].length:0,
@@ -1802,7 +1839,10 @@ function captureCompleteBackup(options={}){
    marketplaceProfiles:Array.isArray(storage[PKEY])?storage[PKEY].length:0,
    sellers:Array.isArray(storage[VKEY])?storage[VKEY].length:0,
    parts:Array.isArray(storage[IKEY])?storage[IKEY].length:0,
-   totalKeys:Object.keys(storage).length
+   ads:critical.counts.ads,
+   timelineEntries:critical.counts.timelineEntries,
+   totalKeys:Object.keys(storage).length,
+   totalSessionKeys:Object.keys(sessionStorageData).length
   }
  }
 }
@@ -1818,7 +1858,7 @@ function normalizeBackupFile(data){
   [PHONECOLKEY]:data?.phoneColumns||data?.columnSettings||[],[TABLELAYOUTKEY]:data?.tableLayouts||{},
   [SNAPKEY]:data?.snapshots||[]
  };
- return{format:BACKUP_FORMAT,formatVersion:1,appVersion:data?.version||'legado',exportedAt:data?.exportedAt||null,storage:legacyMap,summary:{totalKeys:Object.keys(legacyMap).length}}
+ return{format:BACKUP_FORMAT,formatVersion:1,appVersion:data?.version||'legado',exportedAt:data?.exportedAt||null,storage:legacyMap,sessionStorage:{},summary:{totalKeys:Object.keys(legacyMap).length}}
 }
 async function applyCompleteBackup(backup,{replace=true}={}){
  const normalized=normalizeBackupFile(backup);
@@ -1830,16 +1870,29 @@ async function applyCompleteBackup(backup,{replace=true}={}){
   for(let index=0;index<localStorage.length;index++){const key=localStorage.key(index);if(key&&backupEligibleKey(key))current.push(key)}
   current.filter(key=>!Object.prototype.hasOwnProperty.call(normalized.storage,key)).forEach(key=>localStorage.removeItem(key));
  }
- for(const[key,value]of entries){
-  localStorage.setItem(key,JSON.stringify(value));
+ for(const[key,value]of entries)localStorage.setItem(key,JSON.stringify(value));
+ const sessionEntries=Object.entries(normalized.sessionStorage||{}).filter(([key])=>backupEligibleSessionKey(key));
+ if(replace){
+  const currentSession=[];
+  for(let index=0;index<sessionStorage.length;index++){const key=sessionStorage.key(index);if(key&&backupEligibleSessionKey(key))currentSession.push(key)}
+  currentSession.filter(key=>!Object.prototype.hasOwnProperty.call(normalized.sessionStorage||{},key)).forEach(key=>sessionStorage.removeItem(key));
  }
+ for(const[key,value]of sessionEntries)sessionStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));
+ const failed=[];
+ for(const[key,value]of entries){
+  const raw=localStorage.getItem(key);
+  let restored;try{restored=JSON.parse(raw)}catch{restored=raw}
+  if(JSON.stringify(restored)!==JSON.stringify(value))failed.push(key)
+ }
+ if(failed.length)throw new Error(`Falha de integridade ao restaurar: ${failed.join(', ')}`);
  await Promise.all(entries.map(([key,value])=>pushCloudStateNow(key,value)));
  return normalized;
 }
 function backupSummaryText(backup){
  const b=normalizeBackupFile(backup),s=b.summary||{},storage=b.storage||{};
  const count=(key)=>Array.isArray(storage[key])?storage[key].length:0;
- return `${count(SKEY)} aparelho(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is) e ${Object.keys(storage).length} conjunto(s) de dados.`;
+ const ads=Array.isArray(storage[SKEY])?storage[SKEY].reduce((sum,phone)=>sum+(Array.isArray(phone?.ads)?phone.ads.length:0),0):0;
+ return `${count(SKEY)} aparelho(s), ${ads} anúncio(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is), ${Object.keys(storage).length} conjunto(s) permanentes e ${Object.keys(b.sessionStorage||{}).length} preferência(s) de sessão.`;
 }
 
 function downloadBackupObject(backup,filename){
