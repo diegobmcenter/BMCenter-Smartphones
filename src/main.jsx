@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.2';
+const APP_VERSION='10.2.3';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -745,6 +745,8 @@ function Parts(){
   const [inventory,setInventory]=useState(load(IKEY));
   const [supplierFilter,setSupplierFilter]=useState('Todos');
   const [viewMode,setViewMode]=useState('supplier');
+  const [detail,setDetail]=useState(null);
+  const profiles=load(PKEY);
 
   const rows=phones.flatMap(phone=>
     (phone.parts||[])
@@ -931,14 +933,14 @@ function Parts(){
     <option>Pedido entregue</option>
   </select>;
 
-  return <div className="v102-page v102-parts-page">
+  return <><div className="v102-page v102-parts-page">
     <header className="v102-hero"><div><span>COMPRAS E PEÇAS</span><h1>Peças e acessórios</h1><p>Cotações e pedidos organizados sem aparência de planilha.</p></div></header>
     <section className="v102-parts-toolbar"><label>Fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label><label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label><button onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista</button></section>
     {!filteredRows.length&&<Empty text="Nenhuma peça encontrada para este filtro."/>}
     <section className="v102-parts-groups">{(viewMode==='supplier'?Object.entries(groupedBySupplier):Object.entries(groupedByPhone)).map(([group,list])=><article className="v102-parts-group" key={group}>
       <header><div><small>{viewMode==='supplier'?'FORNECEDOR':'APARELHO'}</small><h2>{viewMode==='phone'?group.replace(/^BM-\d+\s*·\s*/,''):group}</h2><span>{list.length} item(ns)</span></div><strong>{money(totalForRows(list))}</strong>{viewMode==='supplier'&&group!=='Fornecedor não definido'&&<button onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</header>
       <div className="v102-part-list">{list.map(row=><div className="v102-part-row" key={row.part.id}>
-        {viewMode==='supplier'&&<div className="v102-part-device"><small>APARELHO</small><b>{phoneDisplayName(row.phone,{includeCode:false})}</b></div>}
+        {viewMode==='supplier'&&<div className="v102-part-device"><small>APARELHO</small><button type="button" className="v102-phone-link" onClick={()=>setDetail(row.phone)}>{phoneDisplayName(row.phone,{includeCode:false})}</button></div>}
         <div><small>PEÇA</small><b>{row.part.name}</b></div>
         <div><small>MELHOR COTAÇÃO</small><b className="good">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</b></div>
         <div className="v102-part-supplier">{renderQuoteSelect(row)}</div>
@@ -947,6 +949,8 @@ function Parts(){
       </div>)}</div>
     </article>)}</section>
   </div>
+  {detail&&<PhoneDetailModal item={phones.find(p=>p.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{const next=phones.map(p=>p.id===v.id?touchPhone(v):p);savePhones(next);setDetail(v)}}/>}
+  </>
 }
 
 
@@ -1061,6 +1065,29 @@ function Diagnostics(){
     </div>
     {phone&&<div className="panel"><h2>{phoneDisplayName(phone)}</h2><div className="diagnostic-grid">{diagnosticItems.map(name=>{const current=(phone.diagnostics||[]).find(x=>x.name===name)||{status:'Não testado',notes:''};return <div className="diagnostic-card" key={name}><b>{name}</b><select value={current.status} onChange={e=>saveDiagnostic(name,e.target.value,current.notes)}><option>Não testado</option><option>OK</option><option>Testar</option><option>Trocar</option><option>Não funciona</option><option>Não se aplica</option></select><input value={current.notes} placeholder="Observação" onChange={e=>saveDiagnostic(name,current.status,e.target.value)}/></div>})}</div></div>}
   </>
+}
+
+
+function AdDetailModal({phone,ad,profiles,onClose,onEdit}){
+ const normalized=normalizeAd(ad||{});
+ const published=profiles.filter(p=>normalized.publications[p.id]?.status==='published').length;
+ const pct=profiles.length?Math.round(published/profiles.length*100):0;
+ return <Modal className="ad-detail-modal" title={`Detalhes do anúncio · ${phone.brand||''} ${phone.model||''}`} onClose={onClose}>
+  <div className="v102-ad-detail-head">
+   <div><small>APARELHO</small><h3>{phone.brand} {phone.model}</h3><span>{money(phone.expected)}</span></div>
+   <div className="v102-ad-detail-progress"><strong>{pct}%</strong><small>{published}/{profiles.length} perfis publicados</small><i><u style={{width:`${pct}%`}}/></i></div>
+  </div>
+  <section className="v102-ad-detail-copy">
+   <div><small>NOME INTERNO</small><b>{normalized.name||'Sem nome'}</b></div>
+   <div><small>TÍTULO</small><p>{normalized.title||'Título ainda não preparado.'}</p></div>
+   <div><small>DESCRIÇÃO</small><p className="v102-ad-description">{normalized.description||'Descrição ainda não preparada.'}</p></div>
+  </section>
+  <section className="v102-ad-detail-profiles">
+   <h3>Publicação por perfil</h3>
+   <div>{profiles.map(profile=>{const pub=normalized.publications[profile.id]||{status:'not_published'};return <article className={pub.status} key={profile.id}><span>{String(profile.name).slice(0,2).toUpperCase()}</span><div><b>{profile.name}</b><small>{publicationLabel(pub.status)}</small></div></article>})}</div>
+  </section>
+  <div className="actions"><button onClick={onClose}>Fechar</button><button className="primary" onClick={onEdit}>Editar anúncio</button></div>
+ </Modal>
 }
 
 function Ads(){
@@ -1206,6 +1233,7 @@ function Ads(){
     publicationLabel={publicationLabel} cyclePublication={cyclePublication}
     setSelectedPhone={setSelectedPhone} setSelectedAd={setSelectedAd} setView={setView}
   />}
+  {view==='details'&&phone&&ad&&<AdDetailModal phone={phone} ad={ad} profiles={profiles} onClose={()=>setView('matrix')} onEdit={()=>setView('editor')}/>}
   {showNoAds&&<div className="ads-drawer-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setShowNoAds(false)}>
    <aside className="ads-awaiting-drawer">
     <header><div><h2>Aguardando anúncio</h2><p>{noAds.length} aparelho{noAds.length!==1?'s':''} sem anúncio cadastrado.</p></div><button onClick={()=>setShowNoAds(false)}><X/></button></header>
@@ -1874,7 +1902,7 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
  ];
  function addTag(){const clean=tag.trim().toUpperCase();if(clean&&!f.tags.includes(clean))set('tags',[...f.tags,clean]);setTag('')}
  function saveAndClose(){onSave(addTimeline(f,'Ficha operacional atualizada'));onClose()}
- return <Modal title={`${showProductCode()?f.code+" · ":""}${f.brand} ${f.model}`} onClose={onClose}>
+ return <Modal className="phone-detail-modal" title={`${showProductCode()?f.code+" · ":""}${f.brand} ${f.model}`} onClose={onClose}>
   <div className="phone-detail-hero">
    <div className="phone-detail-cover"><Smartphone size={46}/></div>
    <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{f.color} · {f.storage} · {f.ram||'RAM não informada'}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
