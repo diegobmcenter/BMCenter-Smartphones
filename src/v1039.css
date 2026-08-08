@@ -1,0 +1,76 @@
+/* BMCenter v10.3.9 — R$ / GB visually inside the same textbox */
+
+/* Override v10.3.8: the field is one single input surface, not segmented. */
+.field-affix-inline{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:31px!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+.field-affix-inline input{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  height:31px!important;
+  min-height:31px!important;
+  box-sizing:border-box!important;
+  border:1px solid var(--line)!important;
+  border-radius:9px!important;
+  background:var(--surface2)!important;
+  color:var(--text)!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
+.field-affix-inline:focus-within{
+  border:0!important;
+  box-shadow:none!important;
+}
+.field-affix-inline:focus-within input{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 2px var(--accent-soft)!important;
+}
+
+/* Prefix and suffix sit inside the boundaries of the textbox. */
+.field-affix-inline .field-prefix,
+.field-affix-inline .field-suffix{
+  position:absolute!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  z-index:2!important;
+  display:block!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  font-size:9px!important;
+  font-weight:750!important;
+  line-height:1!important;
+  pointer-events:none!important;
+  white-space:nowrap!important;
+}
+.field-affix-inline .field-prefix{left:9px!important}
+.field-affix-inline .field-suffix{right:9px!important}
+
+.field-affix-inline.has-prefix input{padding-left:29px!important;padding-right:8px!important}
+.field-affix-inline.has-suffix input{padding-left:8px!important;padding-right:29px!important}
+
+/* GB needs a little more breathing room than a single-character suffix. */
+.field-affix-inline.has-suffix .field-suffix{min-width:15px;text-align:right}
+
+/* No separators: R$ / GB must never look like their own column. */
+.field-affix-inline .field-prefix,
+.field-affix-inline .field-suffix{
+  border-left:0!important;
+  border-right:0!important;
+}
+
+/* Compact dimensions remain from v10.3.8. */
+@media(max-width:760px){
+  .field-affix-inline .field-prefix,
+  .field-affix-inline .field-suffix{font-size:9px!important}
+}
