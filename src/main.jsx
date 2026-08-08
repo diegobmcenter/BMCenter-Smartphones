@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.4';
+const APP_VERSION='10.2.5';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -25,6 +25,8 @@ function phoneSelectedPartsCost(phone){
 function phoneTotalCost(phone){return Number(phone.paid||0)+phoneSelectedPartsCost(phone)}
 function formatDate(value){if(!value)return'—';const[y,m,d]=value.split('-');return d&&m&&y?`${d}/${m}/${y}`:value}
 function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');return m&&y?`${m}/${y}`:value}
+function capacityLabel(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
+function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||''].filter(Boolean).join(' · ')||'Sem detalhes'}
 const statuses=['Aguardando análise','Aguardando peças','Em reparo','Em testes','Pronto','Para fotografar','Anúncio preparado','Anunciado','Reservado','Vendido'];
 
 function normalizeSnapshotList(value){
@@ -619,7 +621,7 @@ function defaultPhoneColumns(){return[
  {id:'profiles',label:'Perfis anunciados',width:190,visible:true},
  {id:'status',label:'Status',width:145,visible:true},
  {id:'cost',label:'Custo',width:105,visible:true},
- {id:'expected',label:'Venda prevista',width:120,visible:true},
+ {id:'expected',label:'Valor de venda',width:125,visible:true},
  {id:'profit',label:'Lucro',width:105,visible:true},
  {id:'actions',label:'Ações',width:230,visible:true}
 ]}
@@ -633,6 +635,17 @@ function Phones(){
  const persistColumns=v=>{setColumns(v);save(PHONECOLKEY,v)};
  const allTags=[...new Set(items.flatMap(x=>x.tags||[]))].sort();
  const changeStatus=(id,status)=>persist(items.map(x=>x.id===id?touchPhone(addTimeline({...x,status},`Status alterado para ${status}`)):x));
+ const updateFinancial=(id,field,value)=>{
+  const numeric=Math.max(0,Number(String(value).replace(',','.'))||0);
+  persist(items.map(phone=>{
+   if(phone.id!==id)return phone;
+   const partsCost=phoneSelectedPartsCost(phone);
+   if(field==='cost')return touchPhone({...phone,paid:Math.max(0,numeric-partsCost)});
+   if(field==='expected')return touchPhone({...phone,expected:numeric});
+   if(field==='profit')return touchPhone({...phone,expected:Math.max(0,phoneTotalCost(phone)+numeric)});
+   return phone
+  }))
+ };
  const filtered=items.filter(x=>{const text=`${x.code} ${x.brand} ${x.model} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();return text.includes(query.toLowerCase())&&(statusFilter==='Todos'||x.status===statusFilter)&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
  function toggleFavorite(phone){persist(items.map(x=>x.id===phone.id?touchPhone({...x,favorite:!x.favorite}):x))}
  function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),status:'Aguardando análise',sale:null,ads:[],photos:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
@@ -663,7 +676,8 @@ function Phones(){
     phoneTotalCost={phoneTotalCost} money={money} toggleFavorite={toggleFavorite} changeStatus={changeStatus}
     setDetail={setDetail} setEdit={setEdit} setColumnEditor={setColumnEditor} setBatchCreate={setBatchCreate}
     blankPhone={blankPhone} items={items} actionPhone={actionPhone} setActionPhone={setActionPhone}
-    setSalePhone={setSalePhone} persist={persist}
+    setSalePhone={setSalePhone} persist={persist} updateFinancial={updateFinancial}
+    totalExpected={items.filter(x=>x.status!=='Vendido').reduce((sum,x)=>sum+Number(x.expected||0),0)}
   />
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>setBatchCreate(false)} onSave={created=>{persist([...created,...items]);setBatchCreate(false)}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
@@ -1694,7 +1708,7 @@ function DataCenterPage(){
  function exportCsv(){
   const phones=load(SKEY);
   const profiles=load(PKEY);
-  const rows=[showProductCode()?['Código','Marca','Modelo','NFC','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']:['Marca','Modelo','NFC','Status','Valor pago','Custo total','Venda prevista','Valor vendido','Data venda','Perfil venda']];
+  const rows=[showProductCode()?['Código','Marca','Modelo','NFC','Status','Valor pago','Custo total','Valor de venda','Valor vendido','Data venda','Perfil venda']:['Marca','Modelo','NFC','Status','Valor pago','Custo total','Valor de venda','Valor vendido','Data venda','Perfil venda']];
   phones.forEach(p=>rows.push(showProductCode()?[p.code,p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']:[p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']));
   downloadText('bmcenter-smartphones.csv',rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
@@ -1907,18 +1921,37 @@ function copyText(text){
 }
 
 
+function PatternGestureGrid({pattern,onChange}){
+ const gridRef=useRef(null),draggingRef=useRef(false),sequenceRef=useRef(Array.isArray(pattern)?pattern:[]);
+ useEffect(()=>{if(!draggingRef.current)sequenceRef.current=Array.isArray(pattern)?pattern:[]},[pattern]);
+ const emit=seq=>{sequenceRef.current=seq;onChange(seq)};
+ const addNode=n=>{const seq=sequenceRef.current||[];if(seq.includes(n))return;emit([...seq,n])};
+ const nodeAt=(clientX,clientY)=>{
+  const el=document.elementFromPoint(clientX,clientY)?.closest?.('[data-pattern-node]');
+  if(!el||!gridRef.current?.contains(el))return null;
+  return Number(el.dataset.patternNode)||null
+ };
+ const startDraw=e=>{e.preventDefault();draggingRef.current=true;e.currentTarget.setPointerCapture?.(e.pointerId);const n=nodeAt(e.clientX,e.clientY);if(n)addNode(n)};
+ const moveDraw=e=>{if(!draggingRef.current)return;e.preventDefault();const n=nodeAt(e.clientX,e.clientY);if(n)addNode(n)};
+ const stopDraw=e=>{if(!draggingRef.current)return;draggingRef.current=false;e.currentTarget.releasePointerCapture?.(e.pointerId)};
+ const points=(Array.isArray(pattern)?pattern:[]).map(n=>{const index=n-1,row=Math.floor(index/3),col=index%3;return `${34+col*56},${34+row*56}`}).join(' ');
+ return <div ref={gridRef} className="pattern-grid gesture-pattern" onPointerDown={startDraw} onPointerMove={moveDraw} onPointerUp={stopDraw} onPointerCancel={stopDraw}>
+  <svg className="pattern-lines" viewBox="0 0 180 180" preserveAspectRatio="none" aria-hidden="true"><polyline points={points}/></svg>
+  {[1,2,3,4,5,6,7,8,9].map(n=><button type="button" data-pattern-node={n} key={n} className={(pattern||[]).includes(n)?'selected':''} onClick={e=>{e.preventDefault();if(!draggingRef.current)addNode(n)}}><span>{n}</span><small>{(pattern||[]).indexOf(n)>=0?(pattern||[]).indexOf(n)+1:''}</small></button>)}
+ </div>
+}
+
 function UnlockCredentialsEditor({value,onChange,compact=false}){
  const items=Array.isArray(value)?value:[];
  const update=(id,patch)=>onChange(items.map(x=>x.id===id?{...x,...patch}:x));
  const remove=id=>onChange(items.filter(x=>x.id!==id));
  const add=type=>onChange([...items,{id:crypto.randomUUID(),type,label:`Alternativa ${items.length+1}`,value:'',pattern:[],note:''}]);
- const pushPattern=(item,n)=>{const seq=Array.isArray(item.pattern)?item.pattern:[];if(seq.includes(n))return;update(item.id,{pattern:[...seq,n]})};
  return <div className={`unlock-credentials ${compact?'compact':''}`}>
-  <div className="unlock-head"><div><b>Desbloqueio do aparelho</b><small>Cadastre quantas alternativas precisar. Pode misturar senha/PIN e padrão.</small></div><div><button type="button" onClick={()=>add('text')}>+ Senha/PIN</button><button type="button" onClick={()=>add('pattern')}>+ Padrão</button></div></div>
+  <div className="unlock-head"><div><b>Desbloqueio do aparelho</b><small>Cadastre quantas alternativas precisar. No padrão, você pode tocar ponto a ponto ou deslizar como no desbloqueio real.</small></div><div><button type="button" onClick={()=>add('text')}>+ Senha/PIN</button><button type="button" onClick={()=>add('pattern')}>+ Padrão</button></div></div>
   {!items.length&&<div className="unlock-empty">Nenhuma alternativa cadastrada.</div>}
   <div className="unlock-list">{items.map((item,index)=><article key={item.id} className={`unlock-item type-${item.type}`}>
    <header><input className="unlock-label" value={item.label||`Alternativa ${index+1}`} onChange={e=>update(item.id,{label:e.target.value})}/><select value={item.type} onChange={e=>update(item.id,{type:e.target.value,value:'',pattern:[]})}><option value="text">Senha / PIN</option><option value="pattern">Padrão de desenho</option></select><button type="button" className="danger" onClick={()=>remove(item.id)}>Remover</button></header>
-   {item.type==='pattern'?<div className="pattern-editor"><div className="pattern-grid">{[1,2,3,4,5,6,7,8,9].map(n=><button type="button" key={n} className={(item.pattern||[]).includes(n)?'selected':''} onClick={()=>pushPattern(item,n)}><span>{n}</span><small>{(item.pattern||[]).indexOf(n)>=0?(item.pattern||[]).indexOf(n)+1:''}</small></button>)}</div><div className="pattern-summary"><span>Sequência:</span><b>{(item.pattern||[]).length?(item.pattern||[]).join(' → '):'Toque nos pontos na ordem correta'}</b><button type="button" onClick={()=>update(item.id,{pattern:[]})}>Limpar padrão</button></div></div>:<label className="unlock-value">Senha, PIN ou texto<input value={item.value||''} onChange={e=>update(item.id,{value:e.target.value})} placeholder="Ex.: 2580, abc123, 0000..."/></label>}
+   {item.type==='pattern'?<div className="pattern-editor"><PatternGestureGrid pattern={item.pattern||[]} onChange={pattern=>update(item.id,{pattern})}/><div className="pattern-summary"><span>Sequência registrada:</span><b>{(item.pattern||[]).length?(item.pattern||[]).join(' → '):'Deslize o dedo ou mouse pelos pontos'}</b><small>Você ainda pode tocar nos pontos individualmente.</small><button type="button" onClick={()=>update(item.id,{pattern:[]})}>Limpar padrão</button></div></div>:<label className="unlock-value">Senha, PIN ou texto<input value={item.value||''} onChange={e=>update(item.id,{value:e.target.value})} placeholder="Ex.: 2580, abc123, 0000..."/></label>}
    <label className="unlock-note">Observação opcional<input value={item.note||''} onChange={e=>update(item.id,{note:e.target.value})} placeholder="Ex.: cliente não tem certeza; tentar primeiro esta opção"/></label>
   </article>)}</div>
  </div>
@@ -1943,14 +1976,14 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
  return <Modal className="phone-detail-modal" title={`${showProductCode()?f.code+" · ":""}${f.brand} ${f.model}`} onClose={onClose}>
   <div className="phone-detail-hero">
    <div className="phone-detail-cover"><Smartphone size={46}/></div>
-   <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{f.color} · {f.storage} · {f.ram||'RAM não informada'}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
-   <div className="phone-detail-value"><span>Venda prevista</span><strong>{money(f.expected)}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
+   <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{formatPhoneSpecs(f)}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
+   <div className="phone-detail-value"><span>Valor de venda</span><strong>{money(f.expected)}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
   </div>
   <div className="phone-detail-progress">{stages.map(([name,done])=><div className={done?'done':''} key={name}><i>{done?'✓':'○'}</i><span>{name}</span></div>)}</div>
   <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>
 
   {tab==='summary'&&<div className="phone-detail-grid">
-   <section><h3>Identificação</h3>{showProductCode()&&<InfoRow label="Código" value={f.code}/>}<InfoRow label="NFC" value={f.nfc===true?'Sim':f.nfc===false?'Não':'Não informado'}/><UnlockCredentialsSummary phone={f}/><InfoRow label="Compra" value={formatDate(f.date)}/></section>
+   <section><h3>Identificação</h3>{showProductCode()&&<InfoRow label="Código" value={f.code}/>}<InfoRow label="NFC" value={f.nfc===true?'Sim':f.nfc===false?'Não':'Não informado'}/><InfoRow label="Conector" value={f.connector||'Não informado'}/><UnlockCredentialsSummary phone={f}/><InfoRow label="Compra" value={formatDate(f.date)}/></section>
    <section><h3>Situação</h3><label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><InfoRow label="Parado há" value={`${daysSince(f.lastActivityAt||f.date)} dias`}/><InfoRow label="Próxima ação" value={f.nextAction}/></section>
    <section><h3>Resumo operacional</h3><InfoRow label="Peças necessárias" value={f.parts.length}/><InfoRow label="Anúncios" value={f.ads.length}/><InfoRow label="Publicado em" value={publishedProfiles.join(', ')||'Nenhum perfil'}/></section>
   </div>}
@@ -1983,7 +2016,7 @@ function InfoRow({label,value}){return <div className="info-row"><span>{label}</
 
 
 function BatchPhoneModal({existing,banks,onClose,onSave}){
- const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
+ const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
  const[shared,setShared]=useState({date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
  const[rows,setRows]=useState([emptyRow(),emptyRow(),emptyRow()]);
  const[busy,setBusy]=useState(false);
@@ -2043,8 +2076,9 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <Field label="Armazenamento" value={row.storage} onChange={v=>setRow(row.id,'storage',v)}/>
      <Field label="RAM" value={row.ram} onChange={v=>setRow(row.id,'ram',v)}/>
      <label>NFC<select value={row.nfc===true?'sim':row.nfc===false?'nao':''} onChange={e=>setRow(row.id,'nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+     <label>Conector<select value={row.connector||''} onChange={e=>setRow(row.id,'connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
      <Field label="Valor pago" type="number" value={row.paid} onChange={v=>setRow(row.id,'paid',v)}/>
-     <Field label="Venda prevista" type="number" value={row.expected} onChange={v=>setRow(row.id,'expected',v)}/>
+     <Field label="Valor de venda" type="number" value={row.expected} onChange={v=>setRow(row.id,'expected',v)}/>
      <label>Status<select value={row.status} onChange={e=>setRow(row.id,'status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
      <label className="batch-phone-notes">Observações individuais<textarea value={row.notes} onChange={e=>setRow(row.id,'notes',e.target.value)} placeholder="Ex.: tela quebrada, não funciona câmera..."/></label>
     </div>
@@ -2076,6 +2110,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     <div className="grid phone-core-fields">
       {[['Marca','brand'],['Modelo','model'],['Cor','color'],['Armazenamento','storage'],['RAM','ram']].map(([l,k])=><Field key={k} label={l} value={f[k]} onChange={v=>set(k,v)}/>) }
       <label>NFC<select value={f.nfc===true?'sim':f.nfc===false?'nao':''} onChange={e=>set('nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+      <label>Conector de carga<select value={f.connector||''} onChange={e=>set('connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
     </div>
     <UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/>
     <h3 className="section-title">Dados da compra</h3>
@@ -2091,7 +2126,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
         {!banks.length&&<small className="field-help">Cadastre primeiro uma conta em Configurações → Contas bancárias.</small>}
       </label>
       <Field label="Valor pago" type="number" value={f.paid} onChange={v=>set('paid',v)}/>
-      <Field label="Venda prevista" type="number" value={f.expected} onChange={v=>set('expected',v)}/>
+      <Field label="Valor de venda" type="number" value={f.expected} onChange={v=>set('expected',v)}/>
       <label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
     </div>
     <label>Tarefas pendentes<textarea value={f.tasks} onChange={e=>set('tasks',e.target.value)} placeholder="Trocar tela, limpar, testar câmera..."/></label>
@@ -2188,5 +2223,5 @@ function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);

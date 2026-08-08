@@ -47,7 +47,7 @@ export default function SmartphonesV9({
 
         <div className="v9-money-row">
           <div><span>Custo</span><b>{money(cost)}</b></div>
-          <div><span>Venda prevista</span><b>{money(x.expected)}</b></div>
+          <div><span>Valor de venda</span><b>{money(x.expected)}</b></div>
           <div><span>Lucro previsto</span><b className={profit>=0?'good':'bad'}>{money(profit)}</b></div>
         </div>
 

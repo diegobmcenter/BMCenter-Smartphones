@@ -58,7 +58,7 @@ export default function SmartphonesView({
 
             <div className="v62-phone-money">
               {show('cost')&&<div><span>Custo</span><b>{money(cost)}</b></div>}
-              {show('expected')&&<div><span>Venda</span><b>{money(x.expected)}</b></div>}
+              {show('expected')&&<div><span>Valor de venda</span><b>{money(x.expected)}</b></div>}
               {show('profit')&&<div><span>Lucro</span><b className={profit>=0?'good':'bad'}>{money(profit)}</b></div>}
             </div>
           </div>
