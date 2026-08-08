@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',AKEY='bmcenter-auth';
-const APP_VERSION='10.2.5';
+const APP_VERSION='10.2.6';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
@@ -2066,7 +2066,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
    <label>Observações gerais da compra<textarea value={shared.buyerNotes} onChange={e=>setSharedField('buyerNotes',e.target.value)} placeholder="Nome, telefone, endereço ou outras informações de quem vendeu o lote..."/></label>
   </section>
   <section className="batch-phone-list">
-   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha cada aparelho separadamente. As alternativas de desbloqueio podem ser adicionadas depois na ficha de cada aparelho.</p></div><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
+   <div className="batch-phone-list-head"><div><h3>Aparelhos do lote</h3><p>Preencha apenas o necessário. Desbloqueio pode ser adicionado depois.</p></div><div><button type="button" onClick={()=>addRows(1)}>+ 1 aparelho</button><button type="button" onClick={()=>addRows(3)}>+ 3 aparelhos</button></div></div>
    {rows.map((row,index)=><article className="batch-phone-row" key={row.id}>
     <header><b>Aparelho {index+1}</b><button type="button" className="danger" onClick={()=>removeRow(row.id)} disabled={rows.length===1}>Remover</button></header>
     <div className="batch-phone-fields">
@@ -2112,9 +2112,9 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       <label>NFC<select value={f.nfc===true?'sim':f.nfc===false?'nao':''} onChange={e=>set('nfc',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Conector de carga<select value={f.connector||''} onChange={e=>set('connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
     </div>
-    <UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/>
+    <details className="compact-editor-section"><summary>Desbloqueio <span>{(f.unlockCredentials||[]).length} alternativa(s)</span></summary><UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/></details>
     <h3 className="section-title">Dados da compra</h3>
-    <div className="grid">
+    <div className="grid compact-purchase-grid">
       <Field label="Data da compra" type="date" value={f.date} onChange={v=>set('date',v)}/>
       <Field label="Origem da compra" value={f.origin} onChange={v=>set('origin',v)}/>
       <Field label="Forma de pagamento" value={f.payment} onChange={v=>set('payment',v)}/>
@@ -2129,14 +2129,15 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       <Field label="Valor de venda" type="number" value={f.expected} onChange={v=>set('expected',v)}/>
       <label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
     </div>
-    <label>Tarefas pendentes<textarea value={f.tasks} onChange={e=>set('tasks',e.target.value)} placeholder="Trocar tela, limpar, testar câmera..."/></label>
-    <label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label>
+    <div className="compact-notes-grid"><label>Tarefas pendentes<textarea value={f.tasks} onChange={e=>set('tasks',e.target.value)} placeholder="Trocar tela, limpar, testar câmera..."/></label><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label></div>
 
-    <h3 className="section-title"><Tags size={18}/> Etiquetas</h3>
+    <details className="compact-editor-section"><summary><span><Tags size={15}/> Etiquetas</span><span>{f.tags.length}</span></summary>
     <div className="tag-editor"><div className="add"><input value={tag} onChange={e=>setTag(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}} placeholder="Ex.: NFC, 5G, OLED, Dual Chip"/><button type="button" onClick={()=>{if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}>Adicionar</button></div><div className="tag-list">{f.tags.map(t=><span key={t}>{t}<button type="button" onClick={()=>set('tags',f.tags.filter(x=>x!==t))}>×</button></span>)}</div></div>
 
-    <div className="parts">
-      <h3>Peças necessárias</h3>
+    </details>
+    <details className="compact-editor-section"><summary>Peças necessárias <span>{f.parts.length}</span></summary>
+    <div className="parts compact-parts">
+      <h3 className="visually-hidden">Peças necessárias</h3>
       <div className="add"><input value={part} onChange={e=>setPart(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addPartNow()}}} placeholder="Ex.: Tela OLED"/><button type="button" onClick={addPartNow}>Adicionar peça</button></div>
       {f.parts.map((p,i)=><div className="quote-box" key={p.id}>
         <div className="part-head">
@@ -2155,10 +2156,13 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       </div>)}
     </div>
 
-    <h3 className="section-title"><Tags size={18}/> Etiqueta do aparelho</h3>
+    </details>
+    <details className="compact-editor-section"><summary>Etiqueta do aparelho</summary>
     <div className="label-preview" id={`label-${f.id}`}><div>{showProductCode()&&<b>{f.code}</b>}<span>{f.brand} {f.model}</span><small>{f.color} · {f.storage}</small></div><QRCodeSVG value={`${showProductCode()?f.code:''}|${f.brand} ${f.model}`} size={92}/></div>
     <button type="button" onClick={()=>printPhoneLabel(f)}>Imprimir etiqueta</button>
+    </details>
 
+    <details className="compact-editor-section"><summary>Históricos</summary>
     <div className="price-history-section">
       <h3><TrendingUp size={18}/> Histórico de preços</h3>
       {!f.priceHistory.length?<p className="muted">Nenhuma alteração de preço registrada.</p>:<div className="timeline-list">{[...f.priceHistory].reverse().map(h=><div className="timeline-item" key={h.id}><b>{new Date(h.date).toLocaleString('pt-BR')}</b><span>{money(h.oldValue)} → <strong>{money(h.newValue)}</strong></span></div>)}</div>}
@@ -2167,7 +2171,8 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       <h3><History size={18}/> Histórico</h3>
       <div className="timeline-list">{[...(f.timeline||[])].reverse().map(t=><div className="timeline-item" key={t.id}><b>{new Date(t.date).toLocaleString('pt-BR')}</b><span>{t.message}</span></div>)}</div>
     </div>
-    <div className="actions"><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={()=>onSave(f)}>Salvar</button></div>
+    </details>
+    <div className="actions sticky-modal-actions"><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={()=>onSave(f)}>Salvar</button></div>
   </Modal>
 }
 
