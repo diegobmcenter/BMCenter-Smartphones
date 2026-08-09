@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.3.15';
+const APP_VERSION='10.4.0';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
@@ -472,17 +472,16 @@ function ProfileAnalyticsPage(){
  const[phones]=useState(load(SKEY)),[tab,setTab]=useState('manage'),[editing,setEditing]=useState(null),[query,setQuery]=useState('');
  const persist=next=>{const ordered=next.map((p,index)=>({...p,order:index}));setProfiles(ordered);save(PKEY,ordered)};
  const sales=phones.filter(p=>p.sale?.soldAt);
- const allAds=phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)})));
  const data=profiles.map(profile=>{
-  const published=allAds.filter(x=>x.ad.publications[profile.id]?.status==='published');
+  const published=phones.filter(phone=>phone.status!=='Vendido'&&publishedProfileIds(phone).includes(profile.id));
   const sold=sales.filter(p=>p.sale?.profileId===profile.id);
   const value=sold.reduce((a,p)=>a+Number(p.sale?.value||0),0);
-  const days=sold.map(p=>Math.max(0,Math.round((new Date(p.sale.soldAt)-new Date(p.date||p.sale.soldAt))/86400000)));
+  const days=sold.map(p=>salesDaysFromProfile(p,profile.id)).filter(v=>v!==null);
   return{profile,published:published.length,sales:sold.length,value,last:[...sold].sort((a,b)=>(b.sale.soldAt||'').localeCompare(a.sale.soldAt||''))[0],averageDays:days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0}
  }).sort((a,b)=>b.sales-a.sales||b.value-a.value);
  const filtered=profiles.filter(p=>`${p.name} ${p.platform||''} ${p.notes||''}`.toLowerCase().includes(query.toLowerCase()));
  function removeProfile(profile){
-  const used=phones.some(phone=>(phone.ads||migrateLegacyAds(phone)).some(ad=>normalizeAd(ad).publications?.[profile.id])||phone.sale?.profileId===profile.id);
+  const used=phones.some(phone=>publishedProfileIds(phone).includes(profile.id)||(phone.ads||migrateLegacyAds(phone)).some(ad=>normalizeAd(ad).publications?.[profile.id])||phone.sale?.profileId===profile.id);
   if(used&&!confirm(`O perfil "${profile.name}" possui histórico em anúncios ou vendas. Deseja excluí-lo mesmo assim?`))return;
   if(!used&&!confirm(`Excluir o perfil "${profile.name}"?`))return;
   persist(profiles.filter(p=>p.id!==profile.id))
@@ -580,7 +579,7 @@ function BatchActionsPage(){
 
 function DataQualityPage(){
  const[phones,setPhones]=useState(load(SKEY)),[filter,setFilter]=useState('Todos');const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setPhones(lean);save(SKEY,lean)};
- const issues=phones.flatMap(phone=>{const list=[];if(!phone.brand||!phone.model)list.push(['Cadastro','Alta','Marca ou modelo não informado']);if(phone.nfc===null||phone.nfc===undefined)list.push(['Recursos','Baixa','NFC ainda não informado']);if(!normalizeUnlockCredentials(phone).length)list.push(['Acesso','Baixa','Nenhuma alternativa de desbloqueio registrada']);if(!Number(phone.expected||0)&&phone.status!=='Vendido')list.push(['Valor','Média','Previsão de venda não informada']);if(['Pronto','Para fotografar','Anúncio preparado','Anunciado'].includes(phone.status)&&!(phone.ads||migrateLegacyAds(phone)).length)list.push(['Anúncios','Alta','Aparelho pronto sem anúncio']);return list.map(([type,severity,message])=>({phone,type,severity,message}))});
+ const issues=phones.flatMap(phone=>{const list=[];if(!phone.brand||!phone.model)list.push(['Cadastro','Alta','Marca ou modelo não informado']);if(phone.nfc===null||phone.nfc===undefined)list.push(['Recursos','Baixa','NFC ainda não informado']);if(!normalizeUnlockCredentials(phone).length)list.push(['Acesso','Baixa','Nenhuma alternativa de desbloqueio registrada']);if(!Number(phone.expected||0)&&phone.status!=='Vendido')list.push(['Valor','Média','Previsão de venda não informada']);if(['Pronto','Para fotografar','Anúncio preparado','Anunciado'].includes(phone.status)&&!publishedProfileIds(phone).length)list.push(['Anúncios','Alta','Aparelho pronto sem perfil de publicação']);return list.map(([type,severity,message])=>({phone,type,severity,message}))});
  const filtered=issues.filter(x=>filter==='Todos'||x.severity===filter),affected=new Set(issues.map(x=>x.phone.id)).size;
  function suggest(phone){const text=phone.status==='Aguardando análise'?'Realizar diagnóstico':phone.status==='Aguardando peças'?'Acompanhar pedido de peças':phone.status==='Pronto'?'Preparar anúncio':'Revisar próxima etapa';persist(phones.map(p=>p.id===phone.id?addTimeline({...p,lastActivityAt:new Date().toISOString()},`Ação sugerida: ${text}`):p))}
  return <><Title t="Qualidade dos dados" s="Encontre cadastros incompletos e informações úteis ausentes."/><div className="quality-metrics"><div><span>Problemas</span><strong>{issues.length}</strong></div><div><span>Aparelhos afetados</span><strong>{affected}</strong></div><div><span>Problemas graves</span><strong>{issues.filter(x=>x.severity==='Alta').length}</strong></div><div><span>Cadastros completos</span><strong>{Math.max(0,phones.length-affected)}</strong></div></div>
@@ -1199,201 +1198,155 @@ function AdDetailModal({phone,ad,profiles,onClose,onEdit}){
 
 function Ads(){
  const[phones,setPhones]=useState(()=>safeAdsPhones());
- const[templates,setTemplates]=useState(load(TKEY));
- const[titleLibrary,setTitleLibrary]=useState(()=>load(ATITLEKEY));
- const[descriptionLibrary,setDescriptionLibrary]=useState(()=>load(ADESCKEY));
- const[newTitle,setNewTitle]=useState(''),[newDescription,setNewDescription]=useState('');
- const[view,setView]=useState('matrix');
+ const[period,setPeriod]=useState('30');
  const[query,setQuery]=useState('');
  const[selectedPhone,setSelectedPhone]=useState('');
- const[selectedAd,setSelectedAd]=useState('');
- const[showNoAds,setShowNoAds]=useState(false);
- const[templateId,setTemplateId]=useState('');
- const[editTemplate,setEditTemplate]=useState(null);
- const profiles=load(PKEY);
- const phone=phones.find(p=>p.id===selectedPhone);
- const ad=phone?.ads?.find(a=>a.id===selectedAd);
+ const[selectedProfile,setSelectedProfile]=useState('');
+ const[generated,setGenerated]=useState({title:'',description:'',source:''});
+ const[generating,setGenerating]=useState(false);
+ const profiles=load(PKEY).filter(profile=>profile.active!==false);
  const persist=next=>{setPhones(next);save(SKEY,next)};
- const persistTemplates=next=>{setTemplates(next);save(TKEY,next)};
- const persistTitles=next=>{setTitleLibrary(next);save(ATITLEKEY,next)};
- const persistDescriptions=next=>{setDescriptionLibrary(next);save(ADESCKEY,next)};
+ const today=new Date();
+ const cutoff=period==='all'?null:new Date(today.getTime()-Number(period)*86400000);
+ const periodSales=phones.filter(phone=>phone.sale?.soldAt&&(!cutoff||new Date(phone.sale.soldAt)>=cutoff));
+ const activePhones=phones.filter(phone=>phone.status!=='Vendido');
+ const publishedLinks=activePhones.reduce((sum,phone)=>sum+publishedProfileIds(phone).length,0);
+ const soldWithProfile=periodSales.filter(phone=>phone.sale?.profileId);
+ const averageDaysList=soldWithProfile.map(phone=>salesDaysFromProfile(phone,phone.sale.profileId)).filter(value=>value!==null);
+ const avgDays=averageDaysList.length?Math.round(averageDaysList.reduce((a,b)=>a+b,0)/averageDaysList.length):0;
+ const profileStats=profiles.map(profile=>{
+  const sold=periodSales.filter(phone=>phone.sale?.profileId===profile.id);
+  const revenue=sold.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
+  const days=sold.map(phone=>salesDaysFromProfile(phone,profile.id)).filter(value=>value!==null);
+  const published=activePhones.filter(phone=>publishedProfileIds(phone).includes(profile.id)).length;
+  return{profile,sales:sold.length,revenue,avgDays:days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0,published};
+ }).sort((a,b)=>b.sales-a.sales||a.avgDays-b.avgDays||b.revenue-a.revenue);
+ const best=profileStats[0]?.sales?profileStats[0]:null;
+ const filteredPhones=activePhones.filter(phone=>`${phone.code||''} ${phone.brand||''} ${phone.model||''} ${adContentSpecs(phone)}`.toLowerCase().includes(query.toLowerCase()));
+ const contentPhone=phones.find(phone=>phone.id===selectedPhone);
+ const contentProfile=profiles.find(profile=>profile.id===selectedProfile);
+ const contentHistory=(contentPhone?.adContentHistory||[]).filter(item=>!selectedProfile||item.profileId===selectedProfile).slice(0,8);
 
- function updateAds(phoneId,updater,message){
-  const next=phones.map(p=>p.id!==phoneId?p:touchPhone(addTimeline({...p,ads:updater(p.ads||[])},message)));
-  persist(next);
- }
-
- function createAd(phoneId=selectedPhone){
-  const target=phones.find(p=>p.id===phoneId);
-  if(!target)return alert('Selecione um aparelho.');
-  const newAd=normalizeAd({
-   id:crypto.randomUUID(),name:`Anúncio ${(target.ads||[]).length+1}`,title:'',description:'',
-   publications:{},workflow:defaultAdWorkflow(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
-  });
-  updateAds(target.id,ads=>[...ads,newAd],'Novo anúncio criado');
-  setSelectedPhone(target.id);setSelectedAd(newAd.id);setView('editor');
- }
-
- function patchAd(patch,message='Anúncio atualizado'){
-  if(!phone||!ad)return;
-  updateAds(phone.id,ads=>ads.map(x=>x.id===ad.id?normalizeAd({...x,...patch,updatedAt:new Date().toISOString()}):x),message);
- }
-
- function duplicateAd(phoneId=selectedPhone,adId=selectedAd){
-  const target=phones.find(p=>p.id===phoneId);
-  const source=target?.ads?.find(a=>a.id===adId);
-  if(!target||!source)return;
-  const copy=normalizeAd({...source,id:crypto.randomUUID(),name:`${source.name||'Anúncio'} - cópia`,publications:{},createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
-  updateAds(target.id,ads=>[...ads,copy],'Anúncio duplicado');
-  setSelectedPhone(target.id);setSelectedAd(copy.id);
- }
-
- function deleteAd(){
-  if(!phone||!ad)return;
-  if(!confirm(`Excluir "${ad.name||'este anúncio'}"?`))return;
-  updateAds(phone.id,ads=>ads.filter(x=>x.id!==ad.id),'Anúncio excluído');
-  setSelectedAd('');setView('matrix');
- }
-
- function setPublication(phoneId,adId,profileId,status){
-  const next=phones.map(p=>p.id!==phoneId?p:{
-   ...p,
-   ads:(p.ads||[]).map(item=>{
-    if(item.id!==adId)return item;
-    const current=normalizeAd(item);
-    return normalizeAd({...current,publications:{...current.publications,[profileId]:{
-     status,date:status==='published'?new Date().toISOString().slice(0,10):'',updatedAt:new Date().toISOString()
-    }},updatedAt:new Date().toISOString()});
-   }),
-   lastActivityAt:new Date().toISOString()
+ function setPublished(phoneId,profileId,active){
+  const stamp=new Date().toISOString(),date=stamp.slice(0,10);
+  const next=phones.map(phone=>{
+   if(phone.id!==phoneId)return phone;
+   const map=normalizeMarketplaceProfiles(phone);
+   const current=map[profileId]||{};
+   const marketplaceProfiles={...map,[profileId]:{...current,active,publishedAt:active?(current.publishedAt||date):current.publishedAt||'',updatedAt:stamp}};
+   const profile=profiles.find(item=>item.id===profileId);
+   return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`${active?'Publicado':'Removido'} no perfil ${profile?.name||'selecionado'}`));
   });
   persist(next);
  }
 
- function cyclePublication(phoneId,adId,profileId){
-  const item=phones.find(p=>p.id===phoneId)?.ads?.find(a=>a.id===adId);
-  const status=normalizeAd(item||{}).publications[profileId]?.status||'not_published';
-  const sequence=['not_published','published','pending','removed'];
-  setPublication(phoneId,adId,profileId,sequence[(sequence.indexOf(status)+1)%sequence.length]);
+ function localVariation(phone){
+  const name=[phone.brand,phone.model].filter(Boolean).join(' ')||'Smartphone';
+  const storage=phone.storage?`${phone.storage}GB`:'';
+  const ram=phone.ram?`${phone.ram}GB RAM`:'';
+  const extras=[phone.nfc===true?'NFC':'',phone.biometrics===true?'biometria':'',phone.likeNew===true?'estado de novo':'',phone.screenProtector===true?'com película':'',phone.caseIncluded===true?'com capinha':''].filter(Boolean);
+  const variants=[
+   `${name} ${storage} ${ram} muito conservado`,
+   `${name} ${storage} - excelente opção`,
+   `${name} ${storage} ${phone.color||''} pronto para uso`,
+   `${name} ${storage} seminovo e bem conservado`
+  ].map(x=>x.replace(/\s+/g,' ').trim());
+  const title=variants[Math.floor(Math.random()*variants.length)];
+  const description=`${name}${phone.color?`, cor ${phone.color}`:''}${storage?`, ${storage}`:''}${ram?`, ${ram}`:''}${extras.length?`, ${extras.join(', ')}`:''}. Aparelho disponível por ${money(phone.expected||0)}. ${phone.notes||''}`.replace(/\s+/g,' ').trim();
+  return{title,description,source:'local'};
  }
 
- function markAll(phoneId,adId,status='published'){
-  const publications={};
-  profiles.forEach(p=>publications[p.id]={status,date:status==='published'?new Date().toISOString().slice(0,10):'',updatedAt:new Date().toISOString()});
-  persist(phones.map(p=>p.id!==phoneId?p:{...p,ads:(p.ads||[]).map(a=>a.id===adId?normalizeAd({...a,publications,updatedAt:new Date().toISOString()}):a)}));
+ async function generateWithAI(){
+  if(!contentPhone)return alert('Selecione um aparelho.');
+  setGenerating(true);
+  try{
+   const response=await fetch('/api/generate-ad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    phone:{
+     brand:contentPhone.brand||'',model:contentPhone.model||'',color:contentPhone.color||'',storage:contentPhone.storage||'',ram:contentPhone.ram||'',
+     nfc:contentPhone.nfc===true,biometrics:contentPhone.biometrics===true,likeNew:contentPhone.likeNew===true,
+     screenProtector:contentPhone.screenProtector===true,caseIncluded:contentPhone.caseIncluded===true,connector:contentPhone.connector||'',
+     price:Number(contentPhone.expected||0),notes:contentPhone.notes||''
+    },
+    profile:contentProfile?.name||'',
+    previous:contentHistory.map(item=>({title:item.title,description:item.description}))
+   })});
+   if(!response.ok)throw new Error((await response.json().catch(()=>({})))?.error||'IA indisponível');
+   const result=await response.json();
+   const value={title:String(result.title||'').trim(),description:String(result.description||'').trim(),source:'ai'};
+   if(!value.title||!value.description)throw new Error('Resposta incompleta');
+   setGenerated(value);
+   saveContentHistory(value);
+  }catch(error){
+   const value=localVariation(contentPhone);
+   setGenerated(value);
+   saveContentHistory(value);
+   alert('A geração por IA ainda não está configurada neste servidor. Criei uma variação local para você continuar trabalhando.');
+  }finally{setGenerating(false)}
  }
 
- function setPublicationRenewal(phoneId,adId,profileId,renewAt){
-  const next=phones.map(p=>p.id!==phoneId?p:{...p,ads:(p.ads||[]).map(item=>{
-   if(item.id!==adId)return item;
-   const current=normalizeAd(item),pub=current.publications[profileId]||normalizePublication({});
-   return normalizeAd({...current,publications:{...current.publications,[profileId]:{...pub,renewAt}},updatedAt:new Date().toISOString()});
-  })});
-  persist(next);
+ function generateLocal(){
+  if(!contentPhone)return alert('Selecione um aparelho.');
+  const value=localVariation(contentPhone);setGenerated(value);saveContentHistory(value);
  }
 
- function renewPublication(phoneId,adId,profileId){
-  const today=new Date().toISOString().slice(0,10);
-  const nextDate=new Date();nextDate.setDate(nextDate.getDate()+7);
-  const renewAt=nextDate.toISOString().slice(0,10);
-  const next=phones.map(p=>p.id!==phoneId?p:{...p,ads:(p.ads||[]).map(item=>{
-   if(item.id!==adId)return item;
-   const current=normalizeAd(item),pub=current.publications[profileId]||normalizePublication({});
-   return normalizeAd({...current,publications:{...current.publications,[profileId]:{...pub,status:'published',date:pub.date||today,lastRenewedAt:today,renewAt}},updatedAt:new Date().toISOString()});
-  })});
-  persist(next);
+ function saveContentHistory(value){
+  if(!contentPhone||!value?.title)return;
+  const entry={id:crypto.randomUUID(),profileId:selectedProfile||'',title:value.title,description:value.description,source:value.source||'local',createdAt:new Date().toISOString()};
+  persist(phones.map(phone=>phone.id===contentPhone.id?{...phone,adContentHistory:[entry,...(phone.adContentHistory||[])].slice(0,40)}:phone));
  }
 
- function generate(){
-  if(!phone||!ad)return;
-  const list=defaultTemplates(),t=list[Math.floor(Math.random()*list.length)];
-  const titleSource=titleLibrary.length?titleLibrary[Math.floor(Math.random()*titleLibrary.length)].text:t.title;
-  const descriptionSource=descriptionLibrary.length?descriptionLibrary[Math.floor(Math.random()*descriptionLibrary.length)].text:t.description;
-  patchAd({title:renderAd(titleSource,phone),description:renderAd(descriptionSource,phone)},'Variação automática gerada');
- }
+ function copy(value){if(!value)return;navigator.clipboard?.writeText(value)}
 
- function applyTemplate(){
-  const t=templates.find(x=>x.id===templateId);
-  if(!t)return alert('Selecione um modelo.');
-  patchAd({title:renderAd(t.title,phone),description:renderAd(t.description,phone),templateId:t.id},`Modelo aplicado: ${t.name}`);
- }
+ return <div className="ads-simple-page">
+  <section className="ads-simple-hero">
+   <div><span>ANÚNCIOS E DESEMPENHO</span><h1>Central de anúncios</h1><p>Controle onde cada aparelho está publicado, gere conteúdo e acompanhe quais perfis estão vendendo melhor.</p></div>
+   <label>Período<select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">7 dias</option><option value="30">30 dias</option><option value="90">90 dias</option><option value="all">Todo período</option></select></label>
+  </section>
 
- const allAds=phones.flatMap(p=>(p.ads||[]).map(a=>({phone:p,ad:normalizeAd(a)})));
- const filtered=allAds.filter(({phone,ad})=>`${phone.code} ${phone.brand} ${phone.model} ${ad.name||''} ${ad.title||''}`.toLowerCase().includes(query.toLowerCase()));
- const noAds=phones.filter(p=>p.status!=='Vendido'&&!(p.ads||[]).length);
- const publishedTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>x.ad.publications[p.id]?.status==='published').length,0);
- const possible=allAds.length*profiles.length;
- const publicationRate=possible?Math.round(publishedTotal/possible*100):0;
- const pendingTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>x.ad.publications[p.id]?.status==='pending').length,0);
- const notPublishedTotal=allAds.reduce((sum,x)=>sum+profiles.filter(p=>!['published','pending'].includes(x.ad.publications[p.id]?.status||'not_published')).length,0);
+  <section className="ads-kpis">
+   <article><small>Vendas no período</small><strong>{periodSales.length}</strong><span>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</span></article>
+   <article><small>Perfil com mais vendas</small><strong>{best?best.profile.name:'—'}</strong><span>{best?`${best.sales} venda(s)`:'Sem vendas no período'}</span></article>
+   <article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><span>Considerando o perfil da venda</span></article>
+   <article><small>Publicações ativas</small><strong>{publishedLinks}</strong><span>{activePhones.length} aparelho(s) em estoque</span></article>
+  </section>
 
- return <div className="ads-v11 ads-premium-page">
-  <div className="ads-v11-head ads-clean-head">
-   <div><span className="ads-section-kicker">GESTÃO DE PUBLICAÇÕES</span><h1>Anúncios</h1><p>Acompanhe cada aparelho e o status das publicações em um só lugar.</p></div>
-   <div className="ads-v11-actions">{view!=='matrix'&&<button onClick={()=>setView('matrix')}>Visão geral</button>}<button className={view==='templates'?'active':''} onClick={()=>setView('templates')}>Modelos</button><button className={view==='library'?'active':''} onClick={()=>setView('library')}>Biblioteca</button><button className="primary" onClick={()=>setView('editor')}><Plus/> Novo anúncio</button></div>
-  </div>
-  <div className="ads-summary-strip"><div><span>Anúncios</span><strong>{allAds.length}</strong></div><i/><div><span>Publicados</span><strong>{publishedTotal}</strong></div><i/><div><span>Pendentes</span><strong>{pendingTotal}</strong></div><i/><div><span>Aguardando anúncio</span><strong>{noAds.length}</strong></div></div>
-
-  {view==='matrix'&&<AdsV102
-    filtered={filtered} profiles={profiles} noAds={noAds} setShowNoAds={setShowNoAds}
-    query={query} setQuery={setQuery} money={money} showProductCode={showProductCode}
-    publicationLabel={publicationLabel} cyclePublication={cyclePublication}
-    setSelectedPhone={setSelectedPhone} setSelectedAd={setSelectedAd} setView={setView}
-  />}
-  {view==='details'&&phone&&ad&&<AdDetailModal phone={phone} ad={ad} profiles={profiles} onClose={()=>setView('matrix')} onEdit={()=>setView('editor')}/>}
-  {showNoAds&&<div className="ads-drawer-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setShowNoAds(false)}>
-   <aside className="ads-awaiting-drawer">
-    <header><div><h2>Aguardando anúncio</h2><p>{noAds.length} aparelho{noAds.length!==1?'s':''} sem anúncio cadastrado.</p></div><button onClick={()=>setShowNoAds(false)}><X/></button></header>
-    <div className="ads-awaiting-list">{noAds.map(p=><article key={p.id}>
-     <div className="ads-awaiting-thumb"><Smartphone size={22}/></div>
-     <div><b>{p.brand} {p.model}</b><small>{[p.storage,p.color].filter(Boolean).join(' · ')||'Sem detalhes'}</small><strong>{money(p.expected)}</strong></div>
-     <button className="primary" onClick={()=>{createAd(p.id);setShowNoAds(false)}}><Plus/> Criar anúncio</button>
-    </article>)}</div>
-   </aside>
-  </div>}
-  {view==='editor'&&<div className="ads-v11-editor">
-   <section>
-    <label>Aparelho<select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setSelectedAd('')}}><option value="">Escolha um aparelho</option>{phones.filter(p=>p.status!=='Vendido').map(p=><option value={p.id} key={p.id}>{phoneDisplayName(p)}</option>)}</select></label>
-    {phone&&<>
-     <div className="ads-editor-title"><div><h2>Anúncios deste aparelho</h2><span>{phone.ads?.length||0} cadastrado(s)</span></div><button className="primary" onClick={()=>createAd(phone.id)}><Plus/> Criar anúncio</button></div>
-     <div className="phone-ad-tabs">{(phone.ads||[]).map(item=><button className={selectedAd===item.id?'active':''} key={item.id} onClick={()=>setSelectedAd(item.id)}><span>{item.name||'Sem nome'}</span><small>{publishedCountForAd(item)}/{profiles.length} perfis</small></button>)}</div>
-     {ad&&<>
-      <div className="ads-editor-grid">
-       <Field label="Nome interno" value={ad.name||''} onChange={v=>patchAd({name:v},'Nome alterado')}/>
-       <label>Modelo<select value={templateId} onChange={e=>setTemplateId(e.target.value)}><option value="">Selecione</option>{templates.map(t=><option value={t.id} key={t.id}>{t.name}</option>)}</select></label>
-      </div>
-      <div className="ads-editor-buttons"><button onClick={applyTemplate}>Usar modelo</button><button onClick={generate}>Gerar variação</button><button onClick={()=>duplicateAd(phone.id,ad.id)}>Duplicar</button><button className="danger" onClick={deleteAd}>Excluir</button></div>
-      <label>Título<input value={ad.title||''} onChange={e=>patchAd({title:e.target.value},'Título alterado')}/></label>
-      <label>Descrição<textarea className="large-textarea" value={ad.description||''} onChange={e=>patchAd({description:e.target.value},'Descrição alterada')}/></label>
-      <div className="copy-row"><button onClick={()=>copyText(ad.title||'')}>Copiar título</button><button onClick={()=>copyText(ad.description||'')}>Copiar descrição</button><span className="badge ok">Salvo automaticamente</span></div>
-      <h3>Publicação por perfil</h3>
-      <div className="ads-profile-editor">{profiles.map(profile=>{
-       const pub=ad.publications[profile.id]||{status:'not_published'};
-       return <div className={pub.status} key={profile.id}><b>{profile.name}</b><select value={pub.status} onChange={e=>setPublication(phone.id,ad.id,profile.id,e.target.value)}><option value="not_published">Não publicado</option><option value="published">Publicado</option><option value="pending">Pendente</option><option value="removed">Removido</option></select></div>
-      })}</div>
-     </>}
-    </>}
-   </section>
-   <aside><h2>Resumo</h2>{phone?<><b>{phone.brand} {phone.model}</b>{showProductCode()&&<span>{phone.code}</span>}<strong>{money(phone.expected)}</strong><button onClick={()=>setView('matrix')}>Voltar à visão geral</button></>:<p>Selecione um aparelho para começar.</p>}</aside>
-  </div>}
-
-  {view==='templates'&&<section className="ads-v11-templates">
-   <div className="ads-editor-title"><div><h2>Modelos de anúncio</h2><span>Textos prontos para títulos e descrições.</span></div><button className="primary" onClick={()=>setEditTemplate({id:crypto.randomUUID(),name:'',title:'{marca} {modelo} {armazenamento} {cor}',description:'{marca} {modelo} com {armazenamento}. Valor: {valor}.'})}><Plus/> Novo modelo</button></div>
-   <div className="template-list">{templates.map(t=><div className="template-card" key={t.id}><div><b>{t.name}</b><span>{t.title}</span></div><div><button onClick={()=>setEditTemplate(t)}>Editar</button><button className="danger" onClick={()=>confirm('Excluir modelo?')&&persistTemplates(templates.filter(x=>x.id!==t.id))}>Excluir</button></div></div>)}</div>
-   {!templates.length&&<Empty text="Nenhum modelo cadastrado."/>}
-  </section>}
-
-
-  {view==='library'&&<section className="ads-v11-templates ad-library-page">
-   <div className="ads-editor-title"><div><h2>Biblioteca de textos</h2><span>Cadastre títulos e descrições independentes para o gerador misturar automaticamente.</span></div></div>
-   <div className="ad-library-grid">
-    <div className="panel"><h3>Títulos</h3><div className="library-add"><input value={newTitle} onChange={e=>setNewTitle(e.target.value)} placeholder="{marca} {modelo} {armazenamento} - Seminovo"/><button className="primary" onClick={()=>{if(!newTitle.trim())return;persistTitles([{id:crypto.randomUUID(),text:newTitle.trim()},...titleLibrary]);setNewTitle('')}}>Adicionar</button></div><div className="library-list">{titleLibrary.map(x=><div key={x.id}><span>{x.text}</span><button className="danger" onClick={()=>persistTitles(titleLibrary.filter(y=>y.id!==x.id))}>Excluir</button></div>)}</div>{!titleLibrary.length&&<Empty text="Nenhum título personalizado."/>}</div>
-    <div className="panel"><h3>Descrições</h3><div className="library-add"><textarea value={newDescription} onChange={e=>setNewDescription(e.target.value)} placeholder="Aparelho {marca} {modelo}, revisado e pronto para uso..."/><button className="primary" onClick={()=>{if(!newDescription.trim())return;persistDescriptions([{id:crypto.randomUUID(),text:newDescription.trim()},...descriptionLibrary]);setNewDescription('')}}>Adicionar</button></div><div className="library-list">{descriptionLibrary.map(x=><div key={x.id}><span>{x.text}</span><button className="danger" onClick={()=>persistDescriptions(descriptionLibrary.filter(y=>y.id!==x.id))}>Excluir</button></div>)}</div>{!descriptionLibrary.length&&<Empty text="Nenhuma descrição personalizada."/>}</div>
+  <section className="ads-profile-performance panel">
+   <header><div><h2>Desempenho dos perfis</h2><p>Use estes números como referência para decidir onde concentrar suas próximas publicações.</p></div></header>
+   <div className="ads-profile-performance-grid">
+    {profileStats.map((item,index)=><article key={item.profile.id}>
+     <div className="rank">{index+1}</div><div className="profile-id"><span style={{background:item.profile.color||'#376cf5'}}>{String(item.profile.name||'?').slice(0,2).toUpperCase()}</span><div><b>{item.profile.name}</b><small>{item.published} aparelho(s) publicado(s)</small></div></div>
+     <div><small>Vendas</small><strong>{item.sales}</strong></div><div><small>Valor vendido</small><strong>{money(item.revenue)}</strong></div><div><small>Média para vender</small><strong>{item.sales?`${item.avgDays} dias`:'—'}</strong></div>
+    </article>)}
+    {!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}
    </div>
-   <div className="template-help"><b>Variáveis disponíveis:</b><code>{showProductCode()?'{marca} {modelo} {cor} {armazenamento} {ram} {valor} {codigo} {tarefas} {observacoes}':'{marca} {modelo} {cor} {armazenamento} {ram} {valor} {tarefas} {observacoes}'}</code></div>
-  </section>}
+  </section>
 
-  {editTemplate&&<TemplateModal item={editTemplate} onClose={()=>setEditTemplate(null)} onSave={v=>{persistTemplates(templates.some(x=>x.id===v.id)?templates.map(x=>x.id===v.id?v:x):[v,...templates]);setEditTemplate(null)}}/>}
+  <div className="ads-workspace">
+   <section className="ads-publication-control panel">
+    <header><div><h2>Onde está publicado</h2><p>Depois de publicar manualmente no Facebook, apenas marque os perfis usados.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
+    <div className="ads-publication-list">
+     {filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}>
+      <div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div>
+      <div className="profile-checks">{profiles.map(profile=><button key={profile.id} className={published.includes(profile.id)?'active':''} onClick={()=>setPublished(phone.id,profile.id,!published.includes(profile.id))}><span>{published.includes(profile.id)?'✓':'+'}</span>{profile.name}</button>)}</div>
+      <strong>{published.length} perfil(is)</strong>
+     </article>})}
+     {!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}
+    </div>
+   </section>
+
+   <section className="ads-content-studio panel">
+    <header><div><h2>Conteúdo para publicação</h2><p>Escolha o aparelho, gere uma variação e copie para publicar manualmente.</p></div></header>
+    <div className="ads-content-selects">
+     <label>Aparelho<select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
+     <label>Perfil<select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
+    </div>
+    {contentPhone&&<div className="ads-content-phone"><b>{phoneDisplayName(contentPhone)}</b><span>{adContentSpecs(contentPhone)}</span><strong>{money(contentPhone.expected||0)}</strong></div>}
+    <div className="ads-generator-actions"><button className="primary" disabled={!contentPhone||generating} onClick={generateWithAI}>{generating?'Gerando...':'✨ Gerar com IA'}</button><button disabled={!contentPhone||generating} onClick={generateLocal}>Gerar variação local</button></div>
+    <label>Título<div className="copy-field"><input value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)}>Copiar</button></div></label>
+    <label>Descrição<div className="copy-field textarea"><textarea value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)}>Copiar</button></div></label>
+    <div className="ads-content-foot"><span>{generated.source==='ai'?'Gerado por IA':generated.source==='local'?'Variação local':''}</span><small>{contentHistory.length?`${contentHistory.length} texto(s) anterior(es) considerado(s) para este aparelho/perfil`:'O histórico fica salvo no próprio aparelho.'}</small></div>
+   </section>
+  </div>
  </div>
 }
 
@@ -1544,6 +1497,46 @@ function SaleModal({item,profiles,onClose,onSave}){
  </Modal>
 }
 
+
+function normalizeMarketplaceProfiles(phone){
+ const source=phone?.marketplaceProfiles&&typeof phone.marketplaceProfiles==='object'&&!Array.isArray(phone.marketplaceProfiles)?{...phone.marketplaceProfiles}:{};
+ try{
+  (phone?.ads||migrateLegacyAds(phone)||[]).forEach(ad=>{
+   const normalized=normalizeAd(ad);
+   Object.entries(normalized.publications||{}).forEach(([profileId,pub])=>{
+    if(pub?.status==='published'&&!source[profileId]){
+     source[profileId]={active:true,publishedAt:pub.date||String(pub.updatedAt||ad.updatedAt||new Date().toISOString()).slice(0,10),updatedAt:pub.updatedAt||ad.updatedAt||''};
+    }
+   });
+  });
+ }catch{}
+ return source;
+}
+function publishedProfileIds(phone){const map=normalizeMarketplaceProfiles(phone);return Object.entries(map).filter(([,value])=>value?.active!==false).map(([id])=>id)}
+function profilePublishedAt(phone,profileId){const value=normalizeMarketplaceProfiles(phone)?.[profileId];return value?.active!==false?(value?.publishedAt||''):''}
+function salesDaysFromProfile(phone,profileId){
+ const soldAt=phone?.sale?.soldAt;
+ if(!soldAt)return null;
+ const publishedAt=profileId?profilePublishedAt(phone,profileId):'';
+ const base=publishedAt||phone?.date||soldAt;
+ const diff=Math.round((new Date(soldAt)-new Date(base))/86400000);
+ return Number.isFinite(diff)?Math.max(0,diff):null
+}
+function marketplaceProfileName(profile){return profile?.name||'Perfil sem nome'}
+function adContentSpecs(phone){
+ return [
+  phone?.brand,phone?.model,
+  phone?.color,
+  phone?.storage?`${phone.storage}GB`:'',
+  phone?.ram?`${phone.ram}GB RAM`:'',
+  phone?.nfc===true?'NFC':'',
+  phone?.biometrics===true?'Biometria':'',
+  phone?.likeNew===true?'Estado de novo':'',
+  phone?.screenProtector===true?'Película':'',
+  phone?.caseIncluded===true?'Capinha':'',
+  phone?.connector||''
+ ].filter(Boolean).join(' · ')
+}
 function migrateLegacyAds(phone){if(phone.ads)return phone.ads;if(phone.ad?.title||phone.ad?.description)return[{id:crypto.randomUUID(),name:'Anúncio 1',title:phone.ad.title||'',description:phone.ad.description||'',publishedProfiles:phone.ad.publishedProfiles||[],createdAt:phone.ad.updatedAt||new Date().toISOString(),updatedAt:phone.ad.updatedAt||new Date().toISOString()}];return[]}
 function renderAd(text,p){const r={'{marca}':p.brand||'','{modelo}':p.model||'','{cor}':p.color||'','{armazenamento}':p.storage||'','{ram}':p.ram||'','{valor}':money(p.expected),'{codigo}':showProductCode()?(p.code||''):'','{tarefas}':p.tasks||'','{observacoes}':p.notes||''};return Object.entries(r).reduce((x,[k,v])=>x.replaceAll(k,v),text||'').trim()}
 function defaultTemplates(){return[{title:'{marca} {modelo} {armazenamento} {cor} - Seminovo',description:'{marca} {modelo} com {armazenamento}. Aparelho seminovo, revisado e pronto para uso. Valor: {valor}. Entrega a combinar.'},{title:'{modelo} {armazenamento} em ótimo estado',description:'Vendo {marca} {modelo}, cor {cor}, com {armazenamento}. Aparelho testado e funcionando. {observacoes} Valor: {valor}.'}]}
