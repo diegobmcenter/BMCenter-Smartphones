@@ -9,14 +9,14 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.0';
+const APP_VERSION='10.4.1';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
-const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'?value:null}catch{return null}};
-const saveDraft=(k,v)=>{const payload={...v,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
-const clearDraft=k=>{localStorage.removeItem(k);queueCloudSave(k,null)};
+const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
+const saveDraft=(k,v)=>{const payload={...v,deleted:false,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
+const clearDraft=k=>{const tombstone={deleted:true,deletedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(tombstone));queueCloudSave(k,tombstone);pushCloudStateNow(k,tombstone).catch(error=>console.warn('Falha ao remover rascunho da nuvem',error))};
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
 function phoneSelectedPartsCost(phone){
  return (phone.parts||[]).reduce((sum,part)=>{
@@ -1299,7 +1299,7 @@ function Ads(){
 
  return <div className="ads-simple-page">
   <section className="ads-simple-hero">
-   <div><span>ANÚNCIOS E DESEMPENHO</span><h1>Central de anúncios</h1><p>Controle onde cada aparelho está publicado, gere conteúdo e acompanhe quais perfis estão vendendo melhor.</p></div>
+   <div><span>PUBLICAÇÃO · CONTEÚDO · RESULTADOS</span><h1>Central de anúncios</h1><p>Um painel simples para marcar onde você publicou, preparar novos textos e entender quais perfis estão trazendo resultado.</p></div>
    <label>Período<select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">7 dias</option><option value="30">30 dias</option><option value="90">90 dias</option><option value="all">Todo período</option></select></label>
   </section>
 
@@ -1311,7 +1311,7 @@ function Ads(){
   </section>
 
   <section className="ads-profile-performance panel">
-   <header><div><h2>Desempenho dos perfis</h2><p>Use estes números como referência para decidir onde concentrar suas próximas publicações.</p></div></header>
+   <header><div><h2>Radar dos perfis</h2><p>Compare vendas, valor e velocidade sem ocupar a tela com linhas gigantes.</p></div></header>
    <div className="ads-profile-performance-grid">
     {profileStats.map((item,index)=><article key={item.profile.id}>
      <div className="rank">{index+1}</div><div className="profile-id"><span style={{background:item.profile.color||'#376cf5'}}>{String(item.profile.name||'?').slice(0,2).toUpperCase()}</span><div><b>{item.profile.name}</b><small>{item.published} aparelho(s) publicado(s)</small></div></div>
@@ -2223,7 +2223,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      <label>Capinha<select value={row.caseIncluded===true?'sim':row.caseIncluded===false?'nao':''} onChange={e=>setRow(row.id,'caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Estado de novo<select value={row.likeNew===true?'sim':row.likeNew===false?'nao':''} onChange={e=>setRow(row.id,'likeNew',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
      <label>Biometria<select value={row.biometrics===true?'sim':row.biometrics===false?'nao':''} onChange={e=>setRow(row.id,'biometrics',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
-     <label>Conector<select value={row.connector||''} onChange={e=>setRow(row.id,'connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
+     <label>Conector<select value={row.connector||''} onChange={e=>setRow(row.id,'connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option><option value="Lightning">Lightning</option></select></label>
      <Field label="Valor pago" value={normalizeMoneyInput(row.paid)} prefix="R$" inputMode="decimal" onChange={v=>setRow(row.id,'paid',normalizeMoneyInput(v))}/>
      <Field label="Valor de venda" value={normalizeMoneyInput(row.expected)} prefix="R$" inputMode="decimal" onChange={v=>setRow(row.id,'expected',normalizeMoneyInput(v))}/>
      <label>Status<select value={row.status} onChange={e=>setRow(row.id,'status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label>
@@ -2280,7 +2280,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
       <label>Capinha<select value={f.caseIncluded===true?'sim':f.caseIncluded===false?'nao':''} onChange={e=>set('caseIncluded',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Estado de novo<select value={f.likeNew===true?'sim':f.likeNew===false?'nao':''} onChange={e=>set('likeNew',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
       <label>Biometria<select value={f.biometrics===true?'sim':f.biometrics===false?'nao':''} onChange={e=>set('biometrics',e.target.value==='sim'?true:e.target.value==='nao'?false:null)}><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></label>
-      <label>Conector de carga<select value={f.connector||''} onChange={e=>set('connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option></select></label>
+      <label>Conector de carga<select value={f.connector||''} onChange={e=>set('connector',e.target.value)}><option value="">Não informado</option><option value="V8">V8 (Micro USB)</option><option value="Tipo C">Tipo C</option><option value="Lightning">Lightning</option></select></label>
     </div>
     <details className="compact-editor-section"><summary>Desbloqueio <span>{(f.unlockCredentials||[]).length} alternativa(s)</span></summary><UnlockCredentialsEditor value={f.unlockCredentials} onChange={v=>set('unlockCredentials',v)}/></details>
     <h3 className="section-title">Dados da compra</h3>

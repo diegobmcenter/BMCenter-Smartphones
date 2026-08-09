@@ -1,0 +1,223 @@
+/* BMCenter v10.4.1 — filtros, foco de cadastro e Central de Anúncios redesenhada */
+
+/* =========================================================
+   FORM FOCUS — TAB must make the active field obvious
+   ========================================================= */
+.phone-editor-modal input:focus-visible,
+.phone-editor-modal select:focus-visible,
+.phone-editor-modal textarea:focus-visible,
+.batch-phone-modal input:focus-visible,
+.batch-phone-modal select:focus-visible,
+.batch-phone-modal textarea:focus-visible,
+.modal input:focus-visible,
+.modal select:focus-visible,
+.modal textarea:focus-visible{
+  outline:none!important;
+  border-color:color-mix(in srgb,var(--accent) 72%,var(--line))!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)!important;
+  background:color-mix(in srgb,var(--surface2) 92%,var(--accent) 8%)!important;
+  transition:border-color .14s ease,box-shadow .14s ease,background .14s ease;
+}
+.phone-editor-modal label:focus-within,
+.batch-phone-modal label:focus-within{
+  color:var(--accent)!important;
+}
+
+/* =========================================================
+   SMARTPHONES — horizontal status filter like "Mais filtros"
+   ========================================================= */
+.v1041-status-trigger{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-width:128px!important;
+  height:38px!important;
+  padding:0 10px!important;
+  white-space:nowrap;
+}
+.v1041-status-trigger svg:last-child{margin-left:auto}
+.v1041-status-trigger.active{
+  color:var(--accent)!important;
+  border-color:color-mix(in srgb,var(--accent) 52%,var(--line))!important;
+  background:var(--accent-soft)!important;
+}
+
+.v1041-status-strip{
+  margin-top:7px;
+  padding:9px 10px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--surface);
+  animation:v1041FilterReveal .16s ease-out;
+}
+@keyframes v1041FilterReveal{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:none}
+}
+.v1041-status-strip-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;
+}
+.v1041-status-strip-head>div{display:grid;gap:1px}
+.v1041-status-strip-head b{font-size:8px;color:var(--text)}
+.v1041-status-strip-head small{font-size:7px;color:var(--muted)}
+.v1041-status-strip-head>button{
+  display:flex!important;align-items:center!important;gap:5px!important;width:auto!important;
+  min-height:28px!important;padding:0 8px!important;font-size:7px!important;
+}
+.v1041-status-chips{display:flex;flex-wrap:wrap;gap:5px}
+.v1041-status-chips>button{
+  width:auto!important;min-height:29px!important;padding:0 8px!important;
+  display:flex!important;align-items:center!important;gap:5px!important;
+  border-radius:8px!important;font-size:7.5px!important;background:var(--surface2)!important;
+}
+.v1041-status-chips>button>span{
+  width:15px;height:15px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;flex:0 0 15px;
+}
+.v1041-status-chips>button.active{
+  border-color:color-mix(in srgb,var(--accent) 58%,var(--line))!important;
+  background:var(--accent-soft)!important;color:var(--accent)!important;
+}
+.v1041-status-chips>button.active>span{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Visible profile names directly on smartphone rows */
+.v1041-published-inline{
+  display:flex;align-items:center;gap:3px;margin-top:3px;min-width:0;max-width:100%;overflow:hidden;
+}
+.v1041-published-inline>span{
+  display:inline-flex;align-items:center;max-width:92px;height:19px;padding:0 6px;
+  border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));
+  border-radius:999px;background:color-mix(in srgb,var(--accent-soft) 72%,var(--surface2));
+  color:var(--accent);font-size:6.6px;font-weight:760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.v1041-published-inline>span.more{max-width:none;flex:0 0 auto}
+.v102-device-name>p{margin-bottom:0!important}
+
+/* =========================================================
+   CENTRAL DE ANÚNCIOS — v10.4.1 redesign
+   compact command center, cards instead of one profile per line
+   ========================================================= */
+.ads-simple-page{
+  gap:10px!important;
+}
+.ads-simple-hero{
+  position:relative;
+  align-items:center!important;
+  padding:14px 16px!important;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 92% 12%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 35%),
+    var(--surface);
+  overflow:hidden;
+}
+.ads-simple-hero:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)
+}
+.ads-simple-hero>div>span{font-size:7.5px!important}
+.ads-simple-hero h1{font-size:24px!important;margin:4px 0 3px!important}
+.ads-simple-hero p{max-width:720px!important;font-size:8.5px!important}
+.ads-simple-hero>label{
+  min-width:142px!important;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:var(--surface2)
+}
+
+.ads-kpis{gap:7px!important}
+.ads-kpis article{
+  min-height:72px!important;padding:9px 10px!important;border-radius:10px!important;
+  box-shadow:none!important;
+}
+.ads-kpis article strong{font-size:15px!important}
+.ads-kpis article:first-child{border-left:3px solid var(--accent)}
+.ads-kpis article:nth-child(2){border-left:3px solid #25a36f}
+.ads-kpis article:nth-child(3){border-left:3px solid #d5962d}
+.ads-kpis article:nth-child(4){border-left:3px solid #7b67d7}
+
+/* Performance becomes a compact card grid */
+.ads-profile-performance{
+  padding:10px!important;
+  border-radius:13px!important;
+}
+.ads-profile-performance>header{margin-bottom:7px!important}
+.ads-profile-performance-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+.ads-profile-performance-grid>article{
+  display:grid!important;
+  grid-template-columns:25px repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:auto auto!important;
+  gap:7px 6px!important;
+  align-items:center!important;
+  min-height:100px!important;
+  padding:9px!important;
+  border:1px solid var(--line)!important;
+  border-radius:11px!important;
+  background:var(--surface2)!important;
+}
+.ads-profile-performance-grid .rank{
+  grid-column:1;grid-row:1!important;width:24px!important;height:24px!important;border-radius:7px!important;font-size:8px!important;
+}
+.ads-profile-performance-grid .profile-id{
+  grid-column:2/5;grid-row:1!important;gap:6px!important;min-width:0
+}
+.ads-profile-performance-grid .profile-id>span{width:25px!important;height:25px!important;flex-basis:25px!important;font-size:7px!important}
+.ads-profile-performance-grid .profile-id b{font-size:8.5px!important}
+.ads-profile-performance-grid .profile-id small{font-size:6.5px!important}
+.ads-profile-performance-grid>article>div:nth-child(3),
+.ads-profile-performance-grid>article>div:nth-child(4),
+.ads-profile-performance-grid>article>div:nth-child(5){
+  grid-row:2!important;
+  min-width:0;padding-top:6px;border-top:1px solid var(--line)
+}
+.ads-profile-performance-grid>article>div:nth-child(3){grid-column:1/3}
+.ads-profile-performance-grid>article>div:nth-child(4){grid-column:3}
+.ads-profile-performance-grid>article>div:nth-child(5){grid-column:4}
+.ads-profile-performance-grid>article>div:nth-child(n+3) small{
+  display:block;font-size:6.3px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.ads-profile-performance-grid>article>div:nth-child(n+3) strong{
+  display:block;margin-top:2px;font-size:8.2px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+
+/* Better balance between publication control and content generator */
+.ads-workspace{
+  grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr)!important;
+  gap:8px!important;
+}
+.ads-publication-control,.ads-content-studio{border-radius:13px!important;padding:10px!important}
+.ads-publication-list{max-height:430px!important;gap:4px!important}
+.ads-publication-list>article{
+  grid-template-columns:minmax(125px,.8fr) minmax(250px,2fr) 54px!important;
+  padding:6px 7px!important;min-height:48px
+}
+.profile-checks button{min-height:25px!important;padding:0 6px!important}
+.profile-checks button>span{width:14px!important;height:14px!important}
+.ads-content-studio{gap:7px!important}
+.copy-field textarea{min-height:92px!important}
+
+/* Light mode stays consistent */
+.v102-app.theme-light .v1041-status-strip,
+.v102-app.theme-light .ads-simple-hero,
+.v102-app.theme-light .ads-profile-performance,
+.v102-app.theme-light .ads-profile-performance-grid>article{
+  background:var(--surface)!important;color:var(--text)!important
+}
+
+/* Responsive */
+@media(max-width:1180px){
+  .ads-profile-performance-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  .ads-workspace{grid-template-columns:1fr!important}
+  .ads-content-studio{position:static!important}
+}
+@media(max-width:720px){
+  .v1041-status-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v1041-status-chips>button{justify-content:flex-start!important}
+  .ads-profile-performance-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:520px){
+  .v1041-status-chips{grid-template-columns:1fr}
+  .v1041-published-inline{flex-wrap:wrap}
+}
