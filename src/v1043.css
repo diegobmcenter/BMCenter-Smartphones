@@ -1,0 +1,15 @@
+/* BMCenter v10.4.3 — divisão opcional de compra em massa */
+.batch-total-purchase{
+ display:grid;grid-template-columns:minmax(210px,1.25fr) minmax(150px,.55fr) minmax(175px,.7fr);
+ gap:8px;align-items:end;margin:8px 0;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2)
+}
+.batch-total-purchase.active{border-color:color-mix(in srgb,var(--accent) 42%,var(--line));background:color-mix(in srgb,var(--accent-soft) 42%,var(--surface2))}
+.batch-split-toggle{display:flex!important;align-items:center!important;gap:8px!important;min-height:36px!important;padding:0!important}
+.batch-split-toggle input{width:16px!important;height:16px!important;min-height:16px!important;flex:0 0 16px!important;accent-color:var(--accent)}
+.batch-split-toggle span{display:grid}.batch-split-toggle b{font-size:8.5px}.batch-split-toggle small{font-size:7px;color:var(--muted);margin-top:1px}
+.batch-total-purchase>label:not(.batch-split-toggle){display:grid;gap:4px;font-size:7.5px;color:var(--muted)}
+.batch-total-purchase .input-affix{min-height:34px!important}
+.batch-split-result{display:grid;gap:2px;align-content:center;min-height:36px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.batch-split-result small{font-size:6.8px;color:var(--muted)}.batch-split-result strong{font-size:8.5px;color:var(--text)}
+@media(max-width:780px){.batch-total-purchase{grid-template-columns:1fr 1fr}.batch-split-toggle{grid-column:1/-1}}
+@media(max-width:520px){.batch-total-purchase{grid-template-columns:1fr}}

@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.2';
+const APP_VERSION='10.4.3';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -33,6 +33,7 @@ function stripUnit(value,unit){return String(value??'').replace(new RegExp(`\\s*
 function normalizeCapacityInput(value){return stripUnit(value,'GB').replace(/[^0-9.,]/g,'')}
 function normalizeRamInput(value){return stripUnit(value,'GB').replace(/[^0-9+.,\s]/g,'').replace(/\s*\+\s*/g,'+').replace(/\+{2,}/g,'+')}
 function normalizeMoneyInput(value){return String(value??'').replace(/^\s*R\$\s*/i,'').replace(/[^0-9.,]/g,'').trim()}
+function parseMoneyInput(value){const raw=normalizeMoneyInput(value);if(!raw)return 0;if(raw.includes(','))return Number(raw.replace(/\./g,'').replace(',','.'))||0;return Number(raw)||0}
 function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':'',phone?.likeNew===true?'Estado de novo':'',phone?.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
 const DEFAULT_PHONE_STATUSES=['Descarte/Sucata','Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
 function sortPhoneStatuses(list){return [...new Set((Array.isArray(list)?list:[]).map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}))}
@@ -195,7 +196,7 @@ function App({cloudUser,onCloudLogout}){
 
  function isVisible(id){return ['phones','settings'].includes(id)||visibleMenus[id]!==false}
  function saveVisible(next){const safe={...next,phones:true};setVisibleMenus(safe);save(MENUKEY,safe)}
- function saveConfig(next){setConfig(next);save(CFGKEY,next)}
+ function saveConfig(next){if(next?.themeMode)localStorage.setItem('bmcenter-last-theme',next.themeMode);setConfig(next);save(CFGKEY,next);pushCloudStateNow(CFGKEY,next).catch(()=>{})}
  function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
@@ -248,11 +249,15 @@ function loadSystemConfig(){
   dashboardWidgets:['metrics','profiles','workflow'],...BALANCED_THEME
  };
  const saved=load(CFGKEY);
- const merged=saved&&typeof saved==='object'&&!Array.isArray(saved)?{...defaults,...saved}:defaults;
- // One-time visual migration requested for v8.0.7.
- if(localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1'){
+ const hasSaved=saved&&typeof saved==='object'&&!Array.isArray(saved)&&Object.keys(saved).length>0;
+ const lastTheme=localStorage.getItem('bmcenter-last-theme');
+ const merged={...(hasSaved?{...defaults,...saved}:defaults),...(lastTheme==='light'||lastTheme==='dark'?{themeMode:lastTheme}:{})};
+ // Never overwrite a theme the user already chose. The old visual migration only applies to a fresh install.
+ if(!hasSaved&&localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1'){
+  localStorage.setItem(BALANCED_THEME_MIGRATION_KEY,'1');
   return {...merged,...BALANCED_THEME}
  }
+ if(localStorage.getItem(BALANCED_THEME_MIGRATION_KEY)!=='1')localStorage.setItem(BALANCED_THEME_MIGRATION_KEY,'1');
  return merged
 }
 
@@ -2185,12 +2190,23 @@ function InfoRow({label,value}){return <div className="info-row"><span>{label}</
 function BatchPhoneModal({existing,banks,onClose,onSave}){
  const emptyRow=()=>({id:crypto.randomUUID(),brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],paid:'',expected:'',notes:'',status:'Aguardando análise'});
  const initialDraft=loadDraft(BATCH_DRAFT_KEY);
- const[shared,setShared]=useState(()=>initialDraft?.shared||{date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
+ const sharedDefaults={date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:'',totalPurchase:'',splitTotal:false};
+ const[shared,setShared]=useState(()=>({...sharedDefaults,...(initialDraft?.shared||{})}));
  const[rows,setRows]=useState(()=>Array.isArray(initialDraft?.rows)&&initialDraft.rows.length?initialDraft.rows:[emptyRow(),emptyRow(),emptyRow()]);
  const[busy,setBusy]=useState(false);
  const[draftRecovered,setDraftRecovered]=useState(Boolean(initialDraft));
  const setSharedField=(key,value)=>setShared(current=>({...current,[key]:value}));
  const setRow=(id,key,value)=>setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));
+ const filledRows=rows.filter(row=>row.brand.trim()||row.model.trim());
+ const splitUnitValue=shared.splitTotal&&filledRows.length?parseMoneyInput(shared.totalPurchase)/filledRows.length:0;
+ useEffect(()=>{
+  if(!shared.splitTotal)return;
+  const total=parseMoneyInput(shared.totalPurchase),valid=rows.filter(row=>row.brand.trim()||row.model.trim());
+  if(!total||!valid.length)return;
+  const totalCents=Math.round(total*100),baseCents=Math.floor(totalCents/valid.length),remainder=totalCents-(baseCents*valid.length);
+  const values=new Map(valid.map((row,index)=>[row.id,(baseCents+(index<remainder?1:0))/100]));
+  setRows(current=>current.map(row=>values.has(row.id)?{...row,paid:values.get(row.id).toFixed(2).replace('.',',')}:row));
+ },[shared.splitTotal,shared.totalPurchase,rows.map(row=>`${row.id}:${row.brand}:${row.model}`).join('|')]);
  const addRows=(amount=1)=>setRows(current=>[...current,...Array.from({length:amount},emptyRow)]);
  const removeRow=id=>setRows(current=>current.length===1?current:current.filter(row=>row.id!==id));
  function saveBatchDraft(){
@@ -2203,7 +2219,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
   if(!confirm('Descartar o rascunho deste cadastro em massa?'))return;
   clearDraft(BATCH_DRAFT_KEY);
   setDraftRecovered(false);
-  setShared({date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:''});
+  setShared({...sharedDefaults,date:new Date().toISOString().slice(0,10)});
   setRows([emptyRow(),emptyRow(),emptyRow()])
  }
  function saveBatch(){
@@ -2226,8 +2242,8 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      origin:shared.origin,
      payment:shared.payment,
      bankAccountId:shared.bankAccountId,
-     paid:Number(row.paid||0),
-     expected:Number(row.expected||0),
+     paid:parseMoneyInput(row.paid),
+     expected:parseMoneyInput(row.expected),
      notes:[row.notes,shared.buyerNotes].filter(Boolean).join('\n'),
      lastActivityAt:now,
      timeline:[{id:crypto.randomUUID(),date:now,message:'Aparelho cadastrado em compra em massa'}]
@@ -2245,6 +2261,11 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
     <Field label="Origem da compra" value={shared.origin} onChange={v=>setSharedField('origin',v)}/>
     <Field label="Forma de pagamento" value={shared.payment} onChange={v=>setSharedField('payment',v)}/>
     <label>Conta usada<select value={shared.bankAccountId} onChange={e=>setSharedField('bankAccountId',e.target.value)}><option value="">Não informado</option>{banks.map(b=><option value={b.id} key={b.id}>{b.bank} · {b.accountName}</option>)}</select></label>
+   </div>
+   <div className={`batch-total-purchase ${shared.splitTotal?'active':''}`}>
+    <label className="batch-split-toggle"><input type="checkbox" checked={!!shared.splitTotal} onChange={e=>setSharedField('splitTotal',e.target.checked)}/><span><b>Dividir valor total da compra</b><small>Opcional. Mantém o valor individual quando estiver desligado.</small></span></label>
+    <Field label="Valor total do lote" value={normalizeMoneyInput(shared.totalPurchase)} prefix="R$" inputMode="decimal" onChange={v=>setSharedField('totalPurchase',normalizeMoneyInput(v))}/>
+    <div className="batch-split-result"><small>{filledRows.length||0} aparelho(s) preenchido(s)</small><strong>{shared.splitTotal&&filledRows.length&&parseMoneyInput(shared.totalPurchase)>0?`${money(splitUnitValue)} por aparelho`:'Divisão automática desativada'}</strong></div>
    </div>
    <label>Observações gerais da compra<textarea value={shared.buyerNotes} onChange={e=>setSharedField('buyerNotes',e.target.value)} placeholder="Nome, telefone, endereço ou outras informações de quem vendeu o lote..."/></label>
   </section>
