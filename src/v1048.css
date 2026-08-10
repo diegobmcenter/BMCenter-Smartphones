@@ -1,0 +1,13 @@
+/* v10.4.8 hotfix — keep Ads on the stable application shell. */
+.v102-app .ads-ref-page{min-height:100%;visibility:visible!important;opacity:1!important}
+.v102-app .ads-ref-page,.v102-app .ads-ref-page *{visibility:visible}
+/* Cancel the route-only shell surgery from v10.4.7 that could leave the route blank. */
+.v102-app.page-ads{grid-template-columns:var(--sidebar-width,250px) minmax(0,1fr)!important}
+.page-ads .v102-stage{grid-template-rows:62px minmax(0,1fr)!important}
+.page-ads .v102-topbar{display:grid!important}
+.page-ads .v102-main{min-height:0!important;overflow:auto!important}
+.page-ads .v102-route{min-height:0!important;overflow:visible!important}
+.page-ads .v102-user{display:flex!important}
+.ads-sidebar-tip{display:none!important}
+/* The approved Ads layout remains light internally, but it no longer overrides the whole app/body. */
+html:has(.v102-app.page-ads),body:has(.v102-app.page-ads){background:initial!important}
