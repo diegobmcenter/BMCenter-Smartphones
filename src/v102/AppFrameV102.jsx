@@ -1,5 +1,5 @@
 import React from 'react';
-import {Bell,BookOpen,ChevronRight,LogOut,Menu,Moon,SlidersHorizontal,Sun,X} from 'lucide-react';
+import {Bell,BookOpen,ChevronRight,Lightbulb,LogOut,Menu,Moon,SlidersHorizontal,Sun,X} from 'lucide-react';
 
 export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visibleMenus,page,navigate,alerts,version,userEmail,children,onLogout,config,onConfigChange}){
  const theme=config?.themeMode==='light'?'light':'dark';
@@ -20,7 +20,7 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
  const[pageFontScale,setPageFontScale]=React.useState(()=>Math.min(1.15,Math.max(.9,Number(readFontScales()[fontScaleKey]??1))));
  React.useEffect(()=>{const scales=readFontScales();setPageFontScale(Math.min(1.15,Math.max(.9,Number(scales[fontScaleKey]??1))))},[fontScaleKey]);
  const changePageFont=delta=>setPageFontScale(current=>{const next=Math.min(1.15,Math.max(.9,Math.round((current+delta)*100)/100));const scales=readFontScales();localStorage.setItem('bmcenter-font-scales',JSON.stringify({...scales,[fontScaleKey]:next}));return next});
- return <div className={`v102-app theme-${theme} ${readingMode?'reading-mode':''}`} style={{'--v102-dim':dimOpacity}}>
+ return <div className={`v102-app theme-${theme} page-${page} ${readingMode?'reading-mode':''}`} style={{'--v102-dim':dimOpacity}}>
   <aside className={`v102-sidebar ${mobileOpen?'open':''}`}>
    <div className="v102-brand-row">
     <button className="v102-brand" onClick={()=>navigate('dashboard')}><span className="v102-mark"><i/><i/><i/></span><span><b>BMCenter</b><small>SMARTPHONES</small></span></button>
@@ -29,6 +29,7 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
    <nav className="v102-navigation">
     {groups.map(group=><section key={group.title}><small>{group.title}</small>{group.ids.map(id=>{const item=menuItems.find(x=>x.id===id);if(!item||!visible(id))return null;const active=page===id;return <button key={id} className={active?'active':''} onClick={()=>navigate(id)}><i>{item.icon}</i><span>{item.text}</span>{id==='today'&&alerts>0&&<em>{alerts}</em>}{active&&<ChevronRight size={14}/>}</button>})}</section>)}
    </nav>
+   {page==='ads'&&<aside className="ads-sidebar-tip"><header><Lightbulb size={16}/><b>Dica rápida</b></header><p>Use a IA para criar títulos e descrições diferentes e aumentar suas vendas.</p><div><img src="/ads-rocket.png" alt=""/></div></aside>}
    <div className="v102-user"><span>DM</span><div><b>Diego Moraes</b><small>{userEmail||'Administrador'}</small></div><button onClick={onLogout}><LogOut size={15}/></button></div>
   </aside>
   <section className="v102-stage">

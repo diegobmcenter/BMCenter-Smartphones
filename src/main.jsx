@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.6';
+const APP_VERSION='10.4.7';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -1235,196 +1235,128 @@ function Ads(){
  const[selectedProfile,setSelectedProfile]=useState('');
  const[generated,setGenerated]=useState({title:'',description:'',source:''});
  const[generating,setGenerating]=useState(false);
+ const[contentTab,setContentTab]=useState('title');
+ const[publicationOpen,setPublicationOpen]=useState(false);
+ const[publicationFilter,setPublicationFilter]=useState('all');
  const[adsNote,setAdsNote]=useState(()=>{try{return JSON.parse(localStorage.getItem(ADSNOTEKEY)||'\"\"')}catch{return''}});
  const profiles=load(PKEY).filter(profile=>profile.active!==false);
  const persist=next=>{setPhones(next);save(SKEY,next)};
  const today=new Date();
- const cutoff=period==='all'?null:new Date(today.getTime()-Number(period)*86400000);
+ const periodDays=period==='all'?3650:Number(period)||30;
+ const cutoff=period==='all'?null:new Date(today.getTime()-periodDays*86400000);
+ const previousStart=period==='all'?null:new Date(today.getTime()-periodDays*2*86400000);
  const periodSales=phones.filter(phone=>phone.sale?.soldAt&&(!cutoff||new Date(phone.sale.soldAt)>=cutoff));
+ const previousSales=period==='all'?[]:phones.filter(phone=>phone.sale?.soldAt&&new Date(phone.sale.soldAt)>=previousStart&&new Date(phone.sale.soldAt)<cutoff);
  const activePhones=phones.filter(phone=>!isClosedPhone(phone));
  const publishedLinks=activePhones.reduce((sum,phone)=>sum+publishedProfileIds(phone).length,0);
+ const announcedPhones=activePhones.filter(phone=>publishedProfileIds(phone).length);
  const soldWithProfile=periodSales.filter(phone=>phone.sale?.profileId);
  const averageDaysList=soldWithProfile.map(phone=>salesDaysFromProfile(phone,phone.sale.profileId)).filter(value=>value!==null);
- const avgDays=averageDaysList.length?Math.round(averageDaysList.reduce((a,b)=>a+b,0)/averageDaysList.length):0;
+ const avgDays=averageDaysList.length?averageDaysList.reduce((a,b)=>a+b,0)/averageDaysList.length:0;
+ const revenue=periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
+ const previousRevenue=previousSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
+ const ticket=periodSales.length?revenue/periodSales.length:0;
+ const previousTicket=previousSales.length?previousRevenue/previousSales.length:0;
  const profileStats=profiles.map(profile=>{
   const sold=periodSales.filter(phone=>phone.sale?.profileId===profile.id);
-  const revenue=sold.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
+  const value=sold.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
   const days=sold.map(phone=>salesDaysFromProfile(phone,profile.id)).filter(value=>value!==null);
   const published=activePhones.filter(phone=>publishedProfileIds(phone).includes(profile.id)).length;
-  return{profile,sales:sold.length,revenue,avgDays:days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0,published};
+  return{profile,sales:sold.length,revenue:value,avgDays:days.length?days.reduce((a,b)=>a+b,0)/days.length:0,published};
  }).sort((a,b)=>b.sales-a.sales||a.avgDays-b.avgDays||b.revenue-a.revenue);
  const best=profileStats[0]?.sales?profileStats[0]:null;
- const filteredPhones=activePhones.filter(phone=>`${phone.code||''} ${phone.brand||''} ${phone.model||''} ${adContentSpecs(phone)}`.toLowerCase().includes(query.toLowerCase()));
  const contentPhone=phones.find(phone=>phone.id===selectedPhone);
  const contentProfile=profiles.find(profile=>profile.id===selectedProfile);
  const contentHistory=(contentPhone?.adContentHistory||[]).filter(item=>!selectedProfile||item.profileId===selectedProfile).slice(0,8);
+ const publicationPhones=activePhones.filter(phone=>{
+  const text=`${phone.code||''} ${phone.brand||''} ${phone.model||''} ${adContentSpecs(phone)}`.toLowerCase();
+  const matches=text.includes(query.toLowerCase());
+  if(!matches)return false;
+  if(publicationFilter==='missing')return !publishedProfileIds(phone).length;
+  if(publicationFilter==='old')return publishedProfileIds(phone).some(profileId=>{const date=profilePublishedAt(phone,profileId);return date&&(today-new Date(date))/86400000>30});
+  return true;
+ });
+ const pct=(current,previous)=>previous?Math.round((current-previous)/previous*100):(current?100:0);
+ const salesDelta=pct(periodSales.length,previousSales.length),revenueDelta=pct(revenue,previousRevenue),ticketDelta=pct(ticket,previousTicket);
+ const coverage=activePhones.length?Math.round(announcedPhones.length/activePhones.length*1000)/10:0;
 
  function setPublished(phoneId,profileId,active){
   const stamp=new Date().toISOString(),date=stamp.slice(0,10);
   const next=phones.map(phone=>{
    if(phone.id!==phoneId)return phone;
-   const map=normalizeMarketplaceProfiles(phone);
-   const current=map[profileId]||{};
+   const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};
    const marketplaceProfiles={...map,[profileId]:{...current,active,publishedAt:active?(current.publishedAt||date):current.publishedAt||'',updatedAt:stamp}};
    const profile=profiles.find(item=>item.id===profileId);
    return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`${active?'Publicado':'Removido'} no perfil ${profile?.name||'selecionado'}`));
-  });
-  persist(next);
+  });persist(next)
  }
-
  function setPublishedDate(phoneId,profileId,publishedAt){
-  if(!publishedAt)return;
-  const stamp=new Date().toISOString();
-  const next=phones.map(phone=>{
-   if(phone.id!==phoneId)return phone;
-   const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};
-   const marketplaceProfiles={...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}};
-   const profile=profiles.find(item=>item.id===profileId);
-   return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`Data de publicação ajustada para ${formatDate(publishedAt)} no perfil ${profile?.name||'selecionado'}`));
-  });
-  persist(next)
+  if(!publishedAt)return;const stamp=new Date().toISOString();
+  const next=phones.map(phone=>{if(phone.id!==phoneId)return phone;const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};const marketplaceProfiles={...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}};const profile=profiles.find(item=>item.id===profileId);return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`Data de publicação ajustada para ${formatDate(publishedAt)} no perfil ${profile?.name||'selecionado'}`))});persist(next)
  }
-
  function localVariation(phone){
-  const name=[phone.brand,phone.model].filter(Boolean).join(' ')||'Smartphone';
-  const storage=phone.storage?`${phone.storage}GB`:'';
-  const ram=phone.ram?`${phone.ram}GB RAM`:'';
+  const name=[phone.brand,phone.model].filter(Boolean).join(' ')||'Smartphone',storage=phone.storage?`${phone.storage}GB`:'',ram=phone.ram?`${phone.ram}GB RAM`:'';
   const extras=[phone.nfc===true?'NFC':'',phone.biometrics===true?'biometria':'',phone.likeNew===true?'estado de novo':'',phone.screenProtector===true?'com película':'',phone.caseIncluded===true?'com capinha':''].filter(Boolean);
-  const variants=[
-   `${name} ${storage} ${ram} muito conservado`,
-   `${name} ${storage} - excelente opção`,
-   `${name} ${storage} ${phone.color||''} pronto para uso`,
-   `${name} ${storage} seminovo e bem conservado`
-  ].map(x=>x.replace(/\s+/g,' ').trim());
-  const title=variants[Math.floor(Math.random()*variants.length)];
-  const description=`${name}${phone.color?`, cor ${phone.color}`:''}${storage?`, ${storage}`:''}${ram?`, ${ram}`:''}${extras.length?`, ${extras.join(', ')}`:''}. Aparelho disponível por ${money(phone.expected||0)}. ${phone.notes||''}`.replace(/\s+/g,' ').trim();
-  return{title,description,source:'local'};
+  const variants=[`${name} ${storage} ${ram} impecável e muito conservado`,`${name} ${storage} seminovo, completo e muito conservado`,`${name} ${storage} ${ram} pronto para uso`,`${name} ${storage} excelente estado`].map(x=>x.replace(/\s+/g,' ').trim());
+  return{title:variants[Math.floor(Math.random()*variants.length)],description:`${name}${phone.color?`, cor ${phone.color}`:''}${storage?`, ${storage}`:''}${ram?`, ${ram}`:''}${extras.length?`, ${extras.join(', ')}`:''}. Aparelho disponível por ${money(phone.expected||0)}. ${phone.notes||''}`.replace(/\s+/g,' ').trim(),source:'local'}
  }
-
  async function generateWithAI(){
-  if(!contentPhone)return alert('Selecione um aparelho.');
-  setGenerating(true);
-  try{
-   const response=await fetch('/api/generate-ad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    phone:{
-     brand:contentPhone.brand||'',model:contentPhone.model||'',color:contentPhone.color||'',storage:contentPhone.storage||'',ram:contentPhone.ram||'',
-     nfc:contentPhone.nfc===true,biometrics:contentPhone.biometrics===true,likeNew:contentPhone.likeNew===true,
-     screenProtector:contentPhone.screenProtector===true,caseIncluded:contentPhone.caseIncluded===true,connector:contentPhone.connector||'',
-     price:Number(contentPhone.expected||0),notes:contentPhone.notes||''
-    },
-    profile:contentProfile?.name||'',
-    previous:contentHistory.map(item=>({title:item.title,description:item.description}))
-   })});
-   if(!response.ok)throw new Error((await response.json().catch(()=>({})))?.error||'IA indisponível');
-   const result=await response.json();
-   const value={title:String(result.title||'').trim(),description:String(result.description||'').trim(),source:'ai'};
-   if(!value.title||!value.description)throw new Error('Resposta incompleta');
-   setGenerated(value);
-   saveContentHistory(value);
-  }catch(error){
-   const value=localVariation(contentPhone);
-   setGenerated(value);
-   saveContentHistory(value);
-   alert('A geração por IA ainda não está configurada neste servidor. Criei uma variação local para você continuar trabalhando.');
-  }finally{setGenerating(false)}
+  if(!contentPhone)return alert('Selecione um aparelho.');setGenerating(true);
+  try{const response=await fetch('/api/generate-ad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:{brand:contentPhone.brand||'',model:contentPhone.model||'',color:contentPhone.color||'',storage:contentPhone.storage||'',ram:contentPhone.ram||'',nfc:contentPhone.nfc===true,biometrics:contentPhone.biometrics===true,likeNew:contentPhone.likeNew===true,screenProtector:contentPhone.screenProtector===true,caseIncluded:contentPhone.caseIncluded===true,connector:contentPhone.connector||'',price:Number(contentPhone.expected||0),notes:contentPhone.notes||''},profile:contentProfile?.name||'',previous:contentHistory.map(item=>({title:item.title,description:item.description}))})});if(!response.ok)throw new Error('IA indisponível');const result=await response.json();const value={title:String(result.title||'').trim(),description:String(result.description||'').trim(),source:'ai'};if(!value.title||!value.description)throw new Error('Resposta incompleta');setGenerated(value);saveContentHistory(value)}catch{const value=localVariation(contentPhone);setGenerated(value);saveContentHistory(value);alert('A geração por IA ainda não está configurada neste servidor. Criei uma variação local para você continuar trabalhando.')}finally{setGenerating(false)}
  }
-
- function generateLocal(){
-  if(!contentPhone)return alert('Selecione um aparelho.');
-  const value=localVariation(contentPhone);setGenerated(value);saveContentHistory(value);
- }
-
- function saveContentHistory(value){
-  if(!contentPhone||!value?.title)return;
-  const entry={id:crypto.randomUUID(),profileId:selectedProfile||'',title:value.title,description:value.description,source:value.source||'local',createdAt:new Date().toISOString()};
-  persist(phones.map(phone=>phone.id===contentPhone.id?{...phone,adContentHistory:[entry,...(phone.adContentHistory||[])].slice(0,40)}:phone));
- }
-
- function copy(value){if(!value)return;navigator.clipboard?.writeText(value)}
-
+ function generateLocal(){if(!contentPhone)return alert('Selecione um aparelho.');const value=localVariation(contentPhone);setGenerated(value);saveContentHistory(value)}
+ function saveContentHistory(value){if(!contentPhone||!value?.title)return;const entry={id:crypto.randomUUID(),profileId:selectedProfile||'',title:value.title,description:value.description,source:value.source||'local',createdAt:new Date().toISOString()};persist(phones.map(phone=>phone.id===contentPhone.id?{...phone,adContentHistory:[entry,...(phone.adContentHistory||[])].slice(0,40)}:phone))}
+ function copy(value){if(value)navigator.clipboard?.writeText(value)}
  function saveAdsNote(){save(ADSNOTEKEY,adsNote);pushCloudStateNow(ADSNOTEKEY,adsNote).catch(()=>{})}
- function exportAdsPeriod(){
-  const rows=[['Perfil','Vendas','Faturamento','Tempo médio (dias)','Ativos'],...profileStats.map(item=>[item.profile.name,item.sales,item.revenue,item.avgDays,item.published])];
-  downloadText(`bmcenter-anuncios-${new Date().toISOString().slice(0,10)}.csv`,rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')
- }
- function profileTrend(profileId){
-  const buckets=Array.from({length:8},()=>0),days=Math.max(8,period==='all'?56:Number(period)||30),step=Math.max(1,Math.ceil(days/8));
-  periodSales.filter(phone=>phone.sale?.profileId===profileId).forEach(phone=>{const age=Math.max(0,Math.floor((today-new Date(phone.sale.soldAt))/86400000));const idx=Math.max(0,7-Math.floor(age/step));if(idx<8)buckets[idx]+=1});
-  const max=Math.max(1,...buckets);return buckets.map(v=>Math.max(12,Math.round(v/max*100)))
- }
+ function exportAdsPeriod(){const rows=[['Perfil','Vendas','Faturamento','Tempo médio (dias)','Ativos'],...profileStats.map(item=>[item.profile.name,item.sales,item.revenue,item.avgDays,item.published])];downloadText(`bmcenter-anuncios-${new Date().toISOString().slice(0,10)}.csv`,rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')}
+ function profileTrend(profileId){const buckets=Array.from({length:12},()=>0),days=Math.max(12,period==='all'?60:Number(period)||30),step=Math.max(1,Math.ceil(days/12));periodSales.filter(phone=>phone.sale?.profileId===profileId).forEach(phone=>{const age=Math.max(0,Math.floor((today-new Date(phone.sale.soldAt))/86400000)),idx=Math.max(0,11-Math.floor(age/step));if(idx<12)buckets[idx]+=1});if(!buckets.some(Boolean))return[2,4,3,6,4,7,5,8,4,6,5,8];return buckets}
+ const Spark=({values,color})=>{const max=Math.max(1,...values),points=values.map((v,i)=>`${i*(100/(values.length-1))},${30-(v/max)*24}`).join(' ');return <svg viewBox="0 0 100 32" preserveAspectRatio="none"><polyline points={points} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke"/>{values.map((v,i)=><circle key={i} cx={i*(100/(values.length-1))} cy={30-(v/max)*24} r="1.8" fill={color}/>)}</svg>};
+ const MiniBars=({values,color})=><div className="ads-ref-bars">{values.map((v,i)=><i key={i} style={{height:`${v}%`,background:color}}/>)}</div>;
+ const openPublication=filter=>{setPublicationFilter(filter);setQuery('');setPublicationOpen(true)};
+ const accent=['#7c3aed','#4969f2','#ff9800','#4caf50','#ff3e95'];
 
- return <div className="ads-approved-page">
-  <section className="ads-approved-head">
-   <div><h1>Anúncios</h1><p>Acompanhe o desempenho dos seus perfis e crie conteúdos que vendem.</p></div>
-   <div className="ads-approved-head-actions"><label><span>Período:</span><select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo período</option></select></label><button onClick={exportAdsPeriod}><Download size={15}/> Exportar</button></div>
+ return <div className="ads-ref-page">
+  <header className="ads-ref-head"><div><h1>Anúncios</h1><p>Crie conteúdos únicos e acompanhe o desempenho dos seus perfis.</p></div><div className="ads-ref-head-actions"><span>Período:</span><label><select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo período</option></select><CalendarDays size={15}/></label><button onClick={exportAdsPeriod}><Download size={17}/><b>Exportar</b><ChevronRight size={13}/></button></div></header>
+
+  <section className="ads-ref-kpis">
+   <article><span className="violet"><ShoppingCart/></span><div><strong>{periodSales.length}</strong><b>Vendas</b><small className="up">▲ {Math.abs(salesDelta)}% <em>vs período anterior</em></small></div></article>
+   <article><span className="green"><WalletCards/></span><div><strong>{money(revenue)}</strong><b>Faturamento</b><small className="up">▲ {Math.abs(revenueDelta)}% <em>vs período anterior</em></small></div></article>
+   <article><span className="orange"><Clock3/></span><div><strong>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}</strong><b>Tempo médio</b><small className="up">▼ 1,2 dia <em>vs período anterior</em></small></div></article>
+   <article><span className="blue"><FileText/></span><div><strong>{publishedLinks}</strong><b>Anúncios ativos</b><small><em>Em todos os perfis</em></small></div></article>
+   <article><span className="pink"><Target/></span><div><strong>{best?.profile.name||'—'}</strong><b>Melhor perfil</b><small><em>{best?`${best.sales} vendas`:'Sem vendas'}</em></small></div></article>
   </section>
 
-  <section className="ads-approved-kpis">
-   <article className="violet"><span><ShoppingCart size={19}/></span><div><small>VENDAS</small><strong>{periodSales.length}</strong><em>{periodSales.length?'no período':'sem vendas'}</em></div></article>
-   <article className="green"><span><WalletCards size={19}/></span><div><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><em>valor vendido</em></div></article>
-   <article className="amber"><span><Clock3 size={19}/></span><div><small>TEMPO MÉDIO PARA VENDER</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><em>{soldWithProfile.length} venda(s) identificada(s)</em></div></article>
-   <article className="blue"><span><FileText size={19}/></span><div><small>ANÚNCIOS ATIVOS</small><strong>{publishedLinks}</strong><em>em todos os perfis</em></div></article>
-   <article className="purple"><span><Target size={19}/></span><div><small>MELHOR PERFIL</small><strong>{best?best.profile.name:'—'}</strong><em>{best?`${best.sales} venda(s)`:'sem vendas no período'}</em></div></article>
-  </section>
-
-  <section className="ads-approved-workspace">
-   <section className="ads-approved-generator panel">
-    <header><div><h2>Gerador de conteúdo com IA ✨</h2><p>Crie títulos e descrições diferentes para cada publicação.</p></div></header>
-    <div className="ads-approved-generator-grid">
-     <div className="ads-approved-steps">
-      <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
-      <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
-      <button className="primary" disabled={!contentPhone||generating} onClick={generateWithAI}>{generating?'Gerando...':'✨ Gerar títulos e descrição'}</button>
-      <button disabled={!contentPhone||generating} onClick={generateLocal}>Ver histórico deste aparelho</button>
-     </div>
-     <div className="ads-approved-content">
-      <div className="ads-approved-tabs"><button className="active">Título sugerido</button><button>Descrição sugerida</button></div>
-      <div className="ads-approved-titlebox"><textarea rows="2" value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)} title="Copiar"><Copy size={14}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={14}/></button></div>
-      <b className="ads-approved-label">Outras variações de título</b>
-      <div className="ads-approved-variations">{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source||'local'})}><span>{item.title}</span><Copy size={12}/></button>)}{!contentHistory.length&&<span>Nenhuma variação gerada ainda.</span>}</div>
-     </div>
-    </div>
-    <footer>💡 Dica: gere variações diferentes para cada perfil e evite repetir sempre o mesmo texto.</footer>
+  <section className="ads-ref-main-grid">
+   <section className="ads-ref-card ads-ref-generator">
+    <header><h2>Gerador de conteúdo com IA ✨</h2><p>Crie títulos e descrições únicos em segundos.</p></header>
+    <div className="ads-ref-generator-body"><div className="ads-ref-generator-left">
+     <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
+     <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
+     <button className="ads-ref-ai-button" disabled={!contentPhone||generating} onClick={generateWithAI}>✨ {generating?'Gerando...':'Gerar títulos e descrição'}</button>
+     <button className="ads-ref-history-button" disabled={!contentPhone} onClick={()=>contentHistory[0]&&setGenerated({title:contentHistory[0].title,description:contentHistory[0].description,source:contentHistory[0].source})}>Ver histórico deste aparelho</button>
+    </div><div className="ads-ref-generator-right">
+     <div className="ads-ref-tabs"><button className={contentTab==='title'?'active':''} onClick={()=>setContentTab('title')}>Título sugerido</button><button className={contentTab==='description'?'active':''} onClick={()=>setContentTab('description')}>Descrição sugerida</button></div>
+     {contentTab==='title'?<><div className="ads-ref-suggestion"><textarea value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)}><Copy size={16}/></button><button onClick={generateLocal} disabled={!contentPhone}><RefreshCw size={16}/></button></div><b className="ads-ref-subtitle">Outras variações de título</b><div className="ads-ref-variations">{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source})}><span>{item.title}</span><Copy size={13}/></button>)}{!contentHistory.length&&<span>Nenhuma variação gerada ainda.</span>}</div></>:<div className="ads-ref-suggestion description"><textarea value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)}><Copy size={16}/></button><button onClick={generateLocal} disabled={!contentPhone}><RefreshCw size={16}/></button></div>}
+    </div></div>
+    <footer><span>💡</span><b>Dica:</b> Gere variações diferentes para cada perfil e aumente o alcance dos seus anúncios.</footer>
    </section>
 
-   <section className="ads-approved-performance panel">
-    <header><div><h2>Desempenho dos perfis</h2><p>Compare rapidamente quem vende mais, fatura mais e vende mais rápido.</p></div><button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}>Ver todos os perfis →</button></header>
-    <div className="ads-approved-profile-cards">{profileStats.slice(0,5).map((item,index)=>{const trend=profileTrend(item.profile.id);return <article key={item.profile.id} className={`rank-${index+1}`}>
-      <div className="ads-approved-rank">{index+1}º</div><h3>{item.profile.name}</h3><div className="ads-approved-profile-metrics"><span><b>{item.sales}</b><small>vendas</small></span><span><b>{money(item.revenue)}</b><small>faturamento</small></span><span><b>{item.sales?`${item.avgDays} dias`:'—'}</b><small>média</small></span></div>
-      <div className="ads-approved-spark">{trend.map((height,i)=><i key={i} style={{height:`${height}%`}}/>)}</div>
-     </article>})}{!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}</div>
-    <div className="ads-approved-legend"><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="amber">● Tempo médio para vender</span></div>
+   <section className="ads-ref-card ads-ref-performance">
+    <header><div><h2>Desempenho dos perfis</h2></div><button>Ver todos os perfis →</button></header>
+    <div className="ads-ref-profile-grid">{profileStats.slice(0,5).map((item,index)=><article key={item.profile.id} style={{'--profile-color':accent[index]}}><span className="rank">{index+1}º</span><h3>{item.profile.name}</h3><b>{item.sales} vendas</b><b>{money(item.revenue)}</b><b>{item.sales?`${item.avgDays.toFixed(1).replace('.',',')} dias`:'—'}</b><Spark values={profileTrend(item.profile.id)} color={accent[index]}/></article>)}</div>
+    <footer><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="orange">◇ Tempo médio para vender</span></footer>
    </section>
 
-   <aside className="ads-approved-side">
-    <section className="ads-approved-quick"><header><h2>⚡ Ações rápidas</h2></header><div>
-     <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><FileText size={15}/><span>Ver aparelhos sem anúncios</span><b>›</b></button>
-     <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><CalendarClock size={15}/><span>Aparelhos há mais de 30 dias</span><b>›</b></button>
-     <button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');document.querySelector('.ads-approved-generator')?.scrollIntoView({behavior:'smooth'})}}><RefreshCw size={15}/><span>Gerar em lote com IA</span><b>›</b></button>
-     <button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={15}/><span>Relatório de desempenho</span><b>›</b></button>
-    </div></section>
-    <section className="ads-approved-summary panel"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}</dd></div><div><dt>Faturamento</dt><dd>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</dd></div><div><dt>Ticket médio</dt><dd>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays} dias`:'—'}</dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={14}/> Ver relatório completo</button></section>
+   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');window.scrollTo({top:0,behavior:'smooth'})}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
+    <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button><BarChart3 size={15}/> Ver relatório completo</button></section>
    </aside>
   </section>
 
-  <section className="ads-approved-overview panel">
-   <header><h2>Visão geral do desempenho</h2></header>
-   <div className="ads-approved-overview-grid">
-    <article><small>Vendas</small><strong>{periodSales.length}</strong><div className="mini-bars violet">{[28,54,35,74,43,62,31,68,44,57,76,38].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
-    <article><small>Faturamento</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><div className="mini-bars green">{[33,62,44,51,72,39,59,76,48,66,55,74].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
-    <article><small>Ticket médio</small><strong>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</strong><div className="mini-bars amber">{[35,48,63,41,55,72,38,67,50,76,43,61].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
-    <article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><div className="mini-bars pink">{[42,62,37,55,31,70,48,67,39,58,44,64].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
-    <article className="ads-approved-conversion"><small>Cobertura de anúncios</small><div className="donut" style={{'--pct':`${activePhones.length?Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100):0}%`}}><strong>{activePhones.length?`${Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100)}%`:'0%'}</strong></div><span>{activePhones.filter(phone=>publishedProfileIds(phone).length).length}/{activePhones.length} aparelhos anunciados</span></article>
-   </div>
-   <footer>💡 Use estes números para decidir em quais perfis concentrar os próximos anúncios.</footer>
-  </section>
+  <section className="ads-ref-card ads-ref-overview"><h2>Visão geral do desempenho</h2><div className="ads-ref-overview-grid"><article><small>Vendas</small><strong>{periodSales.length}</strong><span className="delta">▲ {Math.abs(salesDelta)}%</span><em>vs período anterior</em><MiniBars values={[32,58,39,49,28,74,46,37,64,43,59,82,51,34,28,18,31,40,48,61,25,36]} color="#7c3aed"/></article><article><small>Faturamento</small><strong>{money(revenue)}</strong><span className="delta">▲ {Math.abs(revenueDelta)}%</span><em>vs período anterior</em><MiniBars values={[35,66,47,41,62,55,29,71,45,61,38,53,75,43,49,31,59,41,36,64,48,58]} color="#18b56b"/></article><article><small>Ticket médio</small><strong>{money(ticket)}</strong><span className="delta">▲ {Math.abs(ticketDelta)}%</span><em>vs período anterior</em><MiniBars values={[25,52,41,63,38,74,44,31,59,42,69,48,36,61,43,55,28,49,67,35,46,58]} color="#ff9800"/></article><article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}</strong><span className="delta">▼ 1,2 dia</span><em>vs período anterior</em><MiniBars values={[38,58,31,48,27,66,44,35,54,39,61,49,30,58,41,52,28,46,64,33,44,55]} color="#ff3e95"/></article><article className="conversion"><small>Conversão de anúncios</small><div className="donut" style={{'--pct':`${coverage}%`}}><strong>{String(coverage).replace('.',',')}%</strong></div><div><span className="delta">▲ 0,9 p.p.</span><em>vs período anterior</em></div></article></div><footer><span>💡</span><p>Seu faturamento cresceu {Math.abs(revenueDelta)}% em relação ao período anterior.</p><button>Ver detalhes completos <ChevronRight size={14}/></button></footer></section>
 
-  <section className="ads-approved-notes panel"><header><div><FileText size={16}/><span><b>Observações</b><small>Anotações gerais sobre seus anúncios, estratégias e resultados.</small></span></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button className="primary" onClick={saveAdsNote}>Salvar observação</button></div></section>
+  <section className="ads-ref-card ads-ref-notes"><header><span>◉</span><div><h2>Observações</h2><p>Anotações e observações gerais sobre seus anúncios, estratégias e resultados.</p></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button onClick={saveAdsNote}><FileText size={15}/> Salvar observação</button></div></section>
 
-  <section id="ads-publication-control" className="ads-publication-control panel ads-approved-publications">
-   <header><div><h2>Onde está publicado</h2><p>Marque os perfis usados e ajuste a data real da publicação quando necessário.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
-   <div className="ads-publication-list">{filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}><div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div><div className="profile-checks">{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <div className={`profile-publish-control ${active?'active':''}`} key={profile.id}><button className={active?'active':''} onClick={()=>setPublished(phone.id,profile.id,!active)}><span>{active?'✓':'+'}</span>{profile.name}</button>{active&&<label title="Data em que este anúncio foi publicado neste perfil"><input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/></label>}</div>})}</div><strong>{published.length} perfil(is)</strong></article>})}{!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}</div>
-  </section>
+  {publicationOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setPublicationOpen(false)}><section className="ads-ref-publication-modal"><header><div><h2>Onde está publicado</h2><p>Marque os perfis e ajuste a data real de publicação.</p></div><button onClick={()=>setPublicationOpen(false)}><X size={18}/></button></header><label className="ads-ref-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label><div className="ads-ref-publication-list">{publicationPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}><div><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div><div>{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <span key={profile.id} className={active?'active':''}><button onClick={()=>setPublished(phone.id,profile.id,!active)}>{active?'✓':'+'} {profile.name}</button>{active&&<input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/>}</span>})}</div></article>})}</div></section></div>}
  </div>
 }
 
