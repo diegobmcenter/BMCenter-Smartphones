@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.8';
+const APP_VERSION='10.4.9';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -505,14 +505,14 @@ function ProfileAnalyticsPage(){
  const sales=phones.filter(p=>p.sale?.soldAt);
  const data=profiles.map(profile=>{
   const published=phones.filter(phone=>!isClosedPhone(phone)&&publishedProfileIds(phone).includes(profile.id));
-  const sold=sales.filter(p=>p.sale?.profileId===profile.id);
+  const sold=sales.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);
   const value=sold.reduce((a,p)=>a+Number(p.sale?.value||0),0);
   const days=sold.map(p=>salesDaysFromProfile(p,profile.id)).filter(v=>v!==null);
   return{profile,published:published.length,sales:sold.length,value,last:[...sold].sort((a,b)=>(b.sale.soldAt||'').localeCompare(a.sale.soldAt||''))[0],averageDays:days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0}
  }).sort((a,b)=>b.sales-a.sales||b.value-a.value);
  const filtered=profiles.filter(p=>`${p.name} ${p.platform||''} ${p.notes||''}`.toLowerCase().includes(query.toLowerCase()));
  function removeProfile(profile){
-  const used=phones.some(phone=>publishedProfileIds(phone).includes(profile.id)||(phone.ads||migrateLegacyAds(phone)).some(ad=>normalizeAd(ad).publications?.[profile.id])||phone.sale?.profileId===profile.id);
+  const used=phones.some(phone=>publishedProfileIds(phone).includes(profile.id)||(phone.ads||migrateLegacyAds(phone)).some(ad=>normalizeAd(ad).publications?.[profile.id])||resolvedSaleProfileId(phone,profiles)===profile.id);
   if(used&&!confirm(`O perfil "${profile.name}" possui histórico em anúncios ou vendas. Deseja excluí-lo mesmo assim?`))return;
   if(!used&&!confirm(`Excluir o perfil "${profile.name}"?`))return;
   persist(profiles.filter(p=>p.id!==profile.id))
@@ -685,7 +685,7 @@ function Dashboard(){
  const stale=active.filter(p=>daysSince(p.lastActivityAt||p.date)>=7).sort((a,b)=>daysSince(b.lastActivityAt||b.date)-daysSince(a.lastActivityAt||a.date));
  const attention=stale.slice(0,6);
  const salesByProfile=profiles.map(profile=>{
-  const items=sales.filter(p=>p.sale?.profileId===profile.id);
+  const items=sales.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);
   return{profile,quantity:items.length,revenue:items.reduce((sum,p)=>sum+Number(p.sale?.value||0),0)};
  }).filter(x=>x.quantity).sort((a,b)=>b.revenue-a.revenue);
  const workflow=[
@@ -1238,6 +1238,11 @@ function Ads(){
  const[contentTab,setContentTab]=useState('title');
  const[publicationOpen,setPublicationOpen]=useState(false);
  const[publicationFilter,setPublicationFilter]=useState('all');
+ const[reportOpen,setReportOpen]=useState(false);
+ const[batchOpen,setBatchOpen]=useState(false);
+ const[batchResults,setBatchResults]=useState([]);
+ const[historyOpen,setHistoryOpen]=useState(false);
+ const[noteSaved,setNoteSaved]=useState(false);
  const[adsNote,setAdsNote]=useState(()=>{try{return JSON.parse(localStorage.getItem(ADSNOTEKEY)||'\"\"')}catch{return''}});
  const storedProfiles=load(PKEY);
  const profiles=(Array.isArray(storedProfiles)?storedProfiles:[]).filter(profile=>profile&&profile.active!==false);
@@ -1251,15 +1256,15 @@ function Ads(){
  const activePhones=phones.filter(phone=>!isClosedPhone(phone));
  const publishedLinks=activePhones.reduce((sum,phone)=>sum+publishedProfileIds(phone).length,0);
  const announcedPhones=activePhones.filter(phone=>publishedProfileIds(phone).length);
- const soldWithProfile=periodSales.filter(phone=>phone.sale?.profileId);
- const averageDaysList=soldWithProfile.map(phone=>salesDaysFromProfile(phone,phone.sale.profileId)).filter(value=>value!==null);
+ const soldWithProfile=periodSales.filter(phone=>resolvedSaleProfileId(phone,profiles));
+ const averageDaysList=soldWithProfile.map(phone=>salesDaysFromProfile(phone,resolvedSaleProfileId(phone,profiles))).filter(value=>value!==null);
  const avgDays=averageDaysList.length?averageDaysList.reduce((a,b)=>a+b,0)/averageDaysList.length:0;
  const revenue=periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
  const previousRevenue=previousSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
  const ticket=periodSales.length?revenue/periodSales.length:0;
  const previousTicket=previousSales.length?previousRevenue/previousSales.length:0;
  const profileStats=profiles.map(profile=>{
-  const sold=periodSales.filter(phone=>phone.sale?.profileId===profile.id);
+  const sold=periodSales.filter(phone=>resolvedSaleProfileId(phone,profiles)===profile.id);
   const value=sold.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0);
   const days=sold.map(phone=>salesDaysFromProfile(phone,profile.id)).filter(value=>value!==null);
   const published=activePhones.filter(phone=>publishedProfileIds(phone).includes(profile.id)).length;
@@ -1308,9 +1313,9 @@ function Ads(){
  function generateLocal(){if(!contentPhone)return alert('Selecione um aparelho.');const value=localVariation(contentPhone);setGenerated(value);saveContentHistory(value)}
  function saveContentHistory(value){if(!contentPhone||!value?.title)return;const entry={id:crypto.randomUUID(),profileId:selectedProfile||'',title:value.title,description:value.description,source:value.source||'local',createdAt:new Date().toISOString()};persist(phones.map(phone=>phone.id===contentPhone.id?{...phone,adContentHistory:[entry,...(phone.adContentHistory||[])].slice(0,40)}:phone))}
  function copy(value){if(value)navigator.clipboard?.writeText(value)}
- function saveAdsNote(){save(ADSNOTEKEY,adsNote);pushCloudStateNow(ADSNOTEKEY,adsNote).catch(()=>{})}
+ function saveAdsNote(){save(ADSNOTEKEY,adsNote);pushCloudStateNow(ADSNOTEKEY,adsNote).catch(()=>{});setNoteSaved(true);setTimeout(()=>setNoteSaved(false),1600)}
  function exportAdsPeriod(){const rows=[['Perfil','Vendas','Faturamento','Tempo médio (dias)','Ativos'],...profileStats.map(item=>[item.profile.name,item.sales,item.revenue,item.avgDays,item.published])];downloadText(`bmcenter-anuncios-${new Date().toISOString().slice(0,10)}.csv`,rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')}
- function profileTrend(profileId){const buckets=Array.from({length:12},()=>0),days=Math.max(12,period==='all'?60:Number(period)||30),step=Math.max(1,Math.ceil(days/12));periodSales.filter(phone=>phone.sale?.profileId===profileId).forEach(phone=>{const age=Math.max(0,Math.floor((today-new Date(phone.sale.soldAt))/86400000)),idx=Math.max(0,11-Math.floor(age/step));if(idx<12)buckets[idx]+=1});if(!buckets.some(Boolean))return[2,4,3,6,4,7,5,8,4,6,5,8];return buckets}
+ function profileTrend(profileId){const buckets=Array.from({length:12},()=>0),days=Math.max(12,period==='all'?60:Number(period)||30),step=Math.max(1,Math.ceil(days/12));periodSales.filter(phone=>resolvedSaleProfileId(phone,profiles)===profileId).forEach(phone=>{const age=Math.max(0,Math.floor((today-new Date(phone.sale.soldAt))/86400000)),idx=Math.max(0,11-Math.floor(age/step));if(idx<12)buckets[idx]+=1});if(!buckets.some(Boolean))return[2,4,3,6,4,7,5,8,4,6,5,8];return buckets}
  const Spark=({values,color})=>{const max=Math.max(1,...values),points=values.map((v,i)=>`${i*(100/(values.length-1))},${30-(v/max)*24}`).join(' ');return <svg viewBox="0 0 100 32" preserveAspectRatio="none"><polyline points={points} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke"/>{values.map((v,i)=><circle key={i} cx={i*(100/(values.length-1))} cy={30-(v/max)*24} r="1.8" fill={color}/>)}</svg>};
  const MiniBars=({values,color})=><div className="ads-ref-bars">{values.map((v,i)=><i key={i} style={{height:`${v}%`,background:color}}/>)}</div>;
  const openPublication=filter=>{setPublicationFilter(filter);setQuery('');setPublicationOpen(true)};
@@ -1334,7 +1339,7 @@ function Ads(){
      <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
      <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
      <button className="ads-ref-ai-button" disabled={!contentPhone||generating} onClick={generateWithAI}>✨ {generating?'Gerando...':'Gerar títulos e descrição'}</button>
-     <button className="ads-ref-history-button" disabled={!contentPhone} onClick={()=>contentHistory[0]&&setGenerated({title:contentHistory[0].title,description:contentHistory[0].description,source:contentHistory[0].source})}>Ver histórico deste aparelho</button>
+     <button className="ads-ref-history-button" disabled={!contentPhone} onClick={()=>setHistoryOpen(true)}>Ver histórico deste aparelho</button>
     </div><div className="ads-ref-generator-right">
      <div className="ads-ref-tabs"><button className={contentTab==='title'?'active':''} onClick={()=>setContentTab('title')}>Título sugerido</button><button className={contentTab==='description'?'active':''} onClick={()=>setContentTab('description')}>Descrição sugerida</button></div>
      {contentTab==='title'?<><div className="ads-ref-suggestion"><textarea value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)}><Copy size={16}/></button><button onClick={generateLocal} disabled={!contentPhone}><RefreshCw size={16}/></button></div><b className="ads-ref-subtitle">Outras variações de título</b><div className="ads-ref-variations">{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source})}><span>{item.title}</span><Copy size={13}/></button>)}{!contentHistory.length&&<span>Nenhuma variação gerada ainda.</span>}</div></>:<div className="ads-ref-suggestion description"><textarea value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)}><Copy size={16}/></button><button onClick={generateLocal} disabled={!contentPhone}><RefreshCw size={16}/></button></div>}
@@ -1343,20 +1348,23 @@ function Ads(){
    </section>
 
    <section className="ads-ref-card ads-ref-performance">
-    <header><div><h2>Desempenho dos perfis</h2></div><button>Ver todos os perfis →</button></header>
+    <header><div><h2>Desempenho dos perfis</h2></div><button onClick={()=>setReportOpen(true)}>Ver todos os perfis →</button></header>
     <div className="ads-ref-profile-grid">{profileStats.slice(0,5).map((item,index)=><article key={item.profile.id} style={{'--profile-color':accent[index]}}><span className="rank">{index+1}º</span><h3>{item.profile.name}</h3><b>{item.sales} vendas</b><b>{money(item.revenue)}</b><b>{item.sales?`${item.avgDays.toFixed(1).replace('.',',')} dias`:'—'}</b><Spark values={profileTrend(item.profile.id)} color={accent[index]}/></article>)}</div>
     <footer><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="orange">◇ Tempo médio para vender</span></footer>
    </section>
 
-   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');window.scrollTo({top:0,behavior:'smooth'})}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
-    <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button><BarChart3 size={15}/> Ver relatório completo</button></section>
+   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
+    <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>setReportOpen(true)}><BarChart3 size={15}/> Ver relatório completo</button></section>
    </aside>
   </section>
 
-  <section className="ads-ref-card ads-ref-overview"><h2>Visão geral do desempenho</h2><div className="ads-ref-overview-grid"><article><small>Vendas</small><strong>{periodSales.length}</strong><span className="delta">▲ {Math.abs(salesDelta)}%</span><em>vs período anterior</em><MiniBars values={[32,58,39,49,28,74,46,37,64,43,59,82,51,34,28,18,31,40,48,61,25,36]} color="#7c3aed"/></article><article><small>Faturamento</small><strong>{money(revenue)}</strong><span className="delta">▲ {Math.abs(revenueDelta)}%</span><em>vs período anterior</em><MiniBars values={[35,66,47,41,62,55,29,71,45,61,38,53,75,43,49,31,59,41,36,64,48,58]} color="#18b56b"/></article><article><small>Ticket médio</small><strong>{money(ticket)}</strong><span className="delta">▲ {Math.abs(ticketDelta)}%</span><em>vs período anterior</em><MiniBars values={[25,52,41,63,38,74,44,31,59,42,69,48,36,61,43,55,28,49,67,35,46,58]} color="#ff9800"/></article><article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}</strong><span className="delta">▼ 1,2 dia</span><em>vs período anterior</em><MiniBars values={[38,58,31,48,27,66,44,35,54,39,61,49,30,58,41,52,28,46,64,33,44,55]} color="#ff3e95"/></article><article className="conversion"><small>Conversão de anúncios</small><div className="donut" style={{'--pct':`${coverage}%`}}><strong>{String(coverage).replace('.',',')}%</strong></div><div><span className="delta">▲ 0,9 p.p.</span><em>vs período anterior</em></div></article></div><footer><span>💡</span><p>Seu faturamento cresceu {Math.abs(revenueDelta)}% em relação ao período anterior.</p><button>Ver detalhes completos <ChevronRight size={14}/></button></footer></section>
+  <section className="ads-ref-card ads-ref-overview"><h2>Visão geral do desempenho</h2><div className="ads-ref-overview-grid"><article><small>Vendas</small><strong>{periodSales.length}</strong><span className="delta">▲ {Math.abs(salesDelta)}%</span><em>vs período anterior</em><MiniBars values={[32,58,39,49,28,74,46,37,64,43,59,82,51,34,28,18,31,40,48,61,25,36]} color="#7c3aed"/></article><article><small>Faturamento</small><strong>{money(revenue)}</strong><span className="delta">▲ {Math.abs(revenueDelta)}%</span><em>vs período anterior</em><MiniBars values={[35,66,47,41,62,55,29,71,45,61,38,53,75,43,49,31,59,41,36,64,48,58]} color="#18b56b"/></article><article><small>Ticket médio</small><strong>{money(ticket)}</strong><span className="delta">▲ {Math.abs(ticketDelta)}%</span><em>vs período anterior</em><MiniBars values={[25,52,41,63,38,74,44,31,59,42,69,48,36,61,43,55,28,49,67,35,46,58]} color="#ff9800"/></article><article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}</strong><span className="delta">▼ 1,2 dia</span><em>vs período anterior</em><MiniBars values={[38,58,31,48,27,66,44,35,54,39,61,49,30,58,41,52,28,46,64,33,44,55]} color="#ff3e95"/></article><article className="conversion"><small>Conversão de anúncios</small><div className="donut" style={{'--pct':`${coverage}%`}}><strong>{String(coverage).replace('.',',')}%</strong></div><div><span className="delta">▲ 0,9 p.p.</span><em>vs período anterior</em></div></article></div><footer><span>💡</span><p>Seu faturamento cresceu {Math.abs(revenueDelta)}% em relação ao período anterior.</p><button onClick={()=>setReportOpen(true)}>Ver detalhes completos <ChevronRight size={14}/></button></footer></section>
 
-  <section className="ads-ref-card ads-ref-notes"><header><span>◉</span><div><h2>Observações</h2><p>Anotações e observações gerais sobre seus anúncios, estratégias e resultados.</p></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button onClick={saveAdsNote}><FileText size={15}/> Salvar observação</button></div></section>
+  <section className="ads-ref-card ads-ref-notes"><header><span>◉</span><div><h2>Observações</h2><p>Anotações e observações gerais sobre seus anúncios, estratégias e resultados.</p></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button onClick={saveAdsNote}><FileText size={15}/> {noteSaved?'Salvo ✓':'Salvar observação'}</button></div></section>
 
+  {reportOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setReportOpen(false)}><section className="ads-ref-report-modal"><header><div><h2>Relatório de desempenho</h2><p>Todos os perfis no período selecionado.</p></div><button onClick={()=>setReportOpen(false)}><X size={18}/></button></header><div className="ads-ref-report-table">{profileStats.map((item,index)=><article key={item.profile.id}><span>{index+1}º · {item.profile.name}</span><b>{item.sales} venda(s)</b><b>{money(item.revenue)}</b><b>{item.sales?`${item.avgDays.toFixed(1).replace('.',',')} dias`:'—'}</b><b>{item.published} ativo(s)</b></article>)}</div><footer><button onClick={exportAdsPeriod}><Download size={15}/> Exportar CSV</button><button className="primary" onClick={()=>setReportOpen(false)}>Fechar</button></footer></section></div>}
+  {batchOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setBatchOpen(false)}><section className="ads-ref-batch-modal"><header><div><h2>Conteúdo em lote</h2><p>Variações para os aparelhos ativos.</p></div><button onClick={()=>setBatchOpen(false)}><X size={18}/></button></header><div className="ads-ref-batch-results">{batchResults.map(item=><article key={item.phoneId}><b>{item.name}</b><span>{item.title}</span><button onClick={()=>copy(`${item.title}\n\n${item.description}`)}><Copy size={14}/> Copiar</button></article>)}</div></section></div>}
+  {historyOpen&&contentPhone&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setHistoryOpen(false)}><section className="ads-ref-history-modal"><header><div><h2>Histórico de conteúdo</h2><p>{phoneDisplayName(contentPhone)}</p></div><button onClick={()=>setHistoryOpen(false)}><X size={18}/></button></header><div>{(contentPhone.adContentHistory||[]).slice(0,20).map(item=><article key={item.id}><b>{item.title}</b><p>{item.description}</p><button onClick={()=>{setGenerated({title:item.title,description:item.description,source:item.source});setHistoryOpen(false)}}>Usar novamente</button></article>)}</div></section></div>}
   {publicationOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setPublicationOpen(false)}><section className="ads-ref-publication-modal"><header><div><h2>Onde está publicado</h2><p>Marque os perfis e ajuste a data real de publicação.</p></div><button onClick={()=>setPublicationOpen(false)}><X size={18}/></button></header><label className="ads-ref-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label><div className="ads-ref-publication-list">{publicationPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}><div><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div><div>{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <span key={profile.id} className={active?'active':''}><button onClick={()=>setPublished(phone.id,profile.id,!active)}>{active?'✓':'+'} {profile.name}</button>{active&&<input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/>}</span>})}</div></article>})}</div></section></div>}
  </div>
 }
@@ -1449,7 +1457,7 @@ function TemplateModal({item,onClose,onSave}){const[f,setF]=useState(item),set=(
 function SaleModal({item,profiles,onClose,onSave}){
  const banks=load(BKEY);
  const initial={
-  value:item.expected||0,profileId:'',soldAt:new Date().toISOString().slice(0,10),
+  value:item.expected||0,profileId:publishedProfileIds(item).filter(id=>profiles.some(p=>p.id===id)).length===1?publishedProfileIds(item).filter(id=>profiles.some(p=>p.id===id))[0]:'',soldAt:new Date().toISOString().slice(0,10),
   paymentMethod:'',bankAccountId:'',marketplaceFee:0,shippingCost:0,
   paymentStatus:'Recebido',receivedAmount:item.expected||0,dueDate:'',
   installments:1,saleChannel:'Facebook Marketplace',deliveryType:'Retirada',
@@ -1504,7 +1512,7 @@ function SaleModal({item,profiles,onClose,onSave}){
    <Field label="Cidade/Bairro" value={f.buyerCity||''} onChange={v=>set('buyerCity',v)}/>
   </div>
   <label>Observações<textarea value={f.notes||''} onChange={e=>set('notes',e.target.value)}/></label>
-  <div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave({...f,netValue:net,receivedAmount:received,pendingAmount:pending})}>Salvar venda</button></div>
+  <div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave({...f,profileName:profiles.find(p=>p.id===f.profileId)?.name||f.profileName||'',netValue:net,receivedAmount:received,pendingAmount:pending})}>Salvar venda</button></div>
  </Modal>
 }
 
@@ -1533,6 +1541,8 @@ function salesDaysFromProfile(phone,profileId){
  const diff=Math.round((new Date(soldAt)-new Date(base))/86400000);
  return Number.isFinite(diff)?Math.max(0,diff):null
 }
+function resolvedSaleProfileId(phone,profiles=[]){const sale=phone?.sale||{},raw=sale.profileId||'';if(raw&&profiles.some(p=>p.id===raw))return raw;const norm=v=>String(v||'').trim().toLocaleLowerCase('pt-BR');const named=norm(sale.profileName||sale.profile||sale.sellerProfile||'');if(named){const match=profiles.find(p=>norm(p.name)===named);if(match)return match.id}const published=publishedProfileIds(phone).filter(id=>profiles.some(p=>p.id===id));return published.length===1?published[0]:raw}
+
 function marketplaceProfileName(profile){return profile?.name||'Perfil sem nome'}
 function adContentSpecs(phone){
  return [
@@ -1791,7 +1801,7 @@ function DataCenterPage(){
   const phones=load(SKEY);
   const profiles=load(PKEY);
   const rows=[showProductCode()?['Código','Marca','Modelo','NFC','Status','Valor pago','Custo total','Valor de venda','Valor vendido','Data venda','Perfil venda']:['Marca','Modelo','NFC','Status','Valor pago','Custo total','Valor de venda','Valor vendido','Data venda','Perfil venda']];
-  phones.forEach(p=>rows.push(showProductCode()?[p.code,p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']:[p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===p.sale?.profileId)?.name||'']));
+  phones.forEach(p=>rows.push(showProductCode()?[p.code,p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===resolvedSaleProfileId(p,profiles))?.name||'']:[p.brand,p.model,p.nfc===true?'Sim':p.nfc===false?'Não':'',p.status,p.paid||0,phoneTotalCost(p),p.expected||0,p.sale?.value||'',p.sale?.soldAt||'',profiles.find(x=>x.id===resolvedSaleProfileId(p,profiles))?.name||'']));
   downloadText('bmcenter-smartphones.csv',rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
  function exportAdsCsv(){
@@ -1806,7 +1816,7 @@ function DataCenterPage(){
  }
  function exportProfilesCsv(){
   const profiles=load(PKEY),phones=load(SKEY),rows=[['Perfil','Anúncios publicados','Vendas','Valor vendido']];
-  profiles.forEach(profile=>{let published=0;phones.forEach(p=>(p.ads||migrateLegacyAds(p)).forEach(ad=>{if(normalizeAd(ad).publications[profile.id]?.status==='published')published++}));const sales=phones.filter(p=>p.sale?.profileId===profile.id);rows.push([profile.name,published,sales.length,sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)])});
+  profiles.forEach(profile=>{let published=0;phones.forEach(p=>(p.ads||migrateLegacyAds(p)).forEach(ad=>{if(normalizeAd(ad).publications[profile.id]?.status==='published')published++}));const sales=phones.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);rows.push([profile.name,published,sales.length,sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)])});
   downloadText('bmcenter-perfis.csv',rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
  async function clearAll(){

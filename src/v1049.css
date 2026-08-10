@@ -1,0 +1,66 @@
+/* BMCenter v10.4.9 — Ads functional audit + correct dark theme */
+
+/* Dark theme: keep the approved geometry, change only the palette. */
+.v102-app.page-ads.theme-dark{
+  --bg:#101317!important;--sidebar:#0c0f13!important;--surface:#171b20!important;--surface2:#1d2228!important;--surface3:#252b33!important;
+  --text:#eef2f6!important;--muted:#a0a9b5!important;--faint:#737d89!important;--line:#2a3038!important;--line2:#36404a!important;
+  --accent:#7b97f5!important;--accent-soft:#1c2743!important;background:#101317!important;color:#eef2f6!important;color-scheme:dark!important;
+}
+.v102-app.page-ads.theme-dark .ads-ref-page{background:#101317!important;color:#eef2f6!important}
+.v102-app.page-ads.theme-dark .ads-ref-card,
+.v102-app.page-ads.theme-dark .ads-ref-kpis article,
+.v102-app.page-ads.theme-dark .ads-ref-profile-grid article,
+.v102-app.page-ads.theme-dark .ads-ref-actions,
+.v102-app.page-ads.theme-dark .ads-ref-summary,
+.v102-app.page-ads.theme-dark .ads-ref-overview,
+.v102-app.page-ads.theme-dark .ads-ref-notes{background:#171b20!important;border-color:#2a3038!important;box-shadow:none!important}
+.v102-app.page-ads.theme-dark .ads-ref-page :is(h1,h2,h3,strong,b,dt,dd){color:#eef2f6!important}
+.v102-app.page-ads.theme-dark .ads-ref-page :is(p,small,em){color:#98a4b3!important}
+.v102-app.page-ads.theme-dark .ads-ref-head-actions>span{color:#a0a9b5!important}
+.v102-app.page-ads.theme-dark .ads-ref-head-actions label,
+.v102-app.page-ads.theme-dark .ads-ref-head-actions>button,
+.v102-app.page-ads.theme-dark .ads-ref-generator-left select,
+.v102-app.page-ads.theme-dark .ads-ref-history-button,
+.v102-app.page-ads.theme-dark .ads-ref-suggestion>button,
+.v102-app.page-ads.theme-dark .ads-ref-actions button,
+.v102-app.page-ads.theme-dark .ads-ref-overview>footer button,
+.v102-app.page-ads.theme-dark .ads-ref-notes textarea{background:#1d2228!important;color:#eef2f6!important;border-color:#36404a!important}
+.v102-app.page-ads.theme-dark .ads-ref-head-actions select{background:#1d2228!important;color:#eef2f6!important}
+.v102-app.page-ads.theme-dark .ads-ref-generator-left{border-color:#2a3038!important}
+.v102-app.page-ads.theme-dark .ads-ref-tabs{border-color:#2a3038!important}
+.v102-app.page-ads.theme-dark .ads-ref-tabs button{color:#a0a9b5!important}
+.v102-app.page-ads.theme-dark .ads-ref-tabs button.active{color:#9eb3ff!important;border-bottom-color:#7b97f5!important}
+.v102-app.page-ads.theme-dark .ads-ref-suggestion textarea,
+.v102-app.page-ads.theme-dark .ads-ref-variations{background:#1d2228!important;color:#eef2f6!important;border-color:#36404a!important}
+.v102-app.page-ads.theme-dark .ads-ref-variations>button{background:#1d2228!important;color:#eef2f6!important;border-color:#2a3038!important}
+.v102-app.page-ads.theme-dark .ads-ref-generator>footer,
+.v102-app.page-ads.theme-dark .ads-ref-overview>footer{background:#1c2743!important;color:#c4cff8!important}
+.v102-app.page-ads.theme-dark .ads-ref-summary>button{background:#1c2743!important;border-color:#364b79!important;color:#9eb3ff!important}
+.v102-app.page-ads.theme-dark .ads-ref-overview-grid>article{border-color:#2a3038!important}
+.v102-app.page-ads.theme-dark .ads-ref-overview-grid .donut{background:conic-gradient(#7b97f5 var(--pct),#2a3038 0)!important}
+.v102-app.page-ads.theme-dark .ads-ref-overview-grid .donut:after{background:#171b20!important}
+.v102-app.page-ads.theme-dark .ads-ref-profile-grid article svg{opacity:.95}
+.v102-app.page-ads.theme-dark .ads-ref-performance>header>button{color:#9eb3ff!important}
+
+/* Functional dialogs used by Ads. */
+.ads-ref-report-modal,.ads-ref-batch-modal,.ads-ref-history-modal{
+ width:min(880px,94vw);max-height:84vh;overflow:auto;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);box-shadow:0 28px 80px rgba(0,0,0,.24)
+}
+.ads-ref-report-modal>header,.ads-ref-batch-modal>header,.ads-ref-history-modal>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ads-ref-report-modal>header h2,.ads-ref-batch-modal>header h2,.ads-ref-history-modal>header h2{margin:0;font-size:15px;color:var(--text)}
+.ads-ref-report-modal>header p,.ads-ref-batch-modal>header p,.ads-ref-history-modal>header p{margin:3px 0 0;font-size:8px;color:var(--muted)}
+.ads-ref-report-modal>header>button,.ads-ref-batch-modal>header>button,.ads-ref-history-modal>header>button{width:34px!important;height:34px!important;padding:0!important}
+.ads-ref-report-table{display:grid;gap:6px;margin-top:12px}
+.ads-ref-report-table>article{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(90px,.7fr));gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface2)}
+.ads-ref-report-table span{font-size:9px;font-weight:750}.ads-ref-report-table b{font-size:8px;color:var(--text)}
+.ads-ref-report-modal>footer{display:flex;justify-content:flex-end;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.ads-ref-report-modal>footer button{width:auto!important;min-height:34px!important}
+.ads-ref-batch-results{display:grid;gap:6px;margin-top:12px}
+.ads-ref-batch-results>article{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(0,1.8fr) 72px;gap:8px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--surface2)}
+.ads-ref-batch-results b{font-size:8px}.ads-ref-batch-results span{font-size:8px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ads-ref-batch-results button{min-height:30px!important;font-size:7px!important}
+.ads-ref-history-modal>div{display:grid;gap:7px;padding-top:10px}.ads-ref-history-modal article{padding:9px;border:1px solid var(--line);border-radius:9px;background:var(--surface2)}.ads-ref-history-modal article>b{font-size:9px}.ads-ref-history-modal article>p{font-size:8px;color:var(--muted)}.ads-ref-history-modal article>button{min-height:30px!important;font-size:7px!important}
+
+.v102-app.theme-light .ads-ref-report-modal,.v102-app.theme-light .ads-ref-batch-modal,.v102-app.theme-light .ads-ref-history-modal{background:#fff;color:#11152f;border-color:#dfe4ed}
+.v102-app.theme-light .ads-ref-report-table>article,.v102-app.theme-light .ads-ref-batch-results>article,.v102-app.theme-light .ads-ref-history-modal article{background:#fbfcff;border-color:#e4e8f1}
+
+@media(max-width:720px){.ads-ref-report-table>article{grid-template-columns:1fr 1fr}.ads-ref-batch-results>article{grid-template-columns:1fr}.ads-ref-batch-results button{width:100%!important}}
