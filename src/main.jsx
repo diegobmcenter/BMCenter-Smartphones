@@ -9,10 +9,10 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';
-const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.5';
-const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';
+const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
+const APP_VERSION='10.4.6';
+const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
 const saveDraft=(k,v)=>{const payload={...v,deleted:false,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
@@ -1235,6 +1235,7 @@ function Ads(){
  const[selectedProfile,setSelectedProfile]=useState('');
  const[generated,setGenerated]=useState({title:'',description:'',source:''});
  const[generating,setGenerating]=useState(false);
+ const[adsNote,setAdsNote]=useState(()=>{try{return JSON.parse(localStorage.getItem(ADSNOTEKEY)||'\"\"')}catch{return''}});
  const profiles=load(PKEY).filter(profile=>profile.active!==false);
  const persist=next=>{setPhones(next);save(SKEY,next)};
  const today=new Date();
@@ -1341,79 +1342,88 @@ function Ads(){
 
  function copy(value){if(!value)return;navigator.clipboard?.writeText(value)}
 
- return <div className="ads-simple-page ads-v1044">
-  <section className="ads-v1044-head">
+ function saveAdsNote(){save(ADSNOTEKEY,adsNote);pushCloudStateNow(ADSNOTEKEY,adsNote).catch(()=>{})}
+ function exportAdsPeriod(){
+  const rows=[['Perfil','Vendas','Faturamento','Tempo médio (dias)','Ativos'],...profileStats.map(item=>[item.profile.name,item.sales,item.revenue,item.avgDays,item.published])];
+  downloadText(`bmcenter-anuncios-${new Date().toISOString().slice(0,10)}.csv`,rows.map(row=>row.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8')
+ }
+ function profileTrend(profileId){
+  const buckets=Array.from({length:8},()=>0),days=Math.max(8,period==='all'?56:Number(period)||30),step=Math.max(1,Math.ceil(days/8));
+  periodSales.filter(phone=>phone.sale?.profileId===profileId).forEach(phone=>{const age=Math.max(0,Math.floor((today-new Date(phone.sale.soldAt))/86400000));const idx=Math.max(0,7-Math.floor(age/step));if(idx<8)buckets[idx]+=1});
+  const max=Math.max(1,...buckets);return buckets.map(v=>Math.max(12,Math.round(v/max*100)))
+ }
+
+ return <div className="ads-approved-page">
+  <section className="ads-approved-head">
    <div><h1>Anúncios</h1><p>Acompanhe o desempenho dos seus perfis e crie conteúdos que vendem.</p></div>
-   <label>Período:<select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo período</option></select></label>
+   <div className="ads-approved-head-actions"><label><span>Período:</span><select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo período</option></select></label><button onClick={exportAdsPeriod}><Download size={15}/> Exportar</button></div>
   </section>
 
-  <section className="ads-v1044-kpis">
-   <article><span className="ico"><ShoppingCart size={17}/></span><div><small>VENDAS</small><strong>{periodSales.length}</strong><em>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))} no período</em></div></article>
-   <article><span className="ico"><WalletCards size={17}/></span><div><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><em>{periodSales.length?`${money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length)} ticket médio`:'Sem vendas no período'}</em></div></article>
-   <article><span className="ico"><Clock3 size={17}/></span><div><small>TEMPO MÉDIO PARA VENDER</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><em>{soldWithProfile.length} venda(s) com perfil identificado</em></div></article>
-   <article><span className="ico"><FileText size={17}/></span><div><small>ANÚNCIOS ATIVOS</small><strong>{publishedLinks}</strong><em>Em {activePhones.length} aparelho(s)</em></div></article>
-   <article><span className="ico"><Target size={17}/></span><div><small>MELHOR PERFIL</small><strong>{best?best.profile.name:'—'}</strong><em>{best?`${best.sales} venda(s) · ${money(best.revenue)}`:'Sem vendas no período'}</em></div></article>
+  <section className="ads-approved-kpis">
+   <article className="violet"><span><ShoppingCart size={19}/></span><div><small>VENDAS</small><strong>{periodSales.length}</strong><em>{periodSales.length?'no período':'sem vendas'}</em></div></article>
+   <article className="green"><span><WalletCards size={19}/></span><div><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><em>valor vendido</em></div></article>
+   <article className="amber"><span><Clock3 size={19}/></span><div><small>TEMPO MÉDIO PARA VENDER</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><em>{soldWithProfile.length} venda(s) identificada(s)</em></div></article>
+   <article className="blue"><span><FileText size={19}/></span><div><small>ANÚNCIOS ATIVOS</small><strong>{publishedLinks}</strong><em>em todos os perfis</em></div></article>
+   <article className="purple"><span><Target size={19}/></span><div><small>MELHOR PERFIL</small><strong>{best?best.profile.name:'—'}</strong><em>{best?`${best.sales} venda(s)`:'sem vendas no período'}</em></div></article>
   </section>
 
-  <div className="ads-v1044-main">
-   <section className="ads-v1044-generator panel">
+  <section className="ads-approved-workspace">
+   <section className="ads-approved-generator panel">
     <header><div><h2>Gerador de conteúdo com IA ✨</h2><p>Crie títulos e descrições diferentes para cada publicação.</p></div></header>
-    <div className="ads-v1044-generator-body">
-     <div className="ads-v1044-generator-selects">
+    <div className="ads-approved-generator-grid">
+     <div className="ads-approved-steps">
       <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
       <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
       <button className="primary" disabled={!contentPhone||generating} onClick={generateWithAI}>{generating?'Gerando...':'✨ Gerar títulos e descrição'}</button>
-      <button disabled={!contentPhone||generating} onClick={generateLocal}>Gerar variação local</button>
+      <button disabled={!contentPhone||generating} onClick={generateLocal}>Ver histórico deste aparelho</button>
      </div>
-     <div className="ads-v1044-generated">
-      <label><b>Título sugerido</b><div className="ads-v1044-copy"><textarea rows="2" value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)} title="Copiar"><Copy size={15}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={15}/></button></div></label>
-      <label><b>Descrição sugerida</b><div className="ads-v1044-copy"><textarea rows="5" value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)} title="Copiar"><Copy size={15}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={15}/></button></div></label>
-      {!!contentHistory.length&&<div className="ads-v1044-history"><b>Histórico recente</b>{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source||'local'})}><span>{item.title}</span><Copy size={12}/></button>)}</div>}
+     <div className="ads-approved-content">
+      <div className="ads-approved-tabs"><button className="active">Título sugerido</button><button>Descrição sugerida</button></div>
+      <div className="ads-approved-titlebox"><textarea rows="2" value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)} title="Copiar"><Copy size={14}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={14}/></button></div>
+      <b className="ads-approved-label">Outras variações de título</b>
+      <div className="ads-approved-variations">{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source||'local'})}><span>{item.title}</span><Copy size={12}/></button>)}{!contentHistory.length&&<span>Nenhuma variação gerada ainda.</span>}</div>
      </div>
     </div>
-    <footer>💡 Gere variações diferentes para cada perfil e evite repetir sempre o mesmo texto.</footer>
+    <footer>💡 Dica: gere variações diferentes para cada perfil e evite repetir sempre o mesmo texto.</footer>
    </section>
 
-   <section className="ads-v1044-performance panel">
-    <header><div><h2>Desempenho dos perfis</h2><p>Quem vende mais, fatura mais e vende mais rápido.</p></div></header>
-    <div className="ads-v1044-profile-grid">
-     {profileStats.slice(0,5).map((item,index)=><article key={item.profile.id}>
-      <div className="ads-v1044-profile-title"><i>{index+1}º</i><b>{item.profile.name}</b></div>
-      <div className="ads-v1044-profile-numbers"><span><small>Vendas</small><strong>{item.sales}</strong></span><span><small>Faturamento</small><strong>{money(item.revenue)}</strong></span><span><small>Média</small><strong>{item.sales?`${item.avgDays} dias`:'—'}</strong></span></div>
-      <div className="ads-v1044-bar"><i style={{width:`${Math.max(4,best?.sales?item.sales/best.sales*100:4)}%`}}/></div>
-     </article>)}
-     {!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}
-    </div>
+   <section className="ads-approved-performance panel">
+    <header><div><h2>Desempenho dos perfis</h2><p>Compare rapidamente quem vende mais, fatura mais e vende mais rápido.</p></div><button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}>Ver todos os perfis →</button></header>
+    <div className="ads-approved-profile-cards">{profileStats.slice(0,5).map((item,index)=>{const trend=profileTrend(item.profile.id);return <article key={item.profile.id} className={`rank-${index+1}`}>
+      <div className="ads-approved-rank">{index+1}º</div><h3>{item.profile.name}</h3><div className="ads-approved-profile-metrics"><span><b>{item.sales}</b><small>vendas</small></span><span><b>{money(item.revenue)}</b><small>faturamento</small></span><span><b>{item.sales?`${item.avgDays} dias`:'—'}</b><small>média</small></span></div>
+      <div className="ads-approved-spark">{trend.map((height,i)=><i key={i} style={{height:`${height}%`}}/>)}</div>
+     </article>})}{!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}</div>
+    <div className="ads-approved-legend"><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="amber">● Tempo médio para vender</span></div>
    </section>
-  </div>
 
-  <div className="ads-v1044-mid">
-   <section className="ads-v1044-quick panel"><header><h2>⚡ Ações rápidas</h2></header><div>
-    <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><FileText size={15}/> Ver aparelhos sem anúncios <b>{activePhones.filter(phone=>!publishedProfileIds(phone).length).length}</b></button>
-    <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><CalendarClock size={15}/> Aparelhos há mais de 30 dias <b>{activePhones.filter(phone=>daysSince(phone.date||phone.createdAt)>30).length}</b></button>
-    <button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');document.querySelector('.ads-v1044-generator')?.scrollIntoView({behavior:'smooth'})}}><RefreshCw size={15}/> Gerar conteúdo com IA</button>
-    <button onClick={()=>document.querySelector('.ads-v1044-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={15}/> Resumo de desempenho</button>
-   </div></section>
+   <aside className="ads-approved-side">
+    <section className="ads-approved-quick"><header><h2>⚡ Ações rápidas</h2></header><div>
+     <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><FileText size={15}/><span>Ver aparelhos sem anúncios</span><b>›</b></button>
+     <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><CalendarClock size={15}/><span>Aparelhos há mais de 30 dias</span><b>›</b></button>
+     <button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');document.querySelector('.ads-approved-generator')?.scrollIntoView({behavior:'smooth'})}}><RefreshCw size={15}/><span>Gerar em lote com IA</span><b>›</b></button>
+     <button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={15}/><span>Relatório de desempenho</span><b>›</b></button>
+    </div></section>
+    <section className="ads-approved-summary panel"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}</dd></div><div><dt>Faturamento</dt><dd>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</dd></div><div><dt>Ticket médio</dt><dd>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays} dias`:'—'}</dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>document.querySelector('.ads-approved-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={14}/> Ver relatório completo</button></section>
+   </aside>
+  </section>
 
-   <section className="ads-v1044-overview panel"><header><div><h2>Visão geral do período</h2><p>Os números essenciais em uma leitura rápida.</p></div></header><div className="ads-v1044-overview-grid">
-    <article><small>VENDAS</small><strong>{periodSales.length}</strong><span>{periodSales.length?'negócios concluídos':'nenhuma venda'}</span></article>
-    <article><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><span>valor bruto vendido</span></article>
-    <article><small>TICKET MÉDIO</small><strong>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</strong><span>por aparelho vendido</span></article>
-    <article><small>TEMPO MÉDIO</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><span>até concluir a venda</span></article>
-    <article><small>COBERTURA</small><strong>{activePhones.length?`${Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100)}%`:'—'}</strong><span>{activePhones.filter(phone=>publishedProfileIds(phone).length).length}/{activePhones.length} aparelhos anunciados</span></article>
-   </div></section>
-  </div>
-
-  <section id="ads-publication-control" className="ads-publication-control panel ads-v1044-publications">
-   <header><div><h2>Onde está publicado</h2><p>Marque os perfis usados e ajuste a data real da publicação quando necessário.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
-   <div className="ads-publication-list">
-    {filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}>
-     <div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div>
-     <div className="profile-checks">{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <div className={`profile-publish-control ${active?'active':''}`} key={profile.id}><button className={active?'active':''} onClick={()=>setPublished(phone.id,profile.id,!active)}><span>{active?'✓':'+'}</span>{profile.name}</button>{active&&<label title="Data em que este anúncio foi publicado neste perfil"><input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/></label>}</div>})}</div>
-     <strong>{published.length} perfil(is)</strong>
-    </article>})}
-    {!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}
+  <section className="ads-approved-overview panel">
+   <header><h2>Visão geral do desempenho</h2></header>
+   <div className="ads-approved-overview-grid">
+    <article><small>Vendas</small><strong>{periodSales.length}</strong><div className="mini-bars violet">{[28,54,35,74,43,62,31,68,44,57,76,38].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
+    <article><small>Faturamento</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><div className="mini-bars green">{[33,62,44,51,72,39,59,76,48,66,55,74].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
+    <article><small>Ticket médio</small><strong>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</strong><div className="mini-bars amber">{[35,48,63,41,55,72,38,67,50,76,43,61].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
+    <article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><div className="mini-bars pink">{[42,62,37,55,31,70,48,67,39,58,44,64].map((v,i)=><i key={i} style={{height:v}}/>)}</div></article>
+    <article className="ads-approved-conversion"><small>Cobertura de anúncios</small><div className="donut" style={{'--pct':`${activePhones.length?Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100):0}%`}}><strong>{activePhones.length?`${Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100)}%`:'0%'}</strong></div><span>{activePhones.filter(phone=>publishedProfileIds(phone).length).length}/{activePhones.length} aparelhos anunciados</span></article>
    </div>
+   <footer>💡 Use estes números para decidir em quais perfis concentrar os próximos anúncios.</footer>
+  </section>
+
+  <section className="ads-approved-notes panel"><header><div><FileText size={16}/><span><b>Observações</b><small>Anotações gerais sobre seus anúncios, estratégias e resultados.</small></span></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button className="primary" onClick={saveAdsNote}>Salvar observação</button></div></section>
+
+  <section id="ads-publication-control" className="ads-publication-control panel ads-approved-publications">
+   <header><div><h2>Onde está publicado</h2><p>Marque os perfis usados e ajuste a data real da publicação quando necessário.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
+   <div className="ads-publication-list">{filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}><div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div><div className="profile-checks">{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <div className={`profile-publish-control ${active?'active':''}`} key={profile.id}><button className={active?'active':''} onClick={()=>setPublished(phone.id,profile.id,!active)}><span>{active?'✓':'+'}</span>{profile.name}</button>{active&&<label title="Data em que este anúncio foi publicado neste perfil"><input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/></label>}</div>})}</div><strong>{published.length} perfil(is)</strong></article>})}{!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}</div>
   </section>
  </div>
 }
