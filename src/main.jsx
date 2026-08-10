@@ -11,7 +11,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.3';
+const APP_VERSION='10.4.4';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -2192,21 +2192,22 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
  const initialDraft=loadDraft(BATCH_DRAFT_KEY);
  const sharedDefaults={date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',buyerNotes:'',totalPurchase:'',splitTotal:false};
  const[shared,setShared]=useState(()=>({...sharedDefaults,...(initialDraft?.shared||{})}));
- const[rows,setRows]=useState(()=>Array.isArray(initialDraft?.rows)&&initialDraft.rows.length?initialDraft.rows:[emptyRow(),emptyRow(),emptyRow()]);
+ const[rows,setRows]=useState(()=>Array.isArray(initialDraft?.rows)&&initialDraft.rows.length?initialDraft.rows:[emptyRow(),emptyRow()]);
  const[busy,setBusy]=useState(false);
  const[draftRecovered,setDraftRecovered]=useState(Boolean(initialDraft));
  const setSharedField=(key,value)=>setShared(current=>({...current,[key]:value}));
  const setRow=(id,key,value)=>setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));
- const filledRows=rows.filter(row=>row.brand.trim()||row.model.trim());
- const splitUnitValue=shared.splitTotal&&filledRows.length?parseMoneyInput(shared.totalPurchase)/filledRows.length:0;
+ const splitCount=rows.length;
+ const splitUnitValue=shared.splitTotal&&splitCount?parseMoneyInput(shared.totalPurchase)/splitCount:0;
  useEffect(()=>{
   if(!shared.splitTotal)return;
-  const total=parseMoneyInput(shared.totalPurchase),valid=rows.filter(row=>row.brand.trim()||row.model.trim());
-  if(!total||!valid.length)return;
-  const totalCents=Math.round(total*100),baseCents=Math.floor(totalCents/valid.length),remainder=totalCents-(baseCents*valid.length);
-  const values=new Map(valid.map((row,index)=>[row.id,(baseCents+(index<remainder?1:0))/100]));
+  const rawTotal=String(shared.totalPurchase??'').trim();
+  if(!rawTotal||!rows.length)return;
+  const total=parseMoneyInput(shared.totalPurchase);
+  const totalCents=Math.round(total*100),baseCents=Math.floor(totalCents/rows.length),remainder=totalCents-(baseCents*rows.length);
+  const values=new Map(rows.map((row,index)=>[row.id,(baseCents+(index<remainder?1:0))/100]));
   setRows(current=>current.map(row=>values.has(row.id)?{...row,paid:values.get(row.id).toFixed(2).replace('.',',')}:row));
- },[shared.splitTotal,shared.totalPurchase,rows.map(row=>`${row.id}:${row.brand}:${row.model}`).join('|')]);
+ },[shared.splitTotal,shared.totalPurchase,rows.map(row=>row.id).join('|')]);
  const addRows=(amount=1)=>setRows(current=>[...current,...Array.from({length:amount},emptyRow)]);
  const removeRow=id=>setRows(current=>current.length===1?current:current.filter(row=>row.id!==id));
  function saveBatchDraft(){
@@ -2220,7 +2221,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
   clearDraft(BATCH_DRAFT_KEY);
   setDraftRecovered(false);
   setShared({...sharedDefaults,date:new Date().toISOString().slice(0,10)});
-  setRows([emptyRow(),emptyRow(),emptyRow()])
+  setRows([emptyRow(),emptyRow()])
  }
  function saveBatch(){
   const valid=rows.filter(row=>row.brand.trim()||row.model.trim());
@@ -2265,7 +2266,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
    <div className={`batch-total-purchase ${shared.splitTotal?'active':''}`}>
     <label className="batch-split-toggle"><input type="checkbox" checked={!!shared.splitTotal} onChange={e=>setSharedField('splitTotal',e.target.checked)}/><span><b>Dividir valor total da compra</b><small>Opcional. Mantém o valor individual quando estiver desligado.</small></span></label>
     <Field label="Valor total do lote" value={normalizeMoneyInput(shared.totalPurchase)} prefix="R$" inputMode="decimal" onChange={v=>setSharedField('totalPurchase',normalizeMoneyInput(v))}/>
-    <div className="batch-split-result"><small>{filledRows.length||0} aparelho(s) preenchido(s)</small><strong>{shared.splitTotal&&filledRows.length&&parseMoneyInput(shared.totalPurchase)>0?`${money(splitUnitValue)} por aparelho`:'Divisão automática desativada'}</strong></div>
+    <div className="batch-split-result"><small>{rows.length} aparelho(s) no lote</small><strong>{shared.splitTotal&&rows.length&&String(shared.totalPurchase??'').trim()?`${money(splitUnitValue)} por aparelho · valores atualizados em tempo real`:'Divisão automática desativada'}</strong></div>
    </div>
    <label>Observações gerais da compra<textarea value={shared.buyerNotes} onChange={e=>setSharedField('buyerNotes',e.target.value)} placeholder="Nome, telefone, endereço ou outras informações de quem vendeu o lote..."/></label>
   </section>
