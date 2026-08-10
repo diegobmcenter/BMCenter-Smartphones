@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';
 const SKEY='bmcenter-smartphones',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.4';
+const APP_VERSION='10.4.5';
 const ALL_CLOUD_KEYS=[SKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -1341,56 +1341,80 @@ function Ads(){
 
  function copy(value){if(!value)return;navigator.clipboard?.writeText(value)}
 
- return <div className="ads-simple-page">
-  <section className="ads-simple-hero">
-   <div><span>PUBLICAÇÃO · CONTEÚDO · RESULTADOS</span><h1>Central de anúncios</h1><p>Um painel simples para marcar onde você publicou, preparar novos textos e entender quais perfis estão trazendo resultado.</p></div>
-   <label>Período<select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">7 dias</option><option value="30">30 dias</option><option value="90">90 dias</option><option value="all">Todo período</option></select></label>
+ return <div className="ads-simple-page ads-v1044">
+  <section className="ads-v1044-head">
+   <div><h1>Anúncios</h1><p>Acompanhe o desempenho dos seus perfis e crie conteúdos que vendem.</p></div>
+   <label>Período:<select value={period} onChange={e=>setPeriod(e.target.value)}><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="all">Todo período</option></select></label>
   </section>
 
-  <section className="ads-kpis">
-   <article><small>Vendas no período</small><strong>{periodSales.length}</strong><span>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</span></article>
-   <article><small>Perfil com mais vendas</small><strong>{best?best.profile.name:'—'}</strong><span>{best?`${best.sales} venda(s)`:'Sem vendas no período'}</span></article>
-   <article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><span>Considerando o perfil da venda</span></article>
-   <article><small>Publicações ativas</small><strong>{publishedLinks}</strong><span>{activePhones.length} aparelho(s) em estoque</span></article>
+  <section className="ads-v1044-kpis">
+   <article><span className="ico"><ShoppingCart size={17}/></span><div><small>VENDAS</small><strong>{periodSales.length}</strong><em>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))} no período</em></div></article>
+   <article><span className="ico"><WalletCards size={17}/></span><div><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><em>{periodSales.length?`${money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length)} ticket médio`:'Sem vendas no período'}</em></div></article>
+   <article><span className="ico"><Clock3 size={17}/></span><div><small>TEMPO MÉDIO PARA VENDER</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><em>{soldWithProfile.length} venda(s) com perfil identificado</em></div></article>
+   <article><span className="ico"><FileText size={17}/></span><div><small>ANÚNCIOS ATIVOS</small><strong>{publishedLinks}</strong><em>Em {activePhones.length} aparelho(s)</em></div></article>
+   <article><span className="ico"><Target size={17}/></span><div><small>MELHOR PERFIL</small><strong>{best?best.profile.name:'—'}</strong><em>{best?`${best.sales} venda(s) · ${money(best.revenue)}`:'Sem vendas no período'}</em></div></article>
   </section>
 
-  <section className="ads-profile-performance panel">
-   <header><div><h2>Radar dos perfis</h2><p>Compare vendas, valor e velocidade sem ocupar a tela com linhas gigantes.</p></div></header>
-   <div className="ads-profile-performance-grid">
-    {profileStats.map((item,index)=><article key={item.profile.id}>
-     <div className="rank">{index+1}</div><div className="profile-id"><span style={{background:item.profile.color||'#376cf5'}}>{String(item.profile.name||'?').slice(0,2).toUpperCase()}</span><div><b>{item.profile.name}</b><small>{item.published} aparelho(s) publicado(s)</small></div></div>
-     <div><small>Vendas</small><strong>{item.sales}</strong></div><div><small>Valor vendido</small><strong>{money(item.revenue)}</strong></div><div><small>Média para vender</small><strong>{item.sales?`${item.avgDays} dias`:'—'}</strong></div>
-    </article>)}
-    {!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}
-   </div>
-  </section>
-
-  <div className="ads-workspace">
-   <section className="ads-publication-control panel">
-    <header><div><h2>Onde está publicado</h2><p>Depois de publicar manualmente no Facebook, apenas marque os perfis usados.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
-    <div className="ads-publication-list">
-     {filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}>
-      <div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div>
-      <div className="profile-checks">{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <div className={`profile-publish-control ${active?'active':''}`} key={profile.id}><button className={active?'active':''} onClick={()=>setPublished(phone.id,profile.id,!active)}><span>{active?'✓':'+'}</span>{profile.name}</button>{active&&<label title="Data em que este anúncio foi publicado neste perfil"><input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/></label>}</div>})}</div>
-      <strong>{published.length} perfil(is)</strong>
-     </article>})}
-     {!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}
+  <div className="ads-v1044-main">
+   <section className="ads-v1044-generator panel">
+    <header><div><h2>Gerador de conteúdo com IA ✨</h2><p>Crie títulos e descrições diferentes para cada publicação.</p></div></header>
+    <div className="ads-v1044-generator-body">
+     <div className="ads-v1044-generator-selects">
+      <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
+      <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
+      <button className="primary" disabled={!contentPhone||generating} onClick={generateWithAI}>{generating?'Gerando...':'✨ Gerar títulos e descrição'}</button>
+      <button disabled={!contentPhone||generating} onClick={generateLocal}>Gerar variação local</button>
+     </div>
+     <div className="ads-v1044-generated">
+      <label><b>Título sugerido</b><div className="ads-v1044-copy"><textarea rows="2" value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)} title="Copiar"><Copy size={15}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={15}/></button></div></label>
+      <label><b>Descrição sugerida</b><div className="ads-v1044-copy"><textarea rows="5" value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)} title="Copiar"><Copy size={15}/></button><button onClick={generateLocal} disabled={!contentPhone} title="Gerar outra variação"><RefreshCw size={15}/></button></div></label>
+      {!!contentHistory.length&&<div className="ads-v1044-history"><b>Histórico recente</b>{contentHistory.slice(0,3).map(item=><button key={item.id} onClick={()=>setGenerated({title:item.title,description:item.description,source:item.source||'local'})}><span>{item.title}</span><Copy size={12}/></button>)}</div>}
+     </div>
     </div>
+    <footer>💡 Gere variações diferentes para cada perfil e evite repetir sempre o mesmo texto.</footer>
    </section>
 
-   <section className="ads-content-studio panel">
-    <header><div><h2>Conteúdo para publicação</h2><p>Escolha o aparelho, gere uma variação e copie para publicar manualmente.</p></div></header>
-    <div className="ads-content-selects">
-     <label>Aparelho<select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
-     <label>Perfil<select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
+   <section className="ads-v1044-performance panel">
+    <header><div><h2>Desempenho dos perfis</h2><p>Quem vende mais, fatura mais e vende mais rápido.</p></div></header>
+    <div className="ads-v1044-profile-grid">
+     {profileStats.slice(0,5).map((item,index)=><article key={item.profile.id}>
+      <div className="ads-v1044-profile-title"><i>{index+1}º</i><b>{item.profile.name}</b></div>
+      <div className="ads-v1044-profile-numbers"><span><small>Vendas</small><strong>{item.sales}</strong></span><span><small>Faturamento</small><strong>{money(item.revenue)}</strong></span><span><small>Média</small><strong>{item.sales?`${item.avgDays} dias`:'—'}</strong></span></div>
+      <div className="ads-v1044-bar"><i style={{width:`${Math.max(4,best?.sales?item.sales/best.sales*100:4)}%`}}/></div>
+     </article>)}
+     {!profiles.length&&<Empty text="Cadastre seus perfis do Facebook para começar."/>}
     </div>
-    {contentPhone&&<div className="ads-content-phone"><b>{phoneDisplayName(contentPhone)}</b><span>{adContentSpecs(contentPhone)}</span><strong>{money(contentPhone.expected||0)}</strong></div>}
-    <div className="ads-generator-actions"><button className="primary" disabled={!contentPhone||generating} onClick={generateWithAI}>{generating?'Gerando...':'✨ Gerar com IA'}</button><button disabled={!contentPhone||generating} onClick={generateLocal}>Gerar variação local</button></div>
-    <label>Título<div className="copy-field"><input value={generated.title} onChange={e=>setGenerated({...generated,title:e.target.value})} placeholder="O título gerado aparecerá aqui"/><button onClick={()=>copy(generated.title)}>Copiar</button></div></label>
-    <label>Descrição<div className="copy-field textarea"><textarea value={generated.description} onChange={e=>setGenerated({...generated,description:e.target.value})} placeholder="A descrição gerada aparecerá aqui"/><button onClick={()=>copy(generated.description)}>Copiar</button></div></label>
-    <div className="ads-content-foot"><span>{generated.source==='ai'?'Gerado por IA':generated.source==='local'?'Variação local':''}</span><small>{contentHistory.length?`${contentHistory.length} texto(s) anterior(es) considerado(s) para este aparelho/perfil`:'O histórico fica salvo no próprio aparelho.'}</small></div>
    </section>
   </div>
+
+  <div className="ads-v1044-mid">
+   <section className="ads-v1044-quick panel"><header><h2>⚡ Ações rápidas</h2></header><div>
+    <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><FileText size={15}/> Ver aparelhos sem anúncios <b>{activePhones.filter(phone=>!publishedProfileIds(phone).length).length}</b></button>
+    <button onClick={()=>document.getElementById('ads-publication-control')?.scrollIntoView({behavior:'smooth'})}><CalendarClock size={15}/> Aparelhos há mais de 30 dias <b>{activePhones.filter(phone=>daysSince(phone.date||phone.createdAt)>30).length}</b></button>
+    <button onClick={()=>{setSelectedPhone(activePhones[0]?.id||'');document.querySelector('.ads-v1044-generator')?.scrollIntoView({behavior:'smooth'})}}><RefreshCw size={15}/> Gerar conteúdo com IA</button>
+    <button onClick={()=>document.querySelector('.ads-v1044-overview')?.scrollIntoView({behavior:'smooth'})}><BarChart3 size={15}/> Resumo de desempenho</button>
+   </div></section>
+
+   <section className="ads-v1044-overview panel"><header><div><h2>Visão geral do período</h2><p>Os números essenciais em uma leitura rápida.</p></div></header><div className="ads-v1044-overview-grid">
+    <article><small>VENDAS</small><strong>{periodSales.length}</strong><span>{periodSales.length?'negócios concluídos':'nenhuma venda'}</span></article>
+    <article><small>FATURAMENTO</small><strong>{money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0))}</strong><span>valor bruto vendido</span></article>
+    <article><small>TICKET MÉDIO</small><strong>{periodSales.length?money(periodSales.reduce((sum,phone)=>sum+Number(phone.sale?.value||0),0)/periodSales.length):'—'}</strong><span>por aparelho vendido</span></article>
+    <article><small>TEMPO MÉDIO</small><strong>{averageDaysList.length?`${avgDays} dias`:'—'}</strong><span>até concluir a venda</span></article>
+    <article><small>COBERTURA</small><strong>{activePhones.length?`${Math.round(activePhones.filter(phone=>publishedProfileIds(phone).length).length/activePhones.length*100)}%`:'—'}</strong><span>{activePhones.filter(phone=>publishedProfileIds(phone).length).length}/{activePhones.length} aparelhos anunciados</span></article>
+   </div></section>
+  </div>
+
+  <section id="ads-publication-control" className="ads-publication-control panel ads-v1044-publications">
+   <header><div><h2>Onde está publicado</h2><p>Marque os perfis usados e ajuste a data real da publicação quando necessário.</p></div><label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho"/></label></header>
+   <div className="ads-publication-list">
+    {filteredPhones.map(phone=>{const published=publishedProfileIds(phone);return <article key={phone.id}>
+     <div className="phone"><b>{phoneDisplayName(phone)}</b><small>{adContentSpecs(phone)}</small></div>
+     <div className="profile-checks">{profiles.map(profile=>{const active=published.includes(profile.id),date=profilePublishedAt(phone,profile.id)||new Date().toISOString().slice(0,10);return <div className={`profile-publish-control ${active?'active':''}`} key={profile.id}><button className={active?'active':''} onClick={()=>setPublished(phone.id,profile.id,!active)}><span>{active?'✓':'+'}</span>{profile.name}</button>{active&&<label title="Data em que este anúncio foi publicado neste perfil"><input type="date" value={date} max={new Date().toISOString().slice(0,10)} onChange={e=>setPublishedDate(phone.id,profile.id,e.target.value)}/></label>}</div>})}</div>
+     <strong>{published.length} perfil(is)</strong>
+    </article>})}
+    {!filteredPhones.length&&<Empty text="Nenhum aparelho encontrado."/>}
+   </div>
+  </section>
  </div>
 }
 
