@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.15';
+const APP_VERSION='10.4.16';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -1038,6 +1038,56 @@ function Parts(){
     savePhones(next);
   }
 
+  function clearManualQuote(row){
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).map(part=>part.id===row.part.id?{...part,selectedQuoteId:''}:part)}:phone);
+    savePhones(next);flash('Escolha manual desfeita.');
+  }
+  function editQuote(row,quote){
+    const raw=prompt(`Editar cotação de ${quote.supplier} para ${row.part.name}:`,String(quote.price??''));
+    if(raw===null)return;
+    const value=toNumber(raw);
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).map(part=>{
+      if(part.id!==row.part.id)return part;
+      return{...part,quotes:(part.quotes||[]).map(q=>q.id===quote.id?{...q,price:value,updatedAt:new Date().toISOString()}:q)};
+    })}:phone);
+    savePhones(next);flash('Cotação atualizada.');
+  }
+  function deleteQuote(row,quote){
+    if(!confirm(`Excluir a cotação de ${quote.supplier} para "${row.part.name}"?`))return;
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).map(part=>{
+      if(part.id!==row.part.id)return part;
+      return{...part,quotes:(part.quotes||[]).filter(q=>q.id!==quote.id),selectedQuoteId:part.selectedQuoteId===quote.id?'':part.selectedQuoteId};
+    })}:phone);
+    savePhones(next);flash('Cotação excluída.');
+  }
+  function renameQuickPart(row){
+    const value=prompt('Editar nome da peça:',row.part.name||'');
+    if(value===null||!value.trim())return;
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).map(part=>part.id===row.part.id?{...part,name:value.trim()}:part)}:phone);
+    savePhones(next);flash('Peça atualizada.');
+  }
+  function undoOrderRows(list){
+    if(!list.length)return;
+    if(!confirm('Desfazer esta movimentação e voltar as peças para "Não pedido"?'))return;
+    const targets=new Set(list.map(row=>`${row.phone.id}::${row.part.id}`));
+    const next=phones.map(phone=>{
+      let changed=false;
+      const parts=(phone.parts||[]).map(part=>{
+        if(!targets.has(`${phone.id}::${part.id}`))return part;
+        changed=true;
+        const undo=part._orderUndo||{};
+        const copy={...part,orderStatus:undo.orderStatus||'Não pedido',status:undo.partStatus||part.status};
+        delete copy._orderUndo;
+        return copy;
+      });
+      if(!changed)return phone;
+      const copy={...phone,parts,status:phone._orderUndoStatus||phone.status,lastActivityAt:new Date().toISOString()};
+      delete copy._orderUndoStatus;
+      return copy;
+    });
+    savePhones(next);flash('Movimentação desfeita.');
+  }
+
   function buildQuoteMessage(){
     const items=allQuoteRows.map(row=>`${phoneDisplayName(row.phone,{includeCode:false})} — ${row.part.name}`);
     if(!items.length)return 'Nenhuma peça aguardando cotação.';
@@ -1105,11 +1155,17 @@ function Parts(){
     const targets=new Set(list.map(row=>`${row.phone.id}::${row.part.id}`));const stamp=new Date().toISOString();
     const next=phones.map(phone=>{
       let changed=false;const names=[];
-      const parts=(phone.parts||[]).map(part=>{if(!targets.has(`${phone.id}::${part.id}`))return part;changed=true;names.push(part.name);return{...part,orderStatus:status,status:status==='Pedido entregue'?'Recebida':part.status}});
+      const parts=(phone.parts||[]).map(part=>{
+        if(!targets.has(`${phone.id}::${part.id}`))return part;
+        changed=true;names.push(part.name);
+        const nextPart={...part,orderStatus:status,status:status==='Pedido entregue'?'Recebida':part.status};
+        if(!part._orderUndo)nextPart._orderUndo={orderStatus:part.orderStatus||'Não pedido',partStatus:part.status};
+        return nextPart;
+      });
       if(!changed)return phone;
       const allDelivered=parts.length&&parts.every(part=>['Pedido entregue','Instalada'].includes(part.orderStatus||'Não pedido'));
       const phoneStatus=status==='Pedido realizado'?'Aguardando peças':allDelivered&&phone.status==='Aguardando peças'?'Em reparo':phone.status;
-      return{...phone,parts,status:phoneStatus,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`${message}: ${names.join(', ')}`}]};
+      return{...phone,_orderUndoStatus:phone._orderUndoStatus||phone.status,parts,status:phoneStatus,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`${message}: ${names.join(', ')}`}]};
     });
     savePhones(next);
     if(status==='Pedido realizado'&&quoteSettings.__planUndo){
@@ -1130,6 +1186,7 @@ function Parts(){
   };
   const currentOrderGroups=groupRows([...selectedRows().filter(row=>!['Pedido realizado','Pedido enviado','Pedido entregue','Instalada'].includes(row.part.orderStatus))]);
   const waitingGroups=groupRows(orderRows);
+  const receivedGroups=groupRows(receivedRows);
 
   return <><div className="parts-command-page parts-workbench">
     <section className="parts-workbench-hero">
@@ -1177,22 +1234,23 @@ function Parts(){
     <section className="parts-workbench-middle">
       <article className="parts-open-items">
         <header><div><small>VISÃO GERAL</small><h2>Peças em aberto</h2><p>Pesquise por aparelho, código, peça ou fornecedor.</p></div><label><Search size={14}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Pesquisar em tudo..."/></label></header>
-        <div className="parts-open-list">{workRows.slice(0,30).map(row=>{const rec=recommendedPlan.assignment.find(item=>item.rowKey===`${row.phone.id}::${row.part.id}`);return <div key={`${row.phone.id}-${row.part.id}`}><div className="identity"><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})} · {row.phone.code}</span></div><div className="quote-pills">{[...row.quotes].sort((a,b)=>Number(a.price)-Number(b.price)).slice(0,4).map(q=><button title="Usar este fornecedor nesta peça" onClick={()=>chooseManualQuote(row,q.id)} className={(row.part.selectedQuoteId===q.id||(!row.part.selectedQuoteId&&rec?.quoteId===q.id))?'selected':''} key={q.id}><small>{q.supplier}</small><b>{money(q.price)}</b></button>)}{!row.quotes.length&&<em>Sem preço</em>}</div><span className={`state ${row.part.orderStatus!=='Não pedido'?'ordered':''}`}>{row.part.orderStatus||'Não pedido'}</span></div>})}{!workRows.length&&<Empty text={query?'Nada encontrado para esta pesquisa.':'Nenhuma peça em aberto.'}/>}</div>
+        <div className="parts-open-list">{workRows.slice(0,30).map(row=>{const rec=recommendedPlan.assignment.find(item=>item.rowKey===`${row.phone.id}::${row.part.id}`);return <div key={`${row.phone.id}-${row.part.id}`}><div className="identity"><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})} · {row.phone.code}</span><div className="row-tools"><button onClick={()=>renameQuickPart(row)}>Editar peça</button><button className="danger-link" onClick={()=>removeQuickPart(row)}>Excluir</button></div></div><div className="quote-pills">{[...row.quotes].sort((a,b)=>Number(a.price)-Number(b.price)).slice(0,4).map(q=><span className={`quote-pill-wrap ${(row.part.selectedQuoteId===q.id||(!row.part.selectedQuoteId&&rec?.quoteId===q.id))?'selected':''}`} key={q.id}><button className="quote-main" title="Usar este fornecedor nesta peça" onClick={()=>chooseManualQuote(row,q.id)}><small>{q.supplier}</small><b>{money(q.price)}</b></button><span className="quote-tools"><button title="Editar cotação" onClick={()=>editQuote(row,q)}>✎</button><button title="Excluir cotação" onClick={()=>deleteQuote(row,q)}>×</button></span></span>)}{!row.quotes.length&&<em>Sem preço</em>}</div><div className="row-state-actions"><span className={`state ${row.part.orderStatus!=='Não pedido'?'ordered':''}`}>{row.part.orderStatus||'Não pedido'}</span>{row.part.selectedQuoteId&&<button className="undo-link" onClick={()=>clearManualQuote(row)}>Desfazer escolha</button>}</div></div>})}{!workRows.length&&<Empty text={query?'Nada encontrado para esta pesquisa.':'Nenhuma peça em aberto.'}/>}</div>
       </article>
 
-      <aside className="parts-side-status">
-        <article><span className="dot purple"></span><div><b>{noQuote.length}</b><small>Sem cotação</small></div></article>
-        <article><span className="dot blue"></span><div><b>{quoted.length}</b><small>Com preço</small></div></article>
-        <article><span className="dot orange"></span><div><b>{allOrderRows.length}</b><small>Aguardando entrega</small></div></article>
-        <article><span className="dot green"></span><div><b>{allReceivedRows.length}</b><small>Recebidas</small></div></article>
-      </aside>
+      <div className="parts-status-strip">
+        <article><span className="dot purple"></span><b>{noQuote.length}</b><small>Sem cotação</small></article>
+        <article><span className="dot blue"></span><b>{quoted.length}</b><small>Com preço</small></article>
+        <article><span className="dot orange"></span><b>{allOrderRows.length}</b><small>Aguardando</small></article>
+        <article><span className="dot green"></span><b>{allReceivedRows.length}</b><small>Recebidas</small></article>
+      </div>
     </section>
 
     <section className="parts-workbench-orders">
       <header><div><small>PEDIDOS</small><h2>Pedidos prontos e em andamento</h2><p>Depois de aplicar uma combinação, os pedidos já ficam separados por fornecedor.</p></div>{planUndo&&<button className="undo" onClick={undoRecommended}><RotateCcw size={13}/> Desfazer combinação</button>}</header>
       <div className="parts-orders-grid">{Object.entries(currentOrderGroups).map(([name,list])=>{const items=list.map(row=>({price:Number(row.chosen?.price||0)})),subtotal=items.reduce((s,x)=>s+x.price,0),freight=freightFor(name,items),total=subtotal+freight;return <article className="parts-order-card" key={name}><header><div className="supplier"><Store size={15}/><div><h2>{name}</h2><span>{list.length} peça(s)</span></div></div><strong>{money(total)}</strong></header><div className="parts-order-lines">{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><strong>{money(row.chosen?.price||0)}</strong></div>)}</div><dl><div><dt>Peças</dt><dd>{money(subtotal)}</dd></div><div><dt>Frete</dt><dd className={!freight?'free':''}>{freight?money(freight):'R$ 0,00'}</dd></div><div><dt>Total</dt><dd>{money(total)}</dd></div></dl><footer><button onClick={()=>copyOrder(name,list)}><Copy size={13}/> Copiar pedido</button><button className="primary" onClick={()=>setOrderStatusForRows(list,'Pedido realizado','Pedido realizado')}><CheckSquare size={13}/> Pedido realizado</button></footer></article>})}
-      {Object.entries(waitingGroups).map(([name,list])=><article className="parts-waiting-card" key={`wait-${name}`}><header><div><span>AGUARDANDO</span><h2>{name}</h2><p>{list.length} peça(s)</p></div><Package size={18}/></header><div>{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><button onClick={()=>setOrderStatusForRows([row],'Pedido entregue','Peça recebida')}>Recebido</button></div>)}</div><footer><button className="received" onClick={()=>setOrderStatusForRows(list,'Pedido entregue','Pedido recebido')}><Package size={13}/> Marcar tudo recebido</button></footer></article>)}
+      {Object.entries(waitingGroups).map(([name,list])=><article className="parts-waiting-card" key={`wait-${name}`}><header><div><span>AGUARDANDO</span><h2>{name}</h2><p>{list.length} peça(s)</p></div><Package size={18}/></header><div>{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><button onClick={()=>setOrderStatusForRows([row],'Pedido entregue','Peça recebida')}>Recebido</button></div>)}</div><footer><button className="undo" onClick={()=>undoOrderRows(list)}><RotateCcw size={13}/> Desfazer pedido</button><button className="received" onClick={()=>setOrderStatusForRows(list,'Pedido entregue','Pedido recebido')}><Package size={13}/> Marcar tudo recebido</button></footer></article>)}
       {!Object.keys(currentOrderGroups).length&&!Object.keys(waitingGroups).length&&<div className="parts-wide-empty"><Empty text="Nenhum pedido montado ainda."/></div>}</div>
+      {Object.keys(receivedGroups).length>0&&<details className="parts-received-history"><summary>Recebidas recentemente <span>{allReceivedRows.length}</span></summary><div>{Object.entries(receivedGroups).map(([name,list])=><article key={name}><div><b>{name}</b><small>{list.length} peça(s) recebida(s)</small></div><button className="undo" onClick={()=>undoOrderRows(list)}><RotateCcw size={12}/> Desfazer recebimento</button></article>)}</div></details>}
     </section>
   </div>
 
