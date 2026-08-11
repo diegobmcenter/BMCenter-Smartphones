@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.14';
+const APP_VERSION='10.4.15';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -896,6 +896,12 @@ function Parts(){
   const[detail,setDetail]=useState(null);
   const[query,setQuery]=useState('');
   const[showRules,setShowRules]=useState(false);
+  const[deviceSearch,setDeviceSearch]=useState('');
+  const[quickPhoneId,setQuickPhoneId]=useState('');
+  const[quickPart,setQuickPart]=useState('');
+  const[inlineSupplier,setInlineSupplier]=useState('');
+  const[inlinePrices,setInlinePrices]=useState({});
+  const[notice,setNotice]=useState('');
   const profiles=load(PKEY);
   const activeSuppliers=suppliers.filter(s=>['Peças','Aparelhos e peças'].includes(s.category)||!s.category);
 
@@ -972,6 +978,65 @@ function Parts(){
     const result=assignmentCost(assignment);
     return{assignment,...result,naiveTotal:naive,savings:Math.max(0,naive-result.total)};
   },[phones,quoteSettings]);
+
+  const deviceMatches=pendingPhones
+    .filter(phone=>`${phone.code||''} ${phone.brand||''} ${phone.model||''} ${phone.color||''} ${phone.status||''}`.toLowerCase().includes(deviceSearch.trim().toLowerCase()))
+    .slice(0,8);
+  const selectedQuickPhone=pendingPhones.find(phone=>phone.id===quickPhoneId)||null;
+  const workRows=visibleRows.filter(row=>!['Pedido entregue','Instalada'].includes(row.part.orderStatus));
+  const inlineQuoteRows=(query.trim()?workRows:allQuoteRows).filter(row=>!['Pedido realizado','Pedido enviado','Pedido entregue','Instalada'].includes(row.part.orderStatus));
+  function flash(message){setNotice(message);setTimeout(()=>setNotice(''),1800)}
+  function addQuickPart(){
+    const name=quickPart.trim();
+    if(!quickPhoneId)return flash('Escolha primeiro o aparelho.');
+    if(!name)return flash('Digite o nome da peça.');
+    const stamp=new Date().toISOString();
+    const next=phones.map(phone=>phone.id===quickPhoneId?{
+      ...phone,
+      parts:[...(phone.parts||[]),{id:crypto.randomUUID(),name,status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}],
+      lastActivityAt:stamp,
+      timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`Peça necessária adicionada: ${name}`}]
+    }:phone);
+    savePhones(next);setQuickPart('');flash('Peça adicionada.');
+  }
+  function removeQuickPart(row){
+    if((row.part.quotes||[]).length&&!confirm(`"${row.part.name}" já possui cotação. Remover mesmo assim?`))return;
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).filter(part=>part.id!==row.part.id)}:phone);
+    savePhones(next);
+  }
+  function changeInlineSupplier(name){
+    setInlineSupplier(name);
+    const draft={};
+    allQuoteRows.forEach(row=>{
+      const q=row.quotes.find(item=>item.supplier===name);
+      draft[`${row.phone.id}::${row.part.id}`]=q?.price??'';
+    });
+    setInlinePrices(draft);
+  }
+  function saveInlineQuotes(){
+    if(!inlineSupplier)return flash('Escolha o fornecedor.');
+    const filled=Object.entries(inlinePrices).filter(([,value])=>String(value).trim()!=='');
+    if(!filled.length)return flash('Digite pelo menos um preço.');
+    const stamp=new Date().toISOString();
+    const next=phones.map(phone=>{
+      let changed=false;
+      const parts=(phone.parts||[]).map(part=>{
+        const key=`${phone.id}::${part.id}`,raw=inlinePrices[key];
+        if(raw===undefined||String(raw).trim()==='')return part;
+        const quotes=[...(part.quotes||[])],index=quotes.findIndex(q=>q.supplier===inlineSupplier);
+        const quote={...(index>=0?quotes[index]:{}),id:index>=0?quotes[index].id:crypto.randomUUID(),supplier:inlineSupplier,price:toNumber(raw),updatedAt:stamp};
+        if(index>=0)quotes[index]=quote;else quotes.push(quote);
+        changed=true;
+        return{...part,quotes,status:'Cotando'};
+      });
+      return changed?{...phone,parts,lastActivityAt:stamp}:phone;
+    });
+    savePhones(next);flash(`Preços de ${inlineSupplier} salvos.`);
+  }
+  function chooseManualQuote(row,quoteId){
+    const next=phones.map(phone=>phone.id===row.phone.id?{...phone,parts:(phone.parts||[]).map(part=>part.id===row.part.id?{...part,selectedQuoteId:quoteId}:part)}:phone);
+    savePhones(next);
+  }
 
   function buildQuoteMessage(){
     const items=allQuoteRows.map(row=>`${phoneDisplayName(row.phone,{includeCode:false})} — ${row.part.name}`);
@@ -1066,69 +1131,69 @@ function Parts(){
   const currentOrderGroups=groupRows([...selectedRows().filter(row=>!['Pedido realizado','Pedido enviado','Pedido entregue','Instalada'].includes(row.part.orderStatus))]);
   const waitingGroups=groupRows(orderRows);
 
-  return <><div className="parts-command-page parts-simple-page">
-    <section className="parts-command-hero parts-simple-hero">
-      <div><span>PEÇAS · COTAÇÕES · COMPRAS</span><h1>Central de peças</h1><p>Um fluxo simples: envie a lista, lance os preços, confira a melhor compra e acompanhe os pedidos.</p></div>
-      <div className="parts-command-actions"><button onClick={()=>copyText(buildQuoteMessage(),'Mensagem de cotação copiada.')}><Copy size={15}/> Copiar lista para WhatsApp</button><button className="primary" onClick={()=>startQuickQuote()}><Plus size={15}/> Lançar resposta</button></div>
+  return <><div className="parts-command-page parts-workbench">
+    <section className="parts-workbench-hero">
+      <div><span>CENTRAL DE COMPRAS</span><h1>Peças e cotações</h1><p>Cadastre o que precisa, lance as respostas dos fornecedores e feche a melhor compra sem sair desta tela.</p></div>
+      <div className="parts-workbench-actions"><button onClick={()=>copyText(buildQuoteMessage(),'Lista copiada para o WhatsApp.')}><MessageSquare size={15}/> Copiar cotação</button><button onClick={()=>setShowRules(v=>!v)}><Settings size={15}/> Regras de frete</button></div>
     </section>
 
-    <section className="parts-simple-next">
-      <div className="title"><span>SEU FLUXO</span><h2>O que fazer agora?</h2></div>
-      <button className={tab==='quote'?'active':''} onClick={()=>setTab('quote')}><span className="step purple">1</span><div><b>Enviar cotação</b><small>{noQuote.length} peça(s) sem preço</small></div><ChevronRight size={15}/></button>
-      <button className={tab==='compare'?'active':''} onClick={()=>setTab('compare')}><span className="step blue">2</span><div><b>Comparar respostas</b><small>{quoted.length} peça(s) com preço</small></div><ChevronRight size={15}/></button>
-      <button className={tab==='orders'?'active':''} onClick={()=>setTab('orders')}><span className="step orange">3</span><div><b>Montar pedidos</b><small>{Object.keys(currentOrderGroups).length} fornecedor(es)</small></div><ChevronRight size={15}/></button>
-      <button className={tab==='waiting'?'active':''} onClick={()=>setTab('waiting')}><span className="step green">4</span><div><b>Receber peças</b><small>{allOrderRows.length} peça(s) aguardando</small></div><ChevronRight size={15}/></button>
+    {notice&&<div className="parts-toast"><CheckSquare size={14}/>{notice}</div>}
+
+    <section className="parts-workbench-top">
+      <article className="parts-action-card add-parts">
+        <header><span className="num purple">1</span><div><small>ANÁLISE</small><h2>O que este aparelho precisa?</h2><p>Procure o aparelho e anote todas as peças aqui mesmo.</p></div></header>
+        <label className="parts-device-search"><Search size={15}/><input value={deviceSearch} onChange={e=>{setDeviceSearch(e.target.value);if(quickPhoneId)setQuickPhoneId('')}} placeholder="Digite modelo, marca ou código..."/></label>
+        {deviceSearch&&!quickPhoneId&&<div className="parts-device-results">{deviceMatches.map(phone=><button key={phone.id} onClick={()=>{setQuickPhoneId(phone.id);setDeviceSearch(phoneDisplayName(phone,{includeCode:true}))}}><div><b>{phoneDisplayName(phone,{includeCode:false})}</b><small>{phone.code} · {phone.status}</small></div><ChevronRight size={14}/></button>)}{!deviceMatches.length&&<span>Nenhum aparelho encontrado.</span>}</div>}
+        {selectedQuickPhone&&<div className="parts-selected-phone"><span><Smartphone size={14}/></span><div><b>{phoneDisplayName(selectedQuickPhone,{includeCode:false})}</b><small>{selectedQuickPhone.code} · {(selectedQuickPhone.parts||[]).length} peça(s) anotada(s)</small></div><button onClick={()=>{setQuickPhoneId('');setDeviceSearch('')}}>Trocar</button></div>}
+        <div className="parts-add-inline"><input disabled={!selectedQuickPhone} value={quickPart} onChange={e=>setQuickPart(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addQuickPart()}}} placeholder="Ex.: Tela, bateria, dock de carga..."/><button className="primary" disabled={!selectedQuickPhone} onClick={addQuickPart}><Plus size={14}/> Adicionar</button></div>
+        {selectedQuickPhone&&<div className="parts-mini-list">{(selectedQuickPhone.parts||[]).filter(part=>!['Pedido entregue','Instalada'].includes(part.orderStatus||'Não pedido')).map(part=><div key={part.id}><span><b>{part.name}</b><small>{(part.quotes||[]).length?`${(part.quotes||[]).length} cotação(ões)`:'Ainda sem preço'}</small></span><button onClick={()=>removeQuickPart({phone:selectedQuickPhone,part})}><X size={12}/></button></div>)}</div>}
+      </article>
+
+      <article className="parts-action-card quote-entry">
+        <header><span className="num blue">2</span><div><small>RESPOSTA DO FORNECEDOR</small><h2>Lançar preços rapidamente</h2><p>Escolha o fornecedor uma vez e digite os preços recebidos. Use TAB.</p></div></header>
+        <label className="supplier-select">Fornecedor<select value={inlineSupplier} onChange={e=>changeInlineSupplier(e.target.value)}><option value="">Selecione...</option>{activeSuppliers.map(s=><option key={s.id||s.name} value={s.name}>{s.name}</option>)}</select></label>
+        <div className="parts-inline-prices">
+          {inlineQuoteRows.slice(0,12).map((row,index)=>{const key=`${row.phone.id}::${row.part.id}`;return <label key={key}><span className="order">{String(index+1).padStart(2,'0')}</span><div><b>{row.part.name}</b><small>{phoneDisplayName(row.phone,{includeCode:false})}</small></div><div className="money-prefix"><span>R$</span><input disabled={!inlineSupplier} inputMode="decimal" value={inlinePrices[key]??''} onChange={e=>setInlinePrices({...inlinePrices,[key]:e.target.value.replace(/[^0-9,.-]/g,'')})} placeholder="0,00"/></div></label>})}
+          {!inlineQuoteRows.length&&<Empty text="Nenhuma peça aguardando cotação."/>}
+        </div>
+        {inlineQuoteRows.length>12&&<small className="parts-more-note">+ {inlineQuoteRows.length-12} peça(s). Use a busca abaixo para localizar uma peça específica.</small>}
+        <footer><button onClick={()=>copyText(buildQuoteMessage(),'Lista copiada para o WhatsApp.')}><Copy size={13}/> Copiar lista</button><button className="primary" disabled={!inlineSupplier} onClick={saveInlineQuotes}><CheckSquare size={13}/> Salvar preços</button></footer>
+      </article>
+
+      <article className="parts-action-card purchase-summary">
+        <header><span className="num green">3</span><div><small>DECISÃO DE COMPRA</small><h2>Melhor combinação</h2><p>Preço das peças + fretes + regras de frete grátis.</p></div></header>
+        <div className="parts-best-total"><span>Total recomendado</span><strong>{money(recommendedPlan.total)}</strong><small>{recommendedPlan.freight?`${money(recommendedPlan.freight)} de frete`:'Sem frete adicional'}</small></div>
+        <div className="parts-best-suppliers">{Object.entries(recommendedPlan.groups).slice(0,4).map(([name,items])=>{const subtotal=items.reduce((s,x)=>s+Number(x.price||0),0),freight=freightFor(name,items);return <div key={name}><span><Store size={13}/><b>{name}</b></span><small>{items.length} peça(s) · {freight?'Frete '+money(freight):'Frete grátis'}</small><strong>{money(subtotal+freight)}</strong></div>})}{!recommendedPlan.assignment.length&&<Empty text="Lance preços para receber uma recomendação."/>}</div>
+        {recommendedPlan.savings>0&&<div className="parts-saving"><TrendingUp size={14}/> Economia estimada: <b>{money(recommendedPlan.savings)}</b></div>}
+        <footer>{planUndo&&<button className="undo" onClick={undoRecommended}><RotateCcw size={13}/> Desfazer</button>}<button className="primary" disabled={!recommendedPlan.assignment.length} onClick={applyRecommended}><CheckSquare size={13}/> Usar combinação</button></footer>
+      </article>
     </section>
 
-    <section className="parts-simple-toolbar">
-      <label><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar aparelho ou peça"/></label>
-      <button className={showRules?'active':''} onClick={()=>setShowRules(v=>!v)}><Settings size={14}/> Regras de frete e combinação <ChevronDown size={14}/></button>
+    {showRules&&<section className="parts-rules-panel parts-rules-inline">
+      <header><div><span>REGRAS DE FRETE</span><h2>O que entra no cálculo?</h2><p>Configure uma vez. O sistema usa automaticamente em todas as comparações.</p></div><button onClick={()=>setShowRules(false)}><X size={15}/></button></header>
+      <div className="parts-rules-suppliers">{activeSuppliers.map(s=>{const rule=settingFor(s.name);return <article key={s.id||s.name}><header><Store size={14}/><b>{s.name}</b></header><div className="fields"><label>Frete<div className="money-prefix"><span>R$</span><input value={rule.freight} onChange={e=>updateSetting(s.name,'freight',e.target.value.replace(/[^0-9,.-]/g,''))}/></div></label><label>Grátis acima de<div className="money-prefix"><span>R$</span><input value={rule.freeAbove} onChange={e=>updateSetting(s.name,'freeAbove',e.target.value.replace(/[^0-9,.-]/g,''))}/></div></label><label>Grátis com<input value={rule.freeItems} onChange={e=>updateSetting(s.name,'freeItems',e.target.value.replace(/\D/g,''))} placeholder="itens"/></label></div><label className="paid"><input type="checkbox" checked={rule.freightPaid} onChange={e=>updateSetting(s.name,'freightPaid',e.target.checked)}/><span>Frete já pago / ignorar frete</span></label></article>})}</div>
+    </section>}
+
+    <section className="parts-workbench-middle">
+      <article className="parts-open-items">
+        <header><div><small>VISÃO GERAL</small><h2>Peças em aberto</h2><p>Pesquise por aparelho, código, peça ou fornecedor.</p></div><label><Search size={14}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Pesquisar em tudo..."/></label></header>
+        <div className="parts-open-list">{workRows.slice(0,30).map(row=>{const rec=recommendedPlan.assignment.find(item=>item.rowKey===`${row.phone.id}::${row.part.id}`);return <div key={`${row.phone.id}-${row.part.id}`}><div className="identity"><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})} · {row.phone.code}</span></div><div className="quote-pills">{[...row.quotes].sort((a,b)=>Number(a.price)-Number(b.price)).slice(0,4).map(q=><button title="Usar este fornecedor nesta peça" onClick={()=>chooseManualQuote(row,q.id)} className={(row.part.selectedQuoteId===q.id||(!row.part.selectedQuoteId&&rec?.quoteId===q.id))?'selected':''} key={q.id}><small>{q.supplier}</small><b>{money(q.price)}</b></button>)}{!row.quotes.length&&<em>Sem preço</em>}</div><span className={`state ${row.part.orderStatus!=='Não pedido'?'ordered':''}`}>{row.part.orderStatus||'Não pedido'}</span></div>})}{!workRows.length&&<Empty text={query?'Nada encontrado para esta pesquisa.':'Nenhuma peça em aberto.'}/>}</div>
+      </article>
+
+      <aside className="parts-side-status">
+        <article><span className="dot purple"></span><div><b>{noQuote.length}</b><small>Sem cotação</small></div></article>
+        <article><span className="dot blue"></span><div><b>{quoted.length}</b><small>Com preço</small></div></article>
+        <article><span className="dot orange"></span><div><b>{allOrderRows.length}</b><small>Aguardando entrega</small></div></article>
+        <article><span className="dot green"></span><div><b>{allReceivedRows.length}</b><small>Recebidas</small></div></article>
+      </aside>
     </section>
 
-    {showRules&&<section className="parts-rules-panel">
-      <header><div><span>REGRAS DA COMBINAÇÃO</span><h2>Como o BMCenter escolhe a compra mais barata</h2><p>O cálculo usa o <b>total final do pedido</b>, não somente o menor preço de cada peça.</p></div><button onClick={()=>setShowRules(false)}><X size={15}/></button></header>
-      <div className="parts-rules-explain">
-        <article><span>1</span><div><b>Preço das peças</b><small>Compara todos os preços recebidos.</small></div></article>
-        <ChevronRight size={15}/>
-        <article><span>2</span><div><b>Frete por fornecedor</b><small>Soma o frete uma única vez por pedido.</small></div></article>
-        <ChevronRight size={15}/>
-        <article><span>3</span><div><b>Regras de frete grátis</b><small>Por valor, quantidade ou frete já pago.</small></div></article>
-        <ChevronRight size={15}/>
-        <article className="result"><span><TrendingUp size={14}/></span><div><b>Menor total final</b><small>Recomenda a combinação com menor custo.</small></div></article>
-      </div>
-      <div className="parts-rules-suppliers">{activeSuppliers.map(s=>{const rule=settingFor(s.name);return <article key={s.id||s.name}><header><Store size={14}/><b>{s.name}</b></header><div className="fields"><label>Frete<div className="money-prefix"><span>R$</span><input inputMode="decimal" value={rule.freight} onChange={e=>updateSetting(s.name,'freight',e.target.value.replace(/[^0-9,.-]/g,''))}/></div></label><label>Grátis acima de<div className="money-prefix"><span>R$</span><input inputMode="decimal" placeholder="—" value={rule.freeAbove} onChange={e=>updateSetting(s.name,'freeAbove',e.target.value.replace(/[^0-9,.-]/g,''))}/></div></label><label>Grátis com<input inputMode="numeric" placeholder="— itens" value={rule.freeItems} onChange={e=>updateSetting(s.name,'freeItems',e.target.value.replace(/\D/g,''))}/></label></div><label className="paid"><input type="checkbox" checked={rule.freightPaid} onChange={e=>updateSetting(s.name,'freightPaid',e.target.checked)}/><span>Frete já pago / não considerar</span></label></article>})}{!activeSuppliers.length&&<Empty text="Cadastre fornecedores em Configurações > Fornecedores."/>}</div>
-    </section>}
-
-    {tab==='quote'&&<section className="parts-quote-workspace parts-simple-quote">
-      <article className="parts-message-card">
-        <header><div className="icon"><MessageSquare size={17}/></div><div><span>PASSO 1</span><h2>Envie esta lista aos fornecedores</h2><p>Você copia uma única vez e cola no WhatsApp de quem quiser cotar.</p></div></header>
-        <pre>{buildQuoteMessage()}</pre>
-        <div className="parts-message-actions"><button className="primary" onClick={()=>copyText(buildQuoteMessage(),'Mensagem copiada para enviar aos fornecedores.')}><Copy size={14}/> Copiar mensagem</button><button onClick={()=>startQuickQuote()}><Plus size={14}/> Recebi uma resposta</button></div>
-      </article>
-      <article className="parts-needed-card">
-        <header><div><span>PEÇAS EM ABERTO</span><h2>O que você está cotando</h2><p>As peças anotadas nos aparelhos aparecem automaticamente aqui.</p></div><strong>{quoteRows.length}</strong></header>
-        <div className="parts-needed-list">{quoteRows.map(row=><button key={`${row.phone.id}-${row.part.id}`} onClick={()=>setDetail(row.phone)}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><em className={row.quotes.length?'quoted':'pending'}>{row.quotes.length?`${row.quotes.length} cotação(ões)`:'Aguardando preço'}</em></button>)}{!quoteRows.length&&<Empty text="Nenhuma peça aguardando cotação."/>}</div>
-      </article>
-    </section>}
-
-    {tab==='compare'&&<section className="parts-compare-page parts-simple-compare">
-      <article className="parts-recommendation">
-        <header><div><span>PASSO 2 · MELHOR COMPRA</span><h2>Esta é a combinação mais barata encontrada</h2><p>Já está considerando os fretes e as regras cadastradas acima.</p></div><div className="parts-plan-total"><small>Total final</small><strong>{money(recommendedPlan.total)}</strong><em>{recommendedPlan.freight?`inclui ${money(recommendedPlan.freight)} de frete`:'sem frete adicional'}</em></div></header>
-        <div className="parts-plan-groups">{Object.entries(recommendedPlan.groups).map(([name,items])=>{const subtotal=items.reduce((s,x)=>s+Number(x.price||0),0),freight=freightFor(name,items);return <article key={name}><div className="supplier"><Store size={14}/><div><b>{name}</b><span>{items.length} peça(s)</span></div></div><div className="items">{items.slice(0,4).map(item=><span key={item.rowKey}>{item.part.name}</span>)}{items.length>4&&<span>+{items.length-4}</span>}</div><div className="cost"><small>Peças {money(subtotal)} · Frete {freight?money(freight):'R$ 0,00'}</small><strong>{money(subtotal+freight)}</strong></div></article>})}</div>
-        <footer><div>{recommendedPlan.savings>0?<><TrendingUp size={14}/><span>Esta combinação economiza aproximadamente <b>{money(recommendedPlan.savings)}</b> considerando os fretes.</span></>:<span>Esta é a opção de menor custo encontrada com os preços atuais.</span>}</div><div className="parts-plan-actions">{planUndo&&<button className="undo" onClick={undoRecommended}><RotateCcw size={14}/> Desfazer combinação</button>}<button className="primary" disabled={!recommendedPlan.assignment.length} onClick={applyRecommended}><CheckSquare size={14}/> Usar esta combinação</button></div></footer>
-      </article>
-      <article className="parts-comparison-table"><header><div><span>CONFERÊNCIA</span><h2>Preços recebidos</h2><p>Verde = fornecedor escolhido pela combinação. Você continua vendo os demais preços para conferir.</p></div><button onClick={()=>startQuickQuote()}><Plus size={13}/> Lançar outra resposta</button></header><div>{visibleQuoted.map(row=>{const rec=recommendedPlan.assignment.find(item=>item.rowKey===`${row.phone.id}::${row.part.id}`);return <div className="parts-compare-row" key={`${row.phone.id}-${row.part.id}`}><div className="piece"><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><div className="quotes">{[...row.quotes].sort((a,b)=>Number(a.price)-Number(b.price)).map(q=><span className={rec?.quoteId===q.id?'recommended':''} key={q.id}><small>{q.supplier}</small><b>{money(q.price)}</b>{rec?.quoteId===q.id&&<em>Escolhido</em>}</span>)}</div></div>})}{!visibleQuoted.length&&<Empty text="Ainda não existem preços para comparar. Clique em “Lançar resposta”."/>}</div></article>
-    </section>}
-
-    {tab==='orders'&&<section className="parts-simple-orders">
-      <header className="parts-stage-heading"><div><span>PASSO 3</span><h2>Pedidos prontos para fazer</h2><p>Um cartão por fornecedor. Confira, copie a mensagem e marque quando realmente fizer o pedido.</p></div>{planUndo&&<button className="undo" onClick={undoRecommended}><RotateCcw size={14}/> Desfazer combinação</button>}</header>
-      <div className="parts-orders-grid">{Object.entries(currentOrderGroups).map(([name,list])=>{const items=list.map(row=>({price:Number(row.chosen?.price||0)})),subtotal=items.reduce((s,x)=>s+x.price,0),freight=freightFor(name,items),total=subtotal+freight;return <article className="parts-order-card" key={name}><header><div className="supplier"><Store size={15}/><div><h2>{name}</h2><span>{list.length} peça(s)</span></div></div><strong>{money(total)}</strong></header><div className="parts-order-lines">{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><strong>{money(row.chosen?.price||0)}</strong></div>)}</div><dl><div><dt>Peças</dt><dd>{money(subtotal)}</dd></div><div><dt>Frete</dt><dd className={!freight?'free':''}>{freight?money(freight):'R$ 0,00'}</dd></div><div><dt>Total</dt><dd>{money(total)}</dd></div></dl><footer><button onClick={()=>copyOrder(name,list)}><Copy size={13}/> Copiar pedido</button><button className="primary" onClick={()=>setOrderStatusForRows(list,'Pedido realizado','Pedido realizado')}><CheckSquare size={13}/> Pedido realizado</button></footer></article>})}{!Object.keys(currentOrderGroups).length&&<div className="parts-wide-empty"><Empty text="Nenhuma combinação aplicada. Volte em “Comparar respostas” e escolha a melhor compra."/></div>}</div>
-    </section>}
-
-    {tab==='waiting'&&<section className="parts-simple-orders">
-      <header className="parts-stage-heading"><div><span>PASSO 4</span><h2>Aguardando entrega</h2><p>Aqui ficam somente os pedidos que você já marcou como realizados.</p></div></header>
-      <div className="parts-waiting-grid">{Object.entries(waitingGroups).map(([name,list])=><article className="parts-waiting-card" key={name}><header><div><span>AGUARDANDO ENTREGA</span><h2>{name}</h2><p>{list.length} peça(s) neste pedido</p></div><Package size={19}/></header><div>{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><em>{row.part.orderStatus}</em><button onClick={()=>setOrderStatusForRows([row],'Pedido entregue','Peça recebida')}>Recebido</button></div>)}</div><footer><button onClick={()=>copyOrder(name,list)}><Copy size={13}/> Copiar pedido</button><button className="received" onClick={()=>setOrderStatusForRows(list,'Pedido entregue','Pedido recebido')}><Package size={13}/> Marcar tudo recebido</button></footer></article>)}{!Object.keys(waitingGroups).length&&<div className="parts-wide-empty"><Empty text="Nenhum pedido aguardando entrega."/></div>}</div>
-    </section>}
+    <section className="parts-workbench-orders">
+      <header><div><small>PEDIDOS</small><h2>Pedidos prontos e em andamento</h2><p>Depois de aplicar uma combinação, os pedidos já ficam separados por fornecedor.</p></div>{planUndo&&<button className="undo" onClick={undoRecommended}><RotateCcw size={13}/> Desfazer combinação</button>}</header>
+      <div className="parts-orders-grid">{Object.entries(currentOrderGroups).map(([name,list])=>{const items=list.map(row=>({price:Number(row.chosen?.price||0)})),subtotal=items.reduce((s,x)=>s+x.price,0),freight=freightFor(name,items),total=subtotal+freight;return <article className="parts-order-card" key={name}><header><div className="supplier"><Store size={15}/><div><h2>{name}</h2><span>{list.length} peça(s)</span></div></div><strong>{money(total)}</strong></header><div className="parts-order-lines">{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><strong>{money(row.chosen?.price||0)}</strong></div>)}</div><dl><div><dt>Peças</dt><dd>{money(subtotal)}</dd></div><div><dt>Frete</dt><dd className={!freight?'free':''}>{freight?money(freight):'R$ 0,00'}</dd></div><div><dt>Total</dt><dd>{money(total)}</dd></div></dl><footer><button onClick={()=>copyOrder(name,list)}><Copy size={13}/> Copiar pedido</button><button className="primary" onClick={()=>setOrderStatusForRows(list,'Pedido realizado','Pedido realizado')}><CheckSquare size={13}/> Pedido realizado</button></footer></article>})}
+      {Object.entries(waitingGroups).map(([name,list])=><article className="parts-waiting-card" key={`wait-${name}`}><header><div><span>AGUARDANDO</span><h2>{name}</h2><p>{list.length} peça(s)</p></div><Package size={18}/></header><div>{list.map(row=><div key={`${row.phone.id}-${row.part.id}`}><div><b>{row.part.name}</b><span>{phoneDisplayName(row.phone,{includeCode:false})}</span></div><button onClick={()=>setOrderStatusForRows([row],'Pedido entregue','Peça recebida')}>Recebido</button></div>)}</div><footer><button className="received" onClick={()=>setOrderStatusForRows(list,'Pedido entregue','Pedido recebido')}><Package size={13}/> Marcar tudo recebido</button></footer></article>)}
+      {!Object.keys(currentOrderGroups).length&&!Object.keys(waitingGroups).length&&<div className="parts-wide-empty"><Empty text="Nenhum pedido montado ainda."/></div>}</div>
+    </section>
   </div>
 
   {quoteModal&&<div className="parts-quote-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setQuoteModal(false)}><section className="parts-quote-modal">
