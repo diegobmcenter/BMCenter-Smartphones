@@ -9,9 +9,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.9';
+const APP_VERSION='10.4.12';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -504,7 +504,7 @@ function ProfileAnalyticsPage(){
  const persist=next=>{const ordered=next.map((p,index)=>({...p,order:index}));setProfiles(ordered);save(PKEY,ordered)};
  const sales=phones.filter(p=>p.sale?.soldAt);
  const data=profiles.map(profile=>{
-  const published=phones.filter(phone=>!isClosedPhone(phone)&&publishedProfileIds(phone).includes(profile.id));
+  const published=phones.filter(phone=>publishedProfileIds(phone).includes(profile.id));
   const sold=sales.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);
   const value=sold.reduce((a,p)=>a+Number(p.sale?.value||0),0);
   const days=sold.map(p=>salesDaysFromProfile(p,profile.id)).filter(v=>v!==null);
@@ -885,7 +885,9 @@ function Parts(){
   const [detail,setDetail]=useState(null);
   const profiles=load(PKEY);
 
-  const rows=phones.flatMap(phone=>
+  const rows=phones
+    .filter(phone=>phone.status!=='Vendido')
+    .flatMap(phone=>
     (phone.parts||[])
       .map(part=>{
         const quotes=(part.quotes||[]).filter(q=>q.supplier);
@@ -950,6 +952,33 @@ function Parts(){
         return{...part,orderStatus:'Pedido realizado'};
       });
       return changed?{...phone,parts,status:'Aguardando peças'}:phone;
+    });
+    savePhones(next);
+  }
+
+  function markSupplierReceived(supplierName,list){
+    const eligible=list.filter(row=>{
+      const selected=(row.part.quotes||[]).find(q=>q.id===row.part.selectedQuoteId);
+      const cheapest=[...(row.part.quotes||[])].filter(q=>q.supplier).sort((a,b)=>Number(a.price)-Number(b.price))[0];
+      const chosen=selected||cheapest;
+      return chosen?.supplier===supplierName && !['Pedido entregue','Instalada'].includes(row.part.orderStatus||'Não pedido');
+    });
+    if(!eligible.length){alert('Todas as peças deste fornecedor já estão marcadas como recebidas/entregues.');return;}
+    if(!confirm(`Marcar ${eligible.length} peça(s) de ${supplierName} como recebida(s)?`)) return;
+    const targets=new Set(eligible.map(row=>`${row.phone.id}::${row.part.id}`));
+    const stamp=new Date().toISOString();
+    const next=phones.map(phone=>{
+      let changed=false;
+      const receivedNames=[];
+      const parts=(phone.parts||[]).map(part=>{
+        if(!targets.has(`${phone.id}::${part.id}`)) return part;
+        changed=true;receivedNames.push(part.name);
+        return{...part,status:'Recebida',orderStatus:'Pedido entregue'};
+      });
+      if(!changed)return phone;
+      const allDelivered=parts.length>0&&parts.every(part=>['Pedido entregue','Instalada'].includes(part.orderStatus||'Não pedido'));
+      const status=allDelivered&&phone.status==='Aguardando peças'?'Em reparo':phone.status;
+      return{...phone,parts,status,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`Recebimento em grupo: ${receivedNames.join(', ')}`}]};
     });
     savePhones(next);
   }
@@ -1075,14 +1104,14 @@ function Parts(){
     <section className="v102-parts-toolbar"><label>Fornecedor<select value={supplierFilter} onChange={e=>setSupplierFilter(e.target.value)}><option>Todos</option>{suppliers.map(s=><option key={s}>{s}</option>)}</select></label><label>Agrupar por<select value={viewMode} onChange={e=>setViewMode(e.target.value)}><option value="supplier">Fornecedor</option><option value="phone">Aparelho</option></select></label><button onClick={copySupplierList} disabled={supplierFilter==='Todos'}>Copiar lista</button></section>
     {!filteredRows.length&&<Empty text="Nenhuma peça encontrada para este filtro."/>}
     <section className="v102-parts-groups">{(viewMode==='supplier'?Object.entries(groupedBySupplier):Object.entries(groupedByPhone)).map(([group,list])=><article className="v102-parts-group" key={group}>
-      <header><div><small>{viewMode==='supplier'?'FORNECEDOR':'APARELHO'}</small><h2>{viewMode==='phone'?group.replace(/^BM-\d+\s*·\s*/,''):group}</h2><span>{list.length} item(ns)</span></div><strong>{money(totalForRows(list))}</strong>{viewMode==='supplier'&&group!=='Fornecedor não definido'&&<button onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button>}</header>
+      <header><div><small>{viewMode==='supplier'?'FORNECEDOR':'APARELHO'}</small><h2>{viewMode==='phone'?group.replace(/^BM-\d+\s*·\s*/,''):group}</h2><span>{list.length} item(ns)</span></div><strong>{money(totalForRows(list))}</strong>{viewMode==='supplier'&&group!=='Fornecedor não definido'&&<div className="v10410-parts-group-actions"><button onClick={()=>markSupplierOrderDone(group,list)}>Marcar pedido realizado</button><button className="received" onClick={()=>markSupplierReceived(group,list)}>Marcar como recebido</button></div>}</header>
       <div className="v102-part-list">{list.map(row=><div className="v102-part-row" key={row.part.id}>
         {viewMode==='supplier'&&<div className="v102-part-device"><small>APARELHO</small><button type="button" className="v102-phone-link" onClick={()=>setDetail(row.phone)}>{phoneDisplayName(row.phone,{includeCode:false})}</button></div>}
         <div><small>PEÇA</small><b>{row.part.name}</b></div>
         <div><small>MELHOR COTAÇÃO</small><b className="good">{row.cheapest?`${row.cheapest.supplier} · ${money(row.cheapest.price)}`:'Sem cotação'}</b></div>
         <div className="v102-part-supplier">{renderQuoteSelect(row)}</div>
         <label><small>PEDIDO</small>{renderOrderSelect(row)}</label>
-        <div className="v102-part-actions"><button onClick={()=>markReceived(row)}>Receber</button></div>
+        <div className="v102-part-actions"><button onClick={()=>markReceived(row)}>Marcar recebido</button></div>
       </div>)}</div>
     </article>)}</section>
   </div>

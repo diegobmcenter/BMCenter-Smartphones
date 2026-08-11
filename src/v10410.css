@@ -1,0 +1,52 @@
+/* BMCenter v10.4.10 */
+/* Anúncios: correção efetiva do tema escuro. A v10.4.9 dependia de uma classe page-ads que o AppFrame não usa. */
+.v102-app.theme-dark .ads-ref-page{background:#101317!important;color:#eef2f6!important}
+.v102-app.theme-dark .ads-ref-card,
+.v102-app.theme-dark .ads-ref-kpis article,
+.v102-app.theme-dark .ads-ref-profile-grid article,
+.v102-app.theme-dark .ads-ref-actions,
+.v102-app.theme-dark .ads-ref-summary,
+.v102-app.theme-dark .ads-ref-overview,
+.v102-app.theme-dark .ads-ref-notes{background:#171b20!important;color:#eef2f6!important;border-color:#2a3038!important;box-shadow:none!important}
+.v102-app.theme-dark .ads-ref-page :is(h1,h2,h3,strong,b,dt,dd){color:#eef2f6!important}
+.v102-app.theme-dark .ads-ref-page :is(p,small,em){color:#98a4b3!important}
+.v102-app.theme-dark .ads-ref-head-actions>span,.v102-app.theme-dark .ads-ref-subtitle{color:#a0a9b5!important}
+.v102-app.theme-dark .ads-ref-head-actions label,
+.v102-app.theme-dark .ads-ref-head-actions>button,
+.v102-app.theme-dark .ads-ref-generator-left select,
+.v102-app.theme-dark .ads-ref-history-button,
+.v102-app.theme-dark .ads-ref-suggestion>button,
+.v102-app.theme-dark .ads-ref-actions button,
+.v102-app.theme-dark .ads-ref-overview>footer button,
+.v102-app.theme-dark .ads-ref-notes textarea,
+.v102-app.theme-dark .ads-ref-search,
+.v102-app.theme-dark .ads-ref-publication-modal,
+.v102-app.theme-dark .ads-ref-publication-modal>header>button,
+.v102-app.theme-dark .ads-ref-publication-list>article,
+.v102-app.theme-dark .ads-ref-publication-list span button{background:#1d2228!important;color:#eef2f6!important;border-color:#36404a!important}
+.v102-app.theme-dark .ads-ref-head-actions select,
+.v102-app.theme-dark .ads-ref-generator-left select,
+.v102-app.theme-dark .ads-ref-search input,
+.v102-app.theme-dark .ads-ref-publication-list input[type=date]{background:#1d2228!important;color:#eef2f6!important}
+.v102-app.theme-dark .ads-ref-generator-left,.v102-app.theme-dark .ads-ref-tabs{border-color:#2a3038!important}
+.v102-app.theme-dark .ads-ref-tabs button{color:#a0a9b5!important}
+.v102-app.theme-dark .ads-ref-tabs button.active{color:#9eb3ff!important;border-bottom-color:#7b97f5!important}
+.v102-app.theme-dark .ads-ref-suggestion textarea,
+.v102-app.theme-dark .ads-ref-variations{background:#1d2228!important;color:#eef2f6!important;border-color:#36404a!important}
+.v102-app.theme-dark .ads-ref-variations>button{background:#1d2228!important;color:#eef2f6!important;border-color:#2a3038!important}
+.v102-app.theme-dark .ads-ref-generator>footer,.v102-app.theme-dark .ads-ref-overview>footer{background:#1c2743!important;color:#c4cff8!important}
+.v102-app.theme-dark .ads-ref-summary>button{background:#1c2743!important;border-color:#364b79!important;color:#9eb3ff!important}
+.v102-app.theme-dark .ads-ref-overview-grid>article{border-color:#2a3038!important}
+.v102-app.theme-dark .ads-ref-overview-grid .donut{background:conic-gradient(#7b97f5 var(--pct),#2a3038 0)!important}
+.v102-app.theme-dark .ads-ref-overview-grid .donut:after{background:#171b20!important}
+.v102-app.theme-dark .ads-ref-performance>header>button{color:#9eb3ff!important}
+.v102-app.theme-dark .ads-ref-publication-modal{color:#eef2f6!important}
+.v102-app.theme-dark .ads-ref-publication-modal p,.v102-app.theme-dark .ads-ref-publication-list small{color:#98a4b3!important}
+.v102-app.theme-dark .ads-ref-publication-list span.active button{background:#1c2743!important;border-color:#526ba9!important;color:#aebfff!important}
+
+/* Peças: ações em grupo compactas e legíveis. */
+.v10410-parts-group-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
+.v10410-parts-group-actions>button{width:auto!important;min-height:32px!important;padding:0 10px!important;white-space:nowrap}
+.v10410-parts-group-actions>button.received{border-color:color-mix(in srgb,#22a06b 45%,var(--line))!important;background:color-mix(in srgb,#22a06b 10%,var(--surface2))!important;color:#42c98c!important}
+.v102-parts-group>header{gap:8px!important}.v102-parts-group>header>strong{margin-left:auto}.v102-part-actions>button{white-space:nowrap}
+@media(max-width:900px){.v10410-parts-group-actions{width:100%;margin-left:0;flex-wrap:wrap}}
