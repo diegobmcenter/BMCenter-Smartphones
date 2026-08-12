@@ -1,0 +1,437 @@
+/* BMCenter v10.4.18 — Central de Peças: legibilidade + densidade equilibrada */
+
+/* ---------- BASE DA PÁGINA ---------- */
+.parts-workbench{
+  gap:8px!important;
+  align-content:start!important;
+}
+.parts-workbench-hero{
+  padding:12px 15px!important;
+  min-height:0!important;
+}
+.parts-workbench-hero span{
+  font-size:9px!important;
+  letter-spacing:.11em!important;
+}
+.parts-workbench-hero h1{
+  margin:3px 0!important;
+  font-size:23px!important;
+  line-height:1.08!important;
+}
+.parts-workbench-hero p{
+  font-size:11px!important;
+  line-height:1.35!important;
+}
+.parts-workbench-actions button{
+  min-height:36px!important;
+  padding:0 12px!important;
+  font-size:12px!important;
+}
+
+/* ---------- TRÊS BLOCOS PRINCIPAIS ---------- */
+.parts-workbench-top{
+  grid-template-columns:minmax(270px,30%) minmax(390px,44%) minmax(265px,26%)!important;
+  gap:8px!important;
+  align-items:start!important;
+}
+.parts-action-card{
+  padding:10px!important;
+  gap:7px!important;
+  min-height:0!important;
+  border-radius:11px!important;
+}
+.parts-action-card>header{
+  gap:8px!important;
+  margin:0!important;
+}
+.parts-action-card .num{
+  width:31px!important;
+  height:31px!important;
+  flex-basis:31px!important;
+  font-size:12px!important;
+}
+.parts-action-card header small{
+  font-size:8px!important;
+  line-height:1.15!important;
+  letter-spacing:.08em!important;
+}
+.parts-action-card header h2{
+  margin:2px 0!important;
+  font-size:14px!important;
+  line-height:1.15!important;
+}
+.parts-action-card header p{
+  font-size:10px!important;
+  line-height:1.3!important;
+}
+
+/* busca de aparelho */
+.parts-device-search{
+  height:36px!important;
+  padding:0 9px!important;
+}
+.parts-device-search input{
+  height:34px!important;
+  font-size:12px!important;
+}
+.parts-selected-phone{
+  padding:7px!important;
+  min-height:42px!important;
+}
+.parts-selected-phone b{font-size:11px!important}
+.parts-selected-phone small{font-size:9px!important}
+.parts-selected-phone>button{font-size:9px!important}
+.parts-add-inline{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:6px!important;
+}
+.parts-add-inline input{
+  height:36px!important;
+  font-size:12px!important;
+}
+.parts-add-inline button{
+  min-height:36px!important;
+  padding:0 12px!important;
+  font-size:12px!important;
+}
+.parts-mini-list{
+  max-height:115px!important;
+  gap:4px!important;
+}
+.parts-mini-list>div{padding:6px 7px!important}
+.parts-mini-list b{font-size:10px!important}
+.parts-mini-list small{font-size:9px!important}
+
+/* lançamento rápido */
+.supplier-select{
+  font-size:9px!important;
+  gap:4px!important;
+}
+.supplier-select select{
+  height:36px!important;
+  font-size:11px!important;
+}
+.parts-inline-prices{
+  max-height:245px!important;
+  gap:4px!important;
+}
+.parts-inline-prices>label{
+  grid-template-columns:28px minmax(130px,1fr) 105px!important;
+  min-height:39px!important;
+  padding:4px 6px!important;
+  border-radius:8px!important;
+}
+.parts-inline-prices .order{
+  width:25px!important;
+  height:25px!important;
+  font-size:8px!important;
+}
+.parts-inline-prices b{
+  font-size:10.5px!important;
+  line-height:1.15!important;
+}
+.parts-inline-prices small{
+  margin-top:1px!important;
+  font-size:8.5px!important;
+  line-height:1.1!important;
+}
+.parts-inline-prices .money-prefix{
+  height:31px!important;
+}
+.parts-inline-prices .money-prefix>span{
+  min-width:28px!important;
+  font-size:9px!important;
+}
+.parts-inline-prices input{
+  height:29px!important;
+  min-height:29px!important;
+  padding:0 7px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+.quote-entry>footer{
+  padding-top:6px!important;
+  gap:6px!important;
+}
+.quote-entry>footer button{
+  min-height:33px!important;
+  padding:0 10px!important;
+  font-size:10px!important;
+}
+
+/* melhor combinação */
+.parts-best-total{
+  padding:8px 10px!important;
+  gap:1px!important;
+}
+.parts-best-total span{font-size:9px!important}
+.parts-best-total strong{
+  font-size:22px!important;
+  line-height:1.08!important;
+}
+.parts-best-total small{font-size:8.5px!important}
+.parts-best-suppliers{
+  gap:4px!important;
+}
+.parts-best-suppliers>div{
+  padding:6px 7px!important;
+  min-height:38px!important;
+}
+.parts-best-suppliers b{font-size:10px!important}
+.parts-best-suppliers small{font-size:8px!important}
+.parts-best-suppliers strong{font-size:10px!important}
+.parts-saving{
+  padding:6px 8px!important;
+  font-size:9px!important;
+}
+.purchase-summary>footer{
+  justify-content:flex-end!important;
+  padding-top:6px!important;
+}
+.purchase-summary>footer button{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-height:34px!important;
+  padding:0 11px!important;
+  font-size:10.5px!important;
+}
+
+/* ---------- INDICADORES: faixa curta e legível ---------- */
+.parts-status-strip{
+  grid-template-columns:repeat(4,minmax(125px,1fr))!important;
+  gap:6px!important;
+}
+.parts-status-strip>article{
+  grid-template-columns:5px 28px minmax(0,1fr)!important;
+  min-height:38px!important;
+  padding:6px 9px!important;
+}
+.parts-status-strip .dot{height:25px!important}
+.parts-status-strip b{
+  font-size:13px!important;
+  line-height:1!important;
+}
+.parts-status-strip small{
+  font-size:9px!important;
+  line-height:1.1!important;
+}
+
+/* ---------- PEÇAS EM ABERTO ---------- */
+.parts-open-items{
+  padding:9px!important;
+}
+.parts-open-items>header{
+  grid-template-columns:minmax(0,1fr) 280px!important;
+  margin-bottom:7px!important;
+}
+.parts-open-items>header small{
+  font-size:8px!important;
+}
+.parts-open-items>header h2{
+  margin:2px 0!important;
+  font-size:15px!important;
+}
+.parts-open-items>header p{
+  font-size:9px!important;
+}
+.parts-open-items>header label{
+  height:34px!important;
+}
+.parts-open-items>header input{
+  font-size:11px!important;
+}
+.parts-open-list{
+  gap:5px!important;
+}
+.parts-open-list>div{
+  grid-template-columns:minmax(190px,.72fr) minmax(360px,1.45fr) 110px!important;
+  min-height:58px!important;
+  padding:7px 9px!important;
+  gap:9px!important;
+}
+.parts-open-list .identity b{
+  font-size:11px!important;
+}
+.parts-open-list .identity>span{
+  font-size:8.5px!important;
+}
+.row-tools{
+  gap:8px!important;
+  margin-top:4px!important;
+}
+.row-tools button,.undo-link{
+  min-height:18px!important;
+  font-size:8px!important;
+  font-weight:700!important;
+}
+.quote-pills{
+  gap:5px!important;
+}
+.quote-pill-wrap{
+  grid-template-columns:minmax(120px,1fr) 27px!important;
+  min-width:155px!important;
+  max-width:205px!important;
+  min-height:38px!important;
+}
+.quote-pill-wrap .quote-main{
+  min-height:37px!important;
+  padding:5px 7px!important;
+  gap:7px!important;
+}
+.quote-pill-wrap .quote-main small{
+  font-size:9px!important;
+}
+.quote-pill-wrap .quote-main b{
+  font-size:12px!important;
+  font-weight:800!important;
+}
+.quote-tools button{
+  width:26px!important;
+  height:18px!important;
+  min-height:18px!important;
+  font-size:9px!important;
+}
+.parts-open-list .state{
+  font-size:8px!important;
+  padding:5px 7px!important;
+}
+.row-state-actions{
+  gap:4px!important;
+}
+
+/* ---------- PEDIDOS: cartões compactos que não se esticam ---------- */
+.parts-workbench-orders{
+  padding:9px!important;
+  gap:7px!important;
+}
+.parts-workbench-orders>header small{font-size:8px!important}
+.parts-workbench-orders>header h2{
+  margin:2px 0!important;
+  font-size:15px!important;
+}
+.parts-workbench-orders>header p{font-size:9px!important}
+.parts-workbench-orders>header>button{
+  min-height:32px!important;
+  padding:0 9px!important;
+  font-size:9px!important;
+}
+.parts-workbench-orders .parts-orders-grid{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(290px,360px))!important;
+  justify-content:start!important;
+  gap:7px!important;
+  align-items:start!important;
+}
+.parts-order-card,.parts-waiting-card{
+  width:100%!important;
+  max-width:360px!important;
+}
+.parts-order-card>header,.parts-waiting-card>header{
+  padding:7px 9px!important;
+}
+.parts-order-card>header h2,.parts-waiting-card>header h2{
+  font-size:11px!important;
+}
+.parts-order-card>header span,.parts-waiting-card>header span{
+  font-size:8px!important;
+}
+.parts-order-card>header strong{
+  font-size:12px!important;
+}
+.parts-order-lines>div,.parts-waiting-card>div>div{
+  padding:5px 9px!important;
+}
+.parts-order-lines b,.parts-waiting-card>div>div b{
+  font-size:10px!important;
+}
+.parts-order-lines span,.parts-waiting-card>div>div span{
+  font-size:8px!important;
+}
+.parts-order-lines strong{
+  font-size:10px!important;
+}
+.parts-order-card dl{
+  padding:5px 9px!important;
+}
+.parts-order-card dt,.parts-order-card dd{
+  font-size:8px!important;
+}
+.parts-order-card dl>div:last-child dt,.parts-order-card dl>div:last-child dd{
+  font-size:10px!important;
+  font-weight:800!important;
+}
+.parts-order-card footer,.parts-waiting-card footer{
+  padding:6px!important;
+  gap:5px!important;
+}
+.parts-order-card footer button,.parts-waiting-card footer button{
+  min-height:31px!important;
+  padding:0 8px!important;
+  font-size:8.5px!important;
+}
+.parts-received-history>summary{
+  font-size:9px!important;
+}
+.parts-received-history b{font-size:9px!important}
+.parts-received-history small{font-size:8px!important}
+.parts-received-history button{font-size:8px!important}
+
+/* ---------- REGRAS DE FRETE ---------- */
+.parts-rules-panel>header span{font-size:8px!important}
+.parts-rules-panel>header h2{font-size:15px!important}
+.parts-rules-panel>header p{font-size:10px!important}
+.parts-rules-suppliers>article>header b{font-size:10px!important}
+.parts-rules-suppliers label{font-size:8px!important}
+.parts-rules-suppliers input{font-size:11px!important}
+
+/* ---------- TEMA ESCURO ---------- */
+.v102-app.theme-dark .parts-workbench-hero,
+.v102-app.theme-dark .parts-action-card,
+.v102-app.theme-dark .parts-open-items,
+.v102-app.theme-dark .parts-workbench-orders,
+.v102-app.theme-dark .parts-status-strip>article,
+.v102-app.theme-dark .parts-order-card,
+.v102-app.theme-dark .parts-waiting-card{
+  background:#171a1f!important;
+  border-color:#30353d!important;
+}
+.v102-app.theme-dark .parts-open-list>div{
+  background:#1b1f24!important;
+  border-color:#30353d!important;
+}
+.v102-app.theme-dark .quote-pill-wrap{
+  background:#20252b!important;
+  border-color:#353c45!important;
+}
+.v102-app.theme-dark .quote-pill-wrap.selected{
+  background:#193329!important;
+  border-color:#3fb47b!important;
+}
+.v102-app.theme-dark .parts-best-total{
+  background:#1b392b!important;
+  border-color:#365945!important;
+}
+
+/* ---------- RESPONSIVO ---------- */
+@media(max-width:1180px){
+  .parts-workbench-top{
+    grid-template-columns:minmax(260px,.85fr) minmax(380px,1.15fr)!important;
+  }
+  .purchase-summary{grid-column:1/-1!important}
+  .parts-best-suppliers{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .parts-open-list>div{
+    grid-template-columns:minmax(170px,.7fr) minmax(300px,1.3fr) 100px!important;
+  }
+}
+@media(max-width:900px){
+  .parts-workbench-top{grid-template-columns:1fr!important}
+  .purchase-summary{grid-column:auto!important}
+  .parts-best-suppliers{grid-template-columns:1fr!important}
+  .parts-open-items>header{grid-template-columns:1fr!important}
+}
+@media(max-width:820px){
+  .parts-open-list>div{grid-template-columns:1fr!important}
+  .parts-status-strip{grid-template-columns:1fr 1fr!important}
+  .parts-workbench-orders .parts-orders-grid{grid-template-columns:1fr!important}
+  .parts-order-card,.parts-waiting-card{max-width:none!important}
+}
