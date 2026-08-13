@@ -1,7 +1,7 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.35",
+  "version": "10.4.36",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "qrcode.react": "^4.2.0",
-    "@huggingface/transformers": "^3.8.1"
+    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304"
   },
   "devDependencies": {
     "vite": "^6.0.5"
