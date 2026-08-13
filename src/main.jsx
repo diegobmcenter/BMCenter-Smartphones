@@ -13,7 +13,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10419.css';import'./v10420.css';import'./v10421.css';import'./v10422.css';import'./v10423.css';import'./v10424.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',PHOTOROOTKEY='bmcenter-photo-root-local',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.37';
+const APP_VERSION='10.4.38';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,PHOTOROOTKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -2466,6 +2466,48 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
 function photoReadyCount(phone){return (phone?.photos||[]).filter(photo=>photo?.processedAssetId&&photo?.status==='ready').length}
 function photoOriginalCount(phone){return (phone?.photos||[]).filter(photo=>photo?.originalAssetId).length}
 
+
+function PhotoMaskEditor({source,initialStrokes=[],onClose,onApply}){
+ const[mode,setMode]=useState(1);
+ const[strokes,setStrokes]=useState(()=>Array.isArray(initialStrokes)?initialStrokes:[]);
+ const[drawing,setDrawing]=useState(null);
+ const areaRef=useRef(null);
+
+ function pointFromEvent(e){
+  const rect=areaRef.current.getBoundingClientRect();
+  return{x:Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(e.clientY-rect.top)/rect.height))}
+ }
+ function down(e){
+  e.preventDefault();areaRef.current?.setPointerCapture?.(e.pointerId);
+  setDrawing({brushMode:mode,point:[pointFromEvent(e)],isCompleted:false})
+ }
+ function move(e){
+  if(!drawing)return;
+  const p=pointFromEvent(e),last=drawing.point[drawing.point.length-1];
+  if(!last||Math.hypot(p.x-last.x,p.y-last.y)>.004)setDrawing({...drawing,point:[...drawing.point,p]})
+ }
+ function up(e){
+  if(!drawing)return;
+  areaRef.current?.releasePointerCapture?.(e.pointerId);
+  let pts=[...drawing.point];
+  if(pts.length===1){const p=pts[0];pts.push({x:Math.max(0,Math.min(1,p.x+.035)),y:p.y})}
+  setStrokes([...strokes,{brushMode:drawing.brushMode,point:pts,isCompleted:true}]);
+  setDrawing(null)
+ }
+ const shown=drawing?[...strokes,drawing]:strokes;
+ return <div className="mask-editor-backdrop">
+  <div className="mask-editor-card">
+   <header><div><b>Ajustar recorte</b><small>Verde = preservar · Vermelho = remover. Passe o dedo sobre partes faltando ou fundo indevido.</small></div><button type="button" onClick={onClose}><X size={18}/></button></header>
+   <div className="mask-editor-tools"><button type="button" className={mode===1?'active preserve':''} onClick={()=>setMode(1)}>+ Preservar</button><button type="button" className={mode===2?'active remove':''} onClick={()=>setMode(2)}>− Remover fundo</button><button type="button" onClick={()=>setStrokes([])}>Limpar ajustes</button><button type="button" disabled={!strokes.length} onClick={()=>setStrokes(strokes.slice(0,-1))}>Desfazer traço</button></div>
+   <div className="mask-editor-image" ref={areaRef} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+    <img src={source} alt="Foto original para ajustar recorte" draggable="false"/>
+    <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">{shown.map((stroke,i)=>{const points=(stroke.point||[]).map(p=>`${p.x*1000},${p.y*1000}`).join(' ');return <polyline key={i} points={points} fill="none" stroke={stroke.brushMode===2?'#ff4d5e':'#25d366'} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" opacity=".88"/>})}</svg>
+   </div>
+   <footer><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={()=>onApply(strokes)}>Aplicar recorte e cenário</button></footer>
+  </div>
+ </div>
+}
+
 function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  const[workPhone,setWorkPhone]=useState(phone);
  const[assetUrls,setAssetUrls]=useState({});
@@ -2475,9 +2517,10 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  const[fileError,setFileError]=useState('');
  const[rootInfo,setRootInfo]=useState(()=>{const saved=load(PHOTOROOTKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{}});
  const[folderBusy,setFolderBusy]=useState(false);
+ const[maskEditor,setMaskEditor]=useState(null);
  const fileRef=useRef(null),captureRef=useRef(null);
  useEffect(()=>{if(phone&&!busy)setWorkPhone(phone)},[phone,busy]);
- const settings={style:'Automático',intensity:'Natural',keepScale:true,aiEngine:'mediapipe',localFolderName:'',localFolderLinked:false,...(workPhone?.photoStudioSettings||{})};
+ const settings={style:'Automático',intensity:'Natural',keepScale:true,aiEngine:'mediapipe-v2',localFolderName:'',localFolderLinked:false,...(workPhone?.photoStudioSettings||{})};
  const photos=Array.isArray(workPhone?.photos)?workPhone.photos:[];
  const ready=photoReadyCount(workPhone),total=photoOriginalCount(workPhone),hasPhotoUndo=photos.some(meta=>meta.previousProcessedAssetId);
  const scene=workPhone?.photoScene||sceneForPhone(workPhone,settings.style,0);
@@ -2580,7 +2623,7 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
    const next={...workPhone,photos:[...photos,...additions],photoScene:nextScene,photoStudioSettings:settings};commit(next);await refreshAssets(next);setGalleryMode('original')
   }catch(error){setFileError(error?.message||'Não foi possível adicionar as fotos.')}finally{setBusy(false);setProgress('')}
  }
- async function processAll({force=false,sceneOverride=null,sourcePhone=null}={}){
+ async function processAll({force=false,sceneOverride=null,sourcePhone=null,onlyId=null}={}){
   const source=sourcePhone||workPhone;const sourcePhotos=Array.isArray(source.photos)?source.photos:[];
   if(!sourcePhotos.length)return alert('Adicione pelo menos uma foto.');
   setGalleryMode('original');
@@ -2588,17 +2631,18 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
   const chosenScene=sceneOverride||source.photoScene||sceneForPhone(source,settings.style,0);
   let current={...source,photoScene:chosenScene,photoStudioSettings:settings};commit(current);
   for(let index=0;index<sourcePhotos.length;index++){
+   if(onlyId&&sourcePhotos[index].id!==onlyId)continue;
    const meta=(current.photos||[]).find(item=>item.id===sourcePhotos[index].id)||sourcePhotos[index];
    if(!force&&meta.processedAssetId&&meta.status==='ready')continue;
    setProgress(`Original ${index+1}/${sourcePhotos.length} · criando nova máscara...`);
    current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,status:'processing',error:''}:item)};commit(current);
    try{
     const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;if(!original)throw new Error('Foto original não encontrada neste dispositivo.');
-    const resultDataUrl=await preparePhotoLocally(original,{scene:chosenScene,point:meta.segmentPoint||{x:.5,y:.5},onProgress:message=>setProgress(`Foto ${index+1}/${sourcePhotos.length} · ${message}`)});
+    const resultDataUrl=await preparePhotoLocally(original,{scene:chosenScene,strokes:meta.segmentStrokes||null,onProgress:message=>setProgress(`Foto ${index+1}/${sourcePhotos.length} · ${message}`)});
     const previousProcessedAssetId=meta.processedAssetId||'';
     if(meta.previousProcessedAssetId&&meta.previousProcessedAssetId!==previousProcessedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});
     const processedAssetId=`photo-ready-${meta.id}-${Date.now()}`;
-    await putPhotoAsset({id:processedAssetId,phoneId:current.id,role:'processed',dataUrl:resultDataUrl,createdAt:new Date().toISOString(),sceneId:chosenScene.id,name:`${current.code||'aparelho'}-${index+1}.jpg`,engine:'local-mediapipe-interactive'});
+    await putPhotoAsset({id:processedAssetId,phoneId:current.id,role:'processed',dataUrl:resultDataUrl,createdAt:new Date().toISOString(),sceneId:chosenScene.id,name:`${current.code||'aparelho'}-${index+1}.jpg`,engine:'local-mediapipe-v2'});
     current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,processedAssetId,previousProcessedAssetId,status:'ready',processedAt:new Date().toISOString(),sceneId:chosenScene.id,error:''}:item)};commit(current)
    }catch(error){current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,status:'error',error:error?.message||'Falha no processamento local'}:item)};commit(current);setFileError(error?.message||'Falha no processamento local')}
   }
@@ -2610,33 +2654,39 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
   const reversible=photos.filter(meta=>meta.previousProcessedAssetId);if(!reversible.length)return;setBusy(true);
   try{for(const meta of reversible)if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});const next={...workPhone,photoScene:workPhone.previousPhotoScene||workPhone.photoScene,previousPhotoScene:null,photos:photos.map(meta=>meta.previousProcessedAssetId?{...meta,processedAssetId:meta.previousProcessedAssetId,previousProcessedAssetId:'',status:'ready',error:''}:meta)};commit(next);await refreshAssets(next)}finally{setBusy(false)}
  }
- async function correctCut(meta,event){
-  if(busy)return;
-  const target=event.currentTarget;
-  const rect=target.getBoundingClientRect();
-  const point={x:(event.clientX-rect.left)/rect.width,y:(event.clientY-rect.top)/rect.height};
-  const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,segmentPoint:point,processedAssetId:'',status:'original',error:''}:item)};
+ async function openMaskEditor(meta){
+  setFileError('');
+  try{
+   const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;
+   if(!original)throw new Error('Foto original não encontrada.');
+   setMaskEditor({meta,source:original,strokes:Array.isArray(meta.segmentStrokes)?meta.segmentStrokes:[]});
+  }catch(error){setFileError(error?.message||'Não foi possível abrir o editor de recorte.')}
+ }
+ async function applyMaskEditor(meta,strokes){
+  setMaskEditor(null);
+  const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,segmentStrokes:strokes,processedAssetId:'',status:'original',error:''}:item)};
   commit(next);
-  setProgress('Ponto salvo. Recalculando o recorte...');
-  await processAll({force:true,sourcePhone:next});
+  await processAll({force:true,sourcePhone:next,onlyId:meta.id});
  }
  async function removePhoto(meta){if(!confirm('Excluir esta foto original e a versão preparada?'))return;await Promise.all([deletePhotoAsset(meta.originalAssetId).catch(()=>{}),deletePhotoAsset(meta.processedAssetId).catch(()=>{}),deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{})]);const next={...workPhone,photos:photos.filter(item=>item.id!==meta.id)};commit(next);await refreshAssets(next)}
  function visibleAsset(meta){const id=galleryMode==='ready'?(meta.processedAssetId||meta.originalAssetId):meta.originalAssetId;return{id,url:assetUrls[id]||'',prepared:Boolean(meta.processedAssetId)}}
  async function downloadAll(){const chosen=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return{id,index}}).filter(x=>assetUrls[x.id]);for(const {id,index} of chosen)await downloadDataUrl(assetUrls[id],`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`)}
  async function shareAll(){const items=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return assetUrls[id]?{dataUrl:assetUrls[id],name:`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`}:null}).filter(Boolean);if(!items.length)return alert('Nenhuma foto disponível.');try{await sharePhotoDataUrls(items,`${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Fotos do aparelho')}catch(error){if(error?.name!=='AbortError')alert('Não foi possível abrir o compartilhamento.')}}
  return <section className={`photo-studio ${standalone?'standalone':''}`}>
-  <header className="photo-studio-head"><div><span><WandSparkles size={15}/></span><div><h3>Fotos para anúncio</h3><p>MediaPipe interativo · máscara copiada no callback · aparelho preservado 1:1.</p></div></div><div className="photo-studio-head-right"><div className="photo-metadata-badge"><ShieldCheck size={14}/><span><b>Sem metadados</b><small>EXIF · GPS · XMP · IPTC</small></span></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></div></header>
+  {maskEditor&&<PhotoMaskEditor source={maskEditor.source} initialStrokes={maskEditor.strokes} onClose={()=>setMaskEditor(null)} onApply={strokes=>applyMaskEditor(maskEditor.meta,strokes)}/>}
+  <header className="photo-studio-head"><div><span><WandSparkles size={15}/></span><div><h3>Fotos para anúncio</h3><p>MagicTouch V2 · recorte ajustável · aparelho preservado com pixels da foto original.</p></div></div><div className="photo-studio-head-right"><div className="photo-metadata-badge"><ShieldCheck size={14}/><span><b>Sem metadados</b><small>EXIF · GPS · XMP · IPTC</small></span></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></div></header>
   <div className="photo-studio-controls">
    <label>Estilo<select value={settings.style} onChange={e=>{const style=e.target.value,nextScene=sceneForPhone(workPhone,style,Number(workPhone.photoScene?.offset||0));commit({...workPhone,photoStudioSettings:{...settings,style},photoScene:nextScene})}}>{photoStyles.map(value=><option key={value}>{value}</option>)}</select></label>
-   <label>Motor IA<select value="magictouch" disabled><option>MediaPipe · Segmentação Interativa</option></select></label>
+   <label>Motor IA<select value="mediapipe-v2" disabled><option>MagicTouch V2 · Google MediaPipe</option></select></label>
    <label>Intensidade<select value={settings.intensity} onChange={e=>updateSettings({intensity:e.target.value})}><option>Natural</option><option>Destaque</option></select></label>
    <label className="photo-toggle"><input type="checkbox" checked={settings.keepScale!==false} onChange={e=>updateSettings({keepScale:e.target.checked})}/><span>Manter escala real</span></label>
    <div className="scene-chip"><small>Cenário deste aparelho</small><b>{scene.style} · #{scene.signature}</b></div>
   </div>
-  <div className="photo-primary-actions"><button type="button" className="photo-capture-button primary" onClick={()=>captureRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar foto</button><input ref={captureRef} hidden type="file" accept="image/*" capture="environment" onChange={e=>{addPhotos(e.target.files,{captured:true});e.target.value=''}}/><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Abrir Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar da pasta</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/><button type="button" className="primary" disabled={busy||!total} onClick={()=>processAll({force:true})}><WandSparkles size={15}/> {busy?'Processando...':'Trocar fundo em todas'}</button><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={15}/> Refazer fundo</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={15}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" className="photo-undo-button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={15}/> Desfazer último fundo</button>}</div>
+  <div className="photo-scenario-picker"><div className="photo-scenario-title"><b>Escolha o cenário</b><small>O aparelho não é redesenhado; somente o fundo muda.</small></div><div className="photo-scenario-list">{['Branco Clean','Cinza Premium','Preto Premium','Madeira Clara','Concreto Claro','Mármore Branco','Azul Tech','Bege Minimalista'].map((value,index)=><button type="button" key={value} className={scene.style===value?'active':''} onClick={()=>{const nextScene=sceneForPhone(workPhone,value,0);commit({...workPhone,photoStudioSettings:{...settings,style:value},photoScene:nextScene})}}><span className={`scene-preview scene-${index}`}></span><small>{value}</small></button>)}</div></div>
+  <div className="photo-primary-actions"><button type="button" className="photo-capture-button primary" onClick={()=>captureRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar foto</button><input ref={captureRef} hidden type="file" accept="image/*" capture="environment" onChange={e=>{addPhotos(e.target.files,{captured:true});e.target.value=''}}/><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Abrir Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar da pasta</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/><button type="button" className="primary" disabled={busy||!total} onClick={()=>processAll({force:true})}><WandSparkles size={15}/> {busy?'Processando...':'Preparar todas'}</button><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={15}/> Reprocessar</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={15}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" className="photo-undo-button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={15}/> Desfazer último fundo</button>}</div>
   {(progress||fileError)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress}</div>}
   <div className="photo-gallery-toolbar"><div><button type="button" className={galleryMode==='ready'?'active':''} onClick={()=>setGalleryMode('ready')}>Preparadas <b>{ready}</b></button><button type="button" className={galleryMode==='original'?'active':''} onClick={()=>setGalleryMode('original')}>Originais <b>{total}</b></button></div><div><button type="button" disabled={!total} onClick={downloadAll}><Download size={14}/> Baixar</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
-  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>Use “Tirar foto” para capturar e vincular a imagem imediatamente a este aparelho, ou mantenha o fluxo pelo Open Camera e importe pela pasta.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={meta.status==='error'?'error':''}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Fundo trocado · aparelho copiado da original sem redesenho':'Visual original · metadados removidos')}</small></div><div><button type="button" title="Corrigir recorte: informe um ponto que fique dentro do aparelho" onClick={()=>{const value=prompt('Toque assistido: informe o ponto X,Y em porcentagem sobre o aparelho. Exemplo: 50,50 para o centro.','50,50');if(!value)return;const parts=value.split(',').map(v=>Number(v.trim()));if(parts.length===2&&parts.every(Number.isFinite)){const point={x:Math.max(1,Math.min(99,parts[0]))/100,y:Math.max(1,Math.min(99,parts[1]))/100};const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,segmentPoint:point,status:'original',error:''}:item)};commit(next);processAll({force:true,sourcePhone:next})}}}><Crosshair size={13}/></button>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={()=>resetProcessed(meta)}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={()=>removePhoto(meta)}><Trash2 size={13}/></button></div></footer></article>})}</div>}
+  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>Use “Tirar foto” para capturar e vincular a imagem imediatamente a este aparelho, ou mantenha o fluxo pelo Open Camera e importe pela pasta.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={meta.status==='error'?'error':''}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Cenário aplicado · produto preservado da foto original':'Visual original · metadados removidos')}</small></div><div><button type="button" title="Ajustar recorte visualmente" onClick={()=>openMaskEditor(meta)}><Crosshair size={13}/></button>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={()=>resetProcessed(meta)}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={()=>removePhoto(meta)}><Trash2 size={13}/></button></div></footer></article>})}</div>}
   <div className="photo-drive photo-local-folder">
    <div className="photo-local-folder-head"><FolderOpen size={16}/><div><b>Pasta local das fotos</b><span>O DriveSync continua sincronizando esta pasta com o Google Drive automaticamente.</span></div><span className={rootInfo.configured?'ready':'pending'}>{rootInfo.configured?'Raiz configurada':'Configurar uma vez'}</span></div>
    <div className="photo-root-row"><div><small>Pasta raiz</small><b>{rootInfo.path||rootInfo.name||'Ainda não configurada'}</b></div><button type="button" onClick={configureRootFolder} disabled={folderBusy}><Settings size={14}/> {rootInfo.configured?'Alterar raiz':'Configurar raiz'}</button></div>

@@ -23,3 +23,10 @@ Google MediaPipe Tasks Vision e MagicTouch são usados para segmentação intera
 
 ## MediaPipe v10.4.37
 Runtime fixado em @mediapipe/tasks-vision 0.10.35. Interactive Segmenter usa o modelo Web ptm_512_hdt_ptm_woid.tflite conforme documentação oficial do Google.
+
+
+## MediaPipe Interactive Segmenter V2 — v10.4.38
+- Runtime: @mediapipe/tasks-vision ^1.0.1.
+- Modelo: interactive_segmenter_v2 / MagicTouch int8.
+- Arquitetura baseada no sample Web atual do Google (setImage + segment(strokes)).
+- Licença do ecossistema MediaPipe: Apache-2.0.
