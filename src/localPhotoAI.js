@@ -1,23 +1,15 @@
-let workerInstance=null;
-let requestCounter=0;
-const pending=new Map();
+let removerModulePromise=null;
+let personWorker=null;
+let personRequestId=0;
+const personPending=new Map();
 
-function imageFromDataUrl(source){
+function imageFromSource(source){
  return new Promise((resolve,reject)=>{
   const img=new Image();
   img.onload=()=>resolve(img);
-  img.onerror=()=>reject(new Error('Não foi possível abrir a foto original.'));
+  img.onerror=()=>reject(new Error('Não foi possível abrir a foto.'));
   img.src=source;
  });
-}
-
-function dataUrlToBlob(dataUrl){
- const [head,data]=String(dataUrl||'').split(',');
- const mime=(head.match(/data:([^;]+)/)||[])[1]||'image/jpeg';
- const bin=atob(data||'');
- const bytes=new Uint8Array(bin.length);
- for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
- return new Blob([bytes],{type:mime});
 }
 
 function hashText(text){
@@ -26,141 +18,96 @@ function hashText(text){
  return Math.abs(h>>>0);
 }
 
-function getWorker(){
- if(workerInstance)return workerInstance;
- workerInstance=new Worker(new URL('./photoSegmenter.worker.js',import.meta.url),{type:'module'});
- workerInstance.onmessage=event=>{
+function dataUrlToBlob(dataUrl){
+ const [head,data]=String(dataUrl||'').split(',');
+ const mime=(head.match(/data:([^;]+)/)||[])[1]||'image/jpeg';
+ const binary=atob(data||'');
+ const bytes=new Uint8Array(binary.length);
+ for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+ return new Blob([bytes],{type:mime});
+}
+
+function getPersonWorker(){
+ if(personWorker)return personWorker;
+ personWorker=new Worker(new URL('./personSegmenter.worker.js',import.meta.url),{type:'module'});
+ personWorker.onmessage=event=>{
   const {type,reqId}=event.data||{};
-  const job=pending.get(reqId);
-  if(!job)return;
-  pending.delete(reqId);
-  if(type==='SEGMENT_RESULT')job.resolve(event.data);
-  else job.reject(new Error(event.data?.error||'Falha no MediaPipe.'));
+  const job=personPending.get(reqId);if(!job)return;
+  personPending.delete(reqId);
+  if(type==='PERSON_RESULT')job.resolve(event.data);
+  else job.reject(new Error(event.data?.error||'falha ao identificar mão e braço'));
  };
- workerInstance.onerror=error=>{
-  for(const [,job] of pending)job.reject(new Error(error?.message||'Falha ao iniciar o segmentador local.'));
-  pending.clear();
-  workerInstance?.terminate();
-  workerInstance=null;
+ personWorker.onerror=error=>{
+  for(const [,job] of personPending)job.reject(new Error(error?.message||'falha ao iniciar a proteção de mão e braço'));
+  personPending.clear();personWorker?.terminate();personWorker=null;
  };
- return workerInstance;
+ return personWorker;
 }
 
-function normalizedStroke(stroke){
- const mode=Number(stroke?.brushMode)||1;
- const points=(stroke?.point||[]).map(p=>({
-  x:Math.max(0,Math.min(1,Number(p.x))),
-  y:Math.max(0,Math.min(1,Number(p.y)))
- })).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
- if(!points.length)return null;
- // A short click becomes a valid stroke for GraphV2.
- if(points.length===1){
-  const p=points[0],dx=.032;
-  points.push({x:Math.max(0,Math.min(1,p.x+dx)),y:p.y});
- }
- return{brushMode:mode,point:points,isCompleted:true};
-}
-
-function defaultStrokes(bitmap){
- // BMCenter photos are made with the phone held in a hand. Detect the visible
- // skin cluster, then continue the preservation stroke in the wrist/arm
- // direction until it reaches the frame. This keeps phone, fingers, hand,
- // sleeve and visible arm together as one original subject.
- let skinCenter={x:.5,y:.62},skinEdge={x:.5,y:.78},skinCount=0;
- try{
-  const w=bitmap.width,h=bitmap.height,canvas=new OffscreenCanvas(w,h);
-  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
-  const pixels=ctx.getImageData(0,0,w,h).data;
-  const step=Math.max(1,Math.floor(Math.max(w,h)/260));
-  let sx=0,sy=0,sxx=0,syy=0,sxy=0,bestScore=-1;
-  for(let y=Math.floor(h*.20);y<h*.86;y+=step)for(let x=Math.floor(w*.15);x<w*.85;x+=step){
-   const i=(y*w+x)*4,r=pixels[i],g=pixels[i+1],b=pixels[i+2];
-   const cb=128-.168736*r-.331264*g+.5*b;
-   const cr=128+.5*r-.418688*g-.081312*b;
-   const spread=Math.max(r,g,b)-Math.min(r,g,b);
-   if(r>48&&g>30&&b>20&&spread>12&&cb>=72&&cb<=135&&cr>=133&&cr<=183&&r>g*.95&&r>b*.88){
-    const nx=x/w,ny=y/h;skinCount++;sx+=nx;sy+=ny;sxx+=nx*nx;syy+=ny*ny;sxy+=nx*ny;
-    const score=Math.hypot(nx-.5,(ny-.40)*1.18)+Math.max(0,ny-.5)*.45;
-    if(score>bestScore){bestScore=score;skinEdge={x:nx,y:ny}}
-   }
-  }
-  if(skinCount>12){
-   skinCenter={x:sx/skinCount,y:sy/skinCount};
-   const cxx=sxx/skinCount-skinCenter.x*skinCenter.x;
-   const cyy=syy/skinCount-skinCenter.y*skinCenter.y;
-   const cxy=sxy/skinCount-skinCenter.x*skinCenter.y;
-   const theta=.5*Math.atan2(2*cxy,cxx-cyy);
-   skinCenter.axis={x:Math.cos(theta),y:Math.sin(theta)};
-  }
- }catch{}
-
- let wristX=skinEdge.x-skinCenter.x,wristY=skinEdge.y-skinCenter.y;
- const wristLength=Math.hypot(wristX,wristY)||1;wristX/=wristLength;wristY/=wristLength;
- let axis=skinCenter.axis||{x:0,y:1};
- if(axis.x*wristX+axis.y*wristY<0)axis={x:-axis.x,y:-axis.y};
- let dx=axis.x*.78+wristX*.62,dy=axis.y*.78+wristY*.62;
- if(skinCount<=12){dx=0;dy=1}
- const directionLength=Math.hypot(dx,dy)||1;dx/=directionLength;dy/=directionLength;
- const limits=[];
- if(dx<-.001)limits.push((.025-skinEdge.x)/dx);if(dx>.001)limits.push((.975-skinEdge.x)/dx);
- if(dy>.001)limits.push((.975-skinEdge.y)/dy);if(dy<-.001)limits.push((.08-skinEdge.y)/dy);
- const positive=limits.filter(value=>value>0);
- // Stop well inside the visible arm. The segmenter completes the object to the
- // frame; crossing the edge would teach it to preserve a strip of old background.
- const extend=(positive.length?Math.min(...positive):.5)*.62;
- const end={x:Math.max(.025,Math.min(.975,skinEdge.x+dx*extend)),y:Math.max(.08,Math.min(.975,skinEdge.y+dy*extend))};
- const points=[{x:.50,y:.34},{x:.50,y:.44},{x:.50,y:.54},{x:.50,y:.62}];
- if(skinCount>12)points.push(skinCenter,skinEdge);
- for(let t=.25;t<=1;t+=.25)points.push({x:skinEdge.x+(end.x-skinEdge.x)*t,y:skinEdge.y+(end.y-skinEdge.y)*t});
- return[{brushMode:1,point:points,isCompleted:true}];
-}
-
-async function requestMask(imageData,strokes,onProgress){
- if(typeof Worker==='undefined'||typeof createImageBitmap!=='function'||typeof OffscreenCanvas==='undefined'){
-  throw new Error('Este navegador não oferece os recursos necessários para o recorte local. Use Chrome atualizado.');
- }
- onProgress?.('Calculando o recorte local...');
- const blob=dataUrlToBlob(imageData);
- let bitmap=await createImageBitmap(blob);
- // MagicTouch only needs a compact copy to calculate the mask. The result is
- // upscaled afterwards and applied to the untouched full-resolution original.
- const maxMaskSide=640;
- if(Math.max(bitmap.width,bitmap.height)>maxMaskSide){
-  const scale=maxMaskSide/Math.max(bitmap.width,bitmap.height);
+async function requestPersonMask(imageData){
+ if(typeof Worker==='undefined'||typeof createImageBitmap!=='function')throw new Error('navegador sem suporte ao recorte local');
+ let bitmap=await createImageBitmap(dataUrlToBlob(imageData));
+ const maxSide=640;
+ if(Math.max(bitmap.width,bitmap.height)>maxSide){
+  const scale=maxSide/Math.max(bitmap.width,bitmap.height);
   const resized=await createImageBitmap(bitmap,0,0,bitmap.width,bitmap.height,{
-   resizeWidth:Math.max(1,Math.round(bitmap.width*scale)),
-   resizeHeight:Math.max(1,Math.round(bitmap.height*scale)),
-   resizeQuality:'high'
+   resizeWidth:Math.max(1,Math.round(bitmap.width*scale)),resizeHeight:Math.max(1,Math.round(bitmap.height*scale)),resizeQuality:'high'
   });
-  bitmap.close?.();
-  bitmap=resized;
+  bitmap.close?.();bitmap=resized;
  }
- const reqId=++requestCounter;
- const clean=(Array.isArray(strokes)?strokes:[]).map(normalizedStroke).filter(Boolean);
- const selectedStrokes=clean.length?clean:defaultStrokes(bitmap);
- const worker=getWorker();
-
+ const reqId=++personRequestId;
  const promise=new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>{
-   pending.delete(reqId);
-   reject(new Error('O segmentador demorou demais para iniciar. Atualize a página e tente novamente.'));
-  },180000);
-  pending.set(reqId,{
-   resolve:value=>{clearTimeout(timeout);resolve(value)},
-   reject:error=>{clearTimeout(timeout);reject(error)}
-  });
+  const timer=setTimeout(()=>{personPending.delete(reqId);reject(new Error('a proteção de mão e braço demorou demais'))},120000);
+  personPending.set(reqId,{resolve:value=>{clearTimeout(timer);resolve(value)},reject:error=>{clearTimeout(timer);reject(error)}});
  });
- worker.postMessage({type:'SEGMENT_IMAGE',reqId,bitmap,strokes:selectedStrokes},[bitmap]);
- const result=await promise;
- onProgress?.(`Recorte calculado em ${Math.round(result.inferenceMs||0)} ms.`);
+ getPersonWorker().postMessage({type:'SEGMENT_PERSON',reqId,bitmap},[bitmap]);
+ return promise;
+}
+
+function normalizeStroke(stroke){
+ const points=(stroke?.point||[]).map(point=>({
+  x:Math.max(0,Math.min(1,Number(point.x))),
+  y:Math.max(0,Math.min(1,Number(point.y)))
+ })).filter(point=>Number.isFinite(point.x)&&Number.isFinite(point.y));
+ return points.length?{brushMode:Number(stroke?.brushMode)||1,points}:null;
+}
+
+function dilateBinary(source,w,h,radius=1){
+ const result=new Uint8Array(source);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(source[y*w+x]){
+  for(let dy=-radius;dy<=radius;dy++)for(let dx=-radius;dx<=radius;dx++){
+   if(dx*dx+dy*dy>radius*radius)continue;
+   const nx=x+dx,ny=y+dy;
+   if(nx>=0&&nx<w&&ny>=0&&ny<h)result[ny*w+nx]=1;
+  }
+ }
  return result;
 }
 
+function erodeBinary(source,w,h,radius=1){
+ const result=new Uint8Array(source.length);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+  let keep=source[y*w+x]===1;
+  for(let dy=-radius;keep&&dy<=radius;dy++)for(let dx=-radius;dx<=radius;dx++){
+   if(dx*dx+dy*dy>radius*radius)continue;
+   const nx=x+dx,ny=y+dy;
+   if(nx<0||nx>=w||ny<0||ny>=h||!source[ny*w+nx]){keep=false;break}
+  }
+  if(keep)result[y*w+x]=1;
+ }
+ return result;
+}
+
+function closeBinary(source,w,h,radius=1){
+ return erodeBinary(dilateBinary(source,w,h,radius),w,h,Math.max(1,radius));
+}
+
+function openBinary(source,w,h,radius=1){
+ return dilateBinary(erodeBinary(source,w,h,radius),w,h,radius);
+}
+
 function fillInteriorHoles(binary,w,h){
- // Background connected to image borders stays background.
- // Any enclosed zero-island becomes foreground, protecting screen/camera reflections from "holes".
- const visited=new Uint8Array(w*h);
- const queue=new Int32Array(w*h);
+ const visited=new Uint8Array(w*h),queue=new Int32Array(w*h);
  let head=0,tail=0;
  const push=i=>{if(i>=0&&i<w*h&&!visited[i]&&!binary[i]){visited[i]=1;queue[tail++]=i}};
  for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}
@@ -172,139 +119,232 @@ function fillInteriorHoles(binary,w,h){
  for(let i=0;i<binary.length;i++)if(!binary[i]&&!visited[i])binary[i]=1;
 }
 
-function buildSafeMask(maskData,mw,mh,targetW,targetH){
- if(!maskData||maskData.length!==mw*mh)throw new Error('Máscara inválida recebida do MediaPipe.');
-
- const binary=new Uint8Array(maskData.length);
- let fg=0;
- // Favor preservation: dark phone edges, fingers, nails, cameras and reflections
- // stay opaque. A small original-background halo is preferable to a cut subject.
- for(let i=0;i<maskData.length;i++){if(maskData[i]>=32){binary[i]=1;fg++}}
- let coverage=fg/binary.length;
- if(coverage<.012||coverage>.94)throw new Error(`Recorte automático inseguro (${Math.round(coverage*100)}%). Use "Ajustar recorte".`);
-
- fillInteriorHoles(binary,mw,mh);
-
- const low=document.createElement('canvas');low.width=mw;low.height=mh;
- const lctx=low.getContext('2d',{willReadFrequently:true});
- const img=lctx.createImageData(mw,mh);
- for(let i=0;i<binary.length;i++){
-  const j=i*4,a=binary[i]?255:0;
-  img.data[j]=255;img.data[j+1]=255;img.data[j+2]=255;img.data[j+3]=a;
- }
- lctx.putImageData(img,0,0);
-
- // Expand only outwards at mask resolution. This repairs narrow cuts around
- // fingers and phone edges without ever shrinking or rescaling the subject.
- const lowRadius=Math.max(2,Math.round(Math.min(mw,mh)*.005));
- const expanded=document.createElement('canvas');expanded.width=mw;expanded.height=mh;
- const ectx=expanded.getContext('2d');
- for(let y=-lowRadius;y<=lowRadius;y++)for(let x=-lowRadius;x<=lowRadius;x++){
-  if(x*x+y*y<=lowRadius*lowRadius)ectx.drawImage(low,x,y);
- }
-
- // Smooth scaling is restricted to the outer transition of the mask. The
- // phone, hand and arm still come from the untouched full-resolution photo.
- const scaled=document.createElement('canvas');scaled.width=targetW;scaled.height=targetH;
- const sctx=scaled.getContext('2d');sctx.imageSmoothingEnabled=true;sctx.imageSmoothingQuality='high';
- sctx.drawImage(expanded,0,0,targetW,targetH);
-
- // Final guard band in original resolution. It only adds original pixels.
- const radius=Math.max(2,Math.min(6,Math.round(Math.min(targetW,targetH)*.0018)));
- const safe=document.createElement('canvas');safe.width=targetW;safe.height=targetH;
- const c=safe.getContext('2d');c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
- for(let y=-radius;y<=radius;y++)for(let x=-radius;x<=radius;x++){
-  if(x*x+y*y<=radius*radius)c.drawImage(scaled,x,y);
- }
- return safe;
-}
-
-function paletteFor(style){
- const key=String(style||'').toLowerCase();
- if(key.includes('preto')||key.includes('escuro')||key.includes('grafite'))return['#11151b','#242c36','#4a5969'];
- if(key.includes('madeira')||key.includes('carvalho')||key.includes('nogueira'))return['#e8d2b8','#b99068','#735035'];
- if(key.includes('mármore')||key.includes('travertino')||key.includes('pedra'))return['#f4f1eb','#d8d1c6','#aaa095'];
- if(key.includes('azul')||key.includes('tech'))return['#e8f0f8','#b8cce1','#6887a8'];
- if(key.includes('bege')||key.includes('areia')||key.includes('creme'))return['#f5ecdf','#dfcdb5','#b79d7e'];
- if(key.includes('concreto')||key.includes('cimento'))return['#e4e5e4','#b9bdbc','#7d8483'];
- return['#fafafa','#e7e9ec','#c8cdd3'];
-}
-
-function drawScenario(ctx,w,h,scene){
- const style=scene?.style||'Branco Clean';
- const [a,b,c]=paletteFor(style);
- const g=ctx.createLinearGradient(0,0,w,h);
- g.addColorStop(0,a);g.addColorStop(.68,b);g.addColorStop(1,c);
- ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-
- const seed=hashText(`${style}:${scene?.signature||0}`);
- const lightX=seed%2?w*.24:w*.76;
- const glow=ctx.createRadialGradient(lightX,h*.16,0,lightX,h*.16,Math.max(w,h)*.58);
- glow.addColorStop(0,'rgba(255,255,255,.58)');glow.addColorStop(1,'rgba(255,255,255,0)');
- ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
-
- const lower=h*.78;
- const floor=ctx.createLinearGradient(0,lower,0,h);
- floor.addColorStop(0,'rgba(255,255,255,.02)');floor.addColorStop(1,'rgba(0,0,0,.14)');
- ctx.fillStyle=floor;ctx.fillRect(0,lower,w,h-lower);
-
- // Theme-specific subtle material pattern, always behind the original pixels.
- ctx.save();ctx.globalAlpha=.13;
- if(/madeira|carvalho|nogueira/i.test(style)){
-  ctx.strokeStyle='#5e3e28';ctx.lineWidth=Math.max(1,w*.001);
-  for(let y=lower;y<h;y+=Math.max(8,h*.018)){
-   ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(w*.25,y+5,w*.65,y-4,w,y+2);ctx.stroke();
+function keepLargestComponent(source,w,h){
+ const seen=new Uint8Array(source.length),queue=new Int32Array(source.length);
+ let best=[],total=0;
+ for(let start=0;start<source.length;start++){
+  if(!source[start]||seen[start])continue;
+  let head=0,tail=0;queue[tail++]=start;seen[start]=1;const component=[];
+  while(head<tail){
+   const i=queue[head++],x=i%w,y=(i/w)|0;component.push(i);total++;
+   const add=n=>{if(n>=0&&n<source.length&&source[n]&&!seen[n]){seen[n]=1;queue[tail++]=n}};
+   if(x>0)add(i-1);if(x<w-1)add(i+1);if(y>0)add(i-w);if(y<h-1)add(i+w);
   }
- }else if(/mármore|travertino|pedra/i.test(style)){
-  ctx.strokeStyle='#7f7f7f';ctx.lineWidth=Math.max(1,w*.001);
-  for(let i=0;i<5;i++){const y=h*(.12+i*.16);ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(w*.3,y-18,w*.65,y+24,w,y-8);ctx.stroke()}
- }else if(/concreto|cimento/i.test(style)){
-  ctx.fillStyle='#555';
-  for(let i=0;i<60;i++)ctx.fillRect((seed*(i+3)%997)/997*w,(seed*(i+19)%991)/991*h,1.5,1.5);
+  if(component.length>best.length)best=component;
  }
- ctx.restore();
+ const binary=new Uint8Array(source.length);
+ for(const i of best)binary[i]=1;
+ return{binary,count:best.length,total,retention:total?best.length/total:0};
 }
 
-async function compose(imageData,maskInfo,scene,onProgress){
- const original=await imageFromDataUrl(imageData);
+function keepAnchoredComponents(source,anchor,w,h){
+ const seen=new Uint8Array(source.length),queue=new Int32Array(source.length),result=new Uint8Array(source.length);
+ let anchoredPixels=0;
+ for(let start=0;start<source.length;start++){
+  if(!source[start]||seen[start])continue;
+  let head=0,tail=0,anchors=0;queue[tail++]=start;seen[start]=1;const component=[];
+  while(head<tail){
+   const i=queue[head++],x=i%w,y=(i/w)|0;component.push(i);if(anchor[i])anchors++;
+   const add=n=>{if(n>=0&&n<source.length&&source[n]&&!seen[n]){seen[n]=1;queue[tail++]=n}};
+   if(x>0)add(i-1);if(x<w-1)add(i+1);if(y>0)add(i-w);if(y<h-1)add(i+w);
+  }
+  if(anchors>=3){for(const i of component)result[i]=1;anchoredPixels+=anchors}
+ }
+ return{binary:result,anchoredPixels};
+}
+
+function countForeground(binary){let count=0;for(const value of binary)count+=value?1:0;return count}
+
+function foregroundCorners(binary,w,h){
+ const bw=Math.max(2,Math.round(w*.07)),bh=Math.max(2,Math.round(h*.07));
+ const regions=[[0,0],[w-bw,0],[0,h-bh],[w-bw,h-bh]];
+ let filled=0;
+ for(const [sx,sy] of regions){
+  let count=0;
+  for(let y=sy;y<sy+bh;y++)for(let x=sx;x<sx+bw;x++)count+=binary[y*w+x]?1:0;
+  if(count/(bw*bh)>.62)filled++;
+ }
+ return filled;
+}
+
+function foregroundTouchesFrame(binary,w,h){
+ const band=Math.max(2,Math.round(Math.min(w,h)*.008));
+ let count=0;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(binary[y*w+x]&&(x<band||x>=w-band||y<band||y>=h-band))count++;
+ return count>=Math.max(8,Math.round(Math.min(w,h)*.02));
+}
+
+function paintStrokes(binary,w,h,strokes){
+ const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const image=ctx.createImageData(w,h);
+ for(let i=0;i<binary.length;i++)image.data[i*4+3]=binary[i]?255:0;
+ ctx.putImageData(image,0,0);
+ ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=Math.max(10,Math.round(Math.min(w,h)*.065));
+ for(const stroke of (strokes||[]).map(normalizeStroke).filter(Boolean)){
+  ctx.globalCompositeOperation=stroke.brushMode===0?'destination-out':'source-over';
+  ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.beginPath();
+  stroke.points.forEach((point,index)=>{
+   const x=point.x*w,y=point.y*h;
+   if(index===0){ctx.moveTo(x,y);ctx.arc(x,y,ctx.lineWidth*.5,0,Math.PI*2);ctx.moveTo(x,y)}else ctx.lineTo(x,y);
+  });
+  ctx.stroke();ctx.fill();
+ }
+ const adjusted=ctx.getImageData(0,0,w,h).data;
+ for(let i=0;i<binary.length;i++)binary[i]=adjusted[i*4+3]>=128?1:0;
+}
+
+async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgress){
+ onProgress?.('Identificando o celular, a mão e o braço...');
+ removerModulePromise||=import('modern-rembg');
+ const {removeBackground}=await removerModulePromise;
+ const started=performance.now();
+ const personPromise=requestPersonMask(imageData);
+ const [blob,personInfo]=await Promise.all([
+  removeBackground(imageData,{output:'mask',resolution:320,proxy:false}),
+  personPromise
+ ]);
+ const maskUrl=URL.createObjectURL(blob);
+ try{
+  const maskImage=await imageFromSource(maskUrl);
+  const scale=Math.min(1,640/Math.max(targetW,targetH));
+  const w=Math.max(1,Math.round(targetW*scale)),h=Math.max(1,Math.round(targetH*scale));
+  const low=document.createElement('canvas');low.width=w;low.height=h;
+  const ctx=low.getContext('2d',{willReadFrequently:true});
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(maskImage,0,0,w,h);
+  const pixels=ctx.getImageData(0,0,w,h).data;
+  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),skinAnchor=new Uint8Array(w*h);
+  // A low threshold is deliberately conservative: uncertain edge pixels stay
+  // with the original phone/hand instead of cutting pieces out of them.
+  const {mask:personMask,skinMask,width:personW,height:personH}=personInfo;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+   const i=y*w+x;
+   const px=Math.min(personW-1,Math.floor(x*personW/w)),py=Math.min(personH-1,Math.floor(y*personH/h));
+   binary[i]=pixels[i*4+3]>=24?1:0;
+   personCandidate[i]=personMask[py*personW+px]>=58?1:0;
+   skinAnchor[i]=skinMask[py*personW+px]>=82&&pixels[i*4+3]>=16?1:0;
+  }
+  // Only human components that contain skin already touching the salient
+  // foreground are added. This restores the complete wrist/sleeve while
+  // rejecting plants, upholstery and people elsewhere in the old scene.
+  personCandidate=closeBinary(openBinary(personCandidate,w,h,1),w,h,2);
+  const protectedPerson=keepAnchoredComponents(personCandidate,skinAnchor,w,h);
+  if(protectedPerson.anchoredPixels/binary.length<.0005)throw new Error('a mão não foi identificada com segurança; a foto não foi marcada como pronta');
+  // Extend the human mask only when the original foreground actually exits
+  // the frame (the normal arm/sleeve case). A floating phone and hand already
+  // complete in U2Net must not inherit lights or people from the old scene.
+  if(foregroundTouchesFrame(binary,w,h))for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i])binary[i]=1;
+  paintStrokes(binary,w,h,strokes);
+  binary=closeBinary(binary,w,h,3);
+  binary=openBinary(binary,w,h,2);
+  const component=keepLargestComponent(binary,w,h);
+  binary=component.binary;
+  if(component.retention<.78)throw new Error('o fundo antigo ficou ligado ao objeto e o recorte foi recusado');
+  const beforeFill=countForeground(binary);
+  fillInteriorHoles(binary,w,h);
+  const afterFill=countForeground(binary),coverage=afterFill/binary.length;
+  const repaired=(afterFill-beforeFill)/binary.length;
+  if(coverage<.025||coverage>.88||repaired>.13||foregroundCorners(binary,w,h)>=3){
+   throw new Error('o resultado apresentou risco de buracos ou excesso do fundo antigo e foi recusado');
+  }
+  // One outward pixel protects thin phone borders and fingertips. We never
+  // erode or rescale the original subject.
+  binary=dilateBinary(binary,w,h,2);
+  const safeLow=document.createElement('canvas');safeLow.width=w;safeLow.height=h;
+  const safeCtx=safeLow.getContext('2d');
+  const safeImage=safeCtx.createImageData(w,h);
+  for(let i=0;i<binary.length;i++){
+   const p=i*4;safeImage.data[p]=255;safeImage.data[p+1]=255;safeImage.data[p+2]=255;safeImage.data[p+3]=binary[i]?255:0;
+  }
+  safeCtx.putImageData(safeImage,0,0);
+  const mask=document.createElement('canvas');mask.width=targetW;mask.height=targetH;
+  const finalCtx=mask.getContext('2d');finalCtx.imageSmoothingEnabled=true;finalCtx.imageSmoothingQuality='high';
+  finalCtx.drawImage(safeLow,0,0,targetW,targetH);
+  onProgress?.(`Celular e mão preservados em ${Math.round(performance.now()-started)} ms.`);
+  return mask;
+ }finally{URL.revokeObjectURL(maskUrl)}
+}
+
+const SCENE_PHOTOS=[
+ '/photo-scenes/clean-room.jpg',
+ '/photo-scenes/neutral-arch.jpg',
+ '/photo-scenes/dark-lounge.jpg',
+ '/photo-scenes/bright-living.jpg',
+ '/photo-scenes/blurred-office.jpg',
+ '/photo-scenes/home-office.jpg',
+ '/photo-scenes/dark-gallery.jpg',
+ '/photo-scenes/soft-living.jpg'
+];
+const sceneImageCache=new Map();
+
+function scenePhotoFor(style){
+ const key=String(style||'').toLowerCase();
+ if(/preto|escuro|grafite|carbon|dark/.test(key))return SCENE_PHOTOS[2];
+ if(/azul|tech|android|apple/.test(key))return SCENE_PHOTOS[4];
+ if(/madeira|carvalho|nogueira|quente|golden/.test(key))return SCENE_PHOTOS[7];
+ if(/home office|marketplace|catálogo|produto/.test(key))return SCENE_PHOTOS[5];
+ if(/mármore|travertino|pedra|concreto|cimento|slate/.test(key))return SCENE_PHOTOS[1];
+ if(/bege|areia|creme|champagne|natural/.test(key))return SCENE_PHOTOS[3];
+ if(/loft|editorial|vitrine|urban|luxury/.test(key))return SCENE_PHOTOS[6];
+ return SCENE_PHOTOS[0];
+}
+
+async function loadSceneImage(path){
+ if(!sceneImageCache.has(path))sceneImageCache.set(path,imageFromSource(path));
+ return sceneImageCache.get(path);
+}
+
+async function drawScenario(ctx,w,h,scene){
+ const style=scene?.style||'Branco Clean',path=scenePhotoFor(style);
+ const image=await loadSceneImage(path);
+ const iw=image.naturalWidth||image.width,ih=image.naturalHeight||image.height;
+ const scale=Math.max(w/iw,h/ih)*1.04;
+ const sw=w/scale,sh=h/scale;
+ const seed=hashText(`${style}:${scene?.signature||0}`);
+ const travelX=Math.max(0,iw-sw),travelY=Math.max(0,ih-sh);
+ const sx=travelX*(.42+(seed%19)/100),sy=travelY*(.40+((seed>>5)%17)/100);
+ ctx.save();
+ ctx.filter=`blur(${Math.max(1,Math.min(6,Math.round(Math.min(w,h)*.0024)))}px) saturate(.92) brightness(1.02)`;
+ ctx.drawImage(image,sx,sy,sw,sh,0,0,w,h);
+ ctx.restore();
+ ctx.fillStyle=/preto|escuro|grafite|dark|carbon/i.test(style)?'rgba(6,12,20,.16)':'rgba(255,255,255,.08)';
+ ctx.fillRect(0,0,w,h);
+}
+
+async function compose(imageData,scene,strokes,onProgress){
+ const original=await imageFromSource(imageData);
  const w=original.naturalWidth||original.width,h=original.naturalHeight||original.height;
- const mask=buildSafeMask(maskInfo.mask,maskInfo.width,maskInfo.height,w,h);
-
+ const mask=await calculateForegroundMask(imageData,w,h,strokes,onProgress);
  const cut=document.createElement('canvas');cut.width=w;cut.height=h;
- const cctx=cut.getContext('2d',{alpha:true});
- // Exact original at exact coordinates: no resizing, no generative pixels.
- cctx.drawImage(original,0,0);
- cctx.globalCompositeOperation='destination-in';
- cctx.drawImage(mask,0,0);
- cctx.globalCompositeOperation='source-over';
-
+ const cutCtx=cut.getContext('2d',{alpha:true});
+ // The output uses untouched pixels at their exact original coordinates.
+ // Only the alpha mask and environment are new.
+ cutCtx.drawImage(original,0,0);
+ cutCtx.globalCompositeOperation='destination-in';cutCtx.drawImage(mask,0,0);
+ cutCtx.globalCompositeOperation='source-over';
  const out=document.createElement('canvas');out.width=w;out.height=h;
  const ctx=out.getContext('2d',{alpha:false});
- drawScenario(ctx,w,h,scene);
- ctx.drawImage(cut,0,0);
-
+ await drawScenario(ctx,w,h,scene);ctx.drawImage(cut,0,0);
  onProgress?.('Finalizando em qualidade máxima...');
  return out.toDataURL('image/jpeg',.995);
 }
 
 export const LOCAL_AI_ENGINES=[
- {id:'mediapipe-v2',name:'MediaPipe MagicTouch V2',description:'Modelo oficial atual com pincéis positivos/negativos e ajuste interativo.'}
+ {id:'foreground-v1',name:'Recorte de primeiro plano',description:'Preserva automaticamente o conjunto formado pelo celular, mão e braço.'}
 ];
 
 export async function preparePhotoLocally(imageData,{scene={},strokes=null,onProgress}={}){
  if(!String(imageData||'').startsWith('data:image/'))throw new Error('Imagem original inválida.');
- try{
-  const mask=await requestMask(imageData,strokes,onProgress);
-  return compose(imageData,mask,scene,onProgress);
- }catch(error){
-  console.error('BMCenter MediaPipe V2',error);
+ try{return await compose(imageData,scene,strokes,onProgress)}
+ catch(error){
+  console.error('BMCenter foreground remover',error);
   throw new Error(`Recorte local: ${String(error?.message||error||'erro desconhecido')}`);
  }
 }
 
 export function clearLocalAIModelCache(){
- if(workerInstance)workerInstance.terminate();
- workerInstance=null;
- for(const [,job] of pending)job.reject(new Error('Segmentador reiniciado.'));
- pending.clear();
+ removerModulePromise=null;
+ if(personWorker)personWorker.terminate();personWorker=null;
+ for(const [,job] of personPending)job.reject(new Error('recorte reiniciado'));
+ personPending.clear();
 }

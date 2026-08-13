@@ -1,4 +1,4 @@
-/* Photo Studio v10.4.40 - celular e mão sem deformação */
+/* Photo Studio v10.4.41 - aparelho, mão e ambiente real */
 .mask-editor-image{
  width:min(100%,calc(66vh * var(--mask-image-ratio,1)))!important;
  max-width:calc(100% - 32px);
@@ -16,3 +16,12 @@
 @media(max-width:760px){
  .mask-editor-image{width:min(100%,calc(62vh * var(--mask-image-ratio,1)))!important;max-width:calc(100% - 16px)}
 }
+.photo-scenario-list .scene-preview{background-position:center!important;background-size:cover!important}
+.photo-scenario-list .scene-0{background-image:url('/photo-scenes/clean-room.jpg')!important}
+.photo-scenario-list .scene-1{background-image:url('/photo-scenes/neutral-arch.jpg')!important}
+.photo-scenario-list .scene-2{background-image:url('/photo-scenes/dark-lounge.jpg')!important}
+.photo-scenario-list .scene-3{background-image:url('/photo-scenes/soft-living.jpg')!important}
+.photo-scenario-list .scene-4{background-image:url('/photo-scenes/neutral-arch.jpg')!important}
+.photo-scenario-list .scene-5{background-image:url('/photo-scenes/bright-living.jpg')!important}
+.photo-scenario-list .scene-6{background-image:url('/photo-scenes/blurred-office.jpg')!important}
+.photo-scenario-list .scene-7{background-image:url('/photo-scenes/bright-living.jpg')!important}
