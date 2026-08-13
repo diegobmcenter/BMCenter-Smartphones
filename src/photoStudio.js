@@ -1,15 +1,84 @@
 const DB_NAME='bmcenter-photo-studio-v1';
 const STORE='assets';
+const HANDLE_STORE='handles';
 
 function openDb(){
  return new Promise((resolve,reject)=>{
   if(!('indexedDB' in window))return reject(new Error('Este navegador não oferece armazenamento local de imagens.'));
-  const req=indexedDB.open(DB_NAME,1);
-  req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE)){const store=db.createObjectStore(STORE,{keyPath:'id'});store.createIndex('phoneId','phoneId',{unique:false})}};
+  const req=indexedDB.open(DB_NAME,2);
+  req.onupgradeneeded=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains(STORE)){const store=db.createObjectStore(STORE,{keyPath:'id'});store.createIndex('phoneId','phoneId',{unique:false})}
+   if(!db.objectStoreNames.contains(HANDLE_STORE))db.createObjectStore(HANDLE_STORE,{keyPath:'id'});
+  };
   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('Falha ao abrir a biblioteca de fotos.'));
  });
 }
 function tx(mode,callback){return openDb().then(db=>new Promise((resolve,reject)=>{const t=db.transaction(STORE,mode),store=t.objectStore(STORE);let result;try{result=callback(store)}catch(error){reject(error);return}t.oncomplete=()=>resolve(result);t.onerror=()=>reject(t.error||new Error('Falha ao acessar as fotos.'));t.onabort=()=>reject(t.error||new Error('Operação cancelada.'))}))}
+
+function handleTx(mode,callback){return openDb().then(db=>new Promise((resolve,reject)=>{const tr=db.transaction(HANDLE_STORE,mode),store=tr.objectStore(HANDLE_STORE);let result;try{result=callback(store)}catch(error){reject(error);return}tr.oncomplete=()=>resolve(result);tr.onerror=()=>reject(tr.error||new Error('Falha ao acessar a pasta local.'));tr.onabort=()=>reject(tr.error||new Error('Operação cancelada.'))}))}
+export function localDirectorySupported(){return typeof window!=='undefined'&&typeof window.showDirectoryPicker==='function'}
+export async function saveDirectoryHandle(id,handle,name=''){if(!id||!handle)return;await handleTx('readwrite',store=>store.put({id,handle,name:name||handle.name||'',savedAt:new Date().toISOString()}))}
+export async function getDirectoryHandle(id){if(!id)return null;const db=await openDb();return new Promise((resolve,reject)=>{const req=db.transaction(HANDLE_STORE,'readonly').objectStore(HANDLE_STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})}
+async function ensurePermission(handle,mode='readwrite'){if(!handle)return false;const opts={mode};if((await handle.queryPermission?.(opts))==='granted')return true;return (await handle.requestPermission?.(opts))==='granted'}
+export async function chooseRootPhotoDirectory(){
+ if(!localDirectorySupported())throw new Error('Este navegador não permite selecionar uma pasta local persistente.');
+ const handle=await window.showDirectoryPicker({mode:'readwrite'});
+ if(!(await ensurePermission(handle,'readwrite')))throw new Error('Permissão para a pasta não concedida.');
+ await saveDirectoryHandle('photo-root',handle,handle.name);
+ return{handle,name:handle.name};
+}
+export async function getRootPhotoDirectory(){
+ const saved=await getDirectoryHandle('photo-root');if(!saved?.handle)return null;
+ const permitted=await ensurePermission(saved.handle,'readwrite').catch(()=>false);
+ return permitted?saved:null;
+}
+export async function createPhonePhotoDirectory(phoneId,name){
+ const root=await getRootPhotoDirectory();if(!root?.handle)throw new Error('Selecione primeiro a pasta raiz local.');
+ const safe=String(name||'Aparelho').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim();
+ const handle=await root.handle.getDirectoryHandle(safe,{create:true});
+ await saveDirectoryHandle(`phone-folder:${phoneId}`,handle,safe);
+ return{handle,name:safe};
+}
+export async function getPhonePhotoDirectory(phoneId){
+ const saved=await getDirectoryHandle(`phone-folder:${phoneId}`);if(!saved?.handle)return null;
+ const permitted=await ensurePermission(saved.handle,'readwrite').catch(()=>false);
+ return permitted?saved:null;
+}
+export async function choosePhonePhotoDirectory(phoneId){
+ if(!localDirectorySupported())throw new Error('Este navegador não permite selecionar uma pasta local persistente.');
+ const handle=await window.showDirectoryPicker({mode:'readwrite'});
+ if(!(await ensurePermission(handle,'readwrite')))throw new Error('Permissão para a pasta não concedida.');
+ await saveDirectoryHandle(`phone-folder:${phoneId}`,handle,handle.name);
+ return{handle,name:handle.name};
+}
+export async function listDirectoryImages(phoneId,{includePrepared=false}={}){
+ const saved=await getPhonePhotoDirectory(phoneId);if(!saved?.handle)return[];
+ const files=[];
+ for await(const [name,entry] of saved.handle.entries()){
+  if(entry.kind!=='file'||!/\.(jpe?g|png|webp)$/i.test(name))continue;
+  if(!includePrepared&&/^BM-IA-/i.test(name))continue;
+  try{files.push(await entry.getFile())}catch{}
+ }
+ return files.sort((a,b)=>(a.lastModified||0)-(b.lastModified||0));
+}
+export async function readPhoneDirectoryImageDataUrl(phoneId,name,{maxSide=2200,quality=.92}={}){
+ const saved=await getPhonePhotoDirectory(phoneId);if(!saved?.handle)throw new Error('Pasta local deste aparelho não está vinculada.');
+ const handle=await saved.handle.getFileHandle(name);const file=await handle.getFile();
+ return resizeImageFile(file,{maxSide,quality});
+}
+export async function deletePhoneDirectoryFile(phoneId,name){
+ if(!name)return;const saved=await getPhonePhotoDirectory(phoneId);if(!saved?.handle)return;
+ await saved.handle.removeEntry(name);
+}
+export async function writeImageToPhoneDirectory(phoneId,name,dataUrl){
+ const saved=await getPhonePhotoDirectory(phoneId);if(!saved?.handle)throw new Error('Pasta local deste aparelho não está vinculada.');
+ const clean=await sanitizeImageDataUrl(dataUrl);
+ const fileHandle=await saved.handle.getFileHandle(name,{create:true});
+ const writable=await fileHandle.createWritable();
+ await writable.write(dataUrlToBlob(clean));await writable.close();
+ return name;
+}
 export async function getPhotoAsset(id){if(!id)return null;const db=await openDb();return new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})}
 export async function deletePhotoAsset(id){if(!id)return;await tx('readwrite',store=>store.delete(id))}
 

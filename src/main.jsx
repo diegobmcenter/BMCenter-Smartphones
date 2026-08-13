@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy,FolderOpen,Share2,Trash2,WandSparkles,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
-import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadDataUrl,sharePhotoDataUrls,sceneForPhone,photoStyles}from'./photoStudio.js';
+import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadDataUrl,sharePhotoDataUrls,sceneForPhone,photoStyles,localDirectorySupported,chooseRootPhotoDirectory,getRootPhotoDirectory,createPhonePhotoDirectory,getPhonePhotoDirectory,choosePhonePhotoDirectory,listDirectoryImages}from'./photoStudio.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
@@ -10,10 +10,10 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10419.css';import'./v10420.css';
-const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.20';
-const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10419.css';import'./v10420.css';import'./v10421.css';import'./v10422.css';
+const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',PHOTOROOTKEY='bmcenter-photo-root-local',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
+const APP_VERSION='10.4.22';
+const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,PHOTOROOTKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
 const saveDraft=(k,v)=>{const payload={...v,deleted:false,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
@@ -725,7 +725,7 @@ function defaultPhoneColumns(){return[
 ]}
 function loadPhoneColumns(){const saved=load(PHONECOLKEY);if(!Array.isArray(saved)||!saved.length)return defaultPhoneColumns();const defaults=defaultPhoneColumns(),byId=Object.fromEntries(saved.map(x=>[x.id,x]));return defaults.map(d=>({...d,...byId[d.id]})).sort((a,b)=>{const ao=saved.findIndex(x=>x.id===a.id),bo=saved.findIndex(x=>x.id===b.id);return (ao<0?999:ao)-(bo<0?999:bo)})}
 function Phones(){
- const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
+ const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[photoPhone,setPhotoPhone]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
  const tableWrapRef=useRef(null);
  useEffect(()=>{if(tableWrapRef.current)tableWrapRef.current.scrollLeft=0},[query,statusFilter,tagFilter,onlyFavorites]);
  const banks=load(BKEY),suppliers=load(FKEY),profiles=load(PKEY);
@@ -768,7 +768,7 @@ function Phones(){
    case'cost':return <td className="money-cell">{money(cost)}</td>;
    case'expected':return <td className="money-cell">{money(x.expected)}</td>;
    case'profit':return <td className="money-cell"><span className={profit>=0?'profit-positive':'profit-negative'}>{money(profit)}</span></td>;
-   case'actions':return <td className="smartphone-actions-cell"><div className="smartphone-actions-primary"><button className={x.favorite?'phone-action favorite-button active':'phone-action'} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={18}/></button><button className="phone-action view-action" onClick={()=>setDetail(x)} title="Abrir ficha"><Eye size={18}/></button><button className="phone-action edit-action" onClick={()=>setEdit(x)} title="Editar aparelho"><FileText size={18}/></button><button className="phone-action duplicate-action" onClick={()=>duplicatePhone(x)} title="Duplicar aparelho"><Copy size={18}/></button><button className="phone-action more-action" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}} title="Mais ações">•••</button></div></td>;
+   case'actions':return <td className="smartphone-actions-cell"><div className="smartphone-actions-primary"><button className={x.favorite?'phone-action favorite-button active':'phone-action'} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={18}/></button><button className="phone-action view-action" onClick={()=>setDetail(x)} title="Abrir ficha"><Eye size={18}/></button><button className="phone-action photo-action" onClick={()=>setPhotoPhone(x)} title="Fotos para anúncio"><Camera size={18}/></button><button className="phone-action edit-action" onClick={()=>setEdit(x)} title="Editar aparelho"><FileText size={18}/></button><button className="phone-action duplicate-action" onClick={()=>duplicatePhone(x)} title="Duplicar aparelho"><Copy size={18}/></button><button className="phone-action more-action" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}} title="Mais ações">•••</button></div></td>;
    default:return null
   }
  }
@@ -790,6 +790,7 @@ function Phones(){
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>{setBatchCreate(false);refreshDrafts()}} onSave={created=>{persist([...created,...items]);setBatchCreate(false);refreshDrafts()}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
   {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
+  {photoPhone&&<PhotoStudioModal phone={items.find(x=>x.id===photoPhone.id)||photoPhone} onClose={()=>setPhotoPhone(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setPhotoPhone(v)}}/>}
   {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);let saved=touchPhone(addTimeline(v,'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
   {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>x.id!==salePhone.id?x:touchPhone(addTimeline({...x,status:'Vendido',sale},`Venda registrada por ${money(sale.value)}`))));setSalePhone(null)}}/>}
  </>
@@ -2474,14 +2475,82 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  const[busy,setBusy]=useState(false);
  const[progress,setProgress]=useState('');
  const[fileError,setFileError]=useState('');
- const fileRef=useRef(null);
+ const[rootInfo,setRootInfo]=useState(()=>{const saved=load(PHOTOROOTKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{}});
+ const[folderBusy,setFolderBusy]=useState(false);
+ const fileRef=useRef(null),openCameraRef=useRef(null);
  useEffect(()=>{if(phone&&!busy)setWorkPhone(phone)},[phone,busy]);
- const settings={style:'Automático',intensity:'Natural',keepScale:true,driveFolderUrl:'',...(workPhone?.photoStudioSettings||{})};
+ const settings={style:'Automático',intensity:'Natural',keepScale:true,localFolderName:'',localFolderLinked:false,...(workPhone?.photoStudioSettings||{})};
  const photos=Array.isArray(workPhone?.photos)?workPhone.photos:[];
  const ready=photoReadyCount(workPhone),total=photoOriginalCount(workPhone),hasPhotoUndo=photos.some(meta=>meta.previousProcessedAssetId);
  const scene=workPhone?.photoScene||sceneForPhone(workPhone,settings.style,0);
  function commit(next){setWorkPhone(next);onPhoneChange?.(next)}
  function updateSettings(patch){commit({...workPhone,photoStudioSettings:{...settings,...patch}})}
+ function preferredFolderName(){
+  return (settings.localFolderName||`${workPhone.code||''} ${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Aparelho').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim()
+ }
+ async function configureRootFolder(){
+  setFolderBusy(true);setFileError('');
+  try{
+   if(localDirectorySupported()){
+    const picked=await chooseRootPhotoDirectory();
+    const next={name:picked.name||'Pasta de fotos',configured:true,mode:'handle'};
+    setRootInfo(next);save(PHOTOROOTKEY,next)
+   }else{
+    const current=rootInfo.path||rootInfo.name||'DCIM/OpenCamera';
+    const path=prompt('Informe o caminho/nome da pasta raiz usada pelo Open Camera:',current);
+    if(path===null||!path.trim())return;
+    const next={name:path.trim().split('/').filter(Boolean).pop()||path.trim(),path:path.trim(),configured:true,mode:'path'};
+    setRootInfo(next);save(PHOTOROOTKEY,next)
+   }
+  }catch(error){if(error?.name!=='AbortError')setFileError(error?.message||'Não foi possível configurar a pasta raiz.')}finally{setFolderBusy(false)}
+ }
+ async function preparePhoneFolder(){
+  const name=preferredFolderName();setFolderBusy(true);setFileError('');
+  try{
+   if(localDirectorySupported()){
+    let root=await getRootPhotoDirectory();
+    if(!root){await configureRootFolder();root=await getRootPhotoDirectory()}
+    if(!root)return;
+    const folder=await createPhonePhotoDirectory(workPhone.id,name);
+    updateSettings({localFolderName:folder.name||name,localFolderLinked:true})
+   }else{
+    if(!rootInfo.configured)await configureRootFolder();
+    updateSettings({localFolderName:name,localFolderLinked:true})
+   }
+  }catch(error){setFileError(error?.message||'Não foi possível preparar a pasta deste aparelho.')}finally{setFolderBusy(false)}
+ }
+ async function chooseExistingPhoneFolder(){
+  if(!localDirectorySupported())return alert('Neste navegador, use o nome/caminho configurado da pasta local.');
+  setFolderBusy(true);
+  try{const folder=await choosePhonePhotoDirectory(workPhone.id);updateSettings({localFolderName:folder.name||preferredFolderName(),localFolderLinked:true})}
+  catch(error){if(error?.name!=='AbortError')setFileError(error?.message||'Não foi possível selecionar a pasta.')}finally{setFolderBusy(false)}
+ }
+ async function syncPhoneFolder(){
+  if(!localDirectorySupported())return fileRef.current?.click();
+  setFolderBusy(true);setFileError('');
+  try{
+   const folder=await getPhonePhotoDirectory(workPhone.id);
+   if(!folder)return alert('Crie ou selecione primeiro a pasta deste aparelho.');
+   const files=await listDirectoryImages(workPhone.id);
+   const known=new Set(photos.map(meta=>meta.name));
+   const fresh=files.filter(file=>!known.has(file.name));
+   if(!fresh.length)return alert(`Pasta atualizada. ${files.length} foto(s) encontrada(s), nenhuma nova.`);
+   await addPhotos(fresh);
+  }catch(error){setFileError(error?.message||'Não foi possível ler a pasta local.')}finally{setFolderBusy(false)}
+ }
+ function localFolderPath(){
+  const root=rootInfo.path||rootInfo.name||'Pasta raiz';
+  return `${String(root).replace(/\/+$/,'')}/${preferredFolderName()}`
+ }
+ async function openOpenCamera(){
+  if(!settings.localFolderLinked)await preparePhoneFolder();
+  try{
+   if(navigator.clipboard)await navigator.clipboard.writeText(localFolderPath()).catch(()=>{});
+   window.location.href='intent:#Intent;action=android.media.action.STILL_IMAGE_CAMERA;package=net.sourceforge.opencamera;end'
+  }catch{
+   alert(`Abra o Open Camera e use como destino:\n${localFolderPath()}`)
+  }
+ }
  async function refreshAssets(source=workPhone){
   const map={};
   for(const meta of source?.photos||[]){
@@ -2542,7 +2611,6 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  function visibleAsset(meta){const id=galleryMode==='ready'?(meta.processedAssetId||meta.originalAssetId):meta.originalAssetId;return{id,url:assetUrls[id]||'',prepared:Boolean(meta.processedAssetId)}}
  async function downloadAll(){const chosen=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return{id,index}}).filter(x=>assetUrls[x.id]);for(const {id,index} of chosen)await downloadDataUrl(assetUrls[id],`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`)}
  async function shareAll(){const items=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return assetUrls[id]?{dataUrl:assetUrls[id],name:`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`}:null}).filter(Boolean);if(!items.length)return alert('Nenhuma foto disponível.');try{await sharePhotoDataUrls(items,`${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Fotos do aparelho')}catch(error){if(error?.name!=='AbortError')alert('Não foi possível abrir o compartilhamento.')}}
- const driveUrl=String(settings.driveFolderUrl||'').trim();
  return <section className={`photo-studio ${standalone?'standalone':''}`}>
   <header className="photo-studio-head"><div><span><WandSparkles size={15}/></span><div><h3>Fotos para anúncio</h3><p>Visual original preservado · cenário consistente por aparelho · arquivos sanitizados automaticamente.</p></div></div><div className="photo-studio-head-right"><div className="photo-metadata-badge"><ShieldCheck size={14}/><span><b>Sem metadados</b><small>EXIF · GPS · XMP · IPTC</small></span></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></div></header>
   <div className="photo-studio-controls">
@@ -2551,11 +2619,20 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
    <label className="photo-toggle"><input type="checkbox" checked={settings.keepScale!==false} onChange={e=>updateSettings({keepScale:e.target.checked})}/><span>Manter escala real</span></label>
    <div className="scene-chip"><small>Cenário deste aparelho</small><b>{scene.style} · #{scene.signature}</b></div>
   </div>
-  <div className="photo-primary-actions"><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar / adicionar fotos</button><input ref={fileRef} hidden type="file" accept="image/*" capture="environment" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/><button type="button" className="primary" disabled={busy||!total} onClick={()=>processAll()}><WandSparkles size={15}/> {busy?'Processando...':'Preparar todas com IA'}</button><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={15}/> Refazer fundo</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={15}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" className="photo-undo-button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={15}/> Desfazer último fundo</button>}</div>
+  <div className="photo-primary-actions"><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Abrir Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar da pasta</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/><button type="button" className="primary" disabled={busy||!total} onClick={()=>processAll()}><WandSparkles size={15}/> {busy?'Processando...':'Preparar todas com IA'}</button><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={15}/> Refazer fundo</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={15}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" className="photo-undo-button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={15}/> Desfazer último fundo</button>}</div>
   {(progress||fileError)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress}</div>}
   <div className="photo-gallery-toolbar"><div><button type="button" className={galleryMode==='ready'?'active':''} onClick={()=>setGalleryMode('ready')}>Preparadas <b>{ready}</b></button><button type="button" className={galleryMode==='original'?'active':''} onClick={()=>setGalleryMode('original')}>Originais <b>{total}</b></button></div><div><button type="button" disabled={!total} onClick={downloadAll}><Download size={14}/> Baixar</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
-  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>No celular, toque em “Tirar / adicionar fotos”. Você pode fotografar diretamente pela câmera.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={meta.status==='error'?'error':''}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Fundo preparado · metadados removidos':'Visual original · metadados removidos')}</small></div><div>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={()=>resetProcessed(meta)}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={()=>removePhoto(meta)}><Trash2 size={13}/></button></div></footer></article>})}</div>}
-  <div className="photo-drive"><div><FolderOpen size={16}/><div><b>Pasta de fotos no Google Drive</b><span>O BMCenter guarda o vínculo. As imagens continuam sob seu controle.</span></div></div><div><input value={settings.driveFolderUrl||''} onChange={e=>updateSettings({driveFolderUrl:e.target.value})} placeholder="Cole o link da pasta deste aparelho"/><button type="button" disabled={!driveUrl} onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')}><ExternalLink size={14}/> Abrir pasta</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Enviar / Drive</button></div><small>No Android, “Enviar / Drive” abre o compartilhamento do sistema: você pode escolher Google Drive, WhatsApp, Messenger e outros apps disponíveis.</small></div>
+  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>Abra o Open Camera para fotografar na pasta configurada. Depois use “Importar da pasta” para trazer as fotos ao Photo Studio.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={meta.status==='error'?'error':''}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Fundo preparado · metadados removidos':'Visual original · metadados removidos')}</small></div><div>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={()=>resetProcessed(meta)}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={()=>removePhoto(meta)}><Trash2 size={13}/></button></div></footer></article>})}</div>}
+  <div className="photo-drive photo-local-folder">
+   <div className="photo-local-folder-head"><FolderOpen size={16}/><div><b>Pasta local das fotos</b><span>O DriveSync continua sincronizando esta pasta com o Google Drive automaticamente.</span></div><span className={rootInfo.configured?'ready':'pending'}>{rootInfo.configured?'Raiz configurada':'Configurar uma vez'}</span></div>
+   <div className="photo-root-row"><div><small>Pasta raiz</small><b>{rootInfo.path||rootInfo.name||'Ainda não configurada'}</b></div><button type="button" onClick={configureRootFolder} disabled={folderBusy}><Settings size={14}/> {rootInfo.configured?'Alterar raiz':'Configurar raiz'}</button></div>
+   <div className="photo-phone-folder-card">
+    <div><small>SUBPASTA DESTE APARELHO</small><strong>{preferredFolderName()}</strong><span>{localFolderPath()}</span></div>
+    <div><button type="button" className="primary" onClick={preparePhoneFolder} disabled={folderBusy}><Plus size={14}/> Criar pasta do aparelho</button><button type="button" onClick={chooseExistingPhoneFolder} disabled={folderBusy}><FolderOpen size={14}/> Selecionar existente</button><button type="button" onClick={syncPhoneFolder} disabled={folderBusy}><RefreshCw size={14}/> Atualizar fotos</button></div>
+   </div>
+   <div className="photo-local-flow"><span>1</span><b>Crie a subpasta</b><ChevronRight size={13}/><span>2</span><b>Abra o Open Camera</b><ChevronRight size={13}/><span>3</span><b>Atualize as fotos</b></div>
+   <div className="photo-storage-note"><ShieldCheck size={14}/><span><b>A pasta local é a origem das fotos.</b> O BMCenter lembra a pasta raiz e a subpasta de cada aparelho. O DriveSync pode continuar sincronizando e apagando os arquivos no Google Drive conforme sua configuração.</span></div>
+  </div>
  </section>
 }
 

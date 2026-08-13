@@ -1,0 +1,16 @@
+/* BMCenter v10.4.21 — atalhos e fluxo Open Camera / Drive */
+.phone-action.photo-action{color:#7257d8!important}
+.phone-action.photo-action:hover{background:color-mix(in srgb,#7257d8 11%,var(--surface2))!important;border-color:color-mix(in srgb,#7257d8 35%,var(--line))!important}
+.photo-primary-actions .photo-open-camera{border-color:color-mix(in srgb,#7257d8 35%,var(--line))!important;background:color-mix(in srgb,#7257d8 7%,var(--surface))!important;color:#7257d8!important;font-weight:800!important}
+.photo-drive-v10421{display:grid!important;gap:8px!important}
+.photo-drive-v10421>.photo-drive-root,.photo-drive-v10421>.photo-drive-device{display:grid!important;grid-template-columns:minmax(230px,1fr) auto auto;gap:6px!important;align-items:end!important}
+.photo-drive-v10421>.photo-drive-device{grid-template-columns:minmax(160px,.55fr) minmax(280px,1.45fr) auto}
+.photo-drive-v10421 label{display:grid!important;gap:3px!important;font-size:7px!important;font-weight:750!important;color:var(--muted)!important}
+.photo-drive-v10421 label input{width:100%!important}
+.photo-drive-v10421 button{width:auto!important;white-space:nowrap!important}
+.photo-storage-note{display:flex!important;align-items:flex-start!important;gap:6px!important;padding:7px 8px!important;border:1px solid color-mix(in srgb,#22a06b 24%,var(--line))!important;border-radius:8px!important;background:color-mix(in srgb,#22a06b 5%,var(--surface2))!important}
+.photo-storage-note svg{flex:0 0 auto;color:#168555}.photo-storage-note span{font-size:7px!important;line-height:1.45!important;color:var(--muted)!important}.photo-storage-note b{color:var(--text)!important}
+@media(max-width:760px){
+ .photo-drive-v10421>.photo-drive-root,.photo-drive-v10421>.photo-drive-device{grid-template-columns:1fr!important}
+ .photo-drive-v10421 button{width:100%!important}
+}
