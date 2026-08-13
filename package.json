@@ -1,7 +1,7 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.42",
+  "version": "10.4.43",
   "type": "module",
   "scripts": {
     "sync:mediapipe": "node scripts/copy-mediapipe-wasm.mjs",
@@ -10,7 +10,8 @@
     "prebuild": "npm run sync:mediapipe",
     "build": "vite build",
     "preview": "vite preview",
-    "test:photo-download": "node scripts/test-photo-download.mjs"
+    "test:photo-download": "node scripts/test-photo-download.mjs",
+    "test:photo-engine": "node scripts/test-photo-engine.mjs"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "1.0.1",

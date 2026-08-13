@@ -1,11 +1,12 @@
 # Licenças de terceiros
 
-## Modern Rembg / U2NetP
+## Modern Rembg / Silueta
 
 - Pacote: `modern-rembg` 0.1.2
-- Modelo: U2NetP distribuído pelo próprio pacote
+- Modelo local: Silueta, obtido da distribuição oficial do projeto rembg
 - Licença do pacote: MIT
 - Projeto: https://github.com/qq15725/modern-rembg
+- Modelo: https://github.com/danielgatis/rembg/releases
 
 O modelo calcula localmente o primeiro plano. Nenhuma fotografia é enviada para um serviço externo.
 

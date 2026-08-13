@@ -29,14 +29,12 @@ self.onmessage=async event=>{
   if(masks.length<5)throw new Error('o modelo de mão e braço não retornou as classes esperadas');
   const width=masks[0].width,height=masks[0].height;
   const skin=masks[2].getAsFloat32Array();
-  const clothes=masks[4].getAsFloat32Array();
-  const mask=new Uint8Array(skin.length),skinMask=new Uint8Array(skin.length);
-  for(let i=0;i<mask.length;i++){
-   mask[i]=Math.max(0,Math.min(255,Math.round(Math.max(skin[i],clothes[i])*255)));
+  const skinMask=new Uint8Array(skin.length);
+  for(let i=0;i<skinMask.length;i++){
    skinMask[i]=Math.max(0,Math.min(255,Math.round(skin[i]*255)));
   }
   result.close?.();
-  self.postMessage({type:'PERSON_RESULT',reqId,width,height,mask,skinMask},[mask.buffer,skinMask.buffer]);
+  self.postMessage({type:'PERSON_RESULT',reqId,width,height,skinMask},[skinMask.buffer]);
  }catch(error){
   try{bitmap?.close?.()}catch{}
   self.postMessage({type:'PERSON_ERROR',reqId,error:String(error?.message||error||'erro ao identificar mão e braço')});

@@ -153,6 +153,20 @@ function keepAnchoredComponents(source,anchor,w,h){
  return{binary:result,anchoredPixels};
 }
 
+function removeUnprotectedBorderRegions(source,protectedHuman,w,h){
+ const result=new Uint8Array(source),guard=dilateBinary(protectedHuman,w,h,3);
+ const visited=new Uint8Array(source.length),queue=new Int32Array(source.length);
+ let head=0,tail=0;
+ const push=i=>{if(i>=0&&i<source.length&&source[i]&&!guard[i]&&!visited[i]){visited[i]=1;queue[tail++]=i}};
+ for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}
+ for(let y=1;y<h-1;y++){push(y*w);push(y*w+w-1)}
+ while(head<tail){
+  const i=queue[head++],x=i%w,y=(i/w)|0;result[i]=0;
+  if(x>0)push(i-1);if(x<w-1)push(i+1);if(y>0)push(i-w);if(y<h-1)push(i+w);
+ }
+ return result;
+}
+
 function countForeground(binary){let count=0;for(const value of binary)count+=value?1:0;return count}
 
 function foregroundCorners(binary,w,h){
@@ -194,28 +208,42 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
  const started=performance.now();
  const personPromise=requestPersonMask(imageData);
  const [blob,personInfo]=await Promise.all([
-  removeBackground(imageData,{output:'mask',resolution:320,proxy:false}),
+  removeBackground(imageData,{output:'mask',model:'/models/silueta.onnx',resolution:320,proxy:false}),
   personPromise
  ]);
  const maskUrl=URL.createObjectURL(blob);
  try{
-  const maskImage=await imageFromSource(maskUrl);
+  const [maskImage,sourceImage]=await Promise.all([imageFromSource(maskUrl),imageFromSource(imageData)]);
   const scale=Math.min(1,640/Math.max(targetW,targetH));
   const w=Math.max(1,Math.round(targetW*scale)),h=Math.max(1,Math.round(targetH*scale));
   const low=document.createElement('canvas');low.width=w;low.height=h;
   const ctx=low.getContext('2d',{willReadFrequently:true});
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(maskImage,0,0,w,h);
   const pixels=ctx.getImageData(0,0,w,h).data;
-  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),skinDetected=new Uint8Array(w*h);
+  const sourceCanvas=document.createElement('canvas');sourceCanvas.width=w;sourceCanvas.height=h;
+  const sourceCtx=sourceCanvas.getContext('2d',{willReadFrequently:true});
+  sourceCtx.imageSmoothingEnabled=true;sourceCtx.imageSmoothingQuality='high';sourceCtx.drawImage(sourceImage,0,0,w,h);
+  const sourcePixels=sourceCtx.getImageData(0,0,w,h).data;
+  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),personWeak=new Uint8Array(w*h),skinDetected=new Uint8Array(w*h);
   // A low threshold is deliberately conservative: uncertain edge pixels stay
   // with the original phone/hand instead of cutting pieces out of them.
-  const {mask:personMask,skinMask,width:personW,height:personH}=personInfo;
+  const {skinMask,width:personW,height:personH}=personInfo;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const i=y*w+x;
    const px=Math.min(personW-1,Math.floor(x*personW/w)),py=Math.min(personH-1,Math.floor(y*personH/h));
-   binary[i]=pixels[i*4+3]>=24?1:0;
-   personCandidate[i]=personMask[py*personW+px]>=72?1:0;
-   skinDetected[i]=skinMask[py*personW+px]>=70?1:0;
+   const skin=skinMask[py*personW+px]||0;
+   const r=sourcePixels[i*4],g=sourcePixels[i*4+1],b=sourcePixels[i*4+2];
+   const cb=128-.168736*r-.331264*g+.5*b,cr=128+.5*r-.418688*g-.081312*b;
+   const luma=.299*r+.587*g+.114*b;
+   const skinColor=luma>=55&&cr>=136&&cr<=184&&cb>=78&&cb<=136&&Math.max(r,g,b)-Math.min(r,g,b)>=8;
+   const weakSkinColor=luma>=40&&cr>=132&&cr<=188&&cb>=74&&cb<=140&&Math.max(r,g,b)-Math.min(r,g,b)>=5;
+   binary[i]=pixels[i*4+3]>=36?1:0;
+   // The multiclass model repeatedly classified the upholstered sofa as
+   // clothes. Protection is therefore driven by body skin; a real sleeve can
+   // still remain when it is part of the main salient foreground mask.
+   personCandidate[i]=skin>=60&&skinColor?1:0;
+   personWeak[i]=skin>=24&&weakSkinColor?1:0;
+   skinDetected[i]=skin>=48&&skinColor?1:0;
   }
   // Only human components that contain skin already touching the salient
   // foreground are added. This restores the complete wrist/sleeve while
@@ -224,15 +252,27 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
   const nearOriginalForeground=dilateBinary(binary,w,h,4);
   const skinAnchor=new Uint8Array(binary.length);
   for(let i=0;i<skinAnchor.length;i++)skinAnchor[i]=skinDetected[i]&&nearOriginalForeground[i]?1:0;
-  const protectedPerson=keepAnchoredComponents(personCandidate,skinAnchor,w,h);
-  if(protectedPerson.anchoredPixels/binary.length<.0005)throw new Error('a mão não foi identificada com segurança; a foto não foi marcada como pronta');
+  const anchoredPerson=keepAnchoredComponents(personCandidate,skinAnchor,w,h);
+  if(anchoredPerson.anchoredPixels/binary.length<.0005)throw new Error('a mão não foi identificada com segurança; a foto não foi marcada como pronta');
+  // Close narrow confidence gaps caused by shadows, pen marks, rings and
+  // highlights on the hand. Then recover only weak human pixels immediately
+  // around that trusted silhouette; this expands the person, never the sofa.
+  let protectedPersonBinary=closeBinary(anchoredPerson.binary,w,h,5);
+  const personEnvelope=dilateBinary(protectedPersonBinary,w,h,5);
+  for(let i=0;i<protectedPersonBinary.length;i++)if(personWeak[i]&&personEnvelope[i])protectedPersonBinary[i]=1;
+  protectedPersonBinary=closeBinary(protectedPersonBinary,w,h,4);
+  const protectedPerson={binary:protectedPersonBinary,anchoredPixels:anchoredPerson.anchoredPixels};
+  // The photographed environment often enters from an image edge and touches
+  // the wrist (sofa, rug or cushion). Flood only those non-human border pixels
+  // away before joining the protected hand to the phone.
+  binary=removeUnprotectedBorderRegions(binary,protectedPerson.binary,w,h);
   // Phone and hand are one protected subject regardless of whether the arm
   // touches the photo border. The previous border condition caused hands
   // completely inside the frame to be detected and then discarded.
   for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i])binary[i]=1;
   paintStrokes(binary,w,h,strokes);
-  binary=closeBinary(binary,w,h,3);
-  binary=openBinary(binary,w,h,2);
+  binary=closeBinary(binary,w,h,5);
+  binary=openBinary(binary,w,h,1);
   const component=keepLargestComponent(binary,w,h);
   binary=component.binary;
   if(component.retention<.78)throw new Error('o fundo antigo ficou ligado ao objeto e o recorte foi recusado');

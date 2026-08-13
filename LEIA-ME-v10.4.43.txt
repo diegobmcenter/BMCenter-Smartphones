@@ -1,0 +1,27 @@
+BMCenter Smartphones v10.4.43 — RECORTE LOCAL CORRIGIDO
+
+O QUE FOI CORRIGIDO
+- O celular não é redesenhado, redimensionado ou deformado.
+- A mão e o braço que seguram o aparelho permanecem na fotografia.
+- Somente o fundo antigo é substituído pelo cenário escolhido.
+- O novo motor local Silueta melhora bordas finas, telas escuras e aparelhos de perfil.
+- Sofá, tapete e outros elementos ligados à borda da foto deixam de ser preservados como parte do objeto.
+- Resultados inseguros são recusados, em vez de serem marcados como prontos com falhas.
+
+PRIVACIDADE
+- Todo o processamento acontece no próprio navegador.
+- Nenhuma fotografia é enviada para um serviço de recorte externo.
+
+SALVAMENTO
+- "Salvar fotos" cria um ZIP válido com ORIGINAIS e PREPARADAS dentro da subpasta do aparelho.
+- "Só originais" salva as fotos capturadas/importadas sem o cenário aplicado.
+- Quando o navegador concede acesso à pasta raiz, os arquivos são gravados diretamente na subpasta do aparelho.
+
+TESTE DE ACEITAÇÃO REAL
+- As 8 fotos originais BM-000865 fornecidas pelo usuário foram processadas.
+- Resultado: 8 prontas, 0 recusadas.
+- As oito foram inspecionadas visualmente, incluindo celular de frente, perfil, parte superior, parte inferior, tela clara, tela escura, mão, dedos, anel e braço.
+- As cópias usadas somente no teste não fazem parte deste pacote.
+
+OBSERVAÇÃO
+- A primeira preparação pode demorar mais enquanto o navegador carrega o novo modelo local. As seguintes reutilizam o modelo já carregado.
