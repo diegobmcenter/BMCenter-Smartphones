@@ -82,7 +82,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.4 - correcao do publicador"
+git commit -m "BMCenter v10.4.26 - publicacoes, fluxo operacional e fotos"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

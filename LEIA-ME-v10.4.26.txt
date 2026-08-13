@@ -1,0 +1,17 @@
+BMCenter Smartphones v10.4.26
+
+PACOTE COMPLETO para publicação, baseado no snapshot íntegro v10.4.24.
+
+Correções desta versão:
+- Dashboard > Publicações passa a usar a mesma fonte da tela “Onde está publicado” (marketplaceProfiles / publishedProfileIds).
+- Dashboard > Fluxo Operacional passa a listar dinamicamente os status que realmente possuem aparelhos ativos.
+- Photo Studio ganha “Tirar foto”, vinculando a captura imediatamente ao aparelho.
+- Quando a subpasta local do aparelho estiver vinculada e o navegador suportar acesso persistente a pastas, a captura também é gravada diretamente nela, já sanitizada.
+- O fluxo existente pelo Open Camera permanece disponível.
+- Mantidas as correções visuais e de overflow da v10.4.24.
+
+PUBLICAÇÃO:
+1. Extraia o ZIP.
+2. Abra a pasta BMCenter-Smartphones-v10.4.26.
+3. Execute PUBLICAR-ATUALIZACAO.bat.
+4. O BAT instala dependências se necessário, executa o build e só depois envia ao GitHub.
