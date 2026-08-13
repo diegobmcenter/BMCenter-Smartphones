@@ -169,7 +169,19 @@ const SCENES=[
  ['Produto Grafite','Tema local Produto Grafite. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.']
 ];
 function hash(text){let h=2166136261;for(const c of String(text||'')){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return Math.abs(h>>>0)}
-export function sceneForPhone(phone,style='Automático',offset=0){const baseHash=hash(phone?.id||phone?.code||phone?.model),candidates=style==='Automático'?SCENES:SCENES.filter(([tag])=>tag===style);const pool=candidates.length?candidates:SCENES;const index=(baseHash+Number(offset||0))%pool.length;const [tag,basePrompt]=pool[index];const signature=(hash(`${phone?.id||''}:${offset}`)%997)+1,lights=['luz principal vindo da esquerda','luz principal vindo da direita','luz superior difusa com preenchimento lateral','luz de janela frontal-lateral'],tones=['temperatura neutra','temperatura levemente quente','temperatura levemente fria','contraste suave e natural'],composition=['fundo com profundidade curta','fundo com profundidade média','parede mais distante e suavemente desfocada','composição próxima e limpa'];const prompt=`${basePrompt} Variação exclusiva ${signature}: ${lights[baseHash%lights.length]}, ${tones[Math.floor(baseHash/7)%tones.length]}, ${composition[Math.floor(baseHash/13)%composition.length]}.`;return{id:`scene-${tag.toLowerCase()}-${signature}`,style:tag,prompt,offset:Number(offset||0),signature}}
+export function sceneForPhone(phone,style='Automático',offset=0){
+ const baseHash=hash(phone?.id||phone?.code||phone?.model);
+ let baseIndex=0;
+ if(style==='Automático')baseIndex=baseHash%SCENES.length;
+ else{
+  const found=SCENES.findIndex(([name])=>name===style);
+  baseIndex=found>=0?found:baseHash%SCENES.length;
+ }
+ const index=(baseIndex+Number(offset||0))%SCENES.length;
+ const [tag,basePrompt]=SCENES[index];
+ const signature=(hash(`${phone?.id||''}:${index}:${offset}`)%997)+1;
+ return{id:`scene-${index}-${signature}`,style:tag,prompt:basePrompt,offset:Number(offset||0),signature,index}
+}
 export const photoStyles=['Automático',...SCENES.map(([name])=>name)];
 
 export async function sharePhotoDataUrls(items,title='Fotos do aparelho'){
