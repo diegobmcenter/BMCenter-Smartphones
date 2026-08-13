@@ -1,0 +1,27 @@
+BMCenter Smartphones v10.4.37
+
+CORREÇÃO DO MEDIAPIPE INTERACTIVE SEGMENTER
+
+Causa do erro da v10.4.36:
+- Runtime/modelo incompatíveis.
+- O modelo anterior exigia InteractiveSegmenterGraphV2, que não existia no runtime usado.
+- A máscara do MediaPipe também estava sendo mantida além do tempo de vida garantido pelo callback.
+
+v10.4.37:
+- @mediapipe/tasks-vision 0.10.35 (estável).
+- WASM exatamente da mesma versão.
+- Modelo Web documentado pelo Google:
+  ptm_512_hdt_ptm_woid.tflite
+- API oficial: segment(image,{keypoint},callback).
+- A categoryMask é COPIADA dentro do callback.
+- A foto final usa os pixels da original nas mesmas coordenadas.
+- Nenhuma transformação geométrica é aplicada ao aparelho.
+- Resultado mantém a mesma resolução da original armazenada.
+- O ponto de recorte pode ser corrigido manualmente.
+- Sem OpenAI e sem custo por foto.
+
+TESTE:
+1. Uma foto.
+2. Trocar fundo.
+3. Se o aparelho não for selecionado corretamente, use Corrigir recorte.
+4. Compare Original x Preparada.

@@ -19,3 +19,7 @@ Consulte o repositório do projeto para o texto integral da licença e avisos ap
 
 ## MediaPipe Tasks Vision / MagicTouch
 Google MediaPipe Tasks Vision e MagicTouch são usados para segmentação interativa local. MagicTouch model card: Apache License 2.0.
+
+
+## MediaPipe v10.4.37
+Runtime fixado em @mediapipe/tasks-vision 0.10.35. Interactive Segmenter usa o modelo Web ptm_512_hdt_ptm_woid.tflite conforme documentação oficial do Google.
