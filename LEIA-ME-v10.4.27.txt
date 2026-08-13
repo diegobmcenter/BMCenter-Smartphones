@@ -1,0 +1,26 @@
+BMCenter Smartphones v10.4.27
+
+PRINCIPAL ALTERACAO
+- O botao Preparar todas com IA nao usa mais a API paga da OpenAI.
+- A remocao de fundo roda no proprio navegador usando @imgly/background-removal.
+- O aparelho e preservado a partir dos pixels da foto original; o BMCenter troca apenas o fundo e acrescenta sombra de contato.
+- Nao exige OPENAI_API_KEY e nao consome creditos por foto.
+
+PRIMEIRO USO
+- Na primeira foto, o navegador precisa baixar o modelo de IA local (aprox. dezenas de MB). Isso pode levar mais tempo.
+- Depois o modelo fica armazenado em cache e as proximas execucoes tendem a ser mais rapidas.
+- O processamento usa memoria e CPU/GPU do proprio aparelho.
+
+PUBLICACAO
+1. Extraia o ZIP completo.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. O BAT instala as novas dependencias, executa npm run build e somente publica se o build passar.
+4. A Vercel fara o deploy automaticamente.
+
+LICENCA DE TERCEIROS
+- @imgly/background-removal e distribuido sob AGPL-3.0. Consulte THIRD-PARTY-LICENSES.md.
+
+
+CORREÇÃO DO INSTALADOR
+- Ajustada a dependência onnxruntime-web para ^1.21.0 estável.
+- Remove o conflito ERESOLVE com @imgly/background-removal 1.7.0.

@@ -25,12 +25,19 @@ if errorlevel 1 goto :npm_missing
 echo.
 echo [1/8] Verificando dependencias...
 
-if not exist "node_modules\vite\bin\vite.js" (
-    echo Dependencias ainda nao instaladas. Instalando...
-    call npm install --no-audit --no-fund
-)
+if not exist "node_modules\vite\bin\vite.js" goto :install_dependencies
+if not exist "node_modules\@imgly\background-removal\package.json" goto :install_dependencies
+goto :dependencies_ok
+
+:install_dependencies
+echo Dependencias novas/ausentes. Instalando...
+call npm install --no-audit --no-fund
+if errorlevel 1 goto :install_error
+
+:dependencies_ok
 
 if not exist "node_modules\vite\bin\vite.js" goto :install_error
+if not exist "node_modules\@imgly\background-removal\package.json" goto :install_error
 
 echo Dependencias OK.
 
@@ -82,7 +89,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.26 - publicacoes, fluxo operacional e fotos"
+git commit -m "BMCenter v10.4.27 - IA local gratuita para fotos"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

@@ -1,7 +1,7 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.26",
+  "version": "10.4.27",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,9 @@
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "qrcode.react": "^4.2.0"
+    "qrcode.react": "^4.2.0",
+    "@imgly/background-removal": "^1.7.0",
+    "onnxruntime-web": "^1.21.0"
   },
   "devDependencies": {
     "vite": "^6.0.5"
