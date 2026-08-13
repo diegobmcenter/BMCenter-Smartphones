@@ -6694,7 +6694,7 @@ body{background:var(--61-bg)!important}
 }
 
 
-/* ===== Photo Studio v10.4.39 ===== */
+/* ===== Photo Studio ===== */
 .photo-scenario-picker{margin:10px 0 12px;padding:12px;border:1px solid rgba(148,163,184,.18);border-radius:14px;background:rgba(15,23,42,.36)}
 .photo-scenario-title{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:10px}
 .photo-scenario-title b{font-size:13px}.photo-scenario-title small{font-size:11px;opacity:.68}

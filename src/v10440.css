@@ -1,0 +1,18 @@
+/* Photo Studio v10.4.40 - celular e mão sem deformação */
+.mask-editor-image{
+ width:min(100%,calc(66vh * var(--mask-image-ratio,1)))!important;
+ max-width:calc(100% - 32px);
+ margin:0 auto!important;
+ aspect-ratio:var(--mask-image-ratio,1);
+}
+.mask-editor-image img{
+ width:100%!important;
+ height:100%!important;
+ max-height:none!important;
+ object-fit:fill!important;
+}
+.mask-editor-image svg{width:100%!important;height:100%!important}
+.photo-engine-ready b{letter-spacing:-.01em}
+@media(max-width:760px){
+ .mask-editor-image{width:min(100%,calc(62vh * var(--mask-image-ratio,1)))!important;max-width:calc(100% - 16px)}
+}

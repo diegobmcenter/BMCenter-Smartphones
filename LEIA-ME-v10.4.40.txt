@@ -1,0 +1,37 @@
+BMCenter Smartphones v10.4.40 — CELULAR E MÃO PRESERVADOS
+
+REGRA DESTA VERSÃO
+As fotos são tratadas como um conjunto único:
+- celular;
+- mão e dedos;
+- manga e parte do braço visível.
+
+Todo esse conjunto continua vindo da fotografia original, na mesma posição,
+proporção e perspectiva. Somente o ambiente ao redor é substituído.
+
+CORREÇÕES
+- O automático não tenta mais separar o aparelho da mão.
+- A direção da mão é identificada para incluir também manga e braço visíveis.
+- A máscara ficou mais conservadora para não cortar câmeras, laterais, dedos ou unhas.
+- O recorte só cresce para fora; nunca encolhe o aparelho ou a mão.
+- O ajuste manual agora fica exatamente alinhado à fotografia, inclusive em fotos verticais.
+- O tempo permitido para a primeira inicialização do recorte foi aumentado.
+
+COMO USAR
+1. Importe ou tire as fotos normalmente, segurando o aparelho na mão.
+2. Escolha o cenário.
+3. Clique em "Preparar todas as fotos".
+4. Compare Original e Preparada.
+
+Se uma foto específica precisar de correção:
+1. Abra "Ajustar recorte".
+2. Use "+ Preservar" sobre celular, dedos, mão, manga ou braço que estiver faltando.
+3. Use "− Remover fundo" somente sobre uma parte do ambiente antigo que tenha sobrado.
+4. Clique em "Aplicar recorte e cenário".
+
+TESTE REALIZADO
+- Fotografia real vertical de um smartphone segurado na mão.
+- Celular, mão, dedos, manga e antebraço preservados.
+- Fundo substituído sem mudar tamanho ou forma do aparelho.
+- Editor de ajuste conferido em foto vertical.
+- Projeto compilado sem erros.

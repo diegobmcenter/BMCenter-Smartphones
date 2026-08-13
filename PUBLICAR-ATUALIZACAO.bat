@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.39 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.40 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.39"
+set "VERSION=10.4.40"
 
 echo.
 echo ============================================================
@@ -86,7 +86,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.39 - corrige Photo Studio e recorte local"
+git commit -m "BMCenter v10.4.40 - preserva celular mao e braco no Photo Studio"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

@@ -61,9 +61,58 @@ function normalizedStroke(stroke){
  return{brushMode:mode,point:points,isCompleted:true};
 }
 
-function defaultStrokes(){
- // Deliberately a stroke, not a single point. Current V2 model is trained for interactive brushes.
- return[{brushMode:1,point:[{x:.50,y:.36},{x:.50,y:.44},{x:.50,y:.52},{x:.50,y:.60},{x:.50,y:.66}],isCompleted:true}];
+function defaultStrokes(bitmap){
+ // BMCenter photos are made with the phone held in a hand. Detect the visible
+ // skin cluster, then continue the preservation stroke in the wrist/arm
+ // direction until it reaches the frame. This keeps phone, fingers, hand,
+ // sleeve and visible arm together as one original subject.
+ let skinCenter={x:.5,y:.62},skinEdge={x:.5,y:.78},skinCount=0;
+ try{
+  const w=bitmap.width,h=bitmap.height,canvas=new OffscreenCanvas(w,h);
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bitmap,0,0);
+  const pixels=ctx.getImageData(0,0,w,h).data;
+  const step=Math.max(1,Math.floor(Math.max(w,h)/260));
+  let sx=0,sy=0,sxx=0,syy=0,sxy=0,bestScore=-1;
+  for(let y=Math.floor(h*.20);y<h*.86;y+=step)for(let x=Math.floor(w*.15);x<w*.85;x+=step){
+   const i=(y*w+x)*4,r=pixels[i],g=pixels[i+1],b=pixels[i+2];
+   const cb=128-.168736*r-.331264*g+.5*b;
+   const cr=128+.5*r-.418688*g-.081312*b;
+   const spread=Math.max(r,g,b)-Math.min(r,g,b);
+   if(r>48&&g>30&&b>20&&spread>12&&cb>=72&&cb<=135&&cr>=133&&cr<=183&&r>g*.95&&r>b*.88){
+    const nx=x/w,ny=y/h;skinCount++;sx+=nx;sy+=ny;sxx+=nx*nx;syy+=ny*ny;sxy+=nx*ny;
+    const score=Math.hypot(nx-.5,(ny-.40)*1.18)+Math.max(0,ny-.5)*.45;
+    if(score>bestScore){bestScore=score;skinEdge={x:nx,y:ny}}
+   }
+  }
+  if(skinCount>12){
+   skinCenter={x:sx/skinCount,y:sy/skinCount};
+   const cxx=sxx/skinCount-skinCenter.x*skinCenter.x;
+   const cyy=syy/skinCount-skinCenter.y*skinCenter.y;
+   const cxy=sxy/skinCount-skinCenter.x*skinCenter.y;
+   const theta=.5*Math.atan2(2*cxy,cxx-cyy);
+   skinCenter.axis={x:Math.cos(theta),y:Math.sin(theta)};
+  }
+ }catch{}
+
+ let wristX=skinEdge.x-skinCenter.x,wristY=skinEdge.y-skinCenter.y;
+ const wristLength=Math.hypot(wristX,wristY)||1;wristX/=wristLength;wristY/=wristLength;
+ let axis=skinCenter.axis||{x:0,y:1};
+ if(axis.x*wristX+axis.y*wristY<0)axis={x:-axis.x,y:-axis.y};
+ let dx=axis.x*.78+wristX*.62,dy=axis.y*.78+wristY*.62;
+ if(skinCount<=12){dx=0;dy=1}
+ const directionLength=Math.hypot(dx,dy)||1;dx/=directionLength;dy/=directionLength;
+ const limits=[];
+ if(dx<-.001)limits.push((.025-skinEdge.x)/dx);if(dx>.001)limits.push((.975-skinEdge.x)/dx);
+ if(dy>.001)limits.push((.975-skinEdge.y)/dy);if(dy<-.001)limits.push((.08-skinEdge.y)/dy);
+ const positive=limits.filter(value=>value>0);
+ // Stop well inside the visible arm. The segmenter completes the object to the
+ // frame; crossing the edge would teach it to preserve a strip of old background.
+ const extend=(positive.length?Math.min(...positive):.5)*.62;
+ const end={x:Math.max(.025,Math.min(.975,skinEdge.x+dx*extend)),y:Math.max(.08,Math.min(.975,skinEdge.y+dy*extend))};
+ const points=[{x:.50,y:.34},{x:.50,y:.44},{x:.50,y:.54},{x:.50,y:.62}];
+ if(skinCount>12)points.push(skinCenter,skinEdge);
+ for(let t=.25;t<=1;t+=.25)points.push({x:skinEdge.x+(end.x-skinEdge.x)*t,y:skinEdge.y+(end.y-skinEdge.y)*t});
+ return[{brushMode:1,point:points,isCompleted:true}];
 }
 
 async function requestMask(imageData,strokes,onProgress){
@@ -88,19 +137,20 @@ async function requestMask(imageData,strokes,onProgress){
  }
  const reqId=++requestCounter;
  const clean=(Array.isArray(strokes)?strokes:[]).map(normalizedStroke).filter(Boolean);
+ const selectedStrokes=clean.length?clean:defaultStrokes(bitmap);
  const worker=getWorker();
 
  const promise=new Promise((resolve,reject)=>{
   const timeout=setTimeout(()=>{
    pending.delete(reqId);
    reject(new Error('O segmentador demorou demais para iniciar. Atualize a página e tente novamente.'));
-  },90000);
+  },180000);
   pending.set(reqId,{
    resolve:value=>{clearTimeout(timeout);resolve(value)},
    reject:error=>{clearTimeout(timeout);reject(error)}
   });
  });
- worker.postMessage({type:'SEGMENT_IMAGE',reqId,bitmap,strokes:clean.length?clean:defaultStrokes()},[bitmap]);
+ worker.postMessage({type:'SEGMENT_IMAGE',reqId,bitmap,strokes:selectedStrokes},[bitmap]);
  const result=await promise;
  onProgress?.(`Recorte calculado em ${Math.round(result.inferenceMs||0)} ms.`);
  return result;
@@ -127,10 +177,11 @@ function buildSafeMask(maskData,mw,mh,targetW,targetH){
 
  const binary=new Uint8Array(maskData.length);
  let fg=0;
- // Slightly permissive threshold. Manual negative strokes remove false positives.
- for(let i=0;i<maskData.length;i++){if(maskData[i]>=112){binary[i]=1;fg++}}
+ // Favor preservation: dark phone edges, fingers, nails, cameras and reflections
+ // stay opaque. A small original-background halo is preferable to a cut subject.
+ for(let i=0;i<maskData.length;i++){if(maskData[i]>=32){binary[i]=1;fg++}}
  let coverage=fg/binary.length;
- if(coverage<.012||coverage>.985)throw new Error(`Recorte automático inseguro (${Math.round(coverage*100)}%). Use "Ajustar recorte".`);
+ if(coverage<.012||coverage>.94)throw new Error(`Recorte automático inseguro (${Math.round(coverage*100)}%). Use "Ajustar recorte".`);
 
  fillInteriorHoles(binary,mw,mh);
 
@@ -143,15 +194,25 @@ function buildSafeMask(maskData,mw,mh,targetW,targetH){
  }
  lctx.putImageData(img,0,0);
 
- // Nearest-neighbour upscale preserves geometry.
- const scaled=document.createElement('canvas');scaled.width=targetW;scaled.height=targetH;
- const sctx=scaled.getContext('2d');sctx.imageSmoothingEnabled=false;
- sctx.drawImage(low,0,0,targetW,targetH);
+ // Expand only outwards at mask resolution. This repairs narrow cuts around
+ // fingers and phone edges without ever shrinking or rescaling the subject.
+ const lowRadius=Math.max(2,Math.round(Math.min(mw,mh)*.005));
+ const expanded=document.createElement('canvas');expanded.width=mw;expanded.height=mh;
+ const ectx=expanded.getContext('2d');
+ for(let y=-lowRadius;y<=lowRadius;y++)for(let x=-lowRadius;x<=lowRadius;x++){
+  if(x*x+y*y<=lowRadius*lowRadius)ectx.drawImage(low,x,y);
+ }
 
- // Only expand OUTWARD 2-4 px. Never erode inward.
- const radius=Math.max(2,Math.min(4,Math.round(Math.min(targetW,targetH)*.0012)));
+ // Smooth scaling is restricted to the outer transition of the mask. The
+ // phone, hand and arm still come from the untouched full-resolution photo.
+ const scaled=document.createElement('canvas');scaled.width=targetW;scaled.height=targetH;
+ const sctx=scaled.getContext('2d');sctx.imageSmoothingEnabled=true;sctx.imageSmoothingQuality='high';
+ sctx.drawImage(expanded,0,0,targetW,targetH);
+
+ // Final guard band in original resolution. It only adds original pixels.
+ const radius=Math.max(2,Math.min(6,Math.round(Math.min(targetW,targetH)*.0018)));
  const safe=document.createElement('canvas');safe.width=targetW;safe.height=targetH;
- const c=safe.getContext('2d');c.imageSmoothingEnabled=false;
+ const c=safe.getContext('2d');c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
  for(let y=-radius;y<=radius;y++)for(let x=-radius;x<=radius;x++){
   if(x*x+y*y<=radius*radius)c.drawImage(scaled,x,y);
  }
