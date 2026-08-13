@@ -62,7 +62,7 @@ export async function listDirectoryImages(phoneId,{includePrepared=false}={}){
  }
  return files.sort((a,b)=>(a.lastModified||0)-(b.lastModified||0));
 }
-export async function readPhoneDirectoryImageDataUrl(phoneId,name,{maxSide=2200,quality=.92}={}){
+export async function readPhoneDirectoryImageDataUrl(phoneId,name,{maxSide=3200,quality=.98}={}){
  const saved=await getPhonePhotoDirectory(phoneId);if(!saved?.handle)throw new Error('Pasta local deste aparelho não está vinculada.');
  const handle=await saved.handle.getFileHandle(name);const file=await handle.getFile();
  return resizeImageFile(file,{maxSide,quality});
@@ -86,7 +86,7 @@ export function dataUrlToBlob(dataUrl){const [head,data]=String(dataUrl||'').spl
 export function dataUrlToFile(dataUrl,name='foto.jpg'){const blob=dataUrlToBlob(dataUrl);return new File([blob],name,{type:blob.type||'image/jpeg',lastModified:0})}
 
 async function imageFromDataUrl(source){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Imagem inválida.'));img.src=source})}
-export async function sanitizeImageDataUrl(source,{maxSide=2200,quality=.92}={}){
+export async function sanitizeImageDataUrl(source,{maxSide=3200,quality=.98}={}){
  if(!String(source||'').startsWith('data:image/'))throw new Error('Imagem inválida para sanitização.');
  const image=await imageFromDataUrl(source);
  const scale=Math.min(1,maxSide/Math.max(image.naturalWidth,image.naturalHeight));
@@ -101,40 +101,76 @@ export async function exportAllPhotoAssets(){const db=await openDb();const recor
 export async function importPhotoAssets(records,{replace=false}={}){const prepared=await Promise.all((Array.isArray(records)?records:[]).filter(item=>item?.id&&item?.dataUrl).map(async item=>({...item,dataUrl:await sanitizeImageDataUrl(item.dataUrl),metadataSanitized:true,sanitizedAt:new Date().toISOString()})));const db=await openDb();return new Promise((resolve,reject)=>{const t=db.transaction(STORE,'readwrite'),store=t.objectStore(STORE);if(replace)store.clear();for(const item of prepared)store.put(item);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error)})}
 export async function downloadDataUrl(dataUrl,name){const clean=await sanitizeImageDataUrl(dataUrl);const a=document.createElement('a');a.href=clean;a.download=name;a.click()}
 
-export async function resizeImageFile(file,{maxSide=1600,quality=.9}={}){
+export async function resizeImageFile(file,{maxSide=3200,quality=.98}={}){
  const source=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(file)});
  return sanitizeImageDataUrl(source,{maxSide,quality});
 }
 
 const SCENES=[
- ['Minimalista','Bancada de pedra clara acetinada, parede off-white suave, luz natural lateral difusa, ambiente minimalista premium, sem objetos chamativos.'],
- ['Premium','Mesa de madeira clara sofisticada, parede bege quente desfocada, iluminação de estúdio macia e elegante, atmosfera premium discreta.'],
- ['Escuro','Bancada grafite fosca, fundo cinza-carvão com gradiente suave, luz lateral fria controlada, estética tecnológica moderna.'],
- ['Residencial','Mesa de madeira natural clara, sala moderna desfocada ao fundo, luz de janela suave, ambiente residencial organizado e realista.'],
- ['Claro','Superfície branca texturizada, fundo cinza muito claro, sombra natural delicada, visual limpo de catálogo sem parecer estúdio artificial.'],
- ['Premium','Bancada de pedra cinza-clara, painel ripado de madeira desfocado, iluminação quente lateral, composição elegante e moderna.'],
- ['Minimalista','Mesa bege fosca, parede areia uniforme com leve profundidade, luz natural suave, composição extremamente limpa.'],
- ['Escuro','Mesa preta fosca, fundo azul-petróleo muito escuro desfocado, recorte de luz suave, aparência sofisticada sem neon.'],
- ['Residencial','Bancada clara próxima a uma janela, fundo de sala contemporânea suavemente desfocado, luz natural realista.'],
- ['Claro','Bancada cinza-gelo, parede branca quente, iluminação difusa superior e lateral, fotografia comercial limpa.'],
- ['Premium','Pedra travertino clara, fundo creme com planta muito discreta e desfocada, luz de fim de tarde suave, aparência premium.'],
- ['Minimalista','Superfície cinza-clara lisa, fundo branco com sombra arquitetônica suave, composição minimalista editorial.'],
- ['Escuro','Bancada chumbo acetinada, fundo preto suave com parede texturizada discreta, iluminação de produto lateral.'],
- ['Residencial','Mesa de carvalho claro, cozinha moderna desfocada ao fundo, iluminação natural neutra e organizada.'],
- ['Claro','Mesa branca fosca, fundo bege muito claro, iluminação uniforme com sombra de contato realista.'],
- ['Premium','Bancada mineral clara, fundo de escritório moderno desfocado, iluminação sofisticada e neutra.'],
- ['Minimalista','Superfície areia clara, fundo cinza quente liso, luz lateral macia e limpa, sem decoração.'],
- ['Escuro','Bancada grafite com textura fina, fundo preto-marrom suavemente desfocado, luz de recorte quente muito discreta.'],
- ['Residencial','Mesa clara, fundo de home office organizado e desfocado, luz natural suave entrando pela lateral.'],
- ['Claro','Bancada off-white, fundo azul-cinza muito claro desfocado, iluminação de catálogo natural.'],
- ['Premium','Mesa de nogueira clara, parede cinza quente elegante, luz natural difusa com sombras suaves.'],
- ['Minimalista','Bancada de microcimento claro, fundo bege uniforme, composição editorial muito limpa.'],
- ['Escuro','Superfície cinza-escura fosca, fundo chumbo com gradiente, iluminação técnica suave e realista.'],
- ['Residencial','Mesa de madeira média, fundo de sala clean desfocado, luz de janela neutra e aconchegante.']
+ ['Branco Clean','Tema local Branco Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Branco Catálogo','Tema local Branco Catálogo. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Cinza Gelo','Tema local Cinza Gelo. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Cinza Premium','Tema local Cinza Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Grafite Fosco','Tema local Grafite Fosco. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Preto Premium','Tema local Preto Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Azul Tech','Tema local Azul Tech. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Azul Petróleo','Tema local Azul Petróleo. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Azul Gelo','Tema local Azul Gelo. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Bege Minimalista','Tema local Bege Minimalista. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Areia Clean','Tema local Areia Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Creme Premium','Tema local Creme Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Madeira Clara','Tema local Madeira Clara. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Carvalho Claro','Tema local Carvalho Claro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Nogueira','Tema local Nogueira. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Madeira Escura','Tema local Madeira Escura. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Mármore Branco','Tema local Mármore Branco. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Mármore Bege','Tema local Mármore Bege. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Travertino','Tema local Travertino. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Pedra Clara','Tema local Pedra Clara. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Pedra Cinza','Tema local Pedra Cinza. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Microcimento','Tema local Microcimento. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Concreto Claro','Tema local Concreto Claro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Concreto Escuro','Tema local Concreto Escuro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Estúdio Claro','Tema local Estúdio Claro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Estúdio Neutro','Tema local Estúdio Neutro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Estúdio Escuro','Tema local Estúdio Escuro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Catálogo Premium','Tema local Catálogo Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Editorial Clean','Tema local Editorial Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Editorial Dark','Tema local Editorial Dark. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Loft Claro','Tema local Loft Claro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Loft Grafite','Tema local Loft Grafite. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Home Office','Tema local Home Office. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Sala Moderna','Tema local Sala Moderna. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Cozinha Clean','Tema local Cozinha Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Vitrine Clean','Tema local Vitrine Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Tech Minimal','Tema local Tech Minimal. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Tech Premium','Tema local Tech Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Tech Dark','Tema local Tech Dark. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Apple Inspired','Tema local Apple Inspired. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Android Clean','Tema local Android Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Marketplace Clean','Tema local Marketplace Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Marketplace Premium','Tema local Marketplace Premium. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Natural Claro','Tema local Natural Claro. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Natural Quente','Tema local Natural Quente. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Natural Frio','Tema local Natural Frio. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Luz de Janela','Tema local Luz de Janela. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Luz Suave','Tema local Luz Suave. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Golden Soft','Tema local Golden Soft. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Silver Soft','Tema local Silver Soft. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Champagne','Tema local Champagne. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Carbon','Tema local Carbon. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Slate','Tema local Slate. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Nordic','Tema local Nordic. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Scandinavian','Tema local Scandinavian. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Urban Clean','Tema local Urban Clean. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Luxury Light','Tema local Luxury Light. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Luxury Dark','Tema local Luxury Dark. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Produto Branco','Tema local Produto Branco. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.'],
+ ['Produto Grafite','Tema local Produto Grafite. A fotografia original permanece inteira; o cenário decorativo é aplicado ao redor da foto, sem recorte do aparelho.']
 ];
 function hash(text){let h=2166136261;for(const c of String(text||'')){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return Math.abs(h>>>0)}
 export function sceneForPhone(phone,style='Automático',offset=0){const baseHash=hash(phone?.id||phone?.code||phone?.model),candidates=style==='Automático'?SCENES:SCENES.filter(([tag])=>tag===style);const pool=candidates.length?candidates:SCENES;const index=(baseHash+Number(offset||0))%pool.length;const [tag,basePrompt]=pool[index];const signature=(hash(`${phone?.id||''}:${offset}`)%997)+1,lights=['luz principal vindo da esquerda','luz principal vindo da direita','luz superior difusa com preenchimento lateral','luz de janela frontal-lateral'],tones=['temperatura neutra','temperatura levemente quente','temperatura levemente fria','contraste suave e natural'],composition=['fundo com profundidade curta','fundo com profundidade média','parede mais distante e suavemente desfocada','composição próxima e limpa'];const prompt=`${basePrompt} Variação exclusiva ${signature}: ${lights[baseHash%lights.length]}, ${tones[Math.floor(baseHash/7)%tones.length]}, ${composition[Math.floor(baseHash/13)%composition.length]}.`;return{id:`scene-${tag.toLowerCase()}-${signature}`,style:tag,prompt,offset:Number(offset||0),signature}}
-export const photoStyles=['Automático','Claro','Escuro','Premium','Residencial','Minimalista'];
+export const photoStyles=['Automático',...SCENES.map(([name])=>name)];
 
 export async function sharePhotoDataUrls(items,title='Fotos do aparelho'){
  const sanitized=await Promise.all(items.map(async(item,index)=>({dataUrl:await sanitizeImageDataUrl(item.dataUrl),name:item.name||`foto-${index+1}.jpg`})));

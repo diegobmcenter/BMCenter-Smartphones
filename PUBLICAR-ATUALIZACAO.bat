@@ -1,14 +1,15 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones - Publicar Atualizacao
+title BMCenter Smartphones v10.4.31 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
+set "VERSION=10.4.31"
 
 echo.
 echo ============================================================
-echo     BMCenter Smartphones - PUBLICAR ATUALIZACAO
+echo     BMCenter Smartphones v%VERSION% - PUBLICAR
 echo ============================================================
 echo.
 echo Pasta:
@@ -23,22 +24,14 @@ where npm >nul 2>&1
 if errorlevel 1 goto :npm_missing
 
 echo.
-echo [1/8] Verificando dependencias...
-
-if not exist "node_modules\vite\bin\vite.js" goto :install_dependencies
-if not exist "node_modules\@imgly\background-removal\package.json" goto :install_dependencies
-goto :dependencies_ok
-
-:install_dependencies
-echo Dependencias novas/ausentes. Instalando...
-call npm install --legacy-peer-deps --no-audit --no-fund
+echo [1/8] Instalando/verificando dependencias...
+echo.
+call npm install --no-audit --no-fund
 if errorlevel 1 goto :install_error
 
-:dependencies_ok
+if not exist "node_modules\vite\bin\vite.js" goto :vite_missing
 
-if not exist "node_modules\vite\bin\vite.js" goto :install_error
-if not exist "node_modules\@imgly\background-removal\package.json" goto :install_error
-
+echo.
 echo Dependencias OK.
 
 echo.
@@ -89,7 +82,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.29 - IA local gratuita para fotos"
+git commit -m "BMCenter v10.4.31 - Photo Studio 60 temas sem IA"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...
@@ -101,7 +94,7 @@ echo ============================================================
 echo          ATUALIZACAO ENVIADA COM SUCESSO!
 echo ============================================================
 echo.
-echo O GitHub recebeu os arquivos.
+echo GitHub atualizado para v%VERSION%.
 echo A Vercel deve iniciar o deploy automaticamente.
 echo.
 pause
@@ -138,8 +131,21 @@ echo ============================================================
 echo          ERRO AO INSTALAR AS DEPENDENCIAS
 echo ============================================================
 echo.
-echo O arquivo node_modules\vite\bin\vite.js nao foi encontrado.
-echo Copie ou fotografe as ultimas mensagens acima.
+echo O comando npm install falhou.
+echo Copie ou fotografe as mensagens que apareceram logo acima.
+echo.
+pause
+exit /b 1
+
+:vite_missing
+echo.
+echo ============================================================
+echo          VITE NAO FOI INSTALADO CORRETAMENTE
+echo ============================================================
+echo.
+echo O npm install terminou, mas node_modules\vite\bin\vite.js
+echo nao foi encontrado.
+echo Copie ou fotografe as mensagens acima.
 echo.
 pause
 exit /b 1

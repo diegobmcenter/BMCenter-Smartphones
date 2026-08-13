@@ -1,0 +1,24 @@
+BMCenter Smartphones v10.4.31
+
+CORREÇÃO DO INSTALADOR
+======================
+
+A v10.4.30 removeu corretamente IMG.LY e ONNX do projeto, mas o BAT
+ainda verificava se @imgly/background-removal existia em node_modules.
+Isso fazia o BAT informar erro mesmo depois de uma instalação válida.
+
+Na v10.4.31:
+- O BAT não procura mais IMG.LY ou ONNX.
+- O BAT executa npm install normalmente.
+- Verifica somente o Vite, que realmente faz parte do projeto.
+- Executa npm run build antes de publicar.
+- Mantidos os 60 temas locais sem IA.
+- Mantida a qualidade alta das fotos.
+- Mantidas todas as demais correções da v10.4.30.
+
+COMO PUBLICAR
+1. Extraia o ZIP em uma pasta nova.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. Aguarde Dependencias OK.
+4. Aguarde BUILD APROVADO.
+5. O BAT enviará a versão ao GitHub.
