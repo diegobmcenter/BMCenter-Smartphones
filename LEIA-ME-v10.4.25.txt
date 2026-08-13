@@ -1,0 +1,13 @@
+BMCenter Smartphones v10.4.25
+
+Alteracoes:
+- Dashboard: Publicacoes passa a considerar aparelhos com status Anunciado quando ainda nao existe publicacao detalhada por perfil.
+- Photo Studio: novo botao Tirar fotos abre a camera do Android e importa a foto imediatamente para o aparelho aberto.
+- Open Camera continua disponivel como opcao separada e teve a chamada de abertura ajustada.
+
+Uso:
+1. Extraia o ZIP.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. Se a base completa nao estiver na pasta, o BAT baixa automaticamente a versao atual do GitHub.
+4. Aplica a v10.4.25, instala dependencias, executa npm run build e somente entao faz push.
+5. A Vercel inicia o deploy automaticamente.
