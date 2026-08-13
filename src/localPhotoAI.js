@@ -167,13 +167,6 @@ function foregroundCorners(binary,w,h){
  return filled;
 }
 
-function foregroundTouchesFrame(binary,w,h){
- const band=Math.max(2,Math.round(Math.min(w,h)*.008));
- let count=0;
- for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(binary[y*w+x]&&(x<band||x>=w-band||y<band||y>=h-band))count++;
- return count>=Math.max(8,Math.round(Math.min(w,h)*.02));
-}
-
 function paintStrokes(binary,w,h,strokes){
  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
  const ctx=canvas.getContext('2d',{willReadFrequently:true});
@@ -213,7 +206,7 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
   const ctx=low.getContext('2d',{willReadFrequently:true});
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(maskImage,0,0,w,h);
   const pixels=ctx.getImageData(0,0,w,h).data;
-  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),skinAnchor=new Uint8Array(w*h);
+  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),skinDetected=new Uint8Array(w*h);
   // A low threshold is deliberately conservative: uncertain edge pixels stay
   // with the original phone/hand instead of cutting pieces out of them.
   const {mask:personMask,skinMask,width:personW,height:personH}=personInfo;
@@ -221,25 +214,36 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
    const i=y*w+x;
    const px=Math.min(personW-1,Math.floor(x*personW/w)),py=Math.min(personH-1,Math.floor(y*personH/h));
    binary[i]=pixels[i*4+3]>=24?1:0;
-   personCandidate[i]=personMask[py*personW+px]>=58?1:0;
-   skinAnchor[i]=skinMask[py*personW+px]>=82&&pixels[i*4+3]>=16?1:0;
+   personCandidate[i]=personMask[py*personW+px]>=72?1:0;
+   skinDetected[i]=skinMask[py*personW+px]>=70?1:0;
   }
   // Only human components that contain skin already touching the salient
   // foreground are added. This restores the complete wrist/sleeve while
   // rejecting plants, upholstery and people elsewhere in the old scene.
   personCandidate=closeBinary(openBinary(personCandidate,w,h,1),w,h,2);
+  const nearOriginalForeground=dilateBinary(binary,w,h,4);
+  const skinAnchor=new Uint8Array(binary.length);
+  for(let i=0;i<skinAnchor.length;i++)skinAnchor[i]=skinDetected[i]&&nearOriginalForeground[i]?1:0;
   const protectedPerson=keepAnchoredComponents(personCandidate,skinAnchor,w,h);
   if(protectedPerson.anchoredPixels/binary.length<.0005)throw new Error('a mão não foi identificada com segurança; a foto não foi marcada como pronta');
-  // Extend the human mask only when the original foreground actually exits
-  // the frame (the normal arm/sleeve case). A floating phone and hand already
-  // complete in U2Net must not inherit lights or people from the old scene.
-  if(foregroundTouchesFrame(binary,w,h))for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i])binary[i]=1;
+  // Phone and hand are one protected subject regardless of whether the arm
+  // touches the photo border. The previous border condition caused hands
+  // completely inside the frame to be detected and then discarded.
+  for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i])binary[i]=1;
   paintStrokes(binary,w,h,strokes);
   binary=closeBinary(binary,w,h,3);
   binary=openBinary(binary,w,h,2);
   const component=keepLargestComponent(binary,w,h);
   binary=component.binary;
   if(component.retention<.78)throw new Error('o fundo antigo ficou ligado ao objeto e o recorte foi recusado');
+  let protectedSkin=0,retainedSkin=0;
+  for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i]&&skinDetected[i]){
+   protectedSkin++;
+   if(binary[i])retainedSkin++;
+  }
+  if(protectedSkin<Math.max(12,Math.round(binary.length*.0005))||retainedSkin/protectedSkin<.88){
+   throw new Error('a mão foi detectada, mas não permaneceu inteira no recorte; a foto não foi marcada como pronta');
+  }
   const beforeFill=countForeground(binary);
   fillInteriorHoles(binary,w,h);
   const afterFill=countForeground(binary),coverage=afterFill/binary.length;

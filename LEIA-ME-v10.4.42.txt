@@ -1,0 +1,25 @@
+BMCenter Smartphones v10.4.42 — SALVAMENTO DAS FOTOS CORRIGIDO
+
+O QUE FOI CORRIGIDO
+- O botão "Salvar fotos" agora gera um único arquivo ZIP válido.
+- O botão "Só originais" salva as fotografias capturadas/importadas sem o cenário aplicado.
+- O ZIP preserva a subpasta do aparelho e separa os arquivos em ORIGINAIS e PREPARADAS.
+- Os nomes das fotos incluem o código do aparelho e a numeração da foto.
+- Uma confirmação permanece visível na tela depois que o arquivo é criado.
+
+ESTRUTURA DO ARQUIVO
+SUBPASTA DO APARELHO/
+  ORIGINAIS/
+    BM-000001-01-ORIGINAL.jpg
+  PREPARADAS/
+    BM-000001-01-PREPARADA.jpg
+
+PASTA LOCAL
+- Quando o navegador concede acesso real à pasta raiz, o sistema grava diretamente na subpasta do aparelho.
+- No Chrome para Android sem acesso de gravação em pastas, o navegador obriga o download em Downloads. Nesse caso, o sistema cria um único ZIP com a subpasta completa para nenhuma foto ficar presa dentro do BMCenter.
+
+TESTES REALIZADOS
+- Download real do botão "Só originais": 10 originais conferidas dentro de ORIGINAIS.
+- Download real do botão "Salvar fotos": 10 originais e 7 preparadas conferidas dentro das pastas corretas.
+- Teste automático abre o ZIP e confere os nomes e o conteúdo dos arquivos.
+- Compilação de produção concluída sem erros.

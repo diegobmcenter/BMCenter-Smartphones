@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.41 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.42 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.41"
+set "VERSION=10.4.42"
 
 echo.
 echo ============================================================
@@ -39,7 +39,10 @@ echo [2/8] Testando a versao antes de publicar...
 call npm run build
 if errorlevel 1 goto :build_error
 
-rem Confere os arquivos realmente usados pelo novo motor da v10.4.41.
+call npm run test:photo-download
+if errorlevel 1 goto :build_error
+
+rem Confere os arquivos realmente usados pelo novo motor da v10.4.42.
 rem O Interactive Segmenter antigo foi removido de proposito.
 if not exist "dist\mediapipe\models\selfie_multiclass_256x256.tflite" goto :photo_engine_missing
 if not exist "dist\mediapipe\wasm\vision_wasm_internal.wasm" goto :photo_engine_missing
@@ -91,7 +94,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.41 - novo recorte de celular mao e braco"
+git commit -m "BMCenter v10.4.42 - salvar originais na subpasta do aparelho"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

@@ -1,3 +1,5 @@
+import{strToU8,zipSync}from'fflate';
+
 const DB_NAME='bmcenter-photo-studio-v1';
 const STORE='assets';
 const HANDLE_STORE='handles';
@@ -78,6 +80,49 @@ export async function writeImageToPhoneDirectory(phoneId,name,dataUrl){
  const writable=await fileHandle.createWritable();
  await writable.write(dataUrlToBlob(clean));await writable.close();
  return name;
+}
+function safeFileName(value,fallback='foto.jpg'){
+ const clean=String(value||fallback).replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim();
+ return clean||fallback;
+}
+function photoGroupName(kind){return kind==='prepared'?'PREPARADAS':'ORIGINAIS'}
+export async function writePhotoCollectionToPhoneDirectory(phoneId,items){
+ const saved=await getPhonePhotoDirectory(phoneId);
+ if(!saved?.handle)throw new Error('A subpasta deste aparelho não tem permissão de gravação.');
+ let written=0;
+ for(const item of Array.isArray(items)?items:[]){
+  if(!item?.dataUrl)continue;
+  const group=await saved.handle.getDirectoryHandle(photoGroupName(item.kind),{create:true});
+  const name=safeFileName(item.name,`${item.kind==='prepared'?'preparada':'original'}-${written+1}.jpg`);
+  const clean=await sanitizeImageDataUrl(item.dataUrl);
+  const fileHandle=await group.getFileHandle(name,{create:true});
+  const writable=await fileHandle.createWritable();
+  try{await writable.write(dataUrlToBlob(clean))}finally{await writable.close()}
+  written++;
+ }
+ return{written,folderName:saved.name||saved.handle.name||'Subpasta do aparelho'};
+}
+export async function downloadPhotoArchive(items,folderName='Fotos do aparelho'){
+ const list=(Array.isArray(items)?items:[]).filter(item=>item?.dataUrl);
+ if(!list.length)throw new Error('Nenhuma foto disponível para salvar.');
+ const root=safeFileName(folderName,'Fotos do aparelho').replace(/\.zip$/i,'');
+ const entries={};
+ for(let index=0;index<list.length;index++){
+  const item=list[index];
+  // Assets stored by putPhotoAsset are already sanitized JPEG data URLs.
+  // Re-encoding the whole batch here can exhaust memory on Android.
+  const blob=dataUrlToBlob(item.dataUrl);
+  const name=safeFileName(item.name,`${item.kind==='prepared'?'preparada':'original'}-${index+1}.jpg`);
+  entries[`${root}/${photoGroupName(item.kind)}/${name}`]=new Uint8Array(await blob.arrayBuffer());
+ }
+ entries[`${root}/LEIA-ME.txt`]=strToU8('ORIGINAIS = fotografias capturadas ou importadas sem troca de fundo.\r\nPREPARADAS = versões processadas pelo Photo Studio.\r\n',true);
+ // JPEG files are already compressed. Store mode is faster and uses less
+ // memory on Android while still producing one reliable download.
+ const archive=zipSync(entries,{level:0});
+ const url=URL.createObjectURL(new Blob([archive],{type:'application/zip'}));
+ const a=document.createElement('a');a.href=url;a.download=`${root}.zip`;a.style.display='none';
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ return{name:`${root}.zip`,count:list.length};
 }
 export async function getPhotoAsset(id){if(!id)return null;const db=await openDb();return new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})}
 export async function deletePhotoAsset(id){if(!id)return;await tx('readwrite',store=>store.delete(id))}

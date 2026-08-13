@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,Crosshair,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy,FolderOpen,Share2,Trash2,WandSparkles,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
-import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadDataUrl,sharePhotoDataUrls,sceneForPhone,photoStyles,localDirectorySupported,chooseRootPhotoDirectory,getRootPhotoDirectory,createPhonePhotoDirectory,getPhonePhotoDirectory,choosePhonePhotoDirectory,listDirectoryImages,writeImageToPhoneDirectory}from'./photoStudio.js';
+import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadPhotoArchive,writePhotoCollectionToPhoneDirectory,sharePhotoDataUrls,sceneForPhone,photoStyles,localDirectorySupported,chooseRootPhotoDirectory,getRootPhotoDirectory,createPhonePhotoDirectory,getPhonePhotoDirectory,choosePhonePhotoDirectory,listDirectoryImages,writeImageToPhoneDirectory}from'./photoStudio.js';
 import{preparePhotoLocally}from'./localPhotoAI.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
@@ -15,7 +15,7 @@ import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',PHOTOROOTKEY='bmcenter-photo-root-local',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
 import './v10439.css';
 import './v10440.css';
-const APP_VERSION='10.4.41';
+const APP_VERSION='10.4.42';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,PHOTOROOTKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -2518,6 +2518,7 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  const[busy,setBusy]=useState(false);
  const[progress,setProgress]=useState('');
  const[fileError,setFileError]=useState('');
+ const[saveMessage,setSaveMessage]=useState('');
  const[rootInfo,setRootInfo]=useState(()=>{const saved=load(PHOTOROOTKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{}});
  const[folderBusy,setFolderBusy]=useState(false);
  const[maskEditor,setMaskEditor]=useState(null);
@@ -2560,7 +2561,8 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
     updateSettings({localFolderName:folder.name||name,localFolderLinked:true})
    }else{
     if(!rootInfo.configured)await configureRootFolder();
-    updateSettings({localFolderName:name,localFolderLinked:true})
+    updateSettings({localFolderName:name,localFolderLinked:false,localFolderMode:'path-only'});
+    alert(`Destino registrado: ${localFolderPath()}\n\nO Chrome deste celular não permite que um site grave diretamente nessa pasta. As fotos continuarão protegidas no BMCenter e “Salvar fotos” criará um único ZIP com esta subpasta, ORIGINAIS e PREPARADAS.`)
    }
   }catch(error){setFileError(error?.message||'Não foi possível preparar a pasta deste aparelho.')}finally{setFolderBusy(false)}
  }
@@ -2588,7 +2590,7 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
   return `${String(root).replace(/\/+$/,'')}/${preferredFolderName()}`
  }
  async function openOpenCamera(){
-  if(!settings.localFolderLinked)await preparePhoneFolder();
+  if(!settings.localFolderLinked&&settings.localFolderMode!=='path-only')await preparePhoneFolder();
   try{
    if(navigator.clipboard)await navigator.clipboard.writeText(localFolderPath()).catch(()=>{});
    window.location.href='intent:#Intent;action=android.media.action.STILL_IMAGE_CAMERA;package=net.sourceforge.opencamera;end'
@@ -2611,7 +2613,7 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  async function addPhotos(files,{captured=false}={}){
   const list=[...(files||[])];if(!list.length)return;setBusy(true);setFileError('');
   try{
-   const additions=[];
+   const additions=[];let capturedWithoutFolder=false;
    for(let i=0;i<list.length;i++){
     setProgress(`Preparando foto ${i+1} de ${list.length}...`);
     const dataUrl=await resizeImageFile(list[i],{maxSide:3200,quality:.98});
@@ -2619,16 +2621,20 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
     const capturedName=list[i].name&&list[i].name!=='image.jpg'?list[i].name:`${workPhone.code||'aparelho'}-captura-${Date.now()}-${i+1}.jpg`;
     await putPhotoAsset({id:assetId,phoneId:workPhone.id,role:'original',dataUrl,createdAt:new Date().toISOString(),name:capturedName});
     let localFileName='';
-    if(captured&&localDirectorySupported()){
-     try{
-      const folder=await getPhonePhotoDirectory(workPhone.id);
-      if(folder?.handle){localFileName=await writeImageToPhoneDirectory(workPhone.id,capturedName,dataUrl)}
-     }catch(error){console.warn('A captura foi salva no BMCenter, mas não pôde ser gravada na pasta local.',error)}
+    if(captured){
+     if(localDirectorySupported()){
+      try{
+       const folder=await getPhonePhotoDirectory(workPhone.id);
+       if(folder?.handle)localFileName=await writeImageToPhoneDirectory(workPhone.id,capturedName,dataUrl);
+       else capturedWithoutFolder=true
+      }catch(error){capturedWithoutFolder=true;console.warn('A captura foi salva no BMCenter, mas não pôde ser gravada na pasta local.',error)}
+     }else capturedWithoutFolder=true
     }
     additions.push({id,originalAssetId:assetId,processedAssetId:'',name:capturedName,localFileName,status:'original',createdAt:new Date().toISOString(),error:''});
    }
    const nextScene=workPhone.photoScene||sceneForPhone(workPhone,settings.style,0);
-   const next={...workPhone,photos:[...photos,...additions],photoScene:nextScene,photoStudioSettings:settings};commit(next);await refreshAssets(next);setSelectedPhotoId(additions[0]?.id||'');setGalleryMode('original')
+   const next={...workPhone,photos:[...photos,...additions],photoScene:nextScene,photoStudioSettings:settings};commit(next);await refreshAssets(next);setSelectedPhotoId(additions[0]?.id||'');setGalleryMode('original');
+   if(capturedWithoutFolder)setFileError('A foto original está protegida no BMCenter, mas este celular não deu acesso direto à subpasta. Use “Salvar fotos” para baixar um único ZIP com ORIGINAIS e PREPARADAS.')
   }catch(error){setFileError(error?.message||'Não foi possível adicionar as fotos.')}finally{setBusy(false);setProgress('')}
  }
  async function processAll({force=false,sceneOverride=null,sourcePhone=null,onlyId=null}={}){
@@ -2684,7 +2690,47 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
  function visibleAsset(meta){const id=galleryMode==='ready'?(meta.processedAssetId||meta.originalAssetId):meta.originalAssetId;return{id,url:assetUrls[id]||'',prepared:Boolean(meta.processedAssetId)}}
  const selectedMeta=photos.find(meta=>meta.id===selectedPhotoId)||photos[0]||null;
  const selectedView=selectedMeta?visibleAsset(selectedMeta):{id:'',url:'',prepared:false};
- async function downloadAll(){const chosen=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return{id,index}}).filter(x=>assetUrls[x.id]);for(const {id,index} of chosen)await downloadDataUrl(assetUrls[id],`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`)}
+ async function collectPhotosForSave(mode='both'){
+  const items=[];
+  for(let index=0;index<photos.length;index++){
+   const meta=photos[index],number=String(index+1).padStart(2,'0'),code=workPhone.code||'smartphone';
+   if(mode!=='prepared'&&meta.originalAssetId){
+    const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;
+    if(original)items.push({kind:'original',name:`${code}-${number}-ORIGINAL.jpg`,dataUrl:original})
+   }
+   if(mode!=='original'&&meta.processedAssetId){
+    const prepared=(await getPhotoAsset(meta.processedAssetId))?.dataUrl;
+    if(prepared)items.push({kind:'prepared',name:`${code}-${number}-PREPARADA.jpg`,dataUrl:prepared})
+   }
+  }
+  return items
+ }
+ async function savePhotos(mode='both'){
+  if(!photos.length)return alert('Nenhuma foto disponível.');
+  setBusy(true);setFileError('');setSaveMessage('');setProgress('Reunindo as fotos originais...');
+  try{
+   const items=await collectPhotosForSave(mode);
+   if(!items.length)throw new Error(mode==='prepared'?'Nenhuma foto preparada disponível.':'Nenhuma foto disponível para salvar.');
+   let folder=null;
+   if(localDirectorySupported()){
+    folder=await getPhonePhotoDirectory(workPhone.id);
+    if(!folder?.handle){
+     const root=await getRootPhotoDirectory();
+     if(root?.handle)folder=await createPhonePhotoDirectory(workPhone.id,preferredFolderName())
+    }
+   }
+   if(folder?.handle){
+    setProgress(`Salvando ${items.length} arquivo(s) na subpasta...`);
+    const result=await writePhotoCollectionToPhoneDirectory(workPhone.id,items);
+    updateSettings({localFolderName:result.folderName||preferredFolderName(),localFolderLinked:true,localFolderMode:'handle'});
+    setSaveMessage(`✓ ${result.written} foto(s) salvas na subpasta ${result.folderName}, separadas em ORIGINAIS e PREPARADAS.`)
+   }else{
+    setProgress(`Criando um único arquivo com ${items.length} foto(s)...`);
+    const result=await downloadPhotoArchive(items,preferredFolderName());
+    setSaveMessage(`✓ ${result.name} baixado com ${result.count} foto(s). Abra Downloads e extraia o ZIP; a subpasta do aparelho contém ORIGINAIS e PREPARADAS.`)
+   }
+  }catch(error){setFileError(error?.message||'Não foi possível salvar as fotos.')}finally{setBusy(false);setProgress('')}
+ }
  async function shareAll(){const items=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return assetUrls[id]?{dataUrl:assetUrls[id],name:`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`}:null}).filter(Boolean);if(!items.length)return alert('Nenhuma foto disponível.');try{await sharePhotoDataUrls(items,`${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Fotos do aparelho')}catch(error){if(error?.name!=='AbortError')alert('Não foi possível abrir o compartilhamento.')}}
  return <section className={`photo-studio photo-studio-v10439 ${standalone?'standalone':''}`}>
   {maskEditor&&<PhotoMaskEditor source={maskEditor.source} initialStrokes={maskEditor.strokes} onClose={()=>setMaskEditor(null)} onApply={strokes=>applyMaskEditor(maskEditor.meta,strokes)}/>}
@@ -2693,7 +2739,7 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
    <div className="photo-studio-head-right"><div className="photo-metadata-badge"><ShieldCheck size={14}/><span><b>Original protegido</b><small>sem EXIF, GPS, XMP ou IPTC</small></span></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></div>
   </header>
   <div className="photo-studio-steps"><span className={total?'done':'active'}><b>1</b>Adicionar fotos</span><i></i><span className={total&&!ready?'active':ready?'done':''}><b>2</b>Escolher cenário</span><i></i><span className={ready?'done':total?'active':''}><b>3</b>Preparar</span></div>
-  <div className="photo-source-bar"><div><b>{workPhone.code||'Aparelho'} · {workPhone.brand||''} {workPhone.model||''}</b><small>{settings.localFolderLinked?`Pasta vinculada: ${preferredFolderName()}`:'As fotos ficam vinculadas a este aparelho.'}</small></div><div><button type="button" className="photo-capture-button primary" onClick={()=>captureRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar foto</button><input ref={captureRef} hidden type="file" accept="image/*" capture="environment" onChange={e=>{addPhotos(e.target.files,{captured:true});e.target.value=''}}/><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar fotos</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/></div></div>
+  <div className="photo-source-bar"><div><b>{workPhone.code||'Aparelho'} · {workPhone.brand||''} {workPhone.model||''}</b><small>{settings.localFolderLinked?`Pasta vinculada: ${preferredFolderName()}`:settings.localFolderMode==='path-only'?`Destino do Open Camera: ${preferredFolderName()} · use Salvar fotos para exportar`:'As fotos ficam vinculadas a este aparelho.'}</small></div><div><button type="button" className="photo-capture-button primary" onClick={()=>captureRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar foto</button><input ref={captureRef} hidden type="file" accept="image/*" capture="environment" onChange={e=>{addPhotos(e.target.files,{captured:true});e.target.value=''}}/><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar fotos</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/></div></div>
   <div className="photo-editor-workspace">
    <section className="photo-preview-panel">
     <header><div><b>Prévia da foto</b><small>{selectedMeta?.name||'Adicione uma foto para começar'}</small></div><div className="photo-view-switch"><button type="button" className={galleryMode==='original'?'active':''} onClick={()=>setGalleryMode('original')}>Original</button><button type="button" className={galleryMode==='ready'?'active':''} onClick={()=>setGalleryMode('ready')}>Preparada</button></div></header>
@@ -2708,13 +2754,13 @@ function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
     <div className="photo-engine-ready"><span></span><div><b>Celular e mão protegidos</b><small>O conjunto original permanece inteiro; somente o ambiente é substituído</small></div></div>
     <button type="button" className="photo-prepare-button" disabled={busy||!total} onClick={()=>processAll({force:true})}><WandSparkles size={17}/><span><b>{busy?'Preparando fotos...':'Preparar todas as fotos'}</b><small>{total?`${total} foto(s) · cenário ${scene.style}`:'Adicione fotos para liberar'}</small></span><ChevronRight size={16}/></button>
     <div className="photo-secondary-actions"><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={14}/> Reprocessar</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={14}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={14}/> Desfazer</button>}</div>
-    {(progress||fileError)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress}</div>}
+    {(progress||fileError||saveMessage)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress||saveMessage}</div>}
    </aside>
   </div>
-  <div className="photo-gallery-toolbar"><div><b>Fotos deste aparelho</b><span>{ready} preparadas de {total}</span></div><div><button type="button" disabled={!total} onClick={downloadAll}><Download size={14}/> Baixar todas</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
+  <div className="photo-gallery-toolbar"><div><b>Fotos deste aparelho</b><span>{ready} preparadas de {total}</span></div><div><button type="button" disabled={!total||busy} onClick={()=>savePhotos('both')}><Download size={14}/> Salvar fotos</button><button type="button" disabled={!total||busy} onClick={()=>savePhotos('original')}><FolderOpen size={14}/> Só originais</button><button type="button" disabled={!total||busy} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
   {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>Use “Tirar foto” para capturar e vincular a imagem imediatamente, ou importe as fotos já salvas na pasta do aparelho.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={`${meta.status==='error'?'error ':''}${selectedMeta?.id===meta.id?'selected':''}`} onClick={()=>setSelectedPhotoId(meta.id)}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Cenário aplicado · celular, mão e braço originais':'Original · sem metadados')}</small></div><div><button type="button" title="Ajustar recorte" onClick={e=>{e.stopPropagation();openMaskEditor(meta)}}><Crosshair size={13}/></button>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={e=>{e.stopPropagation();resetProcessed(meta)}}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={e=>{e.stopPropagation();removePhoto(meta)}}><Trash2 size={13}/></button></div></footer></article>})}</div>}
   <details className="photo-storage-panel" open={!rootInfo.configured}>
-   <summary><span><FolderOpen size={16}/><span><b>Pasta e sincronização</b><small>{rootInfo.configured?`${rootInfo.path||rootInfo.name} · ${preferredFolderName()}`:'Configure a pasta raiz uma única vez'}</small></span></span><ChevronDown size={16}/></summary>
+   <summary><span><FolderOpen size={16}/><span><b>Pasta e sincronização</b><small>{rootInfo.configured?`${rootInfo.path||rootInfo.name} · ${preferredFolderName()}${rootInfo.mode==='path'?' · destino sem acesso direto':''}`:'Configure a pasta raiz uma única vez'}</small></span></span><ChevronDown size={16}/></summary>
    <div className="photo-drive photo-local-folder"><div className="photo-local-folder-head"><FolderOpen size={16}/><div><b>Pasta local das fotos</b><span>O DriveSync continua sincronizando esta pasta com o Google Drive automaticamente.</span></div><span className={rootInfo.configured?'ready':'pending'}>{rootInfo.configured?'Raiz configurada':'Configurar uma vez'}</span></div><div className="photo-root-row"><div><small>Pasta raiz</small><b>{rootInfo.path||rootInfo.name||'Ainda não configurada'}</b></div><button type="button" onClick={configureRootFolder} disabled={folderBusy}><Settings size={14}/> {rootInfo.configured?'Alterar raiz':'Configurar raiz'}</button></div><div className="photo-phone-folder-card"><div><small>SUBPASTA DESTE APARELHO</small><strong>{preferredFolderName()}</strong><span>{localFolderPath()}</span></div><div><button type="button" className="primary" onClick={preparePhoneFolder} disabled={folderBusy}><Plus size={14}/> Criar pasta</button><button type="button" onClick={chooseExistingPhoneFolder} disabled={folderBusy}><FolderOpen size={14}/> Selecionar existente</button><button type="button" onClick={syncPhoneFolder} disabled={folderBusy}><RefreshCw size={14}/> Atualizar fotos</button></div></div><div className="photo-local-flow"><span>1</span><b>Vincule a subpasta</b><ChevronRight size={13}/><span>2</span><b>Tire ou importe as fotos</b><ChevronRight size={13}/><span>3</span><b>Prepare para o anúncio</b></div></div>
   </details>
  </section>
