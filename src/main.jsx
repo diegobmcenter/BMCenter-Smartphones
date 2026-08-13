@@ -1,5 +1,6 @@
-import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy}from'lucide-react';
+import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy,FolderOpen,Share2,Trash2,WandSparkles,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
+import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadDataUrl,sharePhotoDataUrls,sceneForPhone,photoStyles}from'./photoStudio.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
@@ -9,9 +10,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10419.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.18';
+const APP_VERSION='10.4.19';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -1415,6 +1416,7 @@ function Ads(){
  const[batchOpen,setBatchOpen]=useState(false);
  const[batchResults,setBatchResults]=useState([]);
  const[historyOpen,setHistoryOpen]=useState(false);
+ const[photoOpen,setPhotoOpen]=useState(false);
  const[noteSaved,setNoteSaved]=useState(false);
  const[adsNote,setAdsNote]=useState(()=>{try{return JSON.parse(localStorage.getItem(ADSNOTEKEY)||'\"\"')}catch{return''}});
  const storedProfiles=load(PKEY);
@@ -1511,6 +1513,7 @@ function Ads(){
     <div className="ads-ref-generator-body"><div className="ads-ref-generator-left">
      <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
      <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
+     <button className="ads-photo-studio-button" disabled={!contentPhone} onClick={()=>setPhotoOpen(true)}><Camera size={15}/><span><b>Fotos do anúncio</b><small>{contentPhone?`${photoReadyCount(contentPhone)}/${photoOriginalCount(contentPhone)} prontas`:'Selecione um aparelho'}</small></span><ChevronRight size={14}/></button>
      <button className="ads-ref-ai-button" disabled={!contentPhone||generating} onClick={generateWithAI}>✨ {generating?'Gerando...':'Gerar títulos e descrição'}</button>
      <button className="ads-ref-history-button" disabled={!contentPhone} onClick={()=>setHistoryOpen(true)}>Ver histórico deste aparelho</button>
     </div><div className="ads-ref-generator-right">
@@ -1526,7 +1529,7 @@ function Ads(){
     <footer><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="orange">◇ Tempo médio para vender</span></footer>
    </section>
 
-   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
+   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button disabled={!contentPhone} onClick={()=>setPhotoOpen(true)}><Camera/><span>Preparar fotos do aparelho</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
     <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>setReportOpen(true)}><BarChart3 size={15}/> Ver relatório completo</button></section>
    </aside>
   </section>
@@ -1535,6 +1538,7 @@ function Ads(){
 
   <section className="ads-ref-card ads-ref-notes"><header><span>◉</span><div><h2>Observações</h2><p>Anotações e observações gerais sobre seus anúncios, estratégias e resultados.</p></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button onClick={saveAdsNote}><FileText size={15}/> {noteSaved?'Salvo ✓':'Salvar observação'}</button></div></section>
 
+  {photoOpen&&contentPhone&&<PhotoStudioModal phone={contentPhone} onClose={()=>setPhotoOpen(false)} onSave={nextPhone=>persist(phones.map(phone=>phone.id===nextPhone.id?nextPhone:phone))}/>}
   {reportOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setReportOpen(false)}><section className="ads-ref-report-modal"><header><div><h2>Relatório de desempenho</h2><p>Todos os perfis no período selecionado.</p></div><button onClick={()=>setReportOpen(false)}><X size={18}/></button></header><div className="ads-ref-report-table">{profileStats.map((item,index)=><article key={item.profile.id}><span>{index+1}º · {item.profile.name}</span><b>{item.sales} venda(s)</b><b>{money(item.revenue)}</b><b>{item.sales?`${item.avgDays.toFixed(1).replace('.',',')} dias`:'—'}</b><b>{item.published} ativo(s)</b></article>)}</div><footer><button onClick={exportAdsPeriod}><Download size={15}/> Exportar CSV</button><button className="primary" onClick={()=>setReportOpen(false)}>Fechar</button></footer></section></div>}
   {batchOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setBatchOpen(false)}><section className="ads-ref-batch-modal"><header><div><h2>Conteúdo em lote</h2><p>Variações para os aparelhos ativos.</p></div><button onClick={()=>setBatchOpen(false)}><X size={18}/></button></header><div className="ads-ref-batch-results">{batchResults.map(item=><article key={item.phoneId}><b>{item.name}</b><span>{item.title}</span><button onClick={()=>copy(`${item.title}\n\n${item.description}`)}><Copy size={14}/> Copiar</button></article>)}</div></section></div>}
   {historyOpen&&contentPhone&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setHistoryOpen(false)}><section className="ads-ref-history-modal"><header><div><h2>Histórico de conteúdo</h2><p>{phoneDisplayName(contentPhone)}</p></div><button onClick={()=>setHistoryOpen(false)}><X size={18}/></button></header><div>{(contentPhone.adContentHistory||[]).slice(0,20).map(item=><article key={item.id}><b>{item.title}</b><p>{item.description}</p><button onClick={()=>{setGenerated({title:item.title,description:item.description,source:item.source});setHistoryOpen(false)}}>Usar novamente</button></article>)}</div></section></div>}
@@ -2022,7 +2026,7 @@ function DataCenterPage(){
 }
 
 const BACKUP_FORMAT='bmcenter-complete-backup';
-const BACKUP_FORMAT_VERSION=4;
+const BACKUP_FORMAT_VERSION=5;
 function backupEligibleKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session'].includes(key);
 }
@@ -2109,6 +2113,16 @@ function captureCompleteBackup(options={}){
   }
  }
 }
+async function captureCompleteBackupWithPhotos(options={}){
+ const backup=captureCompleteBackup(options);
+ try{
+  const photoAssets=await exportAllPhotoAssets();
+  return{...backup,photoAssets,summary:{...(backup.summary||{}),photoAssets:photoAssets.length},audit:{...(backup.audit||{}),photoAssetsCaptured:photoAssets.length,photoAssetsIncluded:true}}
+ }catch(error){
+  console.warn('Não foi possível anexar as fotos ao backup.',error);
+  return{...backup,photoAssets:[],audit:{...(backup.audit||{}),photoAssetsCaptured:0,photoAssetsIncluded:false,photoAssetsError:error?.message||String(error)}}
+ }
+}
 function normalizeBackupFile(data){
  if(data?.format===BACKUP_FORMAT&&data.storage&&typeof data.storage==='object')return data;
  const legacyMap={
@@ -2148,6 +2162,7 @@ async function applyCompleteBackup(backup,{replace=true}={}){
   if(JSON.stringify(restored)!==JSON.stringify(value))failed.push(key)
  }
  if(failed.length)throw new Error(`Falha de integridade ao restaurar: ${failed.join(', ')}`);
+ if(Array.isArray(normalized.photoAssets))await importPhotoAssets(normalized.photoAssets,{replace});
  await Promise.all(entries.map(([key,value])=>pushCloudStateNow(key,value)));
  return normalized;
 }
@@ -2155,7 +2170,7 @@ function backupSummaryText(backup){
  const b=normalizeBackupFile(backup),s=b.summary||{},storage=b.storage||{};
  const count=(key)=>Array.isArray(storage[key])?storage[key].length:0;
  const ads=Array.isArray(storage[SKEY])?storage[SKEY].reduce((sum,phone)=>sum+(Array.isArray(phone?.ads)?phone.ads.length:0),0):0;
- return `${count(SKEY)} aparelho(s), ${ads} anúncio(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is), ${Object.keys(storage).length} conjunto(s) permanentes e ${Object.keys(b.sessionStorage||{}).length} preferência(s) de sessão.`;
+ return `${count(SKEY)} aparelho(s), ${ads} anúncio(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is), ${Array.isArray(b.photoAssets)?b.photoAssets.length:0} arquivo(s) de foto, ${Object.keys(storage).length} conjunto(s) permanentes e ${Object.keys(b.sessionStorage||{}).length} preferência(s) de sessão.`;
 }
 
 function downloadBackupObject(backup,filename){
@@ -2168,7 +2183,7 @@ function BackupPage(){
  const[preview,setPreview]=useState(null),[file,setFile]=useState(null),[busy,setBusy]=useState(false),[cloudBackups,setCloudBackups]=useState([]),[loadingCloud,setLoadingCloud]=useState(true);
  async function refreshCloud(){setLoadingCloud(true);try{setCloudBackups(await listCloudBackups())}catch(error){console.warn(error)}finally{setLoadingCloud(false)}}
  useEffect(()=>{refreshCloud()},[]);
- function exportData(){const data=captureCompleteBackup();downloadBackupObject(data,`bmcenter-completo-${new Date().toISOString().replace(/[:.]/g,'-')}.bmcenter`)}
+ async function exportData(){setBusy(true);try{const data=await captureCompleteBackupWithPhotos();downloadBackupObject(data,`bmcenter-completo-${new Date().toISOString().replace(/[:.]/g,'-')}.bmcenter`)}catch(error){alert(`Falha ao gerar backup: ${error.message||error}`)}finally{setBusy(false)}}
  function chooseFile(selected){
   if(!selected)return;
   const reader=new FileReader();
@@ -2188,7 +2203,7 @@ function BackupPage(){
  }
  async function makeCloudBackup(){
   setBusy(true);
-  try{await createCloudBackup(captureCompleteBackup());await refreshCloud();alert('Backup automático criado na nuvem.')}
+  try{const data=await captureCompleteBackupWithPhotos();await createCloudBackup(data);await refreshCloud();alert('Backup automático criado na nuvem, incluindo a biblioteca de fotos deste navegador.')}
   catch(error){alert(`Falha ao criar backup na nuvem: ${error.message||error}`)}
   finally{setBusy(false)}
  }
@@ -2215,7 +2230,7 @@ function BackupPage(){
   </Title>
   <div className="backup-integrity-banner"><ShieldCheck/><div><b>Backup integral e compatível com versões futuras</b><small>O backup captura automaticamente todas as chaves BMCenter presentes no navegador, incluindo aparelhos, anúncios, fornecedores, contas, perfis, configurações, personalizações, layouts, menus e novos módulos adicionados depois.</small></div></div>
   <div className="backup-grid complete-backup-grid">
-   <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com todos os módulos e configurações.</p><button className="primary" onClick={exportData}>Baixar arquivo .bmcenter</button></div>
+   <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com módulos, configurações e arquivos de fotos armazenados no BMCenter.</p><button className="primary" disabled={busy} onClick={exportData}>Baixar arquivo .bmcenter</button></div>
    <div className="panel backup-card"><Upload size={38}/><h2>Restaurar arquivo</h2><p>Leia e confira o conteúdo antes de substituir os dados atuais.</p><label className="file-button">Selecionar backup<input type="file" accept=".bmcenter,.json,application/json" hidden onChange={e=>chooseFile(e.target.files?.[0])}/></label></div>
   </div>
   {preview&&<div className="panel backup-preview-panel"><div><h2>Conteúdo encontrado</h2><p>{backupSummaryText(preview)}</p><small>Arquivo: {file?.name} · Criado em {preview.exportedAt?new Date(preview.exportedAt).toLocaleString('pt-BR'):'data não informada'} · Versão {preview.appVersion||'—'}</small></div><button className="primary" disabled={busy} onClick={importData}>Restaurar tudo</button></div>}
@@ -2449,6 +2464,103 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
  </Modal>
 }
 
+function photoReadyCount(phone){return (phone?.photos||[]).filter(photo=>photo?.processedAssetId&&photo?.status==='ready').length}
+function photoOriginalCount(phone){return (phone?.photos||[]).filter(photo=>photo?.originalAssetId).length}
+
+function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
+ const[workPhone,setWorkPhone]=useState(phone);
+ const[assetUrls,setAssetUrls]=useState({});
+ const[galleryMode,setGalleryMode]=useState('ready');
+ const[busy,setBusy]=useState(false);
+ const[progress,setProgress]=useState('');
+ const[fileError,setFileError]=useState('');
+ const fileRef=useRef(null);
+ useEffect(()=>{if(phone&&!busy)setWorkPhone(phone)},[phone,busy]);
+ const settings={style:'Automático',intensity:'Natural',keepScale:true,driveFolderUrl:'',...(workPhone?.photoStudioSettings||{})};
+ const photos=Array.isArray(workPhone?.photos)?workPhone.photos:[];
+ const ready=photoReadyCount(workPhone),total=photoOriginalCount(workPhone),hasPhotoUndo=photos.some(meta=>meta.previousProcessedAssetId);
+ const scene=workPhone?.photoScene||sceneForPhone(workPhone,settings.style,0);
+ function commit(next){setWorkPhone(next);onPhoneChange?.(next)}
+ function updateSettings(patch){commit({...workPhone,photoStudioSettings:{...settings,...patch}})}
+ async function refreshAssets(source=workPhone){
+  const map={};
+  for(const meta of source?.photos||[]){
+   for(const id of [meta.originalAssetId,meta.processedAssetId])if(id&&!map[id]){try{const asset=await getPhotoAsset(id);if(asset?.dataUrl)map[id]=asset.dataUrl}catch{}}
+  }
+  setAssetUrls(map)
+ }
+ useEffect(()=>{refreshAssets(workPhone)},[workPhone?.id,photos.map(p=>`${p.originalAssetId||''}:${p.processedAssetId||''}:${p.status||''}`).join('|')]);
+ async function addPhotos(files){
+  const list=[...(files||[])];if(!list.length)return;setBusy(true);setFileError('');
+  try{
+   const additions=[];
+   for(let i=0;i<list.length;i++){
+    setProgress(`Preparando foto ${i+1} de ${list.length}...`);
+    const dataUrl=await resizeImageFile(list[i],{maxSide:1600,quality:.9});
+    const id=crypto.randomUUID(),assetId=`photo-original-${id}`;
+    await putPhotoAsset({id:assetId,phoneId:workPhone.id,role:'original',dataUrl,createdAt:new Date().toISOString(),name:list[i].name||`foto-${i+1}.jpg`});
+    additions.push({id,originalAssetId:assetId,processedAssetId:'',name:list[i].name||`foto-${photos.length+i+1}.jpg`,status:'original',createdAt:new Date().toISOString(),error:''});
+   }
+   const nextScene=workPhone.photoScene||sceneForPhone(workPhone,settings.style,0);
+   const next={...workPhone,photos:[...photos,...additions],photoScene:nextScene,photoStudioSettings:settings};commit(next);await refreshAssets(next);setGalleryMode('original')
+  }catch(error){setFileError(error?.message||'Não foi possível adicionar as fotos.')}finally{setBusy(false);setProgress('')}
+ }
+ async function processAll({force=false,sceneOverride=null,sourcePhone=null}={}){
+  const source=sourcePhone||workPhone;const sourcePhotos=Array.isArray(source.photos)?source.photos:[];
+  if(!sourcePhotos.length)return alert('Adicione pelo menos uma foto.');
+  setBusy(true);setFileError('');
+  const chosenScene=sceneOverride||source.photoScene||sceneForPhone(source,settings.style,0);
+  let current={...source,photoScene:chosenScene,photoStudioSettings:settings};commit(current);
+  let referenceData='';
+  if(!force){const firstReady=sourcePhotos.find(meta=>meta.processedAssetId);if(firstReady){try{referenceData=(await getPhotoAsset(firstReady.processedAssetId))?.dataUrl||''}catch{}}}
+  for(let index=0;index<sourcePhotos.length;index++){
+   const meta=(current.photos||[]).find(item=>item.id===sourcePhotos[index].id)||sourcePhotos[index];
+   if(!force&&meta.processedAssetId&&meta.status==='ready')continue;
+   setProgress(`IA preparando ${index+1} de ${sourcePhotos.length}...`);
+   current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,status:'processing',error:''}:item)};commit(current);
+   try{
+    const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;if(!original)throw new Error('Foto original não encontrada neste dispositivo.');
+    const response=await fetch('/api/process-photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageData:original,referenceData,scenePrompt:chosenScene.prompt,phoneInfo:{brand:current.brand||'',model:current.model||'',color:current.color||''},intensity:settings.intensity,keepScale:settings.keepScale})});
+    const result=await response.json();if(!response.ok||!result?.dataUrl)throw new Error(result?.error||'Falha ao preparar a imagem.');
+    if(meta.previousProcessedAssetId&&meta.previousProcessedAssetId!==meta.processedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});
+    const previousProcessedAssetId=meta.processedAssetId||'';
+    const processedAssetId=`photo-ready-${meta.id}-${Date.now()}`;
+    await putPhotoAsset({id:processedAssetId,phoneId:current.id,role:'processed',dataUrl:result.dataUrl,createdAt:new Date().toISOString(),sceneId:chosenScene.id,name:`${current.code||'aparelho'}-${index+1}.jpg`});
+    if(!referenceData)referenceData=result.dataUrl;
+    current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,processedAssetId,previousProcessedAssetId,status:'ready',processedAt:new Date().toISOString(),sceneId:chosenScene.id,error:''}:item)};commit(current)
+   }catch(error){current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,status:'error',error:error?.message||'Falha no processamento'}:item)};commit(current);setFileError(error?.message||'Falha no processamento')}
+  }
+  await refreshAssets(current);setGalleryMode('ready');setBusy(false);setProgress('')
+ }
+ async function switchScene(){const nextScene=sceneForPhone(workPhone,settings.style,Number(workPhone.photoScene?.offset||0)+1);const next={...workPhone,previousPhotoScene:workPhone.photoScene||scene,photoScene:nextScene};commit(next);await processAll({force:true,sceneOverride:nextScene,sourcePhone:next})}
+ async function resetProcessed(meta){if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});if(meta.previousProcessedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,processedAssetId:'',previousProcessedAssetId:'',status:'original',processedAt:'',error:''}:item)};commit(next);await refreshAssets(next)}
+ async function undoLastBackground(){
+  const reversible=photos.filter(meta=>meta.previousProcessedAssetId);if(!reversible.length)return;setBusy(true);
+  try{for(const meta of reversible)if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});const next={...workPhone,photoScene:workPhone.previousPhotoScene||workPhone.photoScene,previousPhotoScene:null,photos:photos.map(meta=>meta.previousProcessedAssetId?{...meta,processedAssetId:meta.previousProcessedAssetId,previousProcessedAssetId:'',status:'ready',error:''}:meta)};commit(next);await refreshAssets(next)}finally{setBusy(false)}
+ }
+ async function removePhoto(meta){if(!confirm('Excluir esta foto original e a versão preparada?'))return;await Promise.all([deletePhotoAsset(meta.originalAssetId).catch(()=>{}),deletePhotoAsset(meta.processedAssetId).catch(()=>{}),deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{})]);const next={...workPhone,photos:photos.filter(item=>item.id!==meta.id)};commit(next);await refreshAssets(next)}
+ function visibleAsset(meta){const id=galleryMode==='ready'?(meta.processedAssetId||meta.originalAssetId):meta.originalAssetId;return{id,url:assetUrls[id]||'',prepared:Boolean(meta.processedAssetId)}}
+ async function downloadAll(){const chosen=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return{id,index}}).filter(x=>assetUrls[x.id]);chosen.forEach(({id,index})=>downloadDataUrl(assetUrls[id],`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`))}
+ async function shareAll(){const items=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return assetUrls[id]?{dataUrl:assetUrls[id],name:`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`}:null}).filter(Boolean);if(!items.length)return alert('Nenhuma foto disponível.');try{await sharePhotoDataUrls(items,`${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Fotos do aparelho')}catch(error){if(error?.name!=='AbortError')alert('Não foi possível abrir o compartilhamento.')}}
+ const driveUrl=String(settings.driveFolderUrl||'').trim();
+ return <section className={`photo-studio ${standalone?'standalone':''}`}>
+  <header className="photo-studio-head"><div><span><WandSparkles size={15}/></span><div><h3>Fotos para anúncio</h3><p>Originais preservadas · um cenário consistente por aparelho.</p></div></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></header>
+  <div className="photo-studio-controls">
+   <label>Estilo<select value={settings.style} onChange={e=>{const style=e.target.value,nextScene=sceneForPhone(workPhone,style,Number(workPhone.photoScene?.offset||0));commit({...workPhone,photoStudioSettings:{...settings,style},photoScene:nextScene})}}>{photoStyles.map(value=><option key={value}>{value}</option>)}</select></label>
+   <label>Intensidade<select value={settings.intensity} onChange={e=>updateSettings({intensity:e.target.value})}><option>Natural</option><option>Destaque</option></select></label>
+   <label className="photo-toggle"><input type="checkbox" checked={settings.keepScale!==false} onChange={e=>updateSettings({keepScale:e.target.checked})}/><span>Manter escala real</span></label>
+   <div className="scene-chip"><small>Cenário deste aparelho</small><b>{scene.style} · #{scene.signature}</b></div>
+  </div>
+  <div className="photo-primary-actions"><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar / adicionar fotos</button><input ref={fileRef} hidden type="file" accept="image/*" capture="environment" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/><button type="button" className="primary" disabled={busy||!total} onClick={()=>processAll()}><WandSparkles size={15}/> {busy?'Processando...':'Preparar todas com IA'}</button><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={15}/> Refazer fundo</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={15}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" className="photo-undo-button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={15}/> Desfazer último fundo</button>}</div>
+  {(progress||fileError)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress}</div>}
+  <div className="photo-gallery-toolbar"><div><button type="button" className={galleryMode==='ready'?'active':''} onClick={()=>setGalleryMode('ready')}>Preparadas <b>{ready}</b></button><button type="button" className={galleryMode==='original'?'active':''} onClick={()=>setGalleryMode('original')}>Originais <b>{total}</b></button></div><div><button type="button" disabled={!total} onClick={downloadAll}><Download size={14}/> Baixar</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
+  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>No celular, toque em “Tirar / adicionar fotos”. Você pode fotografar diretamente pela câmera.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={meta.status==='error'?'error':''}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Fundo preparado com IA':'Original preservada')}</small></div><div>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={()=>resetProcessed(meta)}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={()=>removePhoto(meta)}><Trash2 size={13}/></button></div></footer></article>})}</div>}
+  <div className="photo-drive"><div><FolderOpen size={16}/><div><b>Pasta de fotos no Google Drive</b><span>O BMCenter guarda o vínculo. As imagens continuam sob seu controle.</span></div></div><div><input value={settings.driveFolderUrl||''} onChange={e=>updateSettings({driveFolderUrl:e.target.value})} placeholder="Cole o link da pasta deste aparelho"/><button type="button" disabled={!driveUrl} onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')}><ExternalLink size={14}/> Abrir pasta</button><button type="button" disabled={!total} onClick={shareAll}><Share2 size={14}/> Enviar / Drive</button></div><small>No Android, “Enviar / Drive” abre o compartilhamento do sistema: você pode escolher Google Drive, WhatsApp, Messenger e outros apps disponíveis.</small></div>
+ </section>
+}
+
+function PhotoStudioModal({phone,onClose,onSave}){return <Modal className="photo-studio-modal" title={`Fotos · ${phoneDisplayName(phone,{includeCode:false})}`} onClose={onClose}><PhonePhotoStudio phone={phone} standalone onPhoneChange={onSave}/></Modal>}
+
 function PhoneModal({item,banks,suppliers,onClose,onSave}){
   const isNewPhone=!load(SKEY).some(phone=>phone.id===item.id);
   const savedPhoneDraft=isNewPhone?loadDraft(PHONE_DRAFT_KEY):null;
@@ -2473,6 +2585,11 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
    clearDraft(PHONE_DRAFT_KEY);setDraftRecovered(false);onClose()
   }
   function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);onSave(f)}
+  function applyPhotoChanges(next){
+   setF(next);
+   if(isNewPhone){saveDraft(PHONE_DRAFT_KEY,{kind:'single-phone-registration',phone:sanitizePhoneForLeanMode(next)});setDraftRecovered(true);return}
+   const stored=load(SKEY);if(Array.isArray(stored)){const persisted=stored.map(phone=>phone.id===next.id?{...phone,photos:next.photos||[],photoScene:next.photoScene||null,photoStudioSettings:next.photoStudioSettings||{}}:phone);save(SKEY,persisted)}
+  }
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
   const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]={...parts[i],[k]:v};return{...current,parts}});
   const addPartNow=()=>{if(!part.trim())return;setF(current=>({...current,parts:[...current.parts,{id:crypto.randomUUID(),name:part.trim(),status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}]}));setPart('')};
@@ -2516,6 +2633,9 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     <details className="compact-editor-section"><summary><span><Tags size={15}/> Etiquetas</span><span>{f.tags.length}</span></summary>
     <div className="tag-editor"><div className="add"><input value={tag} onChange={e=>setTag(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}} placeholder="Ex.: NFC, 5G, OLED, Dual Chip"/><button type="button" onClick={()=>{if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}>Adicionar</button></div><div className="tag-list">{f.tags.map(t=><span key={t}>{t}<button type="button" onClick={()=>set('tags',f.tags.filter(x=>x!==t))}>×</button></span>)}</div></div>
 
+    </details>
+    <details className="compact-editor-section photo-editor-section"><summary><span><Camera size={15}/> Fotos para anúncio</span><span>{photoReadyCount(f)}/{photoOriginalCount(f)} prontas</span></summary>
+      <PhonePhotoStudio phone={f} onPhoneChange={applyPhotoChanges}/>
     </details>
     <details className="compact-editor-section"><summary>Peças necessárias <span>{f.parts.length}</span></summary>
     <div className="parts compact-parts">
