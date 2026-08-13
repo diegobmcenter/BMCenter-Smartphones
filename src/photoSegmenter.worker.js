@@ -1,7 +1,7 @@
 import {FilesetResolver,InteractiveSegmenter} from '@mediapipe/tasks-vision';
 
-const WASM_ROOT='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm';
-const MODEL_URL='https://storage.googleapis.com/mediapipe-models/interactive_segmenter_v2/magic_touch/int8/1/interactive_segmentation.task';
+const WASM_ROOT=new URL('/mediapipe/wasm',self.location.origin).href.replace(/\/$/,'');
+const MODEL_URL=new URL('/mediapipe/models/interactive_segmentation.task',self.location.origin).href;
 
 let task=null;
 let renderCanvas=null;
@@ -11,19 +11,22 @@ async function init(){
  if(task)return task;
  if(initPromise)return initPromise;
  initPromise=(async()=>{
-  const vision=await FilesetResolver.forVisionTasks(WASM_ROOT);
   renderCanvas=new OffscreenCanvas(1,1);
-  try{
-   task=await InteractiveSegmenter.createFromOptions(vision,{
-    baseOptions:{modelAssetPath:MODEL_URL,delegate:'GPU'},
+  const create=async delegate=>{
+   // Module Workers need the local ESM factory loaded before WASM starts.
+   const vision=await FilesetResolver.forVisionTasks(WASM_ROOT,true);
+   return InteractiveSegmenter.createFromOptions(vision,{
+    baseOptions:{modelAssetPath:MODEL_URL,delegate},
     canvas:renderCanvas
    });
+  };
+  try{
+   task=await create('GPU');
   }catch(gpuError){
    console.warn('BMCenter: MediaPipe GPU indisponível, tentando CPU.',gpuError);
-   task=await InteractiveSegmenter.createFromOptions(vision,{
-    baseOptions:{modelAssetPath:MODEL_URL,delegate:'CPU'},
-    canvas:renderCanvas
-   });
+   task?.close?.();
+   task=null;
+   task=await create('CPU');
   }
   return task;
  })();

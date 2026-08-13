@@ -70,14 +70,36 @@ async function requestMask(imageData,strokes,onProgress){
  if(typeof Worker==='undefined'||typeof createImageBitmap!=='function'||typeof OffscreenCanvas==='undefined'){
   throw new Error('Este navegador não oferece os recursos necessários para o recorte local. Use Chrome atualizado.');
  }
- onProgress?.('Preparando segmentador oficial do Google...');
+ onProgress?.('Calculando o recorte local...');
  const blob=dataUrlToBlob(imageData);
- const bitmap=await createImageBitmap(blob);
+ let bitmap=await createImageBitmap(blob);
+ // MagicTouch only needs a compact copy to calculate the mask. The result is
+ // upscaled afterwards and applied to the untouched full-resolution original.
+ const maxMaskSide=640;
+ if(Math.max(bitmap.width,bitmap.height)>maxMaskSide){
+  const scale=maxMaskSide/Math.max(bitmap.width,bitmap.height);
+  const resized=await createImageBitmap(bitmap,0,0,bitmap.width,bitmap.height,{
+   resizeWidth:Math.max(1,Math.round(bitmap.width*scale)),
+   resizeHeight:Math.max(1,Math.round(bitmap.height*scale)),
+   resizeQuality:'high'
+  });
+  bitmap.close?.();
+  bitmap=resized;
+ }
  const reqId=++requestCounter;
  const clean=(Array.isArray(strokes)?strokes:[]).map(normalizedStroke).filter(Boolean);
  const worker=getWorker();
 
- const promise=new Promise((resolve,reject)=>pending.set(reqId,{resolve,reject}));
+ const promise=new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>{
+   pending.delete(reqId);
+   reject(new Error('O segmentador demorou demais para iniciar. Atualize a página e tente novamente.'));
+  },90000);
+  pending.set(reqId,{
+   resolve:value=>{clearTimeout(timeout);resolve(value)},
+   reject:error=>{clearTimeout(timeout);reject(error)}
+  });
+ });
  worker.postMessage({type:'SEGMENT_IMAGE',reqId,bitmap,strokes:clean.length?clean:defaultStrokes()},[bitmap]);
  const result=await promise;
  onProgress?.(`Recorte calculado em ${Math.round(result.inferenceMs||0)} ms.`);

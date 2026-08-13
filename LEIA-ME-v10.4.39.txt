@@ -1,0 +1,37 @@
+BMCenter Smartphones v10.4.39 — PHOTO STUDIO CORRIGIDO
+
+O QUE FOI CORRIGIDO
+- Novo layout do Photo Studio, organizado como um editor visual.
+- Foto e resultado aparecem em destaque, com comparação Original / Preparada.
+- Cenários e ajustes ficam no painel lateral.
+- Galeria das fotos fica logo abaixo do editor.
+- Corrigido o erro "Recorte local: ModuleFactory not set".
+- O mecanismo de recorte e o modelo agora acompanham o projeto e não dependem de arquivos externos durante o uso.
+
+REGRA PRINCIPAL
+A inteligência local calcula somente a máscara do recorte.
+O smartphone e os demais objetos preservados são copiados pixel a pixel da foto ORIGINAL.
+O aparelho não é redesenhado, esticado ou recriado por inteligência generativa.
+
+COMO USAR
+1. Entre no Photo Studio.
+2. Importe ou tire uma ou mais fotos.
+3. Escolha o cenário desejado.
+4. Clique em "Preparar todas as fotos".
+5. Compare as abas "Original" e "Preparada".
+6. Se necessário, use "Ajustar recorte" para marcar áreas que devem permanecer ou sair.
+
+IMPORTANTE
+Na primeira preparação, o navegador pode levar mais tempo para carregar e iniciar o recorte local.
+Aguarde até a foto mostrar o estado "Pronta".
+
+TESTE REALIZADO
+- Projeto instalado e compilado sem erros.
+- Photo Studio aberto no navegador.
+- Foto importada e preparada com sucesso.
+- Recorte concluído sem o erro ModuleFactory.
+- Nenhum erro registrado no navegador durante o teste.
+
+PUBLICAÇÃO
+Abra o arquivo PUBLICAR-ATUALIZACAO.bat e siga as etapas mostradas na tela.
+Antes de enviar, ele instala as dependências, inclui os arquivos locais do recorte e valida a compilação.

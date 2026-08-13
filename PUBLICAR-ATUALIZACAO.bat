@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.38 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.39 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.38"
+set "VERSION=10.4.39"
 
 echo.
 echo ============================================================
@@ -38,6 +38,10 @@ echo.
 echo [2/8] Testando a versao antes de publicar...
 call npm run build
 if errorlevel 1 goto :build_error
+
+if not exist "dist\mediapipe\models\interactive_segmentation.task" goto :mediapipe_missing
+if not exist "dist\mediapipe\wasm\vision_wasm_internal.wasm" goto :mediapipe_missing
+if not exist "dist\mediapipe\wasm\vision_wasm_module_internal.wasm" goto :mediapipe_missing
 
 echo.
 echo ============================================================
@@ -82,7 +86,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.38 - Photo Studio V2 preservacao total do aparelho"
+git commit -m "BMCenter v10.4.39 - corrige Photo Studio e recorte local"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...
@@ -158,6 +162,18 @@ echo ============================================================
 echo.
 echo Nada foi enviado para o GitHub.
 echo Copie ou fotografe o erro que apareceu acima.
+echo.
+pause
+exit /b 1
+
+:mediapipe_missing
+echo.
+echo ============================================================
+echo       ARQUIVOS DO RECORTE LOCAL NAO FORAM INCLUIDOS
+echo ============================================================
+echo.
+echo Nada foi enviado para o GitHub.
+echo Copie ou fotografe as mensagens que apareceram acima.
 echo.
 pause
 exit /b 1

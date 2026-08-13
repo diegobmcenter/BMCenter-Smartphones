@@ -1,10 +1,13 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.38",
+  "version": "10.4.39",
   "type": "module",
   "scripts": {
+    "sync:mediapipe": "node scripts/copy-mediapipe-wasm.mjs",
+    "predev": "npm run sync:mediapipe",
     "dev": "vite",
+    "prebuild": "npm run sync:mediapipe",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -14,7 +17,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "qrcode.react": "^4.2.0",
-    "@mediapipe/tasks-vision": "^1.0.1"
+    "@mediapipe/tasks-vision": "1.0.1"
   },
   "devDependencies": {
     "vite": "^6.0.5"

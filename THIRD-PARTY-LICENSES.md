@@ -1,32 +1,25 @@
 # Licenças de terceiros
 
-## @imgly/background-removal
+## MediaPipe Tasks Vision / Interactive Segmenter V2
 
-O BMCenter Smartphones v10.4.28 utiliza `@imgly/background-removal` para remoção de fundo local no navegador.
+- Pacote: `@mediapipe/tasks-vision` 1.0.1
+- Modelo: Interactive Segmenter V2 / MagicTouch int8
+- Licença do MediaPipe: Apache License 2.0
+- Projeto: https://github.com/google-ai-edge/mediapipe
 
-Projeto: IMG.LY Background Removal JS
-Licença: AGPL-3.0
-Repositório: https://github.com/imgly/background-removal-js
+O runtime WebAssembly e o modelo são distribuídos localmente com este projeto para o funcionamento do recorte no navegador.
 
-Consulte o repositório do projeto para o texto integral da licença e avisos aplicáveis.
+## React e React DOM
 
+- Licença: MIT
+- Projeto: https://github.com/facebook/react
 
-## Transformers.js / BiRefNet
-- Transformers.js: Hugging Face.
-- BiRefNet / BiRefNet Lite: MIT License.
-- ISNet-ONNX model card declares AGPL-3.0; this test build keeps attribution and should be reviewed before redistribution beyond the private/internal project.
+## Lucide React
 
+- Licença: ISC
+- Projeto: https://github.com/lucide-icons/lucide
 
-## MediaPipe Tasks Vision / MagicTouch
-Google MediaPipe Tasks Vision e MagicTouch são usados para segmentação interativa local. MagicTouch model card: Apache License 2.0.
+## QRCode React
 
-
-## MediaPipe v10.4.37
-Runtime fixado em @mediapipe/tasks-vision 0.10.35. Interactive Segmenter usa o modelo Web ptm_512_hdt_ptm_woid.tflite conforme documentação oficial do Google.
-
-
-## MediaPipe Interactive Segmenter V2 — v10.4.38
-- Runtime: @mediapipe/tasks-vision ^1.0.1.
-- Modelo: interactive_segmenter_v2 / MagicTouch int8.
-- Arquitetura baseada no sample Web atual do Google (setImage + segment(strokes)).
-- Licença do ecossistema MediaPipe: Apache-2.0.
+- Licença: ISC
+- Projeto: https://github.com/zpao/qrcode.react
