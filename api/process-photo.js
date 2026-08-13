@@ -1,3 +1,24 @@
+function stripJpegMetadataBase64(base64){
+  try{
+    const input=Buffer.from(base64,'base64');
+    if(input.length<4||input[0]!==0xFF||input[1]!==0xD8)return base64;
+    const chunks=[input.subarray(0,2)];let pos=2;
+    while(pos<input.length){
+      if(input[pos]!==0xFF){chunks.push(input.subarray(pos));break}
+      const marker=input[pos+1];
+      if(marker===0xDA){chunks.push(input.subarray(pos));break}
+      if(marker===0xD9){chunks.push(input.subarray(pos,pos+2));break}
+      if(marker===0x00||marker===0xD8||(marker>=0xD0&&marker<=0xD7)){chunks.push(input.subarray(pos,pos+2));pos+=2;continue}
+      if(pos+4>input.length)break;
+      const length=input.readUInt16BE(pos+2);if(length<2||pos+2+length>input.length)break;
+      const isMetadata=(marker>=0xE1&&marker<=0xEF)||marker===0xFE;
+      if(!isMetadata)chunks.push(input.subarray(pos,pos+2+length));
+      pos+=2+length;
+    }
+    return Buffer.concat(chunks).toString('base64');
+  }catch{return base64}
+}
+
 export default async function handler(req,res){
   if(req.method!=='POST')return res.status(405).json({error:'Método não permitido'});
   const apiKey=process.env.OPENAI_API_KEY;
@@ -22,7 +43,8 @@ export default async function handler(req,res){
     if(!response.ok)throw new Error(data?.error?.message||'Falha no processamento da imagem');
     const call=(data?.output||[]).find(item=>item?.type==='image_generation_call'&&item?.result);
     if(!call?.result)throw new Error('A IA não retornou a imagem processada.');
-    return res.status(200).json({dataUrl:`data:image/jpeg;base64,${call.result}`,model:'gpt-image-1'});
+    const cleanResult=stripJpegMetadataBase64(call.result);
+    return res.status(200).json({dataUrl:`data:image/jpeg;base64,${cleanResult}`,model:'gpt-image-1',metadataSanitized:true});
   }catch(error){
     return res.status(500).json({error:error?.message||'Erro ao preparar a foto'});
   }

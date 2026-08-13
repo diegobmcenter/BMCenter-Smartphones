@@ -10,21 +10,31 @@ function openDb(){
  });
 }
 function tx(mode,callback){return openDb().then(db=>new Promise((resolve,reject)=>{const t=db.transaction(STORE,mode),store=t.objectStore(STORE);let result;try{result=callback(store)}catch(error){reject(error);return}t.oncomplete=()=>resolve(result);t.onerror=()=>reject(t.error||new Error('Falha ao acessar as fotos.'));t.onabort=()=>reject(t.error||new Error('Operação cancelada.'))}))}
-export async function putPhotoAsset(asset){await tx('readwrite',store=>store.put(asset));return asset}
 export async function getPhotoAsset(id){if(!id)return null;const db=await openDb();return new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})}
 export async function deletePhotoAsset(id){if(!id)return;await tx('readwrite',store=>store.delete(id))}
-export async function exportAllPhotoAssets(){const db=await openDb();return new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)})}
-export async function importPhotoAssets(records,{replace=false}={}){const db=await openDb();return new Promise((resolve,reject)=>{const t=db.transaction(STORE,'readwrite'),store=t.objectStore(STORE);if(replace)store.clear();for(const item of Array.isArray(records)?records:[])if(item?.id&&item?.dataUrl)store.put(item);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error)})}
 
 export function dataUrlToBlob(dataUrl){const [head,data]=String(dataUrl||'').split(',');const mime=(head.match(/data:([^;]+)/)||[])[1]||'image/jpeg';const bin=atob(data||'');const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new Blob([bytes],{type:mime})}
-export function dataUrlToFile(dataUrl,name='foto.jpg'){const blob=dataUrlToBlob(dataUrl);return new File([blob],name,{type:blob.type||'image/jpeg'})}
-export function downloadDataUrl(dataUrl,name){const a=document.createElement('a');a.href=dataUrl;a.download=name;a.click()}
+export function dataUrlToFile(dataUrl,name='foto.jpg'){const blob=dataUrlToBlob(dataUrl);return new File([blob],name,{type:blob.type||'image/jpeg',lastModified:0})}
+
+async function imageFromDataUrl(source){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Imagem inválida.'));img.src=source})}
+export async function sanitizeImageDataUrl(source,{maxSide=2200,quality=.92}={}){
+ if(!String(source||'').startsWith('data:image/'))throw new Error('Imagem inválida para sanitização.');
+ const image=await imageFromDataUrl(source);
+ const scale=Math.min(1,maxSide/Math.max(image.naturalWidth,image.naturalHeight));
+ const width=Math.max(1,Math.round(image.naturalWidth*scale)),height=Math.max(1,Math.round(image.naturalHeight*scale));
+ const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+ const ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:false});ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.drawImage(image,0,0,width,height);
+ // Recriar o JPEG pixel a pixel via canvas descarta EXIF, GPS, XMP, IPTC, ICC proprietário, comentários e campos do arquivo de origem.
+ return canvas.toDataURL('image/jpeg',quality);
+}
+export async function putPhotoAsset(asset){const clean=asset?.dataUrl?{...asset,dataUrl:await sanitizeImageDataUrl(asset.dataUrl),metadataSanitized:true,sanitizedAt:new Date().toISOString()}:asset;await tx('readwrite',store=>store.put(clean));return clean}
+export async function exportAllPhotoAssets(){const db=await openDb();const records=await new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)});return Promise.all(records.map(async item=>item?.dataUrl?{...item,dataUrl:await sanitizeImageDataUrl(item.dataUrl),metadataSanitized:true,sanitizedAt:new Date().toISOString()}:item))}
+export async function importPhotoAssets(records,{replace=false}={}){const prepared=await Promise.all((Array.isArray(records)?records:[]).filter(item=>item?.id&&item?.dataUrl).map(async item=>({...item,dataUrl:await sanitizeImageDataUrl(item.dataUrl),metadataSanitized:true,sanitizedAt:new Date().toISOString()})));const db=await openDb();return new Promise((resolve,reject)=>{const t=db.transaction(STORE,'readwrite'),store=t.objectStore(STORE);if(replace)store.clear();for(const item of prepared)store.put(item);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error)})}
+export async function downloadDataUrl(dataUrl,name){const clean=await sanitizeImageDataUrl(dataUrl);const a=document.createElement('a');a.href=clean;a.download=name;a.click()}
 
 export async function resizeImageFile(file,{maxSide=1600,quality=.9}={}){
  const source=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(file)});
- const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Imagem inválida.'));img.src=source});
- const scale=Math.min(1,maxSide/Math.max(image.naturalWidth,image.naturalHeight));const width=Math.max(1,Math.round(image.naturalWidth*scale)),height=Math.max(1,Math.round(image.naturalHeight*scale));
- const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.drawImage(image,0,0,width,height);return canvas.toDataURL('image/jpeg',quality)
+ return sanitizeImageDataUrl(source,{maxSide,quality});
 }
 
 const SCENES=[
@@ -58,7 +68,8 @@ export function sceneForPhone(phone,style='Automático',offset=0){const baseHash
 export const photoStyles=['Automático','Claro','Escuro','Premium','Residencial','Minimalista'];
 
 export async function sharePhotoDataUrls(items,title='Fotos do aparelho'){
- const files=items.map((item,index)=>dataUrlToFile(item.dataUrl,item.name||`foto-${index+1}.jpg`));
+ const sanitized=await Promise.all(items.map(async(item,index)=>({dataUrl:await sanitizeImageDataUrl(item.dataUrl),name:item.name||`foto-${index+1}.jpg`})));
+ const files=sanitized.map(item=>dataUrlToFile(item.dataUrl,item.name));
  if(navigator.share&&navigator.canShare?.({files})){await navigator.share({title,files});return true}
  files.forEach((file,index)=>{const url=URL.createObjectURL(file);const a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000+index*100)});return false
 }
