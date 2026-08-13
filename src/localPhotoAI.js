@@ -55,13 +55,22 @@ function drawBackground(ctx,w,h,scene,intensity){
 export async function preparePhotoLocally(imageData,{scene={},intensity='Natural',keepScale=true,onProgress}={}){
  if(!String(imageData||'').startsWith('data:image/'))throw new Error('Imagem original inválida.');
  onProgress?.('Carregando IA local...');
- const {default:removeBackground}=await import('@imgly/background-removal');
+ const mod=await import('@imgly/background-removal');
+ const removeBackground=mod.removeBackground||mod.default;
+ if(typeof removeBackground!=='function')throw new Error('A IA local de recorte não foi carregada corretamente. Atualize a página e tente novamente.');
  const inputBlob=dataUrlToBlob(imageData);
- const cutoutBlob=await removeBackground(inputBlob,{
+ let cutoutBlob;
+ try{
+  cutoutBlob=await removeBackground(inputBlob,{
   progress:(key,current,total)=>{
    if(total>0){const pct=Math.min(100,Math.round(current/total*100));onProgress?.(`IA local: ${pct}%`)}
   }
- });
+  });
+ }catch(error){
+  console.error('BMCenter Local Photo AI',error);
+  const message=String(error?.message||error||'Erro desconhecido');
+  throw new Error(`Falha na IA local: ${message}. Na primeira execução, mantenha internet ativa até o modelo terminar de baixar.`);
+ }
  onProgress?.('Montando cenário...');
  const [original,cutout]=await Promise.all([blobToImage(inputBlob),blobToImage(cutoutBlob)]);
  const maxSide=1600,scale=Math.min(1,maxSide/Math.max(original.naturalWidth||original.width,original.naturalHeight||original.height));

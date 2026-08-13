@@ -31,7 +31,7 @@ goto :dependencies_ok
 
 :install_dependencies
 echo Dependencias novas/ausentes. Instalando...
-call npm install --no-audit --no-fund
+call npm install --legacy-peer-deps --no-audit --no-fund
 if errorlevel 1 goto :install_error
 
 :dependencies_ok
@@ -89,7 +89,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.27 - IA local gratuita para fotos"
+git commit -m "BMCenter v10.4.28 - IA local gratuita para fotos"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.27
+BMCenter Smartphones v10.4.28
 
 PRINCIPAL ALTERACAO
 - O botao Preparar todas com IA nao usa mais a API paga da OpenAI.
@@ -21,6 +21,14 @@ LICENCA DE TERCEIROS
 - @imgly/background-removal e distribuido sob AGPL-3.0. Consulte THIRD-PARTY-LICENSES.md.
 
 
-CORREÇÃO DO INSTALADOR
-- Ajustada a dependência onnxruntime-web para ^1.21.0 estável.
-- Remove o conflito ERESOLVE com @imgly/background-removal 1.7.0.
+CORRECAO v10.4.28
+- Corrigida importacao da biblioteca de IA local (export nomeado/default).
+- Corrigida dependencia onnxruntime-web para versao estavel compativel.
+- Mensagens de erro da IA local agora mostram a causa real.
+
+
+CORRECAO ADICIONAL DE COMPATIBILIDADE
+- @imgly/background-removal 1.7.0 usa o ONNX Runtime Web recomendado oficialmente pela IMG.LY.
+- O BAT usa npm install --legacy-peer-deps para contornar a validacao de peer dependency do npm sem trocar o runtime exigido pela biblioteca.
+- A importacao da IA local aceita export default e nomeado como protecao adicional.
+- Erros do processamento local agora aparecem com mensagem detalhada em vez de texto minificado.
