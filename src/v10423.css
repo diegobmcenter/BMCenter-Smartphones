@@ -1,0 +1,8 @@
+/* BMCenter v10.4.23 — atalhos visíveis em Smartphones */
+.v102-row-actions .v10423-photo-shortcut{color:#6f5bd3!important}
+.v102-row-actions .v10423-photo-shortcut:hover{background:color-mix(in srgb,#6f5bd3 10%,var(--surface2))!important;border-color:color-mix(in srgb,#6f5bd3 36%,var(--line))!important}
+.v102-row-actions .v10423-scrap-shortcut{color:#b56a20!important}
+.v102-row-actions .v10423-scrap-shortcut:hover{background:color-mix(in srgb,#d9822b 10%,var(--surface2))!important;border-color:color-mix(in srgb,#d9822b 38%,var(--line))!important}
+.v102-page-actions .v10423-scrap-filter{color:#b56a20!important;border-color:color-mix(in srgb,#d9822b 36%,var(--line))!important;background:color-mix(in srgb,#d9822b 8%,var(--surface))!important}
+.v102-app.theme-dark .v102-row-actions .v10423-photo-shortcut{color:#aa9cff!important}
+.v102-app.theme-dark .v102-row-actions .v10423-scrap-shortcut,.v102-app.theme-dark .v102-page-actions .v10423-scrap-filter{color:#efad68!important}
