@@ -1,0 +1,19 @@
+BMCenter Smartphones v10.4.57
+
+MODAL DO APARELHO - OPÇÃO 2 APROVADA
+
+Esta versão reconstrói a janela completa de edição do aparelho com o visual aprovado pelo usuário:
+- cabeçalho com ícone e identificação do aparelho;
+- card Dados do aparelho;
+- card Dados da compra;
+- Peças/Acessórios e Histórico lado a lado;
+- Etiquetas em faixa própria;
+- metadados e ações no mesmo rodapé;
+- hierarquia visual com roxo, azul, verde e âmbar;
+- temas claro e escuro;
+- dimensões compactas para reduzir rolagem e desperdício de espaço.
+
+Regras mantidas:
+- Photo Studio continua removido;
+- aparelhos são cadastrados apenas em Smartphones;
+- Pedidos/Peças continuam exclusivos para peças.

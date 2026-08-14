@@ -1,7 +1,0 @@
-Validação visual feita antes do ZIP:
-- referência: Opção 9 – Linha Inline Rápida (estilo tabela) aprovada pelo usuário;
-- render real em Chromium usando o CSS v10453.css;
-- tema escuro: aprovado internamente;
-- tema claro: aprovado internamente;
-- removidos do layout: banner grande, presets grandes, cards de resumo altos, área permanente de inclusão;
-- inclusão inline fica oculta até clicar Nova peça.
