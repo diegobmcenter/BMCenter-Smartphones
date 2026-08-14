@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.61
+BMCenter Smartphones v10.4.62
 
 CORREÇÕES E INCLUSÕES
 
@@ -37,3 +37,11 @@ REGRAS PRESERVADAS
 - Pedidos e Peças continuam exclusivamente para peças.
 - Aparelhos continuam cadastrados somente em Smartphones.
 - Photo Studio continua removido.
+
+
+v10.4.62 — Pedido em massa compacto
+- campo Previsão removido da tela;
+- painel esquerdo compactado;
+- Produtos deste pedido corrigido e com rolagem própria quando necessário;
+- pedidos preparados exibidos em até 4 cards por linha no desktop;
+- mais espaço para seleção de aparelhos e menor necessidade de rolagem.

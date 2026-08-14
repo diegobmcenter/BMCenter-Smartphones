@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const parts=main.slice(main.indexOf('function Parts(){'),main.indexOf('\n\nfunction PartsInventoryPage'));
-assert.match(main,/APP_VERSION='10\.4\.61'/);
+assert.match(main,/APP_VERSION='10\.4\.62'/);
 assert.match(main,/OKEY='bmcenter-parts-orders'/);
 assert.match(main,/phone-editor-v57/);
 assert.match(main,/subtitle=\"Editar registro do aparelho\"/);
@@ -19,6 +19,9 @@ assert.match(main,/bulkStagedOrders/);
 assert.match(main,/stageCurrentBulkOrder/);
 assert.match(main,/Um ou vários pedidos no mesmo lançamento/);
 assert.match(main,/Salvar este e adicionar outro pedido/);
+assert.match(main,/parts-v62-bulk-dialog/);
+assert.match(main,/parts-v62-bulk-meta/);
+assert.doesNotMatch(main,/label>Previsão<input type="date" value=\{bulkDraft\.expectedDate\}/,'Previsão deve permanecer removida do pedido em massa');
 assert.match(main,/Excluir a peça \"\$\{row\.part\.name\}\" deste aparelho/);
 assert.doesNotMatch(main,/parts-editor-v1053/);
 
