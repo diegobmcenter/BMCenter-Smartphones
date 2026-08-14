@@ -1,12 +1,12 @@
 @echo off
 setlocal EnableExtensions
 chcp 65001 >nul
-title BMCenter Smartphones v10.4.51 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.53 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.51"
+set "VERSION=10.4.53"
 
 echo.
 echo ============================================================
@@ -67,7 +67,7 @@ echo [7/8] Criando a atualizacao...
 git add -A
 git diff --cached --quiet
 if not errorlevel 1 goto :no_changes
-git commit -m "BMCenter v10.4.51 - layout compacto de pecas no aparelho"
+git commit -m "BMCenter v10.4.53 - pecas inline layout aprovado"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

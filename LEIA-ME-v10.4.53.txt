@@ -1,0 +1,31 @@
+BMCenter Smartphones v10.4.53 — PEÇAS INLINE (LAYOUT APROVADO)
+
+Esta versão corrige o layout reprovado da v10.4.52 e reproduz a estrutura aprovada da Opção 9: Linha Inline Rápida.
+
+REGRAS VISUAIS IMPLEMENTADAS
+- sem cabeçalho explicativo grande;
+- sem cards gigantes;
+- título compacto Peças e acessórios + botão Nova peça;
+- resumo em faixa baixa e compacta;
+- tabela enxuta com Peça, Status, Custo, Cotação, Atualizado e Ações;
+- inclusão inline aparece somente ao clicar em Nova peça;
+- Peça + Status + Custo + +Cotação + Adicionar/Cancelar na mesma linha;
+- detalhes e cotações ficam recolhidos e só ocupam espaço quando solicitados;
+- menu de ações compacto por peça;
+- responsivo;
+- tema claro e tema escuro usam as variáveis globais do BMCenter.
+
+VALIDAÇÕES EXECUTADAS
+- parts-orders.test: OK
+- bulk-parts-order.test: OK
+- multi-bulk-order.test: OK
+- source-contracts.test: OK
+- 41 arquivos JS/JSX/MJS analisados sintaticamente: 0 erros
+- renderização visual real em Chromium do layout/CSS: OK
+- render escuro: seção com 898 px de largura e 456 px de altura mesmo com a linha de inclusão aberta
+- render claro: mesmas dimensões e estrutura
+
+REGRAS DO PROJETO PRESERVADAS
+- Photo Studio continua removido;
+- aparelhos continuam cadastrados somente em Smartphones;
+- Pedidos/Peças continuam exclusivos para peças.
