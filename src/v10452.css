@@ -1,0 +1,120 @@
+.parts-editor-v1052{
+  --pe-bg:var(--app-panel,var(--surface,#ffffff));
+  --pe-card:var(--app-card,var(--surface2,#f7f9fc));
+  --pe-line:var(--app-border,var(--line,#d8e0eb));
+  --pe-text:var(--app-text,var(--text,#132238));
+  --pe-muted:var(--app-muted,var(--muted,#64748b));
+  --pe-primary:var(--app-primary,var(--accent,#16bfe6));
+  --pe-primary-soft:color-mix(in srgb,var(--pe-primary) 12%,var(--pe-bg));
+  --pe-ok:#18b16e;
+  --pe-ok-soft:color-mix(in srgb,var(--pe-ok) 13%,var(--pe-bg));
+  --pe-warn:#d98a14;
+  --pe-warn-soft:color-mix(in srgb,var(--pe-warn) 14%,var(--pe-bg));
+  --pe-shadow:0 12px 30px rgba(15,23,42,.06);
+}
+.parts-editor-v1052 .parts-editor-v52-shell{display:grid;gap:12px;padding-top:6px}
+.parts-editor-v1052 .parts-editor-v52-banner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}
+.parts-editor-v1052 .parts-editor-v52-banner-copy{display:grid;gap:3px}
+.parts-editor-v1052 .parts-editor-v52-banner-copy b{font-size:12px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-banner-copy small{font-size:9px;line-height:1.45;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-banner-note{display:flex;align-items:flex-start;gap:7px;max-width:420px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--pe-primary) 22%,var(--pe-line));border-radius:12px;background:var(--pe-primary-soft);font-size:8px;line-height:1.45;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-banner-note svg{flex:0 0 auto;color:var(--pe-primary);margin-top:1px}
+.parts-editor-v1052 .parts-editor-v52-banner-note b{color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.parts-editor-v1052 .parts-editor-v52-stats article{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--pe-line);border-radius:14px;background:linear-gradient(180deg,var(--pe-bg),var(--pe-card));box-shadow:var(--pe-shadow)}
+.parts-editor-v1052 .parts-editor-v52-stats small{font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-stats b{font-size:12px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-board{display:grid;gap:12px;padding:12px;border:1px solid var(--pe-line);border-radius:18px;background:var(--pe-bg);box-shadow:var(--pe-shadow)}
+.parts-editor-v1052 .parts-editor-v52-board-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid var(--pe-line)}
+.parts-editor-v1052 .parts-editor-v52-board-head>div:first-child{display:grid;gap:2px}
+.parts-editor-v1052 .parts-editor-v52-board-head b{font-size:11px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-board-head small{font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-presets{display:flex;gap:6px;flex-wrap:wrap}
+.parts-editor-v1052 .parts-editor-v52-presets button{min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--pe-line);background:var(--pe-card);font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-presets button:hover{border-color:color-mix(in srgb,var(--pe-primary) 32%,var(--pe-line));color:var(--pe-primary)}
+.parts-editor-v1052 .parts-editor-v52-empty{display:flex;align-items:center;justify-content:center;gap:10px;min-height:92px;padding:16px;border:1px dashed var(--pe-line);border-radius:16px;background:var(--pe-card);text-align:center;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-empty b{display:block;font-size:10px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-empty span{display:block;font-size:8px}
+.parts-editor-v1052 .parts-editor-v52-table{display:grid;gap:0;border:1px solid var(--pe-line);border-radius:16px;overflow:hidden;background:var(--pe-card)}
+.parts-editor-v1052 .parts-editor-v52-header,.parts-editor-v1052 .parts-editor-v52-row{display:grid;grid-template-columns:minmax(220px,1.55fr) minmax(110px,.72fr) minmax(95px,.62fr) minmax(180px,1fr) 92px 124px;gap:10px;align-items:center}
+.parts-editor-v1052 .parts-editor-v52-header{padding:11px 14px;background:color-mix(in srgb,var(--pe-bg) 92%,var(--pe-primary-soft));border-bottom:1px solid var(--pe-line)}
+.parts-editor-v1052 .parts-editor-v52-header span{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-body{display:grid}
+.parts-editor-v1052 .parts-editor-v52-row{padding:12px 14px;background:var(--pe-bg);border-bottom:1px solid var(--pe-line)}
+.parts-editor-v1052 .parts-editor-v52-body>article:last-of-type{border-bottom:0}
+.parts-editor-v1052 .parts-editor-v52-col{min-width:0}
+.parts-editor-v1052 .parts-editor-v52-col span,.parts-editor-v1052 .parts-editor-v52-col small{font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-col b{font-size:10px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-col.piece{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center}
+.parts-editor-v1052 .parts-editor-v52-col.piece>div{display:grid;gap:2px;min-width:0}
+.parts-editor-v1052 .parts-editor-v52-index{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--pe-line);background:var(--pe-card);font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-status{display:inline-flex;align-items:center;justify-content:center;min-height:26px;padding:0 10px;border-radius:999px;border:1px solid var(--pe-line);background:var(--pe-card);font-size:8px;font-weight:700;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-status.linked,
+.parts-editor-v1052 .parts-editor-v52-status.instalada,
+.parts-editor-v1052 .parts-editor-v52-status.recebida{color:var(--pe-ok);background:var(--pe-ok-soft);border-color:color-mix(in srgb,var(--pe-ok) 35%,var(--pe-line))}
+.parts-editor-v1052 .parts-editor-v52-status.cotando,
+.parts-editor-v1052 .parts-editor-v52-status.comprar,
+.parts-editor-v1052 .parts-editor-v52-status.comprada{color:var(--pe-warn);background:var(--pe-warn-soft);border-color:color-mix(in srgb,var(--pe-warn) 32%,var(--pe-line))}
+.parts-editor-v1052 .parts-editor-v52-money{font-size:10px;font-weight:800;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-col.actions{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.parts-editor-v1052 .parts-editor-v52-icon{width:30px;height:30px;display:grid;place-items:center;padding:0;border-radius:10px;border:1px solid var(--pe-line);background:var(--pe-card);color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-icon:hover{border-color:color-mix(in srgb,var(--pe-primary) 40%,var(--pe-line));color:var(--pe-primary)}
+.parts-editor-v1052 .parts-editor-v52-icon.danger:hover{border-color:#f4a6a6;color:#c24141}
+.parts-editor-v1052 .parts-editor-v52-row.open{background:color-mix(in srgb,var(--pe-bg) 88%,var(--pe-primary-soft));border-bottom-color:transparent}
+.parts-editor-v1052 .parts-editor-v52-row.linked{background:color-mix(in srgb,var(--pe-ok-soft) 42%,var(--pe-bg))}
+.parts-editor-v1052 .parts-editor-v52-detail{display:grid;gap:10px;padding:12px 14px 14px;border-bottom:1px solid var(--pe-line);background:linear-gradient(180deg,color-mix(in srgb,var(--pe-bg) 90%,var(--pe-primary-soft)),var(--pe-card))}
+.parts-editor-v1052 .parts-editor-v52-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 180px minmax(220px,.95fr);gap:10px;align-items:end}
+.parts-editor-v1052 .parts-editor-v52-detail-grid label,.parts-editor-v1052 .parts-editor-v52-quote-row label,.parts-editor-v1052 .parts-editor-v52-quickform label{display:grid;gap:4px;margin:0;font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-detail-grid input,.parts-editor-v1052 .parts-editor-v52-detail-grid select,.parts-editor-v1052 .parts-editor-v52-quote-row input,.parts-editor-v1052 .parts-editor-v52-quickform input,.parts-editor-v1052 .parts-editor-v52-quickform select{min-height:34px;border-radius:11px;border-color:var(--pe-line);background:var(--pe-bg);color:var(--pe-text);font-size:9px}
+.parts-editor-v1052 .parts-editor-v52-linkbox{min-height:34px;padding:8px 10px;border-radius:12px;border:1px solid var(--pe-line);background:var(--pe-card);display:grid;gap:1px}
+.parts-editor-v1052 .parts-editor-v52-linkbox small{font-size:7px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-linkbox b{font-size:9px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-linkbox span{font-size:7px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-linkbox.linked{background:var(--pe-ok-soft);border-color:color-mix(in srgb,var(--pe-ok) 35%,var(--pe-line))}
+.parts-editor-v1052 .parts-editor-v52-linkbox.linked span{color:var(--pe-ok)}
+.parts-editor-v1052 .parts-editor-v52-detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:2px}
+.parts-editor-v1052 .parts-editor-v52-detail-head b{font-size:9px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-detail-head button{min-height:30px;padding:0 11px;border-radius:10px;font-size:8px}
+.parts-editor-v1052 .parts-editor-v52-quotes{display:grid;gap:7px}
+.parts-editor-v1052 .parts-editor-v52-quote-row{display:grid;grid-template-columns:minmax(140px,1fr) 130px minmax(210px,1.2fr) 30px;gap:8px;align-items:end;padding:9px;border:1px solid var(--pe-line);border-radius:13px;background:var(--pe-bg)}
+.parts-editor-v1052 .parts-editor-v52-quote-row .wide{min-width:0}
+.parts-editor-v1052 .parts-editor-v52-quote-row label span{font-size:7px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-noquotes{padding:12px;border:1px dashed var(--pe-line);border-radius:12px;background:var(--pe-bg);font-size:8px;color:var(--pe-muted);text-align:center}
+.parts-editor-v1052 .parts-editor-v52-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:2px}
+.parts-editor-v1052 .parts-editor-v52-footer small,.parts-editor-v1052 .parts-editor-v52-footer span{font-size:7px;line-height:1.45;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-quickbox{display:grid;gap:10px;padding:12px;border:1px solid var(--pe-line);border-radius:16px;background:linear-gradient(180deg,var(--pe-bg),var(--pe-card))}
+.parts-editor-v1052 .parts-editor-v52-quicktitle{display:grid;gap:2px}
+.parts-editor-v1052 .parts-editor-v52-quicktitle b{font-size:11px;color:var(--pe-text)}
+.parts-editor-v1052 .parts-editor-v52-quicktitle small{font-size:8px;color:var(--pe-muted)}
+.parts-editor-v1052 .parts-editor-v52-quickform{display:grid;grid-template-columns:minmax(210px,1fr) 160px 140px auto;gap:10px;align-items:end}
+.parts-editor-v1052 .parts-editor-v52-quickactions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.parts-editor-v1052 .parts-editor-v52-quickactions button{min-height:34px;padding:0 12px;border-radius:11px;font-size:8px}
+.parts-editor-v1052 .parts-editor-v52-quickactions .primary{min-width:110px;justify-content:center}
+.parts-editor-v1052 .money-prefix{display:grid;grid-template-columns:auto 1fr;align-items:center;overflow:hidden;border:1px solid var(--pe-line);border-radius:11px;background:var(--pe-bg)}
+.parts-editor-v1052 .money-prefix>span{padding:0 9px;font-size:8px;color:var(--pe-muted);border-right:1px solid var(--pe-line)}
+.parts-editor-v1052 .money-prefix input{border:0!important;border-radius:0!important;background:transparent!important}
+@media(max-width:1100px){
+  .parts-editor-v1052 .parts-editor-v52-banner{grid-template-columns:1fr}
+  .parts-editor-v1052 .parts-editor-v52-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .parts-editor-v1052 .parts-editor-v52-header,.parts-editor-v1052 .parts-editor-v52-row{grid-template-columns:minmax(200px,1.4fr) 110px 90px minmax(160px,1fr) 84px 110px}
+  .parts-editor-v1052 .parts-editor-v52-detail-grid{grid-template-columns:1fr 1fr}
+  .parts-editor-v1052 .parts-editor-v52-linkbox{grid-column:1/-1}
+  .parts-editor-v1052 .parts-editor-v52-quickform{grid-template-columns:1fr 1fr}
+  .parts-editor-v1052 .parts-editor-v52-quickactions{grid-column:1/-1;justify-content:flex-start}
+}
+@media(max-width:860px){
+  .parts-editor-v1052 .parts-editor-v52-table{border:0;background:transparent}
+  .parts-editor-v1052 .parts-editor-v52-header{display:none}
+  .parts-editor-v1052 .parts-editor-v52-row{grid-template-columns:1fr;gap:8px;padding:12px;border:1px solid var(--pe-line);border-radius:15px;background:var(--pe-bg);margin-bottom:8px}
+  .parts-editor-v1052 .parts-editor-v52-col{display:flex;justify-content:space-between;gap:10px}
+  .parts-editor-v1052 .parts-editor-v52-col.piece{display:grid;grid-template-columns:34px 1fr}
+  .parts-editor-v1052 .parts-editor-v52-col.actions{justify-content:flex-start}
+  .parts-editor-v1052 .parts-editor-v52-detail{margin:-6px 0 8px;border:1px solid var(--pe-line);border-top:0;border-radius:0 0 15px 15px}
+  .parts-editor-v1052 .parts-editor-v52-detail-grid,.parts-editor-v1052 .parts-editor-v52-quote-row,.parts-editor-v1052 .parts-editor-v52-quickform{grid-template-columns:1fr}
+  .parts-editor-v1052 .parts-editor-v52-footer{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:640px){
+  .parts-editor-v1052 .parts-editor-v52-stats{grid-template-columns:1fr 1fr}
+  .parts-editor-v1052 .parts-editor-v52-presets{width:100%}
+  .parts-editor-v1052 .parts-editor-v52-presets button{flex:1 1 auto}
+}

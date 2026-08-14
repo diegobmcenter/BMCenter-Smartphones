@@ -10,9 +10,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.51';
+const APP_VERSION='10.4.52';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -2368,12 +2368,14 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     selectedQuoteId:p.selectedQuoteId||'',
     orderStatus:p.orderStatus||'Não pedido'
   }));
-  const[f,setF]=useState({...sourcePhone,nfc:sourcePhone.nfc===true?true:sourcePhone.nfc===false?false:null,screenProtector:sourcePhone.screenProtector===true?true:sourcePhone.screenProtector===false?false:null,caseIncluded:sourcePhone.caseIncluded===true?true:sourcePhone.caseIncluded===false?false:null,likeNew:sourcePhone.likeNew===true?true:sourcePhone.likeNew===false?false:null,biometrics:sourcePhone.biometrics===true?true:sourcePhone.biometrics===false?false:null,unlockCredentials:normalizeUnlockCredentials(sourcePhone),bankAccountId:sourcePhone.bankAccountId||'',parts:normalizedParts,diagnostics:sourcePhone.diagnostics||[],timeline:sourcePhone.timeline||[],ad:sourcePhone.ad||{},tags:sourcePhone.tags||[],priceHistory:sourcePhone.priceHistory||[]}),[part,setPart]=useState(''),[tag,setTag]=useState(''),[openPartId,setOpenPartId]=useState('');
+  const[f,setF]=useState({...sourcePhone,nfc:sourcePhone.nfc===true?true:sourcePhone.nfc===false?false:null,screenProtector:sourcePhone.screenProtector===true?true:sourcePhone.screenProtector===false?false:null,caseIncluded:sourcePhone.caseIncluded===true?true:sourcePhone.caseIncluded===false?false:null,likeNew:sourcePhone.likeNew===true?true:sourcePhone.likeNew===false?false:null,biometrics:sourcePhone.biometrics===true?true:sourcePhone.biometrics===false?false:null,unlockCredentials:normalizeUnlockCredentials(sourcePhone),bankAccountId:sourcePhone.bankAccountId||'',parts:normalizedParts,diagnostics:sourcePhone.diagnostics||[],timeline:sourcePhone.timeline||[],ad:sourcePhone.ad||{},tags:sourcePhone.tags||[],priceHistory:sourcePhone.priceHistory||[]}),[part,setPart]=useState(''),[partStatus,setPartStatus]=useState('Cotando'),[partCost,setPartCost]=useState(''),[tag,setTag]=useState(''),[openPartId,setOpenPartId]=useState('');
   const[draftRecovered,setDraftRecovered]=useState(Boolean(savedPhoneDraft));
+  const partSupplierOptions=suppliers.filter(s=>s.category!=='Aparelhos').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR',{sensitivity:'base'}));
   const partsWithValues=f.parts.filter(item=>item.effectiveCost!==undefined||(item.quotes||[]).length).length;
   const linkedPartsCount=f.parts.filter(item=>!!item.orderId).length;
   const pendingPartsCount=f.parts.filter(item=>!['Instalada','Recebida'].includes(item.status||'')).length;
   const installedPartsCount=f.parts.filter(item=>['Instalada','Recebida'].includes(item.status||'')).length;
+  const totalPartsCost=f.parts.reduce((sum,item)=>sum+effectivePartCost(item),0);
   function savePhoneDraft(){
    saveDraft(PHONE_DRAFT_KEY,{kind:'single-phone-registration',phone:sanitizePhoneForLeanMode(f)});
    setDraftRecovered(true);
@@ -2386,12 +2388,24 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
   }
   function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);const ready={...f,parts:(f.parts||[]).map(item=>({...item,quotes:(item.quotes||[]).map(q=>({...q,price:parseMoneyInput(q.price)}))}))};onSave(ready)}
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
-  const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]={...parts[i],[k]:v};return{...current,parts}});
-  const addPartNow=()=>{if(!part.trim())return;setF(current=>({...current,parts:[...current.parts,{id:crypto.randomUUID(),name:part.trim(),status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}]}));setPart('')};
-  const handleEnterNext=e=>{if(e.key!=='Enter')return;e.preventDefault();const row=e.currentTarget.closest('.parts-editor-v51-quote-row,.parts-editor-quote-row,.quote-row');if(!row)return;const fields=[...row.querySelectorAll('input,select,button')];const index=fields.indexOf(e.currentTarget);const next=fields[index+1];if(next&&typeof next.focus==='function')next.focus();};
-  const addQuote=partIndex=>setF(current=>{const parts=[...current.parts];parts[partIndex]={...parts[partIndex],quotes:[...(parts[partIndex].quotes||[]),{id:crypto.randomUUID(),supplier:'',price:0,notes:''}]};return{...current,parts}});
-  const updateQuote=(partIndex,quoteIndex,key,value)=>setF(current=>{const parts=[...current.parts],quotes=[...(parts[partIndex].quotes||[])];quotes[quoteIndex]={...quotes[quoteIndex],[key]:value};parts[partIndex]={...parts[partIndex],quotes};return{...current,parts}});
-  const removeQuote=(partIndex,quoteId)=>setF(current=>{const parts=[...current.parts],part=parts[partIndex];parts[partIndex]={...part,quotes:(part.quotes||[]).filter(q=>q.id!==quoteId),selectedQuoteId:part.selectedQuoteId===quoteId?'':part.selectedQuoteId};return{...current,parts}});
+  const stampPart=partItem=>({...partItem,updatedAt:new Date().toISOString()});
+  const resetPartDraft=()=>{setPart('');setPartStatus('Cotando');setPartCost('')};
+  const formatPartUpdatedAt=value=>{if(!value)return'—';try{return new Date(value).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})}catch{return'—'}};
+  const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]=stampPart({...parts[i],[k]:v});return{...current,parts}});
+  const addPartNow=(withQuote=false)=>{
+    if(!part.trim())return;
+    const costValue=parseMoneyInput(partCost);
+    const created={id:crypto.randomUUID(),name:part.trim(),status:partStatus||'Cotando',quotes:withQuote?[{id:crypto.randomUUID(),supplier:'',price:'',notes:''}]:[],selectedQuoteId:'',orderStatus:'Não pedido',updatedAt:new Date().toISOString()};
+    if(costValue>0)created.effectiveCost=costValue;
+    setF(current=>({...current,parts:[...current.parts,created]}));
+    setOpenPartId(created.id);
+    resetPartDraft();
+  };
+  const removePart=partId=>setF(current=>({...current,parts:current.parts.filter(item=>item.id!==partId)}));
+  const handleEnterNext=e=>{if(e.key!=='Enter')return;e.preventDefault();const row=e.currentTarget.closest('.parts-editor-v52-quote-row,.parts-editor-v51-quote-row,.parts-editor-quote-row,.quote-row');if(!row)return;const fields=[...row.querySelectorAll('input,select,button')];const index=fields.indexOf(e.currentTarget);const next=fields[index+1];if(next&&typeof next.focus==='function')next.focus();};
+  const addQuote=partIndex=>setF(current=>{const parts=[...current.parts],partItem=parts[partIndex];parts[partIndex]=stampPart({...partItem,quotes:[...(partItem.quotes||[]),{id:crypto.randomUUID(),supplier:'',price:'',notes:''}]});return{...current,parts}});
+  const updateQuote=(partIndex,quoteIndex,key,value)=>setF(current=>{const parts=[...current.parts],quotes=[...(parts[partIndex].quotes||[])];quotes[quoteIndex]={...quotes[quoteIndex],[key]:value};parts[partIndex]=stampPart({...parts[partIndex],quotes});return{...current,parts}});
+  const removeQuote=(partIndex,quoteId)=>setF(current=>{const parts=[...current.parts],partItem=parts[partIndex];parts[partIndex]=stampPart({...partItem,quotes:(partItem.quotes||[]).filter(q=>q.id!==quoteId),selectedQuoteId:partItem.selectedQuoteId===quoteId?'':partItem.selectedQuoteId});return{...current,parts}});
   return <Modal className="phone-editor-modal" title={showProductCode()?(f.code||'Novo aparelho'):([f.brand,f.model].filter(Boolean).join(' ')||'Novo aparelho')} onClose={onClose}>
     {isNewPhone&&draftRecovered&&<div className="draft-recovered-banner"><div><b>Rascunho recuperado</b><small>{savedPhoneDraft?.savedAt?`Salvo em ${new Date(savedPhoneDraft.savedAt).toLocaleString('pt-BR')}`:'Continue de onde parou.'}</small></div><button type="button" onClick={discardPhoneDraft}>Descartar rascunho</button></div>}
     <h3 className="section-title">Dados do aparelho</h3>
@@ -2429,49 +2443,94 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     <div className="tag-editor"><div className="add"><input value={tag} onChange={e=>setTag(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}} placeholder="Ex.: NFC, 5G, OLED, Dual Chip"/><button type="button" onClick={()=>{if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}>Adicionar</button></div><div className="tag-list">{f.tags.map(t=><span key={t}>{t}<button type="button" onClick={()=>set('tags',f.tags.filter(x=>x!==t))}>×</button></span>)}</div></div>
 
     </details>
-    <details className="compact-editor-section parts-editor-v10448 parts-editor-v1051" open>
-      <summary><span><ShoppingCart size={14}/> Peças</span><span>{f.parts.length?`${f.parts.length} · ${partsWithValues} com valor`:'Nenhuma'}</span></summary>
-      <div className="parts-editor-v51-shell">
-        <div className="parts-editor-v51-topbar">
-          <div className="parts-editor-v51-intro">
-            <div className="parts-editor-v51-title"><b>Peças e cotações do aparelho</b><small>Cadastre aqui as necessidades, compare valores e acompanhe o custo direto do aparelho sem sair desta tela.</small></div>
-            <div className="parts-editor-v51-hint"><ShieldCheck size={13}/><span>Compra e recebimento continuam sendo confirmados em <b>Peças e acessórios</b>.</span></div>
+    <details className="compact-editor-section parts-editor-v1052" open>
+      <summary><span><ShoppingCart size={14}/> Peças</span><span>{f.parts.length?`${f.parts.length} item(ns) · ${partsWithValues} com valor`:'Nenhuma'}</span></summary>
+      <div className="parts-editor-v52-shell">
+        <div className="parts-editor-v52-banner">
+          <div className="parts-editor-v52-banner-copy">
+            <b>Peças e cotações do aparelho</b>
+            <small>Layout compacto para incluir peça, cotar e consultar custo sem desperdiçar espaço na tela.</small>
           </div>
-          <div className="parts-editor-v51-stats">
-            <div><small>Total</small><b>{f.parts.length}</b></div>
-            <div><small>Com valor</small><b>{partsWithValues}</b></div>
-            <div><small>Em pedido</small><b>{linkedPartsCount}</b></div>
-            <div><small>Instalada/recebida</small><b>{installedPartsCount}</b></div>
+          <div className="parts-editor-v52-banner-note"><ShieldCheck size={13}/><span>Compra e recebimento continuam sendo confirmados em <b>Peças e acessórios</b>.</span></div>
+        </div>
+
+        <div className="parts-editor-v52-stats">
+          <article><small>Total de peças</small><b>{f.parts.length}</b></article>
+          <article><small>Com valor</small><b>{partsWithValues}</b></article>
+          <article><small>Vinculadas</small><b>{linkedPartsCount}</b></article>
+          <article><small>Custo acumulado</small><b>{totalPartsCost?money(totalPartsCost):'—'}</b></article>
+        </div>
+
+        <div className="parts-editor-v52-board">
+          <div className="parts-editor-v52-board-head">
+            <div>
+              <b>Lista rápida de peças</b>
+              <small>{pendingPartsCount} pendente(s) · {installedPartsCount} instalada(s)/recebida(s)</small>
+            </div>
+            <div className="parts-editor-v52-presets">{['Película','Capinha','Tela','Bateria','Conector','Câmera'].map(name=><button type="button" key={name} onClick={()=>setPart(name)}>{name}</button>)}</div>
           </div>
-        </div>
-        <div className="parts-editor-v51-toolbar">
-          <div className="parts-editor-v51-add"><input value={part} onChange={e=>setPart(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addPartNow()}}} placeholder="Adicionar peça rapidamente..."/><button type="button" className="primary" onClick={addPartNow}><Plus size={13}/> Adicionar</button></div>
-          <div className="parts-editor-v51-presets">{['Tela','Película','Capinha','Bateria','Conector','Câmera','Carcaça','Alto-falante'].map(name=><button type="button" key={name} onClick={()=>setPart(name)}>{name}</button>)}</div>
-        </div>
-        {!f.parts.length&&<div className="parts-editor-v51-empty"><Package size={17}/><div><b>Nenhuma peça registrada</b><span>Adicione a primeira peça para começar a controlar custos e cotações.</span></div></div>}
-        {!!f.parts.length&&<div className="parts-editor-v51-summary-row"><span>{pendingPartsCount} pendente(s)</span><span>{linkedPartsCount} vinculada(s) a pedido</span><span>{f.parts.reduce((sum,item)=>sum+effectivePartCost(item),0)?`Custo acumulado ${money(f.parts.reduce((sum,item)=>sum+effectivePartCost(item),0))}`:'Sem custo lançado'}</span></div>}
-        <div className="parts-editor-v51-list">{f.parts.map((p,i)=>{const quotes=p.quotes||[],best=[...quotes].sort((a,b)=>Number(a.price)-Number(b.price))[0],isOpen=openPartId===p.id,linked=!!p.orderId,shownStatus=linked?(p.orderStatus||'Pedido'):((p.status||'Cotando'));return <article className={`parts-editor-v51-card ${isOpen?'open':''} ${linked?'linked':''}`} key={p.id}>
-          <button type="button" className="parts-editor-v51-head" onClick={()=>setOpenPartId(isOpen?'':p.id)}>
-            <span className="parts-editor-v51-index">{String(i+1).padStart(2,'0')}</span>
-            <div className="parts-editor-v51-main">
-              <div className="parts-editor-v51-line1"><b>{p.name||'Peça sem nome'}</b><div className="parts-editor-v51-pills"><span className={`pill ${linked?'success':''}`}>{shownStatus}</span>{quotes.length>0&&<span className="pill muted">{quotes.length} cotação(ões)</span>}{p.effectiveCost!==undefined&&<span className="pill accent">{money(p.effectiveCost)}</span>}</div></div>
-              <div className="parts-editor-v51-line2">{p.effectiveCost!==undefined?`Custo efetivo ${money(p.effectiveCost)}${p.freightShare?` · frete ${money(p.freightShare)}`:''}`:best?`${best.supplier||'Fornecedor'} · menor valor ${money(best.price)}`:'Sem valor registrado ainda'}</div>
+
+          {!f.parts.length&&<div className="parts-editor-v52-empty"><Package size={18}/><div><b>Nenhuma peça registrada</b><span>Use a inclusão rápida abaixo para lançar o primeiro item deste aparelho.</span></div></div>}
+
+          {!!f.parts.length&&<div className="parts-editor-v52-table">
+            <div className="parts-editor-v52-header">
+              <span>Peça</span>
+              <span>Status</span>
+              <span>Custo</span>
+              <span>Cotação</span>
+              <span>Atualizado</span>
+              <span>Ações</span>
             </div>
-            <div className="parts-editor-v51-actions">{!linked&&<span className="parts-editor-v51-mini-action" title="Remover peça" onClick={e=>{e.stopPropagation();confirm(`Remover "${p.name}"?`)&&setF(current=>({...current,parts:current.parts.filter(x=>x.id!==p.id)}))}}><Trash2 size={13}/></span>}<ChevronDown size={15}/></div>
-          </button>
-          {isOpen&&<div className="parts-editor-v51-body">
-            <div className="parts-editor-v51-bodygrid">
-              <label>Peça<input value={p.name} onChange={e=>up(i,'name',e.target.value)}/></label>
-              <label>Status<select value={p.status} onChange={e=>up(i,'status',e.target.value)}>{['Cotando','Comprar','Comprada','Recebida','Instalada'].map(x=><option key={x}>{x}</option>)}</select></label>
-              {linked?<div className="parts-editor-v51-linked-box"><small>Vinculada ao pedido</small><b>{p.purchaseSupplier||'Fornecedor não informado'}</b><span>{p.orderStatus||'—'}</span></div>:<div className="parts-editor-v51-linked-box muted"><small>Peça avulsa</small><b>Sem pedido vinculado</b><span>Você pode cotar aqui e confirmar depois na Central de Peças.</span></div>}
-            </div>
-            <div className="parts-editor-v51-quotes-head"><b>Cotações</b>{!linked&&<button type="button" onClick={()=>addQuote(i)}><Plus size={12}/> Adicionar cotação</button>}</div>
-            <div className="parts-editor-v51-quotes">{quotes.length?quotes.map((q,qi)=><div className="parts-editor-v51-quote-row" key={q.id}><label><span>Fornecedor</span><input list={`editor-suppliers-${p.id}`} value={q.supplier||''} onChange={e=>updateQuote(i,qi,'supplier',e.target.value)} onKeyDown={handleEnterNext} placeholder="Fornecedor"/></label><datalist id={`editor-suppliers-${p.id}`}>{suppliers.filter(s=>s.category!=='Aparelhos').map(s=><option value={s.name} key={s.id}/>)}</datalist><label><span>Valor</span><div className="money-prefix"><span>R$</span><input inputMode="decimal" value={q.price??''} onChange={e=>updateQuote(i,qi,'price',e.target.value.replace(/[^0-9,.-]/g,''))} onKeyDown={handleEnterNext} placeholder="0,00"/></div></label><label className="wide"><span>Observação</span><input value={q.notes||''} onChange={e=>updateQuote(i,qi,'notes',e.target.value)} onKeyDown={handleEnterNext} placeholder="Prazo, cor, condição..."/></label>{!linked&&<button type="button" className="danger icon-only quote-remove" title="Excluir cotação" onClick={()=>removeQuote(i,q.id)}><Trash2 size={12}/></button>}</div>):<div className="parts-editor-v51-noquotes">Nenhuma cotação registrada para esta peça.</div>}</div>
-            <div className="parts-editor-v51-footer"><small>{linked?'Esta peça já está vinculada a um pedido salvo na Central de Peças.':'A confirmação da compra e do recebimento acontece na Central de Peças.'}</small>{!linked&&quotes.length>0&&<span>{best?`Menor valor atual: ${money(best.price)}`:'—'}</span>}</div>
+            <div className="parts-editor-v52-body">{f.parts.map((p,i)=>{const quotes=p.quotes||[],pricedQuotes=quotes.filter(q=>parseMoneyInput(q.price)>0),best=[...pricedQuotes].sort((a,b)=>parseMoneyInput(a.price)-parseMoneyInput(b.price))[0],isOpen=openPartId===p.id,linked=!!p.orderId,shownStatus=linked?(p.orderStatus||'Pedido realizado'):(p.status||'Cotando'),costValue=effectivePartCost(p),quoteSummary=linked?(p.purchaseSupplier||'Pedido vinculado'):(best?`${quotes.length} cotação(ões) · menor ${money(best.price)}`:(quotes.length?`${quotes.length} cotação(ões)`:'Sem cotação'));return <React.Fragment key={p.id}>
+              <article className={`parts-editor-v52-row ${isOpen?'open':''} ${linked?'linked':''}`}>
+                <div className="parts-editor-v52-col piece">
+                  <span className="parts-editor-v52-index">{String(i+1).padStart(2,'0')}</span>
+                  <div>
+                    <b>{p.name||'Peça sem nome'}</b>
+                    <small>{linked?`Pedido vinculado · ${p.orderStatus||'Em pedido'}`:'Peça avulsa deste aparelho'}</small>
+                  </div>
+                </div>
+                <div className="parts-editor-v52-col"><span className={`parts-editor-v52-status ${linked?'linked':String(shownStatus||'').toLowerCase().replace(/[^a-zà-ú0-9]+/g,'-')}`}>{shownStatus}</span></div>
+                <div className="parts-editor-v52-col"><b className="parts-editor-v52-money">{costValue?money(costValue):'—'}</b></div>
+                <div className="parts-editor-v52-col"><span>{quoteSummary}</span></div>
+                <div className="parts-editor-v52-col"><span>{formatPartUpdatedAt(p.updatedAt)}</span></div>
+                <div className="parts-editor-v52-col actions">
+                  {!linked&&<button type="button" className="parts-editor-v52-icon" title="Adicionar cotação" onClick={()=>{addQuote(i);setOpenPartId(p.id)}}><Plus size={13}/></button>}
+                  <button type="button" className="parts-editor-v52-icon" title={isOpen?'Recolher detalhes':'Ver detalhes'} onClick={()=>setOpenPartId(isOpen?'':p.id)}><ChevronDown size={14}/></button>
+                  {!linked&&<button type="button" className="parts-editor-v52-icon danger" title="Excluir peça" onClick={()=>confirm(`Remover "${p.name}"?`)&&removePart(p.id)}><Trash2 size={13}/></button>}
+                </div>
+              </article>
+              {isOpen&&<div className="parts-editor-v52-detail">
+                <div className="parts-editor-v52-detail-grid">
+                  <label>Peça<input value={p.name} onChange={e=>up(i,'name',e.target.value)}/></label>
+                  <label>Status<select value={p.status} onChange={e=>up(i,'status',e.target.value)}>{['Cotando','Comprar','Comprada','Recebida','Instalada'].map(x=><option key={x}>{x}</option>)}</select></label>
+                  {linked?<div className="parts-editor-v52-linkbox linked"><small>Vinculada ao pedido</small><b>{p.purchaseSupplier||'Fornecedor não informado'}</b><span>{p.orderStatus||'—'}</span></div>:<div className="parts-editor-v52-linkbox"><small>Peça avulsa</small><b>Sem pedido vinculado</b><span>Você pode cotar aqui e concluir depois na Central de Peças.</span></div>}
+                </div>
+                <div className="parts-editor-v52-detail-head"><b>Cotações</b>{!linked&&<button type="button" onClick={()=>addQuote(i)}><Plus size={12}/> Adicionar cotação</button>}</div>
+                <div className="parts-editor-v52-quotes">{quotes.length?quotes.map((q,qi)=><div className="parts-editor-v52-quote-row" key={q.id}><label><span>Fornecedor</span><input list={`editor-suppliers-${p.id}`} value={q.supplier||''} onChange={e=>updateQuote(i,qi,'supplier',e.target.value)} onKeyDown={handleEnterNext} placeholder="Fornecedor"/></label><datalist id={`editor-suppliers-${p.id}`}>{partSupplierOptions.map(s=><option value={s.name} key={s.id}/>)}</datalist><label><span>Valor</span><div className="money-prefix"><span>R$</span><input inputMode="decimal" value={q.price??''} onChange={e=>updateQuote(i,qi,'price',e.target.value.replace(/[^0-9,.-]/g,''))} onKeyDown={handleEnterNext} placeholder="0,00"/></div></label><label className="wide"><span>Observação</span><input value={q.notes||''} onChange={e=>updateQuote(i,qi,'notes',e.target.value)} onKeyDown={handleEnterNext} placeholder="Prazo, cor, condição..."/></label>{!linked&&<button type="button" className="parts-editor-v52-icon danger" title="Excluir cotação" onClick={()=>removeQuote(i,q.id)}><Trash2 size={12}/></button>}</div>):<div className="parts-editor-v52-noquotes">Nenhuma cotação registrada para esta peça.</div>}</div>
+                <div className="parts-editor-v52-footer"><small>{linked?'Esta peça já está vinculada a um pedido salvo na Central de Peças.':'A confirmação da compra e do recebimento acontece na Central de Peças.'}</small>{!linked&&quotes.length>0&&<span>{best?`Menor valor atual: ${money(best.price)}`:'—'}</span>}</div>
+              </div>}
+            </React.Fragment>})}</div>
           </div>}
-        </article>})}</div>
+
+          <div className="parts-editor-v52-quickbox">
+            <div className="parts-editor-v52-quicktitle"><b>Inclusão rápida</b><small>Ideal para lançar uma peça ou iniciar uma cotação sem abrir telas grandes.</small></div>
+            <div className="parts-editor-v52-quickform">
+              <label>Peça<input list="parts-editor-presets" value={part} onChange={e=>setPart(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addPartNow(false)}}} placeholder="Ex.: Película"/></label>
+              <label>Status<select value={partStatus} onChange={e=>setPartStatus(e.target.value)}>{['Cotando','Comprar','Comprada','Recebida','Instalada'].map(status=><option key={status}>{status}</option>)}</select></label>
+              <label>Valor pago<div className="money-prefix"><span>R$</span><input inputMode="decimal" value={partCost} onChange={e=>setPartCost(normalizeMoneyInput(e.target.value))} placeholder="Opcional"/></div></label>
+              <div className="parts-editor-v52-quickactions">
+                <button type="button" onClick={()=>addPartNow(true)}>+ Cotação</button>
+                <button type="button" onClick={resetPartDraft}>Limpar</button>
+                <button type="button" className="primary" onClick={()=>addPartNow(false)}><Plus size={13}/> Adicionar</button>
+              </div>
+            </div>
+            <datalist id="parts-editor-presets">{['Película','Capinha','Tela','Bateria','Conector','Câmera','Carcaça','Alto-falante','Microfone','Botão power','Botão volume'].map(name=><option value={name} key={name}/>)}</datalist>
+          </div>
+        </div>
       </div>
     </details>
+
     <details className="compact-editor-section"><summary>Etiqueta do aparelho</summary>
     <div className="label-preview" id={`label-${f.id}`}><div>{showProductCode()&&<b>{f.code}</b>}<span>{f.brand} {f.model}</span><small>{f.color} · {f.storage}</small></div><QRCodeSVG value={`${showProductCode()?f.code:''}|${f.brand} ${f.model}`} size={92}/></div>
     <button type="button" onClick={()=>printPhoneLabel(f)}>Imprimir etiqueta</button>

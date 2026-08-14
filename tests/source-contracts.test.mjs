@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const parts=main.slice(main.indexOf('function Parts(){'),main.indexOf('\n\nfunction PartsInventoryPage'));
-assert.match(main,/APP_VERSION='10\.4\.51'/);
+assert.match(main,/APP_VERSION='10\.4\.52'/);
 assert.match(main,/OKEY='bmcenter-parts-orders'/);
 assert.match(main,/effectivePartCost\(part\)/);
 assert.match(parts,/Pedidos são somente de peças/);
