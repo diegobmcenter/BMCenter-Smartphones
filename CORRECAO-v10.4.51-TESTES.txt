@@ -1,0 +1,17 @@
+BMCenter Smartphones v10.4.51 — CORREÇÃO DO BAT/TESTES
+
+Causa da falha:
+O arquivo tests/source-contracts.test.mjs ainda esperava APP_VERSION='10.4.50',
+enquanto a aplicação já estava corretamente em APP_VERSION='10.4.51'.
+
+Correções:
+- contrato de versão atualizado para 10.4.51;
+- mensagem de commit do PUBLICAR-ATUALIZACAO.bat atualizada;
+- npm run test:parts-orders executado e aprovado;
+- 41 arquivos JS/JSX/MJS verificados sintaticamente com parser TypeScript: OK.
+
+Resultado dos testes:
+parts-orders.test: OK
+bulk-parts-order.test: OK
+multi-bulk-order.test: OK
+source-contracts.test: OK
