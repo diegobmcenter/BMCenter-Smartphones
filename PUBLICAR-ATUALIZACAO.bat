@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.44 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.45 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.44"
+set "VERSION=10.4.45"
 
 echo.
 echo ============================================================
@@ -38,29 +38,6 @@ echo.
 echo [2/8] Testando a versao antes de publicar...
 call npm run build
 if errorlevel 1 goto :build_error
-
-call npm run test:photo-download
-if errorlevel 1 goto :build_error
-
-call npm run test:photo-engine
-if errorlevel 1 goto :build_error
-
-call npm run test:photo-matte
-if errorlevel 1 goto :build_error
-
-rem Confere os arquivos realmente usados pelo novo motor da v10.4.44.
-rem O Interactive Segmenter antigo foi removido de proposito.
-if not exist "dist\mediapipe\models\selfie_multiclass_256x256.tflite" goto :photo_engine_missing
-if not exist "dist\mediapipe\wasm\vision_wasm_internal.wasm" goto :photo_engine_missing
-if not exist "dist\mediapipe\wasm\vision_wasm_module_internal.wasm" goto :photo_engine_missing
-if not exist "dist\assets\u2netp-*.js" goto :photo_engine_missing
-if not exist "dist\assets\personSegmenter.worker-*.js" goto :photo_engine_missing
-if not exist "dist\models\silueta.onnx" goto :photo_engine_missing
-if not exist "dist\photo-scenes\clean-room.jpg" goto :photo_engine_missing
-if not exist "dist\photo-scenes\real-bright-office.jpg" goto :photo_engine_missing
-if not exist "dist\photo-scenes\real-soft-living.jpg" goto :photo_engine_missing
-if not exist "dist\photo-scenes\real-minimal-office.jpg" goto :photo_engine_missing
-if not exist "dist\photo-scenes\real-warm-office.jpg" goto :photo_engine_missing
 
 echo.
 echo ============================================================
@@ -105,7 +82,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.44 - matte suave e cenarios fotograficos reais"
+git commit -m "BMCenter v10.4.45 - Photo Studio removido"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...
@@ -181,18 +158,6 @@ echo ============================================================
 echo.
 echo Nada foi enviado para o GitHub.
 echo Copie ou fotografe o erro que apareceu acima.
-echo.
-pause
-exit /b 1
-
-:photo_engine_missing
-echo.
-echo ============================================================
-echo       ARQUIVOS DO NOVO PHOTO STUDIO NAO FORAM INCLUIDOS
-echo ============================================================
-echo.
-echo Nada foi enviado para o GitHub.
-echo Copie ou fotografe as mensagens que apareceram acima.
 echo.
 pause
 exit /b 1

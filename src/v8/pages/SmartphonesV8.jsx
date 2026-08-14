@@ -33,7 +33,7 @@ export default function SmartphonesV8({
       const published=profiles.filter(profile=>(x.ads||[]).some(ad=>ad?.publications?.[profile.id]?.status==='published'));
       return <article className="v8-inventory-row" key={x.id}>
        <div className="v8-device-cell">
-        <div className="v8-device-thumb">{x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={19}/>}</div>
+        <div className="v8-device-thumb"><Smartphone size={19}/></div>
         <div><div className="v8-row-title"><b>{x.brand} {x.model}</b>{showProductCode()&&show('code')&&<small>{x.code}</small>}</div><span>{[x.color,x.storage,x.ram&&`${x.ram} RAM`].filter(Boolean).join(' · ')||'Sem detalhes'}</span></div>
        </div>
        <div className="v8-status-cell">{show('status')&&<select value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select>}</div>

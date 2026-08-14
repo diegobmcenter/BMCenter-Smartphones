@@ -1,7 +1,5 @@
-import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,Camera,Crosshair,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Palette,Target,Gauge,CalendarClock,Copy,FolderOpen,Share2,Trash2,WandSparkles,ExternalLink,Save}from'lucide-react';
+import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,Image,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Target,Gauge,CalendarClock,Copy,Trash2,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
-import{putPhotoAsset,getPhotoAsset,deletePhotoAsset,exportAllPhotoAssets,importPhotoAssets,resizeImageFile,downloadPhotoArchive,writePhotoCollectionToPhoneDirectory,sharePhotoDataUrls,sceneForPhone,photoStyles,localDirectorySupported,chooseRootPhotoDirectory,getRootPhotoDirectory,createPhonePhotoDirectory,getPhonePhotoDirectory,choosePhonePhotoDirectory,listDirectoryImages,writeImageToPhoneDirectory}from'./photoStudio.js';
-import{preparePhotoLocally}from'./localPhotoAI.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
@@ -11,12 +9,10 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10419.css';import'./v10420.css';import'./v10421.css';import'./v10422.css';import'./v10423.css';import'./v10424.css';
-const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',PHOTOROOTKEY='bmcenter-photo-root-local',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-import './v10439.css';
-import './v10440.css';
-const APP_VERSION='10.4.44';
-const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,PHOTOROOTKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';
+const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
+const APP_VERSION='10.4.45';
+const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
 const saveDraft=(k,v)=>{const payload={...v,deleted:false,savedAt:new Date().toISOString()};localStorage.setItem(k,JSON.stringify(payload));queueCloudSave(k,payload);return payload};
@@ -139,6 +135,7 @@ function App({cloudUser,onCloudLogout}){
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
  useEffect(()=>{const key='bmcenter-lean-phone-v102';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const lean=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(lean));queueCloudSave(SKEY,lean)}localStorage.setItem(key,'1')},[]);
  useEffect(()=>{const key='bmcenter-phone-schema-v1024';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const migrated=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}localStorage.setItem(key,'1')},[]);
+ useEffect(()=>{const key='bmcenter-photo-studio-removed-v10445';if(localStorage.getItem(key)!=='1'){const phones=load(SKEY);if(Array.isArray(phones)){const cleaned=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(cleaned));queueCloudSave(SKEY,cleaned)}localStorage.removeItem('bmcenter-photo-root-local');localStorage.setItem(key,'1')}if('indexedDB'in window)indexedDB.deleteDatabase('bmcenter-photo-studio-v1')},[]);
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[commandOpen,setCommandOpen]=useState(false);
  useEffect(()=>{document.body.classList.toggle('hide-product-code',config.showProductCode===false)},[config.showProductCode]);
@@ -290,7 +287,7 @@ function normalizeUnlockCredentials(phone){
  return normalized
 }
 function sanitizePhoneForLeanMode(phone){
- const {priority,nextAction,nextActionDate,expectedSaleDate,sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,archived,archivedAt,imei1,imei2,serial,devicePassword,...clean}=phone||{};
+ const {priority,nextAction,nextActionDate,expectedSaleDate,sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,photos,photoScene,previousPhotoScene,photoStudioSettings,archived,archivedAt,imei1,imei2,serial,devicePassword,...clean}=phone||{};
  return {...clean,nfc:phone?.nfc===true?true:phone?.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(phone)}
 }
 
@@ -725,7 +722,7 @@ function defaultPhoneColumns(){return[
 ]}
 function loadPhoneColumns(){const saved=load(PHONECOLKEY);if(!Array.isArray(saved)||!saved.length)return defaultPhoneColumns();const defaults=defaultPhoneColumns(),byId=Object.fromEntries(saved.map(x=>[x.id,x]));return defaults.map(d=>({...d,...byId[d.id]})).sort((a,b)=>{const ao=saved.findIndex(x=>x.id===a.id),bo=saved.findIndex(x=>x.id===b.id);return (ao<0?999:ao)-(bo<0?999:bo)})}
 function Phones(){
- const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[photoPhone,setPhotoPhone]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
+ const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
  const tableWrapRef=useRef(null);
  useEffect(()=>{if(tableWrapRef.current)tableWrapRef.current.scrollLeft=0},[query,statusFilter,tagFilter,onlyFavorites]);
  const banks=load(BKEY),suppliers=load(FKEY),profiles=load(PKEY);
@@ -753,13 +750,13 @@ function Phones(){
  };
  const filtered=items.filter(x=>{const text=`${x.code} ${x.brand} ${x.model} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();const statusOk=statusFilter.length?statusFilter.includes(x.status):!isClosedPhone(x);return text.includes(query.toLowerCase())&&statusOk&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
  function toggleFavorite(phone){persist(items.map(x=>x.id===phone.id?touchPhone({...x,favorite:!x.favorite}):x))}
- function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),status:'Aguardando análise',sale:null,ads:[],photos:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
+ function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),status:'Aguardando análise',sale:null,ads:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
  function moveColumn(draggedId,targetId){if(!draggedId||draggedId===targetId)return;const from=columns.findIndex(c=>c.id===draggedId),to=columns.findIndex(c=>c.id===targetId);if(from<0||to<0)return;const next=[...columns],item=next.splice(from,1)[0];next.splice(to,0,item);persistColumns(next)}
  function startColumnResize(e,column){e.preventDefault();e.stopPropagation();const startX=e.clientX,startWidth=column.width;document.body.classList.add('column-resizing');const move=event=>{const width=Math.max(12,Math.min(1600,startWidth+event.clientX-startX));setColumns(current=>current.map(c=>c.id===column.id?{...c,width}:c))};const up=event=>{const width=Math.max(12,Math.min(1600,startWidth+event.clientX-startX));const next=columns.map(c=>c.id===column.id?{...c,width}:c);persistColumns(next);document.body.classList.remove('column-resizing');window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up)};window.addEventListener('pointermove',move);window.addEventListener('pointerup',up)}
  function autoFitPhoneColumn(columnId){const table=document.querySelector('.configurable-phone-table');if(!table)return;const cells=[...table.querySelectorAll(`[data-column-id="${columnId}"]`)];let max=12;cells.forEach(cell=>{const clone=cell.cloneNode(true);clone.querySelectorAll('button,input,select,.excel-column-resizer,.universal-resize-handle').forEach(x=>x.remove());clone.style.cssText='position:absolute;visibility:hidden;width:max-content;max-width:none;white-space:nowrap;display:block;padding:0;font:inherit';document.body.appendChild(clone);max=Math.max(max,Math.ceil(clone.scrollWidth+10));clone.remove()});persistColumns(columns.map(c=>c.id===columnId?{...c,width:Math.min(1600,max)}:c))}
- const columnAlign=id=>['photos','accessories','cost','expected','profit','actions','priority','status'].includes(id)?'center':'left';
+ const columnAlign=id=>['accessories','cost','expected','profit','actions','priority','status'].includes(id)?'center':'left';
  const visibleColumns=columns.filter(c=>c.visible&&(c.id!=='code'||showProductCode()));
- function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,photoCount=Object.values(x.photoChecklist||{}).filter(Boolean).length,accessories=(x.accessories||[]).filter(a=>a.included).length,published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));
+ function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,accessories=(x.accessories||[]).filter(a=>a.included).length,published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));
   switch(column.id){
    case'code':return <td className="product-code"><b>{x.code}</b></td>;
    case'device':return <td className="smartphone-device-cell"><b>{x.brand} {x.model}</b><small>{[x.color,x.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small><div className="tag-line">{(x.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}</div></td>;
@@ -768,7 +765,7 @@ function Phones(){
    case'cost':return <td className="money-cell">{money(cost)}</td>;
    case'expected':return <td className="money-cell">{money(x.expected)}</td>;
    case'profit':return <td className="money-cell"><span className={profit>=0?'profit-positive':'profit-negative'}>{money(profit)}</span></td>;
-   case'actions':return <td className="smartphone-actions-cell"><div className="smartphone-actions-primary"><button className={x.favorite?'phone-action favorite-button active':'phone-action'} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={18}/></button><button className="phone-action view-action" onClick={()=>setDetail(x)} title="Abrir ficha"><Eye size={18}/></button><button className="phone-action photo-action" onClick={()=>setPhotoPhone(x)} title="Fotos para anúncio"><Camera size={18}/></button><button className="phone-action edit-action" onClick={()=>setEdit(x)} title="Editar aparelho"><FileText size={18}/></button><button className="phone-action duplicate-action" onClick={()=>duplicatePhone(x)} title="Duplicar aparelho"><Copy size={18}/></button><button className="phone-action more-action" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}} title="Mais ações">•••</button></div></td>;
+   case'actions':return <td className="smartphone-actions-cell"><div className="smartphone-actions-primary"><button className={x.favorite?'phone-action favorite-button active':'phone-action'} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={18}/></button><button className="phone-action view-action" onClick={()=>setDetail(x)} title="Abrir ficha"><Eye size={18}/></button><button className="phone-action edit-action" onClick={()=>setEdit(x)} title="Editar aparelho"><FileText size={18}/></button><button className="phone-action duplicate-action" onClick={()=>duplicatePhone(x)} title="Duplicar aparelho"><Copy size={18}/></button><button className="phone-action more-action" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}} title="Mais ações">•••</button></div></td>;
    default:return null
   }
  }
@@ -779,7 +776,7 @@ function Phones(){
     query={query} setQuery={setQuery} onlyFavorites={onlyFavorites} setOnlyFavorites={setOnlyFavorites}
     visibleColumns={visibleColumns} profiles={profiles} showProductCode={showProductCode}
     phoneTotalCost={phoneTotalCost} money={money} toggleFavorite={toggleFavorite} changeStatus={changeStatus}
-    setDetail={setDetail} setPhotoPhone={setPhotoPhone} setEdit={setEdit} setColumnEditor={setColumnEditor} setBatchCreate={setBatchCreate}
+    setDetail={setDetail} setEdit={setEdit} setColumnEditor={setColumnEditor} setBatchCreate={setBatchCreate}
     blankPhone={()=>blankPhone(Number(nextPhoneCode(items).replace(/\D/g,'')))} items={items} actionPhone={actionPhone} setActionPhone={setActionPhone}
     setSalePhone={setSalePhone} persist={persist} updateFinancial={updateFinancial}
     totalExpected={items.filter(x=>!isClosedPhone(x)).reduce((sum,x)=>sum+Number(x.expected||0),0)}
@@ -790,7 +787,6 @@ function Phones(){
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>{setBatchCreate(false);refreshDrafts()}} onSave={created=>{persist([...created,...items]);setBatchCreate(false);refreshDrafts()}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
   {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
-  {photoPhone&&<PhotoStudioModal phone={items.find(x=>x.id===photoPhone.id)||photoPhone} onClose={()=>setPhotoPhone(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setPhotoPhone(v)}}/>}
   {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);let saved=touchPhone(addTimeline(v,'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
   {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>x.id!==salePhone.id?x:touchPhone(addTimeline({...x,status:'Vendido',sale},`Venda registrada por ${money(sale.value)}`))));setSalePhone(null)}}/>}
  </>
@@ -1417,7 +1413,6 @@ function Ads(){
  const[batchOpen,setBatchOpen]=useState(false);
  const[batchResults,setBatchResults]=useState([]);
  const[historyOpen,setHistoryOpen]=useState(false);
- const[photoOpen,setPhotoOpen]=useState(false);
  const[noteSaved,setNoteSaved]=useState(false);
  const[adsNote,setAdsNote]=useState(()=>{try{return JSON.parse(localStorage.getItem(ADSNOTEKEY)||'\"\"')}catch{return''}});
  const storedProfiles=load(PKEY);
@@ -1514,7 +1509,6 @@ function Ads(){
     <div className="ads-ref-generator-body"><div className="ads-ref-generator-left">
      <label><b>1. Escolha o aparelho</b><select value={selectedPhone} onChange={e=>{setSelectedPhone(e.target.value);setGenerated({title:'',description:'',source:''})}}><option value="">Selecione</option>{activePhones.map(phone=><option key={phone.id} value={phone.id}>{phoneDisplayName(phone)}</option>)}</select></label>
      <label><b>2. Escolha o perfil</b><select value={selectedProfile} onChange={e=>setSelectedProfile(e.target.value)}><option value="">Sem perfil específico</option>{profiles.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}</select></label>
-     <button className="ads-photo-studio-button" disabled={!contentPhone} onClick={()=>setPhotoOpen(true)}><Camera size={15}/><span><b>Fotos do anúncio</b><small>{contentPhone?`${photoReadyCount(contentPhone)}/${photoOriginalCount(contentPhone)} prontas`:'Selecione um aparelho'}</small></span><ChevronRight size={14}/></button>
      <button className="ads-ref-ai-button" disabled={!contentPhone||generating} onClick={generateWithAI}>✨ {generating?'Gerando...':'Gerar títulos e descrição'}</button>
      <button className="ads-ref-history-button" disabled={!contentPhone} onClick={()=>setHistoryOpen(true)}>Ver histórico deste aparelho</button>
     </div><div className="ads-ref-generator-right">
@@ -1530,7 +1524,7 @@ function Ads(){
     <footer><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="orange">◇ Tempo médio para vender</span></footer>
    </section>
 
-   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button disabled={!contentPhone} onClick={()=>setPhotoOpen(true)}><Camera/><span>Preparar fotos do aparelho</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
+   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
     <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>setReportOpen(true)}><BarChart3 size={15}/> Ver relatório completo</button></section>
    </aside>
   </section>
@@ -1538,8 +1532,6 @@ function Ads(){
   <section className="ads-ref-card ads-ref-overview"><h2>Visão geral do desempenho</h2><div className="ads-ref-overview-grid"><article><small>Vendas</small><strong>{periodSales.length}</strong><span className="delta">▲ {Math.abs(salesDelta)}%</span><em>vs período anterior</em><MiniBars values={[32,58,39,49,28,74,46,37,64,43,59,82,51,34,28,18,31,40,48,61,25,36]} color="#7c3aed"/></article><article><small>Faturamento</small><strong>{money(revenue)}</strong><span className="delta">▲ {Math.abs(revenueDelta)}%</span><em>vs período anterior</em><MiniBars values={[35,66,47,41,62,55,29,71,45,61,38,53,75,43,49,31,59,41,36,64,48,58]} color="#18b56b"/></article><article><small>Ticket médio</small><strong>{money(ticket)}</strong><span className="delta">▲ {Math.abs(ticketDelta)}%</span><em>vs período anterior</em><MiniBars values={[25,52,41,63,38,74,44,31,59,42,69,48,36,61,43,55,28,49,67,35,46,58]} color="#ff9800"/></article><article><small>Tempo médio para vender</small><strong>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}</strong><span className="delta">▼ 1,2 dia</span><em>vs período anterior</em><MiniBars values={[38,58,31,48,27,66,44,35,54,39,61,49,30,58,41,52,28,46,64,33,44,55]} color="#ff3e95"/></article><article className="conversion"><small>Conversão de anúncios</small><div className="donut" style={{'--pct':`${coverage}%`}}><strong>{String(coverage).replace('.',',')}%</strong></div><div><span className="delta">▲ 0,9 p.p.</span><em>vs período anterior</em></div></article></div><footer><span>💡</span><p>Seu faturamento cresceu {Math.abs(revenueDelta)}% em relação ao período anterior.</p><button onClick={()=>setReportOpen(true)}>Ver detalhes completos <ChevronRight size={14}/></button></footer></section>
 
   <section className="ads-ref-card ads-ref-notes"><header><span>◉</span><div><h2>Observações</h2><p>Anotações e observações gerais sobre seus anúncios, estratégias e resultados.</p></div></header><div><textarea value={adsNote} onChange={e=>setAdsNote(e.target.value)} placeholder="Escreva suas observações aqui..."/><button onClick={saveAdsNote}><FileText size={15}/> {noteSaved?'Salvo ✓':'Salvar observação'}</button></div></section>
-
-  {photoOpen&&contentPhone&&<PhotoStudioModal phone={contentPhone} onClose={()=>setPhotoOpen(false)} onSave={nextPhone=>persist(phones.map(phone=>phone.id===nextPhone.id?nextPhone:phone))}/>}
   {reportOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setReportOpen(false)}><section className="ads-ref-report-modal"><header><div><h2>Relatório de desempenho</h2><p>Todos os perfis no período selecionado.</p></div><button onClick={()=>setReportOpen(false)}><X size={18}/></button></header><div className="ads-ref-report-table">{profileStats.map((item,index)=><article key={item.profile.id}><span>{index+1}º · {item.profile.name}</span><b>{item.sales} venda(s)</b><b>{money(item.revenue)}</b><b>{item.sales?`${item.avgDays.toFixed(1).replace('.',',')} dias`:'—'}</b><b>{item.published} ativo(s)</b></article>)}</div><footer><button onClick={exportAdsPeriod}><Download size={15}/> Exportar CSV</button><button className="primary" onClick={()=>setReportOpen(false)}>Fechar</button></footer></section></div>}
   {batchOpen&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setBatchOpen(false)}><section className="ads-ref-batch-modal"><header><div><h2>Conteúdo em lote</h2><p>Variações para os aparelhos ativos.</p></div><button onClick={()=>setBatchOpen(false)}><X size={18}/></button></header><div className="ads-ref-batch-results">{batchResults.map(item=><article key={item.phoneId}><b>{item.name}</b><span>{item.title}</span><button onClick={()=>copy(`${item.title}\n\n${item.description}`)}><Copy size={14}/> Copiar</button></article>)}</div></section></div>}
   {historyOpen&&contentPhone&&<div className="ads-ref-modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setHistoryOpen(false)}><section className="ads-ref-history-modal"><header><div><h2>Histórico de conteúdo</h2><p>{phoneDisplayName(contentPhone)}</p></div><button onClick={()=>setHistoryOpen(false)}><X size={18}/></button></header><div>{(contentPhone.adContentHistory||[]).slice(0,20).map(item=><article key={item.id}><b>{item.title}</b><p>{item.description}</p><button onClick={()=>{setGenerated({title:item.title,description:item.description,source:item.source});setHistoryOpen(false)}}>Usar novamente</button></article>)}</div></section></div>}
@@ -1618,7 +1610,6 @@ function safeAdsPhones(){
     model:p.model||'',
     color:p.color||'',
     storage:p.storage||'',
-    photos:Array.isArray(p.photos)?p.photos:[],
     ads
    };
   });
@@ -2114,16 +2105,6 @@ function captureCompleteBackup(options={}){
   }
  }
 }
-async function captureCompleteBackupWithPhotos(options={}){
- const backup=captureCompleteBackup(options);
- try{
-  const photoAssets=await exportAllPhotoAssets();
-  return{...backup,photoAssets,summary:{...(backup.summary||{}),photoAssets:photoAssets.length},audit:{...(backup.audit||{}),photoAssetsCaptured:photoAssets.length,photoAssetsIncluded:true}}
- }catch(error){
-  console.warn('Não foi possível anexar as fotos ao backup.',error);
-  return{...backup,photoAssets:[],audit:{...(backup.audit||{}),photoAssetsCaptured:0,photoAssetsIncluded:false,photoAssetsError:error?.message||String(error)}}
- }
-}
 function normalizeBackupFile(data){
  if(data?.format===BACKUP_FORMAT&&data.storage&&typeof data.storage==='object')return data;
  const legacyMap={
@@ -2140,6 +2121,8 @@ function normalizeBackupFile(data){
 }
 async function applyCompleteBackup(backup,{replace=true}={}){
  const normalized=normalizeBackupFile(backup);
+ if(Array.isArray(normalized.storage?.[SKEY]))normalized.storage[SKEY]=normalized.storage[SKEY].map(sanitizePhoneForLeanMode);
+ delete normalized.photoAssets;
  if(!normalized.storage||typeof normalized.storage!=='object')throw new Error('O arquivo não contém dados restauráveis.');
  const entries=Object.entries(normalized.storage).filter(([key])=>backupEligibleKey(key));
  if(!entries.length)throw new Error('Nenhum dado do BMCenter foi encontrado no arquivo.');
@@ -2163,7 +2146,6 @@ async function applyCompleteBackup(backup,{replace=true}={}){
   if(JSON.stringify(restored)!==JSON.stringify(value))failed.push(key)
  }
  if(failed.length)throw new Error(`Falha de integridade ao restaurar: ${failed.join(', ')}`);
- if(Array.isArray(normalized.photoAssets))await importPhotoAssets(normalized.photoAssets,{replace});
  await Promise.all(entries.map(([key,value])=>pushCloudStateNow(key,value)));
  return normalized;
 }
@@ -2171,7 +2153,7 @@ function backupSummaryText(backup){
  const b=normalizeBackupFile(backup),s=b.summary||{},storage=b.storage||{};
  const count=(key)=>Array.isArray(storage[key])?storage[key].length:0;
  const ads=Array.isArray(storage[SKEY])?storage[SKEY].reduce((sum,phone)=>sum+(Array.isArray(phone?.ads)?phone.ads.length:0),0):0;
- return `${count(SKEY)} aparelho(s), ${ads} anúncio(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is), ${Array.isArray(b.photoAssets)?b.photoAssets.length:0} arquivo(s) de foto, ${Object.keys(storage).length} conjunto(s) permanentes e ${Object.keys(b.sessionStorage||{}).length} preferência(s) de sessão.`;
+ return `${count(SKEY)} aparelho(s), ${ads} anúncio(s), ${count(FKEY)} fornecedor(es), ${count(BKEY)} conta(s) bancária(s), ${count(PKEY)} perfil(is), ${Object.keys(storage).length} conjunto(s) permanentes e ${Object.keys(b.sessionStorage||{}).length} preferência(s) de sessão.`;
 }
 
 function downloadBackupObject(backup,filename){
@@ -2184,7 +2166,7 @@ function BackupPage(){
  const[preview,setPreview]=useState(null),[file,setFile]=useState(null),[busy,setBusy]=useState(false),[cloudBackups,setCloudBackups]=useState([]),[loadingCloud,setLoadingCloud]=useState(true);
  async function refreshCloud(){setLoadingCloud(true);try{setCloudBackups(await listCloudBackups())}catch(error){console.warn(error)}finally{setLoadingCloud(false)}}
  useEffect(()=>{refreshCloud()},[]);
- async function exportData(){setBusy(true);try{const data=await captureCompleteBackupWithPhotos();downloadBackupObject(data,`bmcenter-completo-${new Date().toISOString().replace(/[:.]/g,'-')}.bmcenter`)}catch(error){alert(`Falha ao gerar backup: ${error.message||error}`)}finally{setBusy(false)}}
+ async function exportData(){setBusy(true);try{const data=await captureCompleteBackup();downloadBackupObject(data,`bmcenter-completo-${new Date().toISOString().replace(/[:.]/g,'-')}.bmcenter`)}catch(error){alert(`Falha ao gerar backup: ${error.message||error}`)}finally{setBusy(false)}}
  function chooseFile(selected){
   if(!selected)return;
   const reader=new FileReader();
@@ -2204,7 +2186,7 @@ function BackupPage(){
  }
  async function makeCloudBackup(){
   setBusy(true);
-  try{const data=await captureCompleteBackupWithPhotos();await createCloudBackup(data);await refreshCloud();alert('Backup automático criado na nuvem, incluindo a biblioteca de fotos deste navegador.')}
+  try{const data=await captureCompleteBackup();await createCloudBackup(data);await refreshCloud();alert('Backup automático criado na nuvem.')}
   catch(error){alert(`Falha ao criar backup na nuvem: ${error.message||error}`)}
   finally{setBusy(false)}
  }
@@ -2231,7 +2213,7 @@ function BackupPage(){
   </Title>
   <div className="backup-integrity-banner"><ShieldCheck/><div><b>Backup integral e compatível com versões futuras</b><small>O backup captura automaticamente todas as chaves BMCenter presentes no navegador, incluindo aparelhos, anúncios, fornecedores, contas, perfis, configurações, personalizações, layouts, menus e novos módulos adicionados depois.</small></div></div>
   <div className="backup-grid complete-backup-grid">
-   <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com módulos, configurações e arquivos de fotos armazenados no BMCenter.</p><button className="primary" disabled={busy} onClick={exportData}>Baixar arquivo .bmcenter</button></div>
+   <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com os módulos, dados e configurações do BMCenter.</p><button className="primary" disabled={busy} onClick={exportData}>Baixar arquivo .bmcenter</button></div>
    <div className="panel backup-card"><Upload size={38}/><h2>Restaurar arquivo</h2><p>Leia e confira o conteúdo antes de substituir os dados atuais.</p><label className="file-button">Selecionar backup<input type="file" accept=".bmcenter,.json,application/json" hidden onChange={e=>chooseFile(e.target.files?.[0])}/></label></div>
   </div>
   {preview&&<div className="panel backup-preview-panel"><div><h2>Conteúdo encontrado</h2><p>{backupSummaryText(preview)}</p><small>Arquivo: {file?.name} · Criado em {preview.exportedAt?new Date(preview.exportedAt).toLocaleString('pt-BR'):'data não informada'} · Versão {preview.appVersion||'—'}</small></div><button className="primary" disabled={busy} onClick={importData}>Restaurar tudo</button></div>}
@@ -2301,7 +2283,7 @@ function UnlockCredentialsSummary({phone}){
 }
 
 function PhoneDetailModal({item,profiles,onClose,onSave}){
- const[f,setF]=useState(()=>({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),photos:Array.isArray(item.photos)?item.photos:[],timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
+ const[f,setF]=useState(()=>({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
  const[tab,setTab]=useState('summary'),[tag,setTag]=useState(''),[checkText,setCheckText]=useState(''),[commentText,setCommentText]=useState('');
  const set=(k,v)=>setF({...f,[k]:v});
  const publishedProfiles=[...new Set((f.ads||[]).flatMap(ad=>profiles.filter(p=>normalizeAd(ad).publications[p.id]?.status==='published').map(p=>p.name)))];
@@ -2465,309 +2447,6 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
  </Modal>
 }
 
-function photoReadyCount(phone){return (phone?.photos||[]).filter(photo=>photo?.processedAssetId&&photo?.status==='ready').length}
-function photoOriginalCount(phone){return (phone?.photos||[]).filter(photo=>photo?.originalAssetId).length}
-
-
-function PhotoMaskEditor({source,initialStrokes=[],onClose,onApply}){
- const[mode,setMode]=useState(1);
- const[strokes,setStrokes]=useState(()=>Array.isArray(initialStrokes)?initialStrokes:[]);
- const[drawing,setDrawing]=useState(null);
- const[imageRatio,setImageRatio]=useState(1);
- const areaRef=useRef(null);
-
- function pointFromEvent(e){
-  const rect=areaRef.current.getBoundingClientRect();
-  return{x:Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(e.clientY-rect.top)/rect.height))}
- }
- function down(e){
-  e.preventDefault();areaRef.current?.setPointerCapture?.(e.pointerId);
-  setDrawing({brushMode:mode,point:[pointFromEvent(e)],isCompleted:false})
- }
- function move(e){
-  if(!drawing)return;
-  const p=pointFromEvent(e),last=drawing.point[drawing.point.length-1];
-  if(!last||Math.hypot(p.x-last.x,p.y-last.y)>.004)setDrawing({...drawing,point:[...drawing.point,p]})
- }
- function up(e){
-  if(!drawing)return;
-  areaRef.current?.releasePointerCapture?.(e.pointerId);
-  let pts=[...drawing.point];
-  if(pts.length===1){const p=pts[0];pts.push({x:Math.max(0,Math.min(1,p.x+.035)),y:p.y})}
-  setStrokes([...strokes,{brushMode:drawing.brushMode,point:pts,isCompleted:true}]);
-  setDrawing(null)
- }
- const shown=drawing?[...strokes,drawing]:strokes;
- return <div className="mask-editor-backdrop">
-  <div className="mask-editor-card">
-   <header><div><b>Ajustar recorte</b><small>Verde = preservar · Vermelho = remover. Passe o dedo sobre partes faltando ou fundo indevido.</small></div><button type="button" onClick={onClose}><X size={18}/></button></header>
-   <div className="mask-editor-tools"><button type="button" className={mode===1?'active preserve':''} onClick={()=>setMode(1)}>+ Preservar</button><button type="button" className={mode===2?'active remove':''} onClick={()=>setMode(2)}>− Remover fundo</button><button type="button" onClick={()=>setStrokes([])}>Limpar ajustes</button><button type="button" disabled={!strokes.length} onClick={()=>setStrokes(strokes.slice(0,-1))}>Desfazer traço</button></div>
-   <div className="mask-editor-image" ref={areaRef} style={{'--mask-image-ratio':imageRatio,aspectRatio:String(imageRatio)}} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
-    <img src={source} alt="Foto original para ajustar recorte" draggable="false" onLoad={e=>setImageRatio((e.currentTarget.naturalWidth||1)/(e.currentTarget.naturalHeight||1))}/>
-    <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">{shown.map((stroke,i)=>{const points=(stroke.point||[]).map(p=>`${p.x*1000},${p.y*1000}`).join(' ');return <polyline key={i} points={points} fill="none" stroke={stroke.brushMode===2?'#ff4d5e':'#25d366'} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" opacity=".88"/>})}</svg>
-   </div>
-   <footer><button type="button" onClick={onClose}>Cancelar</button><button type="button" className="primary" onClick={()=>onApply(strokes)}>Aplicar recorte e cenário</button></footer>
-  </div>
- </div>
-}
-
-function PhonePhotoStudio({phone,onPhoneChange,standalone=false}){
- const[workPhone,setWorkPhone]=useState(phone);
- const[assetUrls,setAssetUrls]=useState({});
- const[galleryMode,setGalleryMode]=useState('ready');
- const[busy,setBusy]=useState(false);
- const[progress,setProgress]=useState('');
- const[fileError,setFileError]=useState('');
- const[saveMessage,setSaveMessage]=useState('');
- const[rootInfo,setRootInfo]=useState(()=>{const saved=load(PHOTOROOTKEY);return saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{}});
- const[folderBusy,setFolderBusy]=useState(false);
- const[maskEditor,setMaskEditor]=useState(null);
- const[selectedPhotoId,setSelectedPhotoId]=useState('');
- const fileRef=useRef(null),captureRef=useRef(null);
- useEffect(()=>{if(phone&&!busy)setWorkPhone(phone)},[phone,busy]);
- const settings={style:'Automático',intensity:'Natural',keepScale:true,aiEngine:'foreground-v1',localFolderName:'',localFolderLinked:false,...(workPhone?.photoStudioSettings||{})};
- const photos=Array.isArray(workPhone?.photos)?workPhone.photos:[];
- const ready=photoReadyCount(workPhone),total=photoOriginalCount(workPhone),hasPhotoUndo=photos.some(meta=>meta.previousProcessedAssetId);
- const scene=workPhone?.photoScene||sceneForPhone(workPhone,settings.style,0);
- function commit(next){setWorkPhone(next);onPhoneChange?.(next)}
- function updateSettings(patch){commit({...workPhone,photoStudioSettings:{...settings,...patch}})}
- function preferredFolderName(){
-  return (settings.localFolderName||`${workPhone.code||''} ${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Aparelho').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim()
- }
- async function configureRootFolder(){
-  setFolderBusy(true);setFileError('');
-  try{
-   if(localDirectorySupported()){
-    const picked=await chooseRootPhotoDirectory();
-    const next={name:picked.name||'Pasta de fotos',configured:true,mode:'handle'};
-    setRootInfo(next);save(PHOTOROOTKEY,next)
-   }else{
-    const current=rootInfo.path||rootInfo.name||'DCIM/OpenCamera';
-    const path=prompt('Informe o caminho/nome da pasta raiz usada pelo Open Camera:',current);
-    if(path===null||!path.trim())return;
-    const next={name:path.trim().split('/').filter(Boolean).pop()||path.trim(),path:path.trim(),configured:true,mode:'path'};
-    setRootInfo(next);save(PHOTOROOTKEY,next)
-   }
-  }catch(error){if(error?.name!=='AbortError')setFileError(error?.message||'Não foi possível configurar a pasta raiz.')}finally{setFolderBusy(false)}
- }
- async function preparePhoneFolder(){
-  const name=preferredFolderName();setFolderBusy(true);setFileError('');
-  try{
-   if(localDirectorySupported()){
-    let root=await getRootPhotoDirectory();
-    if(!root){await configureRootFolder();root=await getRootPhotoDirectory()}
-    if(!root)return;
-    const folder=await createPhonePhotoDirectory(workPhone.id,name);
-    updateSettings({localFolderName:folder.name||name,localFolderLinked:true})
-   }else{
-    if(!rootInfo.configured)await configureRootFolder();
-    updateSettings({localFolderName:name,localFolderLinked:false,localFolderMode:'path-only'});
-    alert(`Destino registrado: ${localFolderPath()}\n\nO Chrome deste celular não permite que um site grave diretamente nessa pasta. As fotos continuarão protegidas no BMCenter e “Salvar fotos” criará um único ZIP com esta subpasta, ORIGINAIS e PREPARADAS.`)
-   }
-  }catch(error){setFileError(error?.message||'Não foi possível preparar a pasta deste aparelho.')}finally{setFolderBusy(false)}
- }
- async function chooseExistingPhoneFolder(){
-  if(!localDirectorySupported())return alert('Neste navegador, use o nome/caminho configurado da pasta local.');
-  setFolderBusy(true);
-  try{const folder=await choosePhonePhotoDirectory(workPhone.id);updateSettings({localFolderName:folder.name||preferredFolderName(),localFolderLinked:true})}
-  catch(error){if(error?.name!=='AbortError')setFileError(error?.message||'Não foi possível selecionar a pasta.')}finally{setFolderBusy(false)}
- }
- async function syncPhoneFolder(){
-  if(!localDirectorySupported())return fileRef.current?.click();
-  setFolderBusy(true);setFileError('');
-  try{
-   const folder=await getPhonePhotoDirectory(workPhone.id);
-   if(!folder)return alert('Crie ou selecione primeiro a pasta deste aparelho.');
-   const files=await listDirectoryImages(workPhone.id);
-   const known=new Set(photos.map(meta=>meta.name));
-   const fresh=files.filter(file=>!known.has(file.name));
-   if(!fresh.length)return alert(`Pasta atualizada. ${files.length} foto(s) encontrada(s), nenhuma nova.`);
-   await addPhotos(fresh);
-  }catch(error){setFileError(error?.message||'Não foi possível ler a pasta local.')}finally{setFolderBusy(false)}
- }
- function localFolderPath(){
-  const root=rootInfo.path||rootInfo.name||'Pasta raiz';
-  return `${String(root).replace(/\/+$/,'')}/${preferredFolderName()}`
- }
- async function openOpenCamera(){
-  if(!settings.localFolderLinked&&settings.localFolderMode!=='path-only')await preparePhoneFolder();
-  try{
-   if(navigator.clipboard)await navigator.clipboard.writeText(localFolderPath()).catch(()=>{});
-   window.location.href='intent:#Intent;action=android.media.action.STILL_IMAGE_CAMERA;package=net.sourceforge.opencamera;end'
-  }catch{
-   alert(`Abra o Open Camera e use como destino:\n${localFolderPath()}`)
-  }
- }
- async function refreshAssets(source=workPhone){
-  const map={};
-  for(const meta of source?.photos||[]){
-   for(const id of [meta.originalAssetId,meta.processedAssetId])if(id&&!map[id]){try{let asset=await getPhotoAsset(id);if(asset?.dataUrl&&!asset.metadataSanitized)asset=await putPhotoAsset(asset);if(asset?.dataUrl)map[id]=asset.dataUrl}catch{}}
-  }
-  setAssetUrls(map)
- }
- useEffect(()=>{refreshAssets(workPhone)},[workPhone?.id,photos.map(p=>`${p.originalAssetId||''}:${p.processedAssetId||''}:${p.status||''}`).join('|')]);
- useEffect(()=>{
-  if(!photos.length){setSelectedPhotoId('');return}
-  if(!photos.some(meta=>meta.id===selectedPhotoId))setSelectedPhotoId(photos[0].id)
- },[photos.map(meta=>meta.id).join('|'),selectedPhotoId]);
- async function addPhotos(files,{captured=false}={}){
-  const list=[...(files||[])];if(!list.length)return;setBusy(true);setFileError('');
-  try{
-   const additions=[];let capturedWithoutFolder=false;
-   for(let i=0;i<list.length;i++){
-    setProgress(`Preparando foto ${i+1} de ${list.length}...`);
-    const dataUrl=await resizeImageFile(list[i],{maxSide:3200,quality:.98});
-    const id=crypto.randomUUID(),assetId=`photo-original-${id}`;
-    const capturedName=list[i].name&&list[i].name!=='image.jpg'?list[i].name:`${workPhone.code||'aparelho'}-captura-${Date.now()}-${i+1}.jpg`;
-    await putPhotoAsset({id:assetId,phoneId:workPhone.id,role:'original',dataUrl,createdAt:new Date().toISOString(),name:capturedName});
-    let localFileName='';
-    if(captured){
-     if(localDirectorySupported()){
-      try{
-       const folder=await getPhonePhotoDirectory(workPhone.id);
-       if(folder?.handle)localFileName=await writeImageToPhoneDirectory(workPhone.id,capturedName,dataUrl);
-       else capturedWithoutFolder=true
-      }catch(error){capturedWithoutFolder=true;console.warn('A captura foi salva no BMCenter, mas não pôde ser gravada na pasta local.',error)}
-     }else capturedWithoutFolder=true
-    }
-    additions.push({id,originalAssetId:assetId,processedAssetId:'',name:capturedName,localFileName,status:'original',createdAt:new Date().toISOString(),error:''});
-   }
-   const nextScene=workPhone.photoScene||sceneForPhone(workPhone,settings.style,0);
-   const next={...workPhone,photos:[...photos,...additions],photoScene:nextScene,photoStudioSettings:settings};commit(next);await refreshAssets(next);setSelectedPhotoId(additions[0]?.id||'');setGalleryMode('original');
-   if(capturedWithoutFolder)setFileError('A foto original está protegida no BMCenter, mas este celular não deu acesso direto à subpasta. Use “Salvar fotos” para baixar um único ZIP com ORIGINAIS e PREPARADAS.')
-  }catch(error){setFileError(error?.message||'Não foi possível adicionar as fotos.')}finally{setBusy(false);setProgress('')}
- }
- async function processAll({force=false,sceneOverride=null,sourcePhone=null,onlyId=null}={}){
-  const source=sourcePhone||workPhone;const sourcePhotos=Array.isArray(source.photos)?source.photos:[];
-  if(!sourcePhotos.length)return alert('Adicione pelo menos uma foto.');
-  setGalleryMode('original');
-  setBusy(true);setFileError('');
-  const chosenScene=sceneOverride||source.photoScene||sceneForPhone(source,settings.style,0);
-  let current={...source,photoScene:chosenScene,photoStudioSettings:settings};commit(current);
-  for(let index=0;index<sourcePhotos.length;index++){
-   if(onlyId&&sourcePhotos[index].id!==onlyId)continue;
-   const meta=(current.photos||[]).find(item=>item.id===sourcePhotos[index].id)||sourcePhotos[index];
-   if(!force&&meta.processedAssetId&&meta.status==='ready')continue;
-   setProgress(`Original ${index+1}/${sourcePhotos.length} · criando nova máscara...`);
-   current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,status:'processing',error:''}:item)};commit(current);
-   try{
-    const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;if(!original)throw new Error('Foto original não encontrada neste dispositivo.');
-    const resultDataUrl=await preparePhotoLocally(original,{scene:chosenScene,strokes:meta.segmentStrokes||null,onProgress:message=>setProgress(`Foto ${index+1}/${sourcePhotos.length} · ${message}`)});
-    const previousProcessedAssetId=meta.processedAssetId||'';
-    if(meta.previousProcessedAssetId&&meta.previousProcessedAssetId!==previousProcessedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});
-    const processedAssetId=`photo-ready-${meta.id}-${Date.now()}`;
-    await putPhotoAsset({id:processedAssetId,phoneId:current.id,role:'processed',dataUrl:resultDataUrl,createdAt:new Date().toISOString(),sceneId:chosenScene.id,name:`${current.code||'aparelho'}-${index+1}.jpg`,engine:'local-foreground-phone-hand-v1'});
-    current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,processedAssetId,previousProcessedAssetId,status:'ready',processedAt:new Date().toISOString(),sceneId:chosenScene.id,error:''}:item)};commit(current)
-   }catch(error){
-    if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});
-    if(meta.previousProcessedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});
-    current={...current,photos:current.photos.map(item=>item.id===meta.id?{...item,processedAssetId:'',previousProcessedAssetId:'',status:'error',error:error?.message||'Falha no processamento local'}:item)};commit(current);setFileError(error?.message||'Falha no processamento local')
-   }
-  }
-  await refreshAssets(current);setGalleryMode('ready');setBusy(false);setProgress('')
- }
- async function switchScene(){const nextScene=sceneForPhone(workPhone,settings.style,Number(workPhone.photoScene?.offset||0)+1);const next={...workPhone,previousPhotoScene:workPhone.photoScene||scene,photoScene:nextScene};commit(next);await processAll({force:true,sceneOverride:nextScene,sourcePhone:next})}
- async function resetProcessed(meta){if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});if(meta.previousProcessedAssetId)await deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{});const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,processedAssetId:'',previousProcessedAssetId:'',status:'original',processedAt:'',error:''}:item)};commit(next);await refreshAssets(next)}
- async function undoLastBackground(){
-  const reversible=photos.filter(meta=>meta.previousProcessedAssetId);if(!reversible.length)return;setBusy(true);
-  try{for(const meta of reversible)if(meta.processedAssetId)await deletePhotoAsset(meta.processedAssetId).catch(()=>{});const next={...workPhone,photoScene:workPhone.previousPhotoScene||workPhone.photoScene,previousPhotoScene:null,photos:photos.map(meta=>meta.previousProcessedAssetId?{...meta,processedAssetId:meta.previousProcessedAssetId,previousProcessedAssetId:'',status:'ready',error:''}:meta)};commit(next);await refreshAssets(next)}finally{setBusy(false)}
- }
- async function openMaskEditor(meta){
-  setFileError('');
-  try{
-   const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;
-   if(!original)throw new Error('Foto original não encontrada.');
-   setMaskEditor({meta,source:original,strokes:Array.isArray(meta.segmentStrokes)?meta.segmentStrokes:[]});
-  }catch(error){setFileError(error?.message||'Não foi possível abrir o editor de recorte.')}
- }
- async function applyMaskEditor(meta,strokes){
-  setMaskEditor(null);
-  const next={...workPhone,photos:photos.map(item=>item.id===meta.id?{...item,segmentStrokes:strokes,processedAssetId:'',status:'original',error:''}:item)};
-  commit(next);
-  await processAll({force:true,sourcePhone:next,onlyId:meta.id});
- }
- async function removePhoto(meta){if(!confirm('Excluir esta foto original e a versão preparada?'))return;await Promise.all([deletePhotoAsset(meta.originalAssetId).catch(()=>{}),deletePhotoAsset(meta.processedAssetId).catch(()=>{}),deletePhotoAsset(meta.previousProcessedAssetId).catch(()=>{})]);const next={...workPhone,photos:photos.filter(item=>item.id!==meta.id)};commit(next);await refreshAssets(next)}
- function visibleAsset(meta){const id=galleryMode==='ready'?(meta.processedAssetId||meta.originalAssetId):meta.originalAssetId;return{id,url:assetUrls[id]||'',prepared:Boolean(meta.processedAssetId)}}
- const selectedMeta=photos.find(meta=>meta.id===selectedPhotoId)||photos[0]||null;
- const selectedView=selectedMeta?visibleAsset(selectedMeta):{id:'',url:'',prepared:false};
- async function collectPhotosForSave(mode='both'){
-  const items=[];
-  for(let index=0;index<photos.length;index++){
-   const meta=photos[index],number=String(index+1).padStart(2,'0'),code=workPhone.code||'smartphone';
-   if(mode!=='prepared'&&meta.originalAssetId){
-    const original=(await getPhotoAsset(meta.originalAssetId))?.dataUrl;
-    if(original)items.push({kind:'original',name:`${code}-${number}-ORIGINAL.jpg`,dataUrl:original})
-   }
-   if(mode!=='original'&&meta.processedAssetId){
-    const prepared=(await getPhotoAsset(meta.processedAssetId))?.dataUrl;
-    if(prepared)items.push({kind:'prepared',name:`${code}-${number}-PREPARADA.jpg`,dataUrl:prepared})
-   }
-  }
-  return items
- }
- async function savePhotos(mode='both'){
-  if(!photos.length)return alert('Nenhuma foto disponível.');
-  setBusy(true);setFileError('');setSaveMessage('');setProgress('Reunindo as fotos originais...');
-  try{
-   const items=await collectPhotosForSave(mode);
-   if(!items.length)throw new Error(mode==='prepared'?'Nenhuma foto preparada disponível.':'Nenhuma foto disponível para salvar.');
-   let folder=null;
-   if(localDirectorySupported()){
-    folder=await getPhonePhotoDirectory(workPhone.id);
-    if(!folder?.handle){
-     const root=await getRootPhotoDirectory();
-     if(root?.handle)folder=await createPhonePhotoDirectory(workPhone.id,preferredFolderName())
-    }
-   }
-   if(folder?.handle){
-    setProgress(`Salvando ${items.length} arquivo(s) na subpasta...`);
-    const result=await writePhotoCollectionToPhoneDirectory(workPhone.id,items);
-    updateSettings({localFolderName:result.folderName||preferredFolderName(),localFolderLinked:true,localFolderMode:'handle'});
-    setSaveMessage(`✓ ${result.written} foto(s) salvas na subpasta ${result.folderName}, separadas em ORIGINAIS e PREPARADAS.`)
-   }else{
-    setProgress(`Criando um único arquivo com ${items.length} foto(s)...`);
-    const result=await downloadPhotoArchive(items,preferredFolderName());
-    setSaveMessage(`✓ ${result.name} baixado com ${result.count} foto(s). Abra Downloads e extraia o ZIP; a subpasta do aparelho contém ORIGINAIS e PREPARADAS.`)
-   }
-  }catch(error){setFileError(error?.message||'Não foi possível salvar as fotos.')}finally{setBusy(false);setProgress('')}
- }
- async function shareAll(){const items=photos.map((meta,index)=>{const id=meta.processedAssetId||meta.originalAssetId;return assetUrls[id]?{dataUrl:assetUrls[id],name:`${workPhone.code||'smartphone'}-${String(index+1).padStart(2,'0')}.jpg`}:null}).filter(Boolean);if(!items.length)return alert('Nenhuma foto disponível.');try{await sharePhotoDataUrls(items,`${workPhone.brand||''} ${workPhone.model||''}`.trim()||'Fotos do aparelho')}catch(error){if(error?.name!=='AbortError')alert('Não foi possível abrir o compartilhamento.')}}
- return <section className={`photo-studio photo-studio-v10439 ${standalone?'standalone':''}`}>
-  {maskEditor&&<PhotoMaskEditor source={maskEditor.source} initialStrokes={maskEditor.strokes} onClose={()=>setMaskEditor(null)} onApply={strokes=>applyMaskEditor(maskEditor.meta,strokes)}/>}
-  <header className="photo-studio-head">
-   <div><span><WandSparkles size={17}/></span><div><h3>Photo Studio</h3><p>Troque somente o cenário. O smartphone continua vindo da foto original.</p></div></div>
-   <div className="photo-studio-head-right"><div className="photo-metadata-badge"><ShieldCheck size={14}/><span><b>Original protegido</b><small>sem EXIF, GPS, XMP ou IPTC</small></span></div><div className="photo-count"><b>{ready}</b><span>prontas</span><em>/ {total}</em></div></div>
-  </header>
-  <div className="photo-studio-steps"><span className={total?'done':'active'}><b>1</b>Adicionar fotos</span><i></i><span className={total&&!ready?'active':ready?'done':''}><b>2</b>Escolher cenário</span><i></i><span className={ready?'done':total?'active':''}><b>3</b>Preparar</span></div>
-  <div className="photo-source-bar"><div><b>{workPhone.code||'Aparelho'} · {workPhone.brand||''} {workPhone.model||''}</b><small>{settings.localFolderLinked?`Pasta vinculada: ${preferredFolderName()}`:settings.localFolderMode==='path-only'?`Destino do Open Camera: ${preferredFolderName()} · use Salvar fotos para exportar`:'As fotos ficam vinculadas a este aparelho.'}</small></div><div><button type="button" className="photo-capture-button primary" onClick={()=>captureRef.current?.click()} disabled={busy}><Camera size={15}/> Tirar foto</button><input ref={captureRef} hidden type="file" accept="image/*" capture="environment" onChange={e=>{addPhotos(e.target.files,{captured:true});e.target.value=''}}/><button type="button" className="photo-open-camera" onClick={openOpenCamera} disabled={busy}><Camera size={15}/> Open Camera</button><button type="button" onClick={()=>fileRef.current?.click()} disabled={busy}><FolderOpen size={15}/> Importar fotos</button><input ref={fileRef} hidden type="file" accept="image/*" multiple onChange={e=>{addPhotos(e.target.files);e.target.value=''}}/></div></div>
-  <div className="photo-editor-workspace">
-   <section className="photo-preview-panel">
-    <header><div><b>Prévia da foto</b><small>{selectedMeta?.name||'Adicione uma foto para começar'}</small></div><div className="photo-view-switch"><button type="button" className={galleryMode==='original'?'active':''} onClick={()=>setGalleryMode('original')}>Original</button><button type="button" className={galleryMode==='ready'?'active':''} onClick={()=>setGalleryMode('ready')}>Preparada</button></div></header>
-    <div className="photo-hero-preview">{selectedView.url?<img src={selectedView.url} alt="Prévia selecionada"/>:<div className="photo-preview-empty"><Camera size={34}/><b>Nenhuma foto selecionada</b><span>Tire uma foto ou importe imagens da pasta deste aparelho.</span></div>}{selectedMeta&&<div className={`photo-preview-status ${selectedMeta.status||'original'}`}>{selectedMeta.status==='ready'?'Pronta':selectedMeta.status==='processing'?'Preparando':selectedMeta.status==='error'?'Requer ajuste':'Original'}</div>}</div>
-    <footer><span><ShieldCheck size={14}/> Mesma posição, proporção e detalhes do aparelho original</span>{selectedMeta&&<button type="button" onClick={()=>openMaskEditor(selectedMeta)}><Crosshair size={14}/> Ajustar recorte</button>}</footer>
-   </section>
-   <aside className="photo-editor-panel">
-    <div className="photo-editor-panel-title"><div><span><Palette size={16}/></span><div><b>Cenário do aparelho</b><small>O mesmo cenário será usado em todas as fotos.</small></div></div><em>#{scene.signature}</em></div>
-    <div className="photo-scenario-list">{['Branco Clean','Cinza Premium','Preto Premium','Madeira Clara','Concreto Claro','Mármore Branco','Azul Tech','Bege Minimalista'].map((value,index)=><button type="button" key={value} className={scene.style===value?'active':''} onClick={()=>{const nextScene=sceneForPhone(workPhone,value,0);commit({...workPhone,photoStudioSettings:{...settings,style:value},photoScene:nextScene})}}><span className={`scene-preview scene-${index}`}></span><small>{value}</small>{scene.style===value&&<b>✓</b>}</button>)}</div>
-    <label className="photo-all-scenes"><span>Ver todos os cenários</span><select value={settings.style} onChange={e=>{const style=e.target.value,nextScene=sceneForPhone(workPhone,style,Number(workPhone.photoScene?.offset||0));commit({...workPhone,photoStudioSettings:{...settings,style},photoScene:nextScene})}}>{photoStyles.map(value=><option key={value}>{value}</option>)}</select></label>
-    <div className="photo-editor-options"><label><span>Acabamento</span><select value={settings.intensity} onChange={e=>updateSettings({intensity:e.target.value})}><option>Natural</option><option>Destaque</option></select></label><label className="photo-toggle"><input type="checkbox" checked={settings.keepScale!==false} onChange={e=>updateSettings({keepScale:e.target.checked})}/><span>Manter escala real</span></label></div>
-    <div className="photo-engine-ready"><span></span><div><b>Celular e mão protegidos</b><small>O conjunto original permanece inteiro; somente o ambiente é substituído</small></div></div>
-    <button type="button" className="photo-prepare-button" disabled={busy||!total} onClick={()=>processAll({force:true})}><WandSparkles size={17}/><span><b>{busy?'Preparando fotos...':'Preparar todas as fotos'}</b><small>{total?`${total} foto(s) · cenário ${scene.style}`:'Adicione fotos para liberar'}</small></span><ChevronRight size={16}/></button>
-    <div className="photo-secondary-actions"><button type="button" disabled={busy||!total} onClick={()=>processAll({force:true})}><RefreshCw size={14}/> Reprocessar</button><button type="button" disabled={busy||!total} onClick={switchScene}><Palette size={14}/> Trocar cenário</button>{hasPhotoUndo&&<button type="button" disabled={busy} onClick={undoLastBackground}><RotateCcw size={14}/> Desfazer</button>}</div>
-    {(progress||fileError||saveMessage)&&<div className={`photo-progress ${fileError?'error':''}`}>{fileError||progress||saveMessage}</div>}
-   </aside>
-  </div>
-  <div className="photo-gallery-toolbar"><div><b>Fotos deste aparelho</b><span>{ready} preparadas de {total}</span></div><div><button type="button" disabled={!total||busy} onClick={()=>savePhotos('both')}><Download size={14}/> Salvar fotos</button><button type="button" disabled={!total||busy} onClick={()=>savePhotos('original')}><FolderOpen size={14}/> Só originais</button><button type="button" disabled={!total||busy} onClick={shareAll}><Share2 size={14}/> Compartilhar</button></div></div>
-  {!photos.length?<div className="photo-empty"><Camera size={28}/><b>Nenhuma foto ainda</b><span>Use “Tirar foto” para capturar e vincular a imagem imediatamente, ou importe as fotos já salvas na pasta do aparelho.</span></div>:<div className="photo-grid">{photos.map((meta,index)=>{const view=visibleAsset(meta);return <article key={meta.id} className={`${meta.status==='error'?'error ':''}${selectedMeta?.id===meta.id?'selected':''}`} onClick={()=>setSelectedPhotoId(meta.id)}><div className="photo-thumb">{view.url?<img src={view.url} alt={`Foto ${index+1}`}/>:<div className="photo-loading">{meta.status==='processing'?'Preparando...':'Carregando...'}</div>}<span>{String(index+1).padStart(2,'0')}</span>{meta.status==='ready'&&<em>✓ Pronta</em>}</div><footer><div><b>{meta.name||`Foto ${index+1}`}</b><small>{meta.status==='error'?meta.error:(view.prepared?'Cenário aplicado · celular, mão e braço originais':'Original · sem metadados')}</small></div><div><button type="button" title="Ajustar recorte" onClick={e=>{e.stopPropagation();openMaskEditor(meta)}}><Crosshair size={13}/></button>{meta.processedAssetId&&<button type="button" title="Voltar à original" onClick={e=>{e.stopPropagation();resetProcessed(meta)}}><RotateCcw size={13}/></button>}<button type="button" title="Excluir foto" onClick={e=>{e.stopPropagation();removePhoto(meta)}}><Trash2 size={13}/></button></div></footer></article>})}</div>}
-  <details className="photo-storage-panel" open={!rootInfo.configured}>
-   <summary><span><FolderOpen size={16}/><span><b>Pasta e sincronização</b><small>{rootInfo.configured?`${rootInfo.path||rootInfo.name} · ${preferredFolderName()}${rootInfo.mode==='path'?' · destino sem acesso direto':''}`:'Configure a pasta raiz uma única vez'}</small></span></span><ChevronDown size={16}/></summary>
-   <div className="photo-drive photo-local-folder"><div className="photo-local-folder-head"><FolderOpen size={16}/><div><b>Pasta local das fotos</b><span>O DriveSync continua sincronizando esta pasta com o Google Drive automaticamente.</span></div><span className={rootInfo.configured?'ready':'pending'}>{rootInfo.configured?'Raiz configurada':'Configurar uma vez'}</span></div><div className="photo-root-row"><div><small>Pasta raiz</small><b>{rootInfo.path||rootInfo.name||'Ainda não configurada'}</b></div><button type="button" onClick={configureRootFolder} disabled={folderBusy}><Settings size={14}/> {rootInfo.configured?'Alterar raiz':'Configurar raiz'}</button></div><div className="photo-phone-folder-card"><div><small>SUBPASTA DESTE APARELHO</small><strong>{preferredFolderName()}</strong><span>{localFolderPath()}</span></div><div><button type="button" className="primary" onClick={preparePhoneFolder} disabled={folderBusy}><Plus size={14}/> Criar pasta</button><button type="button" onClick={chooseExistingPhoneFolder} disabled={folderBusy}><FolderOpen size={14}/> Selecionar existente</button><button type="button" onClick={syncPhoneFolder} disabled={folderBusy}><RefreshCw size={14}/> Atualizar fotos</button></div></div><div className="photo-local-flow"><span>1</span><b>Vincule a subpasta</b><ChevronRight size={13}/><span>2</span><b>Tire ou importe as fotos</b><ChevronRight size={13}/><span>3</span><b>Prepare para o anúncio</b></div></div>
-  </details>
- </section>
-}
-
-function PhotoStudioModal({phone,onClose,onSave}){return <Modal className="photo-studio-modal" title={`Photo Studio · ${phoneDisplayName(phone,{includeCode:false})}`} onClose={onClose}><PhonePhotoStudio phone={phone} standalone onPhoneChange={onSave}/></Modal>}
-
 function PhoneModal({item,banks,suppliers,onClose,onSave}){
   const isNewPhone=!load(SKEY).some(phone=>phone.id===item.id);
   const savedPhoneDraft=isNewPhone?loadDraft(PHONE_DRAFT_KEY):null;
@@ -2779,7 +2458,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     selectedQuoteId:p.selectedQuoteId||'',
     orderStatus:p.orderStatus||'Não pedido'
   }));
-  const[f,setF]=useState({...sourcePhone,nfc:sourcePhone.nfc===true?true:sourcePhone.nfc===false?false:null,screenProtector:sourcePhone.screenProtector===true?true:sourcePhone.screenProtector===false?false:null,caseIncluded:sourcePhone.caseIncluded===true?true:sourcePhone.caseIncluded===false?false:null,likeNew:sourcePhone.likeNew===true?true:sourcePhone.likeNew===false?false:null,biometrics:sourcePhone.biometrics===true?true:sourcePhone.biometrics===false?false:null,unlockCredentials:normalizeUnlockCredentials(sourcePhone),bankAccountId:sourcePhone.bankAccountId||'',parts:normalizedParts,diagnostics:sourcePhone.diagnostics||[],timeline:sourcePhone.timeline||[],ad:sourcePhone.ad||{},tags:sourcePhone.tags||[],priceHistory:sourcePhone.priceHistory||[],photos:sourcePhone.photos||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
+  const[f,setF]=useState({...sourcePhone,nfc:sourcePhone.nfc===true?true:sourcePhone.nfc===false?false:null,screenProtector:sourcePhone.screenProtector===true?true:sourcePhone.screenProtector===false?false:null,caseIncluded:sourcePhone.caseIncluded===true?true:sourcePhone.caseIncluded===false?false:null,likeNew:sourcePhone.likeNew===true?true:sourcePhone.likeNew===false?false:null,biometrics:sourcePhone.biometrics===true?true:sourcePhone.biometrics===false?false:null,unlockCredentials:normalizeUnlockCredentials(sourcePhone),bankAccountId:sourcePhone.bankAccountId||'',parts:normalizedParts,diagnostics:sourcePhone.diagnostics||[],timeline:sourcePhone.timeline||[],ad:sourcePhone.ad||{},tags:sourcePhone.tags||[],priceHistory:sourcePhone.priceHistory||[]}),[part,setPart]=useState(''),[tag,setTag]=useState('');
   const[draftRecovered,setDraftRecovered]=useState(Boolean(savedPhoneDraft));
   function savePhoneDraft(){
    saveDraft(PHONE_DRAFT_KEY,{kind:'single-phone-registration',phone:sanitizePhoneForLeanMode(f)});
@@ -2792,11 +2471,6 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
    clearDraft(PHONE_DRAFT_KEY);setDraftRecovered(false);onClose()
   }
   function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);onSave(f)}
-  function applyPhotoChanges(next){
-   setF(next);
-   if(isNewPhone){saveDraft(PHONE_DRAFT_KEY,{kind:'single-phone-registration',phone:sanitizePhoneForLeanMode(next)});setDraftRecovered(true);return}
-   const stored=load(SKEY);if(Array.isArray(stored)){const persisted=stored.map(phone=>phone.id===next.id?{...phone,photos:next.photos||[],photoScene:next.photoScene||null,photoStudioSettings:next.photoStudioSettings||{}}:phone);save(SKEY,persisted)}
-  }
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
   const up=(i,k,v)=>setF(current=>{const parts=[...current.parts];parts[i]={...parts[i],[k]:v};return{...current,parts}});
   const addPartNow=()=>{if(!part.trim())return;setF(current=>({...current,parts:[...current.parts,{id:crypto.randomUUID(),name:part.trim(),status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}]}));setPart('')};
@@ -2840,9 +2514,6 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     <details className="compact-editor-section"><summary><span><Tags size={15}/> Etiquetas</span><span>{f.tags.length}</span></summary>
     <div className="tag-editor"><div className="add"><input value={tag} onChange={e=>setTag(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}} placeholder="Ex.: NFC, 5G, OLED, Dual Chip"/><button type="button" onClick={()=>{if(tag.trim()&&!f.tags.includes(tag.trim())){set('tags',[...f.tags,tag.trim()]);setTag('')}}}>Adicionar</button></div><div className="tag-list">{f.tags.map(t=><span key={t}>{t}<button type="button" onClick={()=>set('tags',f.tags.filter(x=>x!==t))}>×</button></span>)}</div></div>
 
-    </details>
-    <details className="compact-editor-section photo-editor-section"><summary><span><Camera size={15}/> Fotos para anúncio</span><span>{photoReadyCount(f)}/{photoOriginalCount(f)} prontas</span></summary>
-      <PhonePhotoStudio phone={f} onPhoneChange={applyPhotoChanges}/>
     </details>
     <details className="compact-editor-section"><summary>Peças necessárias <span>{f.parts.length}</span></summary>
     <div className="parts compact-parts">
@@ -2898,8 +2569,6 @@ function Field({label,value,onChange,type='text',prefix='',suffix='',inputMode})
 function Title({t,s,children}){return <div className="title"><div><h1>{t}</h1><p>{s}</p></div>{children}</div>}
 function Empty({text='Nenhum registro cadastrado.'}){return <div className="empty">{text}</div>}
 
-const photoLabels={front:'Frente',back:'Traseira',left:'Lateral esquerda',right:'Lateral direita',screen:'Tela ligada',cameras:'Câmeras',accessories:'Acessórios',details:'Detalhes estéticos'};
-function defaultPhotoChecklist(){return{front:false,back:false,left:false,right:false,screen:false,cameras:false,accessories:false,details:false}}
 function defaultAccessories(){return['Caixa','Carregador','Cabo USB','Capinha','Película','Nota fiscal','Fone de ouvido'].map(name=>({name,included:false}))}
 function touchPhone(phone){return{...phone,lastActivityAt:new Date().toISOString()}}
 function daysSince(value){if(!value)return 0;return Math.max(0,Math.floor((Date.now()-new Date(value).getTime())/86400000))}
@@ -2945,5 +2614,5 @@ function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],photos:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);

@@ -1,7 +1,0 @@
-/* BMCenter v10.4.20 — Photo Studio: sanitização automática de metadados */
-.photo-studio-head-right{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.photo-metadata-badge{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid color-mix(in srgb,#22a06b 38%,var(--line));border-radius:9px;background:color-mix(in srgb,#22a06b 7%,var(--surface2));color:#168555}
-.photo-metadata-badge>span{display:grid;gap:1px;line-height:1.05}.photo-metadata-badge b{font-size:8px}.photo-metadata-badge small{font-size:6px;color:var(--muted);white-space:nowrap}
-.v102-app.theme-dark .photo-metadata-badge{background:#17382b;border-color:#2e6b50;color:#64d5a0}
-.v102-app.theme-dark .photo-metadata-badge small{color:#9bb1a7}
-@media(max-width:760px){.photo-studio-head{align-items:flex-start;flex-direction:column}.photo-studio-head-right{width:100%;justify-content:space-between}.photo-metadata-badge{min-width:0}.photo-metadata-badge small{white-space:normal}}

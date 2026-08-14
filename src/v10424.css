@@ -146,7 +146,7 @@
     justify-content:start!important;gap:6px!important
   }
 
-  .modalbody .grid:not(.photo-grid):not(.parts-orders-grid),
+  .modalbody .grid:not(.parts-orders-grid),
   .settings-page .grid,
   .data-page .grid{
     column-gap:7px!important;row-gap:6px!important

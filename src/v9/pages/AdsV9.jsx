@@ -17,7 +17,7 @@ export default function AdsV9({
     const pct=profiles.length?Math.round(published/profiles.length*100):0;
     return <article className="v9-ad-card" key={ad.id}>
       <header>
-        <div className="v9-ad-thumb">{phone.photos?.[0]?<img src={phone.photos[0].dataUrl} alt=""/>:<Smartphone size={28}/>}</div>
+        <div className="v9-ad-thumb"><Smartphone size={28}/></div>
         <div><h3>{phone.brand} {phone.model}</h3>{showProductCode()&&phone.code&&<small>{phone.code}</small>}<strong>{money(phone.expected)}</strong></div>
         <div className="v9-ad-percent"><b>{pct}%</b><span>{published}/{profiles.length} canais</span></div>
       </header>
