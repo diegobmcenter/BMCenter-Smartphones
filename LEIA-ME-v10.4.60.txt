@@ -1,21 +1,19 @@
 BMCenter Smartphones v10.4.60
 
-CORREÇÃO LOCALIZADA — PEÇAS / ACESSÓRIOS
+CORREÇÃO: INCLUSÃO INLINE DE PEÇA NO MODAL DO APARELHO
 
-Base: v10.4.59 (Opção 2 aprovada).
+- Mantém o visual aprovado da Opção 2 da v10.4.59.
+- Corrige o formulário que aparecia comprimido/cortado ao clicar em Adicionar item.
+- Peça, Status, Custo, + Cotação, Adicionar e Cancelar ficam dentro do card Peças/Acessórios.
+- Nenhum elemento invade o card Histórico.
+- Sem overflow horizontal no card de peças.
+- Em desktop, a inclusão usa uma única linha compacta, como no esboço aprovado.
+- Em larguras menores, reorganiza automaticamente sem cortar os campos.
+- Tema claro e escuro usam a mesma estrutura e foram validados.
 
-Corrigido:
-- o card de Peças/Acessórios não fica mais preso à altura compacta quando a inclusão rápida é aberta;
-- a inclusão rápida deixou de tentar colocar Peça + Status + Custo + Cotação + Adicionar + Cancelar na mesma linha estreita;
-- os três campos principais ficam na primeira linha;
-- Cotação / Cancelar / Adicionar ficam em uma segunda linha baixa e organizada;
-- o card cresce somente enquanto a inclusão ou detalhe de uma peça está aberto;
-- fechado, volta automaticamente à altura compacta;
-- nenhuma coluna invade a coluna vizinha;
-- o conteúdo da tabela usa scroll interno apenas quando houver muitas peças, sem cortar os controles;
-- a janela completa e o visual aprovado da v10.4.59 foram preservados.
+Validação visual realizada em largura equivalente ao modal desktop:
+form clientWidth == scrollWidth
+card clientWidth == scrollWidth
+grid clientWidth == scrollWidth
 
-REGRAS PRESERVADAS
-- Photo Studio permanece removido.
-- Aparelhos são cadastrados somente em Smartphones.
-- Pedidos e Central de Peças continuam exclusivamente para peças.
+Testes de pedidos de peças e contratos de fonte: OK.
