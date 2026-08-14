@@ -1,0 +1,17 @@
+BMCenter Smartphones v10.4.46 — PEÇAS SIMPLIFICADAS
+
+Esta versão reorganiza toda a rotina de peças e acessórios.
+
+PRINCIPAIS MUDANÇAS
+- Central de peças dividida em quatro etapas: Pendências, Comparar preços, Pedidos e Recebidas.
+- Somente a etapa escolhida fica aberta, reduzindo a poluição visual.
+- Inclusão rápida por aparelho com atalhos para as peças mais comuns.
+- Lançamento de vários preços do mesmo fornecedor usando a tecla TAB.
+- Cada pendência mostra claramente a próxima ação.
+- Recomendações e pedidos continuam considerando preço e regras de frete.
+- No cadastro do aparelho, as peças agora aparecem em cartões recolhíveis.
+- Cotações ficam em linhas compactas, sem os antigos botões vermelhos ocupando a tela inteira.
+- Layout ajustado para computador e celular.
+
+PUBLICAÇÃO
+Execute PUBLICAR-ATUALIZACAO.bat e siga as instruções da tela.
