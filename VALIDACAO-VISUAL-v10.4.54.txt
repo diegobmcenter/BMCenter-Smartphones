@@ -1,0 +1,8 @@
+VALIDAÇÃO VISUAL v10.4.54
+Viewport: 1365x768
+Modal: 920x533 no cenário fechado; sem scroll interno.
+Seção Peças: 846x229 com 3 peças.
+Com inclusão rápida: 846x278; linha de inclusão 49px; sem scroll interno.
+Tema escuro: linha rgb(23,27,32), texto rgb(238,242,246).
+Tema claro: linha rgb(251,252,253), texto rgb(32,39,51).
+Contraste corrigido após remover dependência das variáveis antigas --app-* e usar variáveis V102.

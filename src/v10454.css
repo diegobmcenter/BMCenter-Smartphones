@@ -1,0 +1,108 @@
+/* v10.4.54 — Peças inline ultracompacto, aprovado para modal do aparelho */
+.parts-editor-v1053{
+  --p53-bg:var(--surface)!important;
+  --p53-card:var(--surface2)!important;
+  --p53-line:var(--line)!important;
+  --p53-text:var(--text)!important;
+  --p53-muted:var(--muted)!important;
+  --p53-primary:var(--accent)!important;
+  --p53-primary-soft:var(--accent-soft)!important;
+  --p53-green:var(--green)!important;
+  --p53-amber:var(--amber)!important;
+  --p53-blue:var(--accent)!important;
+}
+.parts-editor-v1053 .parts-editor-v53-shell{gap:6px!important;padding:3px 0 0!important}
+.parts-editor-v1053 .parts-editor-v54-titlebar{min-height:28px!important;align-items:center!important;padding:0!important}
+.parts-editor-v1053 .parts-editor-v54-title{display:flex!important;align-items:baseline!important;gap:8px!important;min-width:0}
+.parts-editor-v1053 .parts-editor-v54-title b{font-size:9px!important;white-space:nowrap}
+.parts-editor-v1053 .parts-editor-v54-title small{font-size:6.8px!important;white-space:nowrap;color:var(--muted)!important}
+.parts-editor-v1053 .parts-editor-v54-title-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.parts-editor-v1053 .parts-editor-v54-mini-summary{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:6.6px;color:var(--muted)}
+.parts-editor-v1053 .parts-editor-v54-mini-summary span{display:inline-flex;gap:2px;align-items:baseline}
+.parts-editor-v1053 .parts-editor-v54-mini-summary b{font-size:7.2px;color:var(--text)}
+.parts-editor-v1053 .parts-editor-v54-mini-summary i{width:2px;height:2px;border-radius:50%;background:var(--faint);opacity:.8}
+.parts-editor-v1053 .parts-editor-v54-new{min-height:25px!important;height:25px!important;padding:0 8px!important;font-size:7px!important;border-radius:7px!important;white-space:nowrap}
+.parts-editor-v1053 .parts-editor-v54-new svg{width:11px!important;height:11px!important}
+/* old metric cards are deliberately removed from JSX */
+.parts-editor-v1053 .parts-editor-v53-table{border-radius:8px!important;background:var(--surface)!important;border-color:var(--line)!important;overflow:visible!important}
+.parts-editor-v1053 .parts-editor-v53-head,
+.parts-editor-v1053 .parts-editor-v53-row{grid-template-columns:minmax(150px,1.55fr) 82px 68px minmax(92px,.8fr) 68px 84px!important;gap:5px!important}
+.parts-editor-v1053 .parts-editor-v53-head{min-height:23px!important;height:23px!important;padding:0 8px!important;background:var(--surface2)!important;border-bottom-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-head span{font-size:5.9px!important;color:var(--faint)!important;letter-spacing:.025em!important}
+.parts-editor-v1053 .parts-editor-v53-row{min-height:35px!important;padding:4px 8px!important;background:var(--surface)!important;border-bottom-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-row.open{background:color-mix(in srgb,var(--accent-soft) 55%,var(--surface))!important}
+.parts-editor-v1053 .parts-editor-v53-piece{gap:6px!important}
+.parts-editor-v1053 .parts-editor-v53-piece .dot{width:6px!important;height:6px!important}
+.parts-editor-v1053 .parts-editor-v53-piece b{font-size:7.8px!important;line-height:1.12!important}
+.parts-editor-v1053 .parts-editor-v53-piece small{font-size:5.9px!important;line-height:1.1!important}
+.parts-editor-v1053 .parts-editor-v53-status{min-height:18px!important;height:18px!important;padding:0 6px!important;font-size:5.9px!important}
+.parts-editor-v1053 .parts-editor-v53-cost{font-size:7.6px!important}
+.parts-editor-v1053 .parts-editor-v53-quote-count{gap:3px!important}
+.parts-editor-v1053 .parts-editor-v53-quote-count b{font-size:7.2px!important}
+.parts-editor-v1053 .parts-editor-v53-quote-count small,.parts-editor-v1053 .parts-editor-v53-muted{font-size:5.8px!important}
+.parts-editor-v1053 .parts-editor-v53-actions{gap:3px!important}
+.parts-editor-v1053 .parts-editor-v53-actions>button,
+.parts-editor-v1053 .parts-editor-v53-menu-wrap>button{width:22px!important;height:22px!important;min-height:22px!important;padding:0!important;border-radius:6px!important;background:var(--surface2)!important;border-color:var(--line)!important;color:var(--muted)!important}
+.parts-editor-v1053 .parts-editor-v53-actions svg,.parts-editor-v1053 .parts-editor-v53-menu-wrap svg{width:11px!important;height:11px!important}
+.parts-editor-v1053 .parts-editor-v53-menu{top:25px!important;min-width:135px!important;padding:4px!important;background:var(--surface)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-menu button{min-height:24px!important;padding:4px 6px!important;font-size:6.8px!important;color:var(--text)!important}
+.parts-editor-v1053 .parts-editor-v53-menu button:hover{background:var(--surface2)!important}
+.parts-editor-v1053 .parts-editor-v53-inline-add{grid-template-columns:minmax(140px,1.3fr) 92px 84px 78px auto!important;gap:5px!important;padding:6px 8px!important;background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface))!important;border-bottom-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-inline-add label,.parts-editor-v1053 .parts-editor-v53-inline-quote{gap:2px!important}
+.parts-editor-v1053 .parts-editor-v53-inline-add label>span,.parts-editor-v1053 .parts-editor-v53-inline-quote>span{font-size:5.7px!important}
+.parts-editor-v1053 .parts-editor-v53-inline-add input,.parts-editor-v1053 .parts-editor-v53-inline-add select{min-height:25px!important;height:25px!important;padding:3px 6px!important;border-radius:6px!important;font-size:7px!important;background:var(--surface2)!important;color:var(--text)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-inline-quote button{min-height:25px!important;height:25px!important;padding:0 6px!important;font-size:6.3px!important;border-radius:6px!important}
+.parts-editor-v1053 .parts-editor-v53-inline-actions{gap:4px!important}
+.parts-editor-v1053 .parts-editor-v53-inline-actions button{min-height:25px!important;height:25px!important;padding:0 7px!important;font-size:6.3px!important;border-radius:6px!important}
+.parts-editor-v1053 .parts-editor-v53-detail{gap:5px!important;padding:6px 8px!important;background:var(--surface2)!important;border-bottom-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-detail-top{grid-template-columns:minmax(0,1fr) 110px minmax(150px,.8fr)!important;gap:5px!important}
+.parts-editor-v1053 .parts-editor-v53-detail label{gap:2px!important;font-size:5.8px!important}
+.parts-editor-v1053 .parts-editor-v53-detail input,.parts-editor-v1053 .parts-editor-v53-detail select{min-height:26px!important;height:26px!important;padding:3px 6px!important;font-size:7px!important;border-radius:6px!important;background:var(--surface)!important;color:var(--text)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-link{min-height:26px!important;padding:4px 6px!important;border-radius:6px!important;background:var(--surface)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-link small,.parts-editor-v1053 .parts-editor-v53-link span{font-size:5.4px!important}
+.parts-editor-v1053 .parts-editor-v53-link b{font-size:6.8px!important}
+.parts-editor-v1053 .parts-editor-v53-detail-head b{font-size:6.8px!important}
+.parts-editor-v1053 .parts-editor-v53-detail-head button{min-height:23px!important;height:23px!important;padding:0 6px!important;font-size:5.9px!important}
+.parts-editor-v1053 .parts-editor-v53-quotes{gap:4px!important}
+.parts-editor-v1053 .parts-editor-v53-quote-row{grid-template-columns:minmax(100px,1fr) 90px minmax(120px,1.1fr) 24px!important;gap:4px!important;padding:4px!important;border-radius:6px!important;background:var(--surface)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-quote-row label span{font-size:5.3px!important}
+.parts-editor-v1053 .parts-editor-v53-noquotes{padding:5px!important;border-radius:6px!important;font-size:5.8px!important;background:var(--surface)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .parts-editor-v53-detail-foot small{font-size:5.4px!important}.parts-editor-v1053 .parts-editor-v53-detail-foot b{font-size:5.9px!important}
+.parts-editor-v1053 .parts-editor-v53-empty{min-height:36px!important;padding:6px!important;font-size:6.7px!important}
+.parts-editor-v1053 .parts-editor-v54-hint{display:flex;align-items:center;gap:5px;min-height:18px;padding:0 2px;color:var(--faint)}
+.parts-editor-v1053 .parts-editor-v54-hint span{font-size:8px;color:var(--accent)}
+.parts-editor-v1053 .parts-editor-v54-hint small{font-size:5.8px!important;line-height:1.2!important;color:var(--faint)!important}
+.parts-editor-v1053 .parts-editor-v54-hint b{color:var(--text)!important}
+.parts-editor-v1053 .money-prefix{border-radius:6px!important;background:var(--surface2)!important;border-color:var(--line)!important}
+.parts-editor-v1053 .money-prefix>span{padding:0 5px!important;font-size:5.8px!important;color:var(--muted)!important;border-right-color:var(--line)!important}
+/* The whole section must stay visually dense inside the modal. */
+.v102-app .phone-editor-modal .parts-editor-v1053{margin-top:5px!important;margin-bottom:5px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053>summary{min-height:28px!important;height:28px!important;padding:0 8px!important;font-size:7px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053>summary span{font-size:7px!important}
+/* Explicit theme ownership: never allow legacy light backgrounds in dark mode. */
+.v102-app.theme-dark .parts-editor-v1053 :is(.parts-editor-v53-table,.parts-editor-v53-row,.parts-editor-v53-menu,.parts-editor-v53-detail,.parts-editor-v53-quote-row,.parts-editor-v53-inline-add,.money-prefix){color-scheme:dark}
+.v102-app.theme-dark .parts-editor-v1053 .parts-editor-v53-head{background:var(--surface2)!important;color:var(--text)!important}
+.v102-app.theme-dark .parts-editor-v1053 .parts-editor-v53-row{background:var(--surface)!important;color:var(--text)!important}
+.v102-app.theme-light .parts-editor-v1053 .parts-editor-v53-head{background:var(--surface2)!important;color:var(--text)!important}
+.v102-app.theme-light .parts-editor-v1053 .parts-editor-v53-row{background:var(--surface)!important;color:var(--text)!important}
+@media(max-width:1080px){
+ .parts-editor-v1053 .parts-editor-v54-mini-summary span:nth-of-type(2),.parts-editor-v1053 .parts-editor-v54-mini-summary i:nth-of-type(2){display:none}
+ .parts-editor-v1053 .parts-editor-v53-head,.parts-editor-v1053 .parts-editor-v53-row{grid-template-columns:minmax(130px,1.45fr) 75px 62px minmax(82px,.75fr) 62px 76px!important}
+}
+@media(max-width:820px){
+ .parts-editor-v1053 .parts-editor-v54-titlebar{align-items:flex-start!important}.parts-editor-v1053 .parts-editor-v54-title-actions{flex-wrap:wrap}
+ .parts-editor-v1053 .parts-editor-v54-mini-summary{order:2;width:100%;justify-content:flex-end}
+ .parts-editor-v1053 .parts-editor-v53-row{grid-template-columns:1fr auto!important;gap:4px!important;margin-bottom:4px!important;padding:6px!important}
+ .parts-editor-v1053 .parts-editor-v53-detail-top,.parts-editor-v1053 .parts-editor-v53-quote-row,.parts-editor-v1053 .parts-editor-v53-inline-add{grid-template-columns:1fr!important}
+ .parts-editor-v1053 .parts-editor-v53-inline-actions{justify-content:flex-start!important}
+}
+/* Defeat legacy modal rules that forced white text in the light theme. */
+.v102-app .phone-editor-modal .parts-editor-v1053 b,
+.v102-app .phone-editor-modal .parts-editor-v1053 strong{color:var(--text)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 small{color:var(--muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.blue{color:var(--accent)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.green{color:var(--green)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.amber{color:var(--amber)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint small{color:var(--faint)!important}
+.v102-app.theme-light .phone-editor-modal>.modalhead h2{color:var(--text)!important}
+.v102-app.theme-dark .phone-editor-modal>.modalhead h2{color:var(--text)!important}

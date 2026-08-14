@@ -10,9 +10,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.53';
+const APP_VERSION='10.4.54';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -2448,16 +2448,12 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
     <details className="compact-editor-section parts-editor-v1053" open>
       <summary><span><ShoppingCart size={14}/> Peças</span><span>{f.parts.length?`${f.parts.length} item(ns) · ${partsWithValues} com valor`:'Nenhuma'}</span></summary>
       <div className="parts-editor-v53-shell">
-        <div className="parts-editor-v53-titlebar">
-          <div><b>Peças e acessórios</b><small>Inclusão e cotação rápida deste aparelho.</small></div>
-          <button type="button" className="primary parts-editor-v53-new" onClick={()=>setShowPartQuick(true)}><Plus size={13}/> Nova peça</button>
-        </div>
-
-        <div className="parts-editor-v53-metrics">
-          <div><b>{f.parts.length}</b><small>Total</small></div>
-          <div><b>{installedPartsCount}</b><small>Instalada/recebida</small></div>
-          <div><b>{linkedPartsCount}</b><small>Em pedido</small></div>
-          <div><b>{pendingPartsCount}</b><small>Pendente</small></div>
+        <div className="parts-editor-v53-titlebar parts-editor-v54-titlebar">
+          <div className="parts-editor-v54-title"><b>Peças e acessórios</b><small>Inclusão e cotação rápida.</small></div>
+          <div className="parts-editor-v54-title-actions">
+            <div className="parts-editor-v54-mini-summary"><span><b>{f.parts.length}</b> total</span><i/> <span><b>{installedPartsCount}</b> instalada</span><i/> <span><b>{linkedPartsCount}</b> pedido</span><i/> <span><b>{pendingPartsCount}</b> pendente</span></div>
+            <button type="button" className="primary parts-editor-v53-new parts-editor-v54-new" onClick={()=>setShowPartQuick(true)}><Plus size={12}/> Nova peça</button>
+          </div>
         </div>
 
         <div className="parts-editor-v53-table">
@@ -2500,7 +2496,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
           </div>
         </div>
         <datalist id="parts-editor-v53-presets">{['Película','Capinha','Tela','Bateria','Conector','Câmera','Carcaça','Alto-falante','Microfone','Botão power','Botão volume'].map(name=><option value={name} key={name}/>)}</datalist>
-        <div className="parts-editor-v53-tip"><span>ⓘ</span><small>Pressione ENTER para adicionar rapidamente. Para cotar, use <b>+ Cotação</b> na linha de inclusão ou no menu da peça.</small></div>
+        <div className="parts-editor-v54-hint"><span>ⓘ</span><small>ENTER adiciona rapidamente · use <b>+ Cotação</b> quando precisar comparar preço.</small></div>
       </div>
     </details>
 
