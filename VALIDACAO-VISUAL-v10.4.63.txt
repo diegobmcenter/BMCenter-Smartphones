@@ -1,6 +1,6 @@
-BMCenter Smartphones v10.4.62 — VALIDAÇÃO DO PEDIDO EM MASSA
+BMCenter Smartphones v10.4.63 — VALIDAÇÃO DO PEDIDO EM MASSA
 
-Revisado em viewport 1365 x 768 usando a estrutura e o CSS da v10.4.62.
+Revisado em viewport 1365 x 768 usando a estrutura e o CSS da v10.4.63.
 
 Resultado medido:
 - modal: 1258 x 613 px;

@@ -1,0 +1,157 @@
+/* v10.4.63 — Pedido em massa: filtro de status íntegro + aparelhos em grade 3x */
+
+/* O select de status não pode cortar texto nem seta. */
+.parts-v62-bulk-dialog .parts-v49-bulk-filters{
+  grid-template-columns:minmax(0,1fr) 184px!important;
+  align-items:center!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-filters>select{
+  width:184px!important;
+  min-width:184px!important;
+  max-width:184px!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0 30px 0 10px!important;
+  line-height:30px!important;
+  font-size:8.4px!important;
+  overflow:visible!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-filters>label{
+  min-width:0!important;
+  width:100%!important;
+}
+
+/*
+   A lista de aparelhos passa a aproveitar a largura real do painel.
+   Desktop: 3 cartões por linha.
+   Selecionado: o valor individual aparece abaixo, dentro do próprio cartão.
+*/
+.parts-v62-bulk-dialog .parts-v49-bulk-list{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  align-content:start!important;
+  padding:6px 8px 9px!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-list>article{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  align-content:center!important;
+  align-items:center!important;
+  gap:4px!important;
+  min-width:0!important;
+  min-height:48px!important;
+  padding:6px 7px!important;
+  border-radius:8px!important;
+  overflow:hidden!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-check{
+  display:grid!important;
+  grid-template-columns:15px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-width:0!important;
+  width:100%!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-check>div{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-check b{
+  display:block!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:8.2px!important;
+  line-height:1.18!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-check small{
+  display:block!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  margin-top:1px!important;
+  font-size:6.2px!important;
+  line-height:1.15!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 104px!important;
+  align-items:center!important;
+  gap:5px!important;
+  width:100%!important;
+  padding:4px 0 0 22px!important;
+  border-top:1px dashed color-mix(in srgb,var(--line) 72%,transparent)!important;
+  font-size:6.2px!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price>span{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price .money-prefix{
+  min-width:0!important;
+  width:104px!important;
+  height:26px!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price input{
+  width:100%!important;
+  min-width:0!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-list>article.selected{
+  min-height:79px!important;
+}
+
+/* Em notebook menor ainda aproveita bem o espaço: 2 por linha. */
+@media(max-width:1180px){
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+/* Quando o modal já empilha os painéis, mantém dois cartões se houver largura. */
+@media(max-width:900px){
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{
+    grid-template-columns:minmax(0,1fr) 180px!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters>select{
+    width:180px!important;
+    min-width:180px!important;
+    max-width:180px!important;
+  }
+}
+
+/* Celular: um cartão por linha; filtro usa largura total e nunca corta. */
+@media(max-width:620px){
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{
+    grid-template-columns:1fr!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters>select{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{
+    grid-template-columns:1fr!important;
+    gap:5px!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-list>article{
+    min-height:46px!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-row-price{
+    grid-template-columns:minmax(0,1fr) 112px!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-row-price .money-prefix{
+    width:112px!important;
+  }
+}
