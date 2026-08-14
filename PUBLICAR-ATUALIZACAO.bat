@@ -1,12 +1,12 @@
 @echo off
 setlocal EnableExtensions
 chcp 65001 >nul
-title BMCenter Smartphones v10.4.59 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.60 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.59"
+set "VERSION=10.4.60"
 
 echo.
 echo ============================================================
@@ -67,7 +67,7 @@ echo [7/8] Criando a atualizacao...
 git add -A
 git diff --cached --quiet
 if not errorlevel 1 goto :no_changes
-git commit -m "BMCenter v10.4.59 - modal aparelho opcao 2 aprovada"
+git commit -m "BMCenter v10.4.60 - modal aparelho opcao 2 aprovada"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

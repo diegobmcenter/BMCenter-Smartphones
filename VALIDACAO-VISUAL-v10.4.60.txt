@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.59 — VALIDAÇÃO VISUAL FINAL
+BMCenter Smartphones v10.4.60 — VALIDAÇÃO VISUAL FINAL
 
 Referência visual: imagem aprovada pelo usuário (Opção 2, janela completa do aparelho).
 Viewport usado no QA: 1365 x 768.
