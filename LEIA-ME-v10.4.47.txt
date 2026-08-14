@@ -1,0 +1,17 @@
+BMCenter Smartphones v10.4.47 — PEÇAS COMPACTAS
+
+Esta versão separa claramente as duas rotinas de peças.
+
+PRINCIPAIS MUDANÇAS
+- Página de peças focada em pedidos maiores, listas e comparação de fornecedores.
+- Cabeçalho, filtros e peças em linhas compactas, evitando colunas gigantes.
+- Botões Adicionar à lista e Configurações de frete corrigidos e testados.
+- Dentro do aparelho, compra avulsa em primeiro plano e cotação opcional.
+- Valor da compra direta entra no custo total do aparelho ao salvar.
+- Cada peça ocupa somente uma linha e abre os detalhes apenas quando necessário.
+- Campos de preço aceitam vírgula decimal.
+- Cores verificadas nos temas claro e escuro.
+- Layout ajustado para computador e celular.
+
+PUBLICAÇÃO
+Execute PUBLICAR-ATUALIZACAO.bat e siga as instruções da tela.
