@@ -1,0 +1,208 @@
+/* v10.4.56 — Peças do aparelho com visual aprovado: compacto, elegante e legível */
+.v102-app .phone-editor-modal{
+  --ped56-title: var(--text);
+  --ped56-text: var(--text);
+  --ped56-muted: color-mix(in srgb, var(--text) 60%, var(--surface));
+  --ped56-soft: color-mix(in srgb, var(--text) 76%, var(--surface));
+  --ped56-faint: color-mix(in srgb, var(--text) 44%, var(--surface));
+  --ped56-line: var(--line);
+  --ped56-card: var(--surface);
+  --ped56-card-2: var(--surface2);
+  --ped56-card-3: color-mix(in srgb, var(--surface2) 65%, var(--surface));
+  --ped56-accent: #7c3aed;
+  --ped56-accent-2: #8b5cf6;
+  --ped56-accent-soft: rgba(124,58,237,.10);
+  --ped56-blue: #2563eb;
+  --ped56-blue-soft: rgba(37,99,235,.11);
+  --ped56-green: #16a34a;
+  --ped56-green-soft: rgba(22,163,74,.12);
+  --ped56-amber: #d97706;
+  --ped56-amber-soft: rgba(217,119,6,.12);
+  --ped56-danger: #dc2626;
+}
+.v102-app.theme-dark .phone-editor-modal{
+  --ped56-title: #f8fbff;
+  --ped56-text: #eef4ff;
+  --ped56-muted: rgba(198,210,228,.82);
+  --ped56-soft: rgba(233,240,250,.94);
+  --ped56-faint: rgba(160,176,198,.82);
+  --ped56-line: rgba(111,135,167,.22);
+  --ped56-card: #121b29;
+  --ped56-card-2: #172233;
+  --ped56-card-3: #111927;
+  --ped56-accent: #a78bfa;
+  --ped56-accent-2: #8b5cf6;
+  --ped56-accent-soft: rgba(139,92,246,.16);
+  --ped56-blue: #7ea8ff;
+  --ped56-blue-soft: rgba(126,168,255,.14);
+  --ped56-green: #7ee0a8;
+  --ped56-green-soft: rgba(34,197,94,.16);
+  --ped56-amber: #f6be67;
+  --ped56-amber-soft: rgba(245,158,11,.16);
+}
+.v102-app.theme-light .phone-editor-modal{
+  --ped56-title: #101828;
+  --ped56-text: #172133;
+  --ped56-muted: #64748b;
+  --ped56-soft: #334155;
+  --ped56-faint: #94a3b8;
+  --ped56-line: rgba(15,23,42,.12);
+  --ped56-card: #ffffff;
+  --ped56-card-2: #f8fafc;
+  --ped56-card-3: #f5f7fb;
+  --ped56-accent: #7c3aed;
+  --ped56-accent-2: #8b5cf6;
+  --ped56-accent-soft: rgba(124,58,237,.08);
+  --ped56-blue: #2563eb;
+  --ped56-blue-soft: rgba(37,99,235,.08);
+  --ped56-green: #16a34a;
+  --ped56-green-soft: rgba(22,163,74,.10);
+  --ped56-amber: #d97706;
+  --ped56-amber-soft: rgba(217,119,6,.10);
+}
+
+/* tipografia geral do modal */
+.v102-app .phone-editor-modal .modalhead h2{color:var(--ped56-title)!important;font-size:16px!important;font-weight:800!important;letter-spacing:-.01em!important}
+.v102-app .phone-editor-modal .compact-editor-grid label,
+.v102-app .phone-editor-modal .compact-notes-grid label,
+.v102-app .phone-editor-modal .grid label,
+.v102-app .phone-editor-modal label{color:var(--ped56-soft)!important;font-size:11px!important;font-weight:700!important}
+.v102-app .phone-editor-modal input,
+.v102-app .phone-editor-modal select,
+.v102-app .phone-editor-modal textarea{background:var(--ped56-card)!important;border-color:var(--ped56-line)!important;color:var(--ped56-text)!important;font-size:12px!important}
+.v102-app .phone-editor-modal input::placeholder,
+.v102-app .phone-editor-modal textarea::placeholder{color:var(--ped56-faint)!important;opacity:1!important}
+.v102-app .phone-editor-modal .muted,
+.v102-app .phone-editor-modal small{color:var(--ped56-muted)!important}
+
+/* blocos expansíveis */
+.v102-app .phone-editor-modal .compact-editor-section{border:1px solid var(--ped56-line)!important;background:transparent!important;border-radius:14px!important;overflow:hidden}
+.v102-app .phone-editor-modal .compact-editor-section>summary{min-height:40px!important;padding:0 14px!important;background:transparent!important;color:var(--ped56-title)!important;font-size:12px!important;font-weight:800!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+.v102-app .phone-editor-modal .compact-editor-section>summary span:first-child{display:inline-flex!important;align-items:center!important;gap:7px!important}
+.v102-app .phone-editor-modal .compact-editor-section>summary span:last-child{color:var(--ped56-muted)!important;font-size:11px!important;font-weight:700!important}
+.v102-app .phone-editor-modal .compact-editor-section>summary svg{color:var(--ped56-accent)!important}
+.v102-app .phone-editor-modal .compact-editor-section[open]>summary{border-bottom:1px solid var(--ped56-line)!important}
+
+/* peça editor alinhado ao mock aprovado */
+.v102-app .phone-editor-modal .parts-editor-v1053{--p53-text:var(--ped56-text)!important;--p53-muted:var(--ped56-muted)!important;--p53-bg:var(--ped56-card)!important;--p53-card:var(--ped56-card-2)!important;--p53-line:var(--ped56-line)!important;--p53-primary:var(--ped56-accent)!important;--p53-primary-soft:var(--ped56-accent-soft)!important;--p53-blue:var(--ped56-blue)!important;--p53-green:var(--ped56-green)!important;--p53-amber:var(--ped56-amber)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-shell{gap:8px!important;padding:10px 0 0!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-titlebar{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;min-height:auto!important;align-items:end!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title{display:grid!important;gap:2px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title b{font-size:14px!important;line-height:1.1!important;font-weight:800!important;color:var(--ped56-title)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title small{font-size:10.5px!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title-actions{display:inline-flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:10px!important;min-width:0!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary{display:inline-flex!important;align-items:center!important;gap:8px!important;white-space:nowrap!important;font-size:10.5px!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary i{width:4px!important;height:4px!important;background:var(--ped56-faint)!important;opacity:.6!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary span{display:inline-flex!important;align-items:baseline!important;gap:3px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary b{font-size:12px!important;font-weight:800!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary span:nth-of-type(1) b{color:var(--ped56-accent)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary span:nth-of-type(2) b{color:var(--ped56-green)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary span:nth-of-type(3) b{color:var(--ped56-amber)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary span:nth-of-type(4) b{color:var(--ped56-blue)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-new{width:auto!important;flex:0 0 auto!important;min-width:108px!important;min-height:30px!important;height:30px!important;padding:0 12px!important;font-size:11px!important;font-weight:800!important;border-radius:10px!important;background:linear-gradient(135deg,var(--ped56-accent),var(--ped56-accent-2))!important;border-color:transparent!important;color:#fff!important;box-shadow:0 8px 20px rgba(124,58,237,.18)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-new *{color:#fff!important}
+.v102-app.theme-dark .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-new{color:#fff!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-new:hover{filter:brightness(1.03)}
+
+/* tabela compacta e bonita */
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-table{border:1px solid var(--ped56-line)!important;border-radius:12px!important;background:var(--ped56-card)!important;overflow:hidden!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-head,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-row{grid-template-columns:minmax(200px,1.6fr) minmax(86px,.66fr) minmax(72px,.54fr) minmax(95px,.72fr) minmax(86px,.72fr) 84px!important;gap:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-head{min-height:33px!important;padding:0 12px!important;background:var(--ped56-card-3)!important;border-bottom:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-head span{font-size:10px!important;letter-spacing:.03em!important;font-weight:800!important;color:var(--ped56-faint)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-row{min-height:48px!important;padding:8px 12px!important;background:var(--ped56-card)!important;border-bottom:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-row.open{background:color-mix(in srgb,var(--ped56-accent-soft) 36%,var(--ped56-card))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-piece b{font-size:12.5px!important;line-height:1.1!important;color:var(--ped56-title)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-piece small{font-size:10.2px!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-piece .dot{width:8px!important;height:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status{min-height:24px!important;height:24px!important;padding:0 9px!important;border-radius:999px!important;font-size:10px!important;font-weight:800!important;background:var(--ped56-card-2)!important;color:var(--ped56-muted)!important;border:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.blue{background:var(--ped56-blue-soft)!important;color:var(--ped56-blue)!important;border-color:color-mix(in srgb,var(--ped56-blue) 25%,var(--ped56-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.green{background:var(--ped56-green-soft)!important;color:var(--ped56-green)!important;border-color:color-mix(in srgb,var(--ped56-green) 25%,var(--ped56-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.amber{background:var(--ped56-amber-soft)!important;color:var(--ped56-amber)!important;border-color:color-mix(in srgb,var(--ped56-amber) 25%,var(--ped56-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-cost{font-size:12px!important;font-weight:700!important;color:var(--ped56-soft)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-count b{font-size:11.6px!important;color:var(--ped56-title)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-count small,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-muted{font-size:10px!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions{gap:5px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions>button,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu-wrap>button{width:28px!important;height:28px!important;border-radius:8px!important;background:var(--ped56-card-2)!important;border:1px solid var(--ped56-line)!important;color:var(--ped56-soft)!important;box-shadow:none!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions>button:hover,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu-wrap>button:hover{background:var(--ped56-accent-soft)!important;color:var(--ped56-accent)!important;border-color:color-mix(in srgb,var(--ped56-accent) 30%,var(--ped56-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu{top:32px!important;min-width:165px!important;border-radius:11px!important;padding:6px!important;background:var(--ped56-card)!important;border-color:var(--ped56-line)!important;box-shadow:0 20px 45px rgba(0,0,0,.14)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu button{min-height:30px!important;font-size:11px!important;font-weight:700!important;color:var(--ped56-soft)!important;border-radius:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu button:hover{background:var(--ped56-card-2)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu button.danger{color:var(--ped56-danger)!important}
+
+/* inclusão rápida */
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add{grid-template-columns:minmax(170px,1.25fr) 110px 96px 84px auto!important;gap:7px!important;padding:9px 10px!important;background:color-mix(in srgb,var(--ped56-accent-soft) 45%,var(--ped56-card))!important;border-bottom:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add label,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail label{gap:4px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add label>span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-quote>span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row label span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail label{font-size:10px!important;color:var(--ped56-muted)!important;font-weight:700!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add input,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add select,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail input,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail select,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row input{min-height:30px!important;height:30px!important;font-size:11.5px!important;border-radius:9px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-quote button{min-height:30px!important;height:30px!important;padding:0 8px!important;background:transparent!important;color:var(--ped56-accent)!important;font-size:11px!important;font-weight:800!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-actions{gap:6px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-actions button{min-height:30px!important;height:30px!important;padding:0 11px!important;font-size:11px!important;border-radius:9px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-actions .primary{background:linear-gradient(135deg,var(--ped56-accent),var(--ped56-accent-2))!important;border-color:transparent!important;color:#fff!important}
+
+/* detalhe e cotações */
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail{gap:9px!important;padding:10px 12px 11px!important;background:var(--ped56-card-2)!important;border-bottom:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-top{grid-template-columns:minmax(0,1fr) 120px minmax(175px,.82fr)!important;gap:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link{min-height:32px!important;border-radius:10px!important;background:var(--ped56-card)!important;border-color:var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link small,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-foot small,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-noquotes,
+.v102-app .phone-editor-modal .parts-editor-v1053 .money-prefix>span{font-size:10px!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link b,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-head b{font-size:11.5px!important;color:var(--ped56-title)!important;font-weight:800!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link.linked{background:var(--ped56-green-soft)!important;border-color:color-mix(in srgb,var(--ped56-green) 30%,var(--ped56-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-head button{min-height:28px!important;padding:0 10px!important;font-size:10.5px!important;border-radius:8px!important;color:var(--ped56-accent)!important;background:transparent!important;border-color:var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row{grid-template-columns:minmax(120px,1fr) 112px minmax(150px,1.2fr) 30px!important;gap:7px!important;padding:7px!important;border-radius:10px!important;background:var(--ped56-card)!important;border-color:var(--ped56-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-noquotes{padding:10px!important;border-style:dashed!important;border-radius:10px!important;background:var(--ped56-card)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .money-prefix{border-color:var(--ped56-line)!important;background:var(--ped56-card)!important;border-radius:9px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .money-prefix input{font-size:11.5px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint{min-height:22px!important;padding:0 2px!important;gap:6px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint span{font-size:11px!important;color:var(--ped56-accent)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint small{font-size:10px!important;line-height:1.3!important;color:var(--ped56-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint b{color:var(--ped56-title)!important}
+
+/* etiqueta e histórico mais bonitos */
+.v102-app .phone-editor-modal .label-preview,
+.v102-app .phone-editor-modal .price-history-section,
+.v102-app .phone-editor-modal .timeline-section,
+.v102-app .phone-editor-modal .tag-editor{background:var(--ped56-card)!important;border:1px solid var(--ped56-line)!important;border-radius:12px!important}
+.v102-app .phone-editor-modal .price-history-section,
+.v102-app .phone-editor-modal .timeline-section{padding:12px!important}
+.v102-app .phone-editor-modal .price-history-section h3,
+.v102-app .phone-editor-modal .timeline-section h3{margin:0 0 10px!important;font-size:13px!important;color:var(--ped56-title)!important;display:flex!important;align-items:center!important;gap:8px!important}
+.v102-app .phone-editor-modal .timeline-item{padding:9px 0!important;border-bottom:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .timeline-item:last-child{border-bottom:0!important}
+.v102-app .phone-editor-modal .timeline-item b{font-size:11px!important;color:var(--ped56-title)!important}
+.v102-app .phone-editor-modal .timeline-item span{font-size:11px!important;color:var(--ped56-soft)!important}
+.v102-app .phone-editor-modal .tag-list span{background:var(--ped56-card-2)!important;border:1px solid var(--ped56-line)!important;color:var(--ped56-soft)!important;font-size:10.5px!important}
+
+/* rodapé do modal */
+.v102-app .phone-editor-modal .actions.sticky-modal-actions{margin-top:16px!important;padding-top:14px!important;border-top:1px solid var(--ped56-line)!important}
+.v102-app .phone-editor-modal .actions.sticky-modal-actions button{min-height:36px!important;padding:0 14px!important;border-radius:11px!important;font-size:12px!important;font-weight:800!important}
+.v102-app .phone-editor-modal .actions.sticky-modal-actions button:not(.primary):not(.draft-save-button){background:var(--ped56-card)!important;color:var(--ped56-soft)!important;border-color:var(--ped56-line)!important}
+.v102-app .phone-editor-modal .actions.sticky-modal-actions .primary{background:linear-gradient(135deg,var(--ped56-accent),var(--ped56-accent-2))!important;border-color:transparent!important;color:#fff!important}
+.v102-app .phone-editor-modal .actions.sticky-modal-actions .primary *{color:#fff!important}
+
+/* responsivo */
+@media(max-width:1080px){
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-titlebar{grid-template-columns:1fr!important}
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title-actions{justify-content:flex-start!important}
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary{order:2!important}
+}
+@media(max-width:860px){
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add,
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-top,
+  .v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row{grid-template-columns:1fr!important}
+}
