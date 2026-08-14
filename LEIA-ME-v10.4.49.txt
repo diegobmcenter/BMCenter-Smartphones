@@ -1,0 +1,32 @@
+BMCenter Smartphones v10.4.49 — PEDIDO EM MASSA DE PEÇAS
+
+REGRA ESTRUTURAL
+- Pedidos e Peças continuam sendo exclusivamente para PEÇAS.
+- Nenhum pedido cadastra aparelhos.
+- Aparelhos continuam sendo cadastrados somente em Smartphones.
+- Photo Studio continua removido do sistema.
+
+RECEBIDOS COMPACTOS
+- A aba Recebidos abre cada pedido fechado por padrão.
+- O cartão fechado mostra somente: PEDIDO RECEBIDO, fornecedor, quantidade/data, total e frete.
+- Clique no cabeçalho do pedido para expandir e ver peças, aparelhos, custos e ações.
+- Clique novamente para fechar.
+
+PEDIDO EM MASSA
+- Novo botão "Pedido em massa" no cabeçalho da Central de Peças.
+- Não exige cotação ou comparação de preço.
+- Informe fornecedor, nome da peça, valor unitário, frete, datas e observação.
+- Selecione vários smartphones já cadastrados.
+- Busca e filtro por status permitem trabalhar apenas com os aparelhos desejados.
+- "Selecionar filtrados" marca de uma vez todos os aparelhos da filtragem atual.
+- Exemplo: comprar 15 películas e vincular uma película a cada um dos 15 aparelhos.
+- O valor unitário pode ser igual para todos ou ajustado individualmente por aparelho.
+- Ao concluir, o pedido nasce confirmado e cada peça entra imediatamente no custo do seu smartphone.
+- O frete total é rateado proporcionalmente entre as peças e fecha exatamente nos centavos.
+- Se "Pedido já foi recebido" estiver marcado, os itens já entram como recebidos.
+- Se já houver a mesma peça pendente no aparelho, ela é reutilizada em vez de duplicada.
+- Se a mesma peça já estiver vinculada a um pedido ativo, aquele aparelho é ignorado para evitar duplicidade.
+
+VALIDAÇÃO
+- Testes automáticos cobrem pedido em massa, valores individuais, rateio de frete, reutilização de peça pendente e bloqueio de duplicidade.
+- PUBLICAR-ATUALIZACAO.bat testa os pedidos e executa o build antes de publicar.

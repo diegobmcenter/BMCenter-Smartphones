@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost}from'../src/partsOrders.js';
+import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder}from'../src/partsOrders.js';
 
 const shares=allocateFreight([{id:'a',price:10},{id:'b',price:20},{id:'c',price:30}],10);
 assert.equal(shares.reduce((s,i)=>s+Math.round(i.freightShare*100),0),1000,'frete deve fechar exatamente em centavos');
@@ -45,3 +45,30 @@ assert.equal(allReceived.status,'received','recebimento coletivo deve fechar ped
 const repeated=syncOrdersIntoPhones(syncOrdersIntoPhones([{id:'pa',status:'Em reparo',paid:10,parts:[{id:'a',name:'Tela'}]}],[allReceived]),[allReceived]);
 assert.equal(repeated[0].paid,10,'sincronizar pedido repetidamente não altera compra do aparelho');
 assert.equal(repeated[0].parts[0].effectiveCost,allReceived.items[0].effectiveCost,'sincronização repetida é idempotente');
+
+
+let seq=0;const idFactory=()=>`id-${++seq}`;
+const bulkPhones=[
+ {id:'bp1',code:'BM-1',brand:'Samsung',model:'A15',status:'Em reparo',paid:300,parts:[]},
+ {id:'bp2',code:'BM-2',brand:'Motorola',model:'G54',status:'Em testes',paid:400,parts:[{id:'existing-film',name:'Película',status:'Cotando',quotes:[],orderStatus:'Não pedido'}]},
+ {id:'bp3',code:'BM-3',brand:'Xiaomi',model:'Note',status:'Pronto',paid:500,parts:[]}
+];
+const bulk=createBulkPartsOrder({phones:bulkPhones,phoneIds:['bp1','bp2','bp3'],partName:'Película',supplier:'TEC Cell',unitPrice:10,pricesByPhone:{bp2:12,bp3:8},freight:3,orderDate:'2026-08-14',receivedNow:false,now:'2026-08-14T05:00:00Z',idFactory});
+assert.ok(bulk.order,'pedido em massa deve criar um pedido');
+assert.equal(bulk.order.items.length,3,'uma peça deve ser criada/vinculada para cada aparelho selecionado');
+assert.equal(bulk.order.status,'ordered','pedido manual em massa já nasce confirmado');
+assert.equal(bulk.added,2,'deve criar peças novas apenas onde ainda não existe pendência reutilizável');
+assert.equal(bulk.reused,1,'deve reutilizar uma peça pendente de mesmo nome quando possível');
+assert.equal(bulk.order.subtotal,30,'valores individuais devem ser respeitados');
+assert.equal(bulk.order.total,33,'frete total deve entrar no pedido');
+assert.equal(bulk.order.items.reduce((s,i)=>s+Math.round(i.freightShare*100),0),300,'frete do pedido em massa deve fechar nos centavos');
+const bulkSynced=syncOrdersIntoPhones(bulk.phones,[bulk.order]);
+assert.equal(bulkSynced[0].parts.find(p=>p.name==='Película').effectiveCost,11,'custo individual deve receber frete rateado');
+assert.equal(bulkSynced[1].parts.find(p=>p.name==='Película').purchasePrice,12,'preço individual editado deve ser respeitado');
+assert.equal(bulkSynced[2].parts.find(p=>p.name==='Película').purchasePrice,8,'preço individual por aparelho deve ser respeitado');
+
+const alreadyOrdered=[{id:'lock',brand:'A',model:'B',status:'Em reparo',parts:[{id:'locked-part',name:'Película',orderId:'active-order',orderStatus:'Pedido realizado'}]}];
+const blocked=createBulkPartsOrder({phones:alreadyOrdered,phoneIds:['lock'],partName:'Película',supplier:'TEC Cell',unitPrice:5,now:'2026-08-14T05:30:00Z',idFactory});
+assert.equal(blocked.order,null,'não deve duplicar a mesma peça quando já existe pedido ativo');
+assert.equal(blocked.skipped.length,1);
+console.log('bulk-parts-order.test: OK');

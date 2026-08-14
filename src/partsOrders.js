@@ -121,6 +121,49 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
  })
 }
 
+
+export function createBulkPartsOrder({phones=[],phoneIds=[],partName='',supplier='',unitPrice=0,pricesByPhone={},freight=0,orderDate='',expectedDate='',notes='',receivedNow=false,now=new Date().toISOString(),idFactory=()=>crypto.randomUUID()}={}){
+ const selectedIds=new Set((Array.isArray(phoneIds)?phoneIds:[]).map(String));
+ const cleanName=String(partName||'').trim();
+ const cleanSupplier=String(supplier||'').trim();
+ if(!cleanName)throw new Error('Informe o nome da peça.');
+ if(!cleanSupplier)throw new Error('Informe o fornecedor.');
+ if(!selectedIds.size)throw new Error('Selecione pelo menos um aparelho.');
+ const stamp=now||new Date().toISOString(),today=stamp.slice(0,10);
+ const skipped=[],items=[];
+ let added=0,reused=0;
+ const normalizeName=value=>String(value||'').trim().toLocaleLowerCase('pt-BR');
+ const targetName=normalizeName(cleanName);
+ const nextPhones=(Array.isArray(phones)?phones:[]).map(phone=>{
+  if(!selectedIds.has(String(phone.id)))return phone;
+  if(['Vendido','Descarte/Sucata'].includes(phone?.status)){
+   skipped.push({phoneId:phone.id,reason:'Aparelho encerrado'});return phone
+  }
+  const currentParts=Array.isArray(phone.parts)?phone.parts:[];
+  const locked=currentParts.find(part=>normalizeName(part.name)===targetName&&part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
+  if(locked){skipped.push({phoneId:phone.id,reason:'Já existe esta peça em um pedido ativo'});return phone}
+  const reusable=currentParts.find(part=>normalizeName(part.name)===targetName&&!part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
+  const rawPrice=Object.prototype.hasOwnProperty.call(pricesByPhone||{},phone.id)?pricesByPhone[phone.id]:unitPrice;
+  const price=roundMoney(rawPrice);
+  let partId;
+  let parts;
+  if(reusable){
+   partId=reusable.id;
+   parts=currentParts.map(part=>part.id===reusable.id?{...part,selectedQuoteId:'',status:'Comprada'}:part);
+   reused++
+  }else{
+   partId=idFactory();
+   const part={id:partId,name:cleanName,status:'Comprada',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'};
+   parts=[...currentParts,part];added++
+  }
+  items.push({id:idFactory(),phoneId:phone.id,partId,partName:cleanName,phoneLabel:[phone.brand,phone.model].filter(Boolean).join(' '),quoteId:'',price,confirmedAt:stamp,receivedAt:receivedNow?stamp:''});
+  return{...phone,parts,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:idFactory(),date:stamp,message:`Compra em massa registrada: ${cleanName}`}]}
+ });
+ if(!items.length)return{phones:nextPhones,order:null,skipped,added,reused};
+ const order=normalizePartsOrder({id:idFactory(),supplier:cleanSupplier,orderDate:orderDate||today,expectedDate:expectedDate||'',freight:roundMoney(freight),notes:String(notes||''),items,createdAt:stamp,updatedAt:stamp,receivedAt:receivedNow?stamp:''});
+ return{phones:nextPhones,order,skipped,added,reused}
+}
+
 export function migrateLegacyPartsOrders(phones=[],orders=[],now=new Date().toISOString()){
  const existing=normalizePartsOrders(orders);
  const existingLinks=new Set(existing.flatMap(order=>order.items.map(item=>`${item.phoneId}::${item.partId}`)));
