@@ -214,6 +214,9 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
  const maskUrl=URL.createObjectURL(blob);
  try{
   const [maskImage,sourceImage]=await Promise.all([imageFromSource(maskUrl),imageFromSource(imageData)]);
+  // The neural matte already has the original 1200x1600 resolution. This
+  // smaller copy is used only to reject disconnected pieces of the old room;
+  // it must never become the final visible edge.
   const scale=Math.min(1,640/Math.max(targetW,targetH));
   const w=Math.max(1,Math.round(targetW*scale)),h=Math.max(1,Math.round(targetH*scale));
   const low=document.createElement('canvas');low.width=w;low.height=h;
@@ -224,9 +227,9 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
   const sourceCtx=sourceCanvas.getContext('2d',{willReadFrequently:true});
   sourceCtx.imageSmoothingEnabled=true;sourceCtx.imageSmoothingQuality='high';sourceCtx.drawImage(sourceImage,0,0,w,h);
   const sourcePixels=sourceCtx.getImageData(0,0,w,h).data;
-  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),personWeak=new Uint8Array(w*h),skinDetected=new Uint8Array(w*h);
-  // A low threshold is deliberately conservative: uncertain edge pixels stay
-  // with the original phone/hand instead of cutting pieces out of them.
+  let binary=new Uint8Array(w*h),personCandidate=new Uint8Array(w*h),personWeak=new Uint8Array(w*h),skinDetected=new Uint8Array(w*h),skinTone=new Uint8Array(w*h);
+  // Binary here means topology only. The delivered alpha edge is rebuilt from
+  // the full-resolution soft matte below.
   const {skinMask,width:personW,height:personH}=personInfo;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const i=y*w+x;
@@ -244,6 +247,7 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
    personCandidate[i]=skin>=60&&skinColor?1:0;
    personWeak[i]=skin>=24&&weakSkinColor?1:0;
    skinDetected[i]=skin>=48&&skinColor?1:0;
+   skinTone[i]=weakSkinColor?1:0;
   }
   // Only human components that contain skin already touching the salient
   // foreground are added. This restores the complete wrist/sleeve while
@@ -271,8 +275,9 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
   // completely inside the frame to be detected and then discarded.
   for(let i=0;i<binary.length;i++)if(protectedPerson.binary[i])binary[i]=1;
   paintStrokes(binary,w,h,strokes);
-  binary=closeBinary(binary,w,h,5);
-  binary=openBinary(binary,w,h,1);
+  // A large close joined fingers to the phone and trapped the old room in
+  // genuine openings. Only tiny confidence cracks may be closed.
+  binary=closeBinary(binary,w,h,2);
   const component=keepLargestComponent(binary,w,h);
   binary=component.binary;
   if(component.retention<.78)throw new Error('o fundo antigo ficou ligado ao objeto e o recorte foi recusado');
@@ -284,40 +289,80 @@ async function calculateForegroundMask(imageData,targetW,targetH,strokes,onProgr
   if(protectedSkin<Math.max(12,Math.round(binary.length*.0005))||retainedSkin/protectedSkin<.88){
    throw new Error('a mão foi detectada, mas não permaneceu inteira no recorte; a foto não foi marcada como pronta');
   }
-  const beforeFill=countForeground(binary);
-  fillInteriorHoles(binary,w,h);
-  const afterFill=countForeground(binary),coverage=afterFill/binary.length;
-  const repaired=(afterFill-beforeFill)/binary.length;
-  if(coverage<.025||coverage>.88||repaired>.13||foregroundCorners(binary,w,h)>=3){
+  // Repair only enclosed holes whose original pixels are skin-colored and
+  // remain inside the trusted hand envelope. This restores a missed highlight
+  // on a palm without bringing sofa/rug pixels back through real openings.
+  const holeProbe=new Uint8Array(binary);fillInteriorHoles(holeProbe,w,h);
+  const handEnvelope=dilateBinary(protectedPerson.binary,w,h,3);
+  for(let i=0;i<binary.length;i++)if(!binary[i]&&holeProbe[i]&&handEnvelope[i]&&skinTone[i])binary[i]=1;
+  const foreground=countForeground(binary),coverage=foreground/binary.length;
+  // Probe enclosed areas for validation, but never fill the remaining ones.
+  // Spaces between hand, fingers and phone have to reveal the new room.
+  holeProbe.set(binary);fillInteriorHoles(holeProbe,w,h);
+  const internalOpenArea=(countForeground(holeProbe)-foreground)/binary.length;
+  if(coverage<.025||coverage>.88||internalOpenArea>.24||foregroundCorners(binary,w,h)>=3){
    throw new Error('o resultado apresentou risco de buracos ou excesso do fundo antigo e foi recusado');
   }
-  // One outward pixel protects thin phone borders and fingertips. We never
-  // erode or rescale the original subject.
-  binary=dilateBinary(binary,w,h,2);
-  const safeLow=document.createElement('canvas');safeLow.width=w;safeLow.height=h;
-  const safeCtx=safeLow.getContext('2d');
-  const safeImage=safeCtx.createImageData(w,h);
+  const topologyLow=document.createElement('canvas');topologyLow.width=w;topologyLow.height=h;
+  const topologyLowCtx=topologyLow.getContext('2d');
+  const topologyImage=topologyLowCtx.createImageData(w,h);
+  const personLow=document.createElement('canvas');personLow.width=w;personLow.height=h;
+  const personLowCtx=personLow.getContext('2d');
+  const personImage=personLowCtx.createImageData(w,h);
   for(let i=0;i<binary.length;i++){
-   const p=i*4;safeImage.data[p]=255;safeImage.data[p+1]=255;safeImage.data[p+2]=255;safeImage.data[p+3]=binary[i]?255:0;
+   topologyImage.data[i*4+3]=binary[i]?255:0;
+   personImage.data[i*4+3]=protectedPerson.binary[i]?255:0;
   }
-  safeCtx.putImageData(safeImage,0,0);
+  topologyLowCtx.putImageData(topologyImage,0,0);
+  personLowCtx.putImageData(personImage,0,0);
+
+  const topologyFull=document.createElement('canvas');topologyFull.width=targetW;topologyFull.height=targetH;
+  const topologyCtx=topologyFull.getContext('2d',{willReadFrequently:true});
+  topologyCtx.imageSmoothingEnabled=true;topologyCtx.imageSmoothingQuality='high';
+  topologyCtx.drawImage(topologyLow,0,0,targetW,targetH);
+  const personFull=document.createElement('canvas');personFull.width=targetW;personFull.height=targetH;
+  const personCtx=personFull.getContext('2d',{willReadFrequently:true});
+  personCtx.imageSmoothingEnabled=true;personCtx.imageSmoothingQuality='high';
+  personCtx.filter='blur(.7px)';personCtx.drawImage(personLow,0,0,targetW,targetH);personCtx.filter='none';
+  const modelFull=document.createElement('canvas');modelFull.width=targetW;modelFull.height=targetH;
+  const modelCtx=modelFull.getContext('2d',{willReadFrequently:true});
+  modelCtx.imageSmoothingEnabled=true;modelCtx.imageSmoothingQuality='high';modelCtx.drawImage(maskImage,0,0,targetW,targetH);
+
+  const topologyPixels=topologyCtx.getImageData(0,0,targetW,targetH).data;
+  const personPixels=personCtx.getImageData(0,0,targetW,targetH).data;
+  const modelPixels=modelCtx.getImageData(0,0,targetW,targetH).data;
   const mask=document.createElement('canvas');mask.width=targetW;mask.height=targetH;
-  const finalCtx=mask.getContext('2d');finalCtx.imageSmoothingEnabled=true;finalCtx.imageSmoothingQuality='high';
-  finalCtx.drawImage(safeLow,0,0,targetW,targetH);
+  const finalCtx=mask.getContext('2d');
+  const finalImage=finalCtx.createImageData(targetW,targetH);
+  const smoothstep=(low,high,value)=>{
+   const t=Math.max(0,Math.min(1,(value-low)/(high-low)));
+   return t*t*(3-2*t);
+  };
+  const manualOverride=Array.isArray(strokes)&&strokes.length>0;
+  for(let i=0;i<targetW*targetH;i++){
+   const p=i*4;
+   const gate=smoothstep(.02,.98,topologyPixels[p+3]/255);
+   const modelAlpha=smoothstep(.045,.19,modelPixels[p+3]/255);
+   const protectedAlpha=smoothstep(.04,.92,personPixels[p+3]/255);
+   const alpha=manualOverride?gate:Math.min(gate,Math.max(modelAlpha,protectedAlpha));
+   finalImage.data[p]=255;finalImage.data[p+1]=255;finalImage.data[p+2]=255;
+   finalImage.data[p+3]=Math.max(0,Math.min(255,Math.round(alpha*255)));
+  }
+  finalCtx.putImageData(finalImage,0,0);
   onProgress?.(`Celular e mão preservados em ${Math.round(performance.now()-started)} ms.`);
   return mask;
  }finally{URL.revokeObjectURL(maskUrl)}
 }
 
 const SCENE_PHOTOS=[
- '/photo-scenes/clean-room.jpg',
- '/photo-scenes/neutral-arch.jpg',
+ '/photo-scenes/real-minimal-office.jpg',
+ '/photo-scenes/real-bright-office.jpg',
  '/photo-scenes/dark-lounge.jpg',
- '/photo-scenes/bright-living.jpg',
+ '/photo-scenes/real-soft-living.jpg',
  '/photo-scenes/blurred-office.jpg',
  '/photo-scenes/home-office.jpg',
- '/photo-scenes/dark-gallery.jpg',
- '/photo-scenes/soft-living.jpg'
+ '/photo-scenes/dark-lounge.jpg',
+ '/photo-scenes/real-warm-office.jpg'
 ];
 const sceneImageCache=new Map();
 
@@ -348,11 +393,14 @@ async function drawScenario(ctx,w,h,scene){
  const travelX=Math.max(0,iw-sw),travelY=Math.max(0,ih-sh);
  const sx=travelX*(.42+(seed%19)/100),sy=travelY*(.40+((seed>>5)%17)/100);
  ctx.save();
- ctx.filter=`blur(${Math.max(1,Math.min(6,Math.round(Math.min(w,h)*.0024)))}px) saturate(.92) brightness(1.02)`;
+ // A restrained optical softness integrates the subject with the room. The
+ // previous heavy blur and white wash made a real photo resemble an AI mockup.
+ ctx.filter=`blur(${Math.max(.6,Math.min(2.2,Math.min(w,h)*.0011)).toFixed(1)}px) saturate(.96) brightness(.99)`;
  ctx.drawImage(image,sx,sy,sw,sh,0,0,w,h);
  ctx.restore();
- ctx.fillStyle=/preto|escuro|grafite|dark|carbon/i.test(style)?'rgba(6,12,20,.16)':'rgba(255,255,255,.08)';
- ctx.fillRect(0,0,w,h);
+ if(/preto|escuro|grafite|dark|carbon/i.test(style)){
+  ctx.fillStyle='rgba(6,12,20,.08)';ctx.fillRect(0,0,w,h);
+ }
 }
 
 async function compose(imageData,scene,strokes,onProgress){

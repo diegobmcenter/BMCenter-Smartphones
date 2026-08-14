@@ -37,6 +37,14 @@ As fotografias de ambiente são do Pexels e podem ser utilizadas e modificadas s
 - https://www.pexels.com/photo/265129/
 - https://www.pexels.com/photo/30001009/
 - https://www.pexels.com/photo/12277639/
+- https://www.pexels.com/photo/the-interior-of-a-home-office-in-a-house-11438345/
+- https://www.pexels.com/photo/modern-living-room-with-cozy-decor-and-plush-sofa-34992782/
+- https://www.pexels.com/photo/minimal-interior-design-of-a-home-office-workplace-6000854/
+- https://www.pexels.com/photo/interior-of-a-neat-home-office-10099162/
+
+Os quatro últimos arquivos substituem cenários renderizados por fotografias de
+ambientes reais. O sistema aplica somente uma suavização óptica discreta para
+compatibilizar a profundidade de campo com a foto do aparelho.
 
 ## React e React DOM
 

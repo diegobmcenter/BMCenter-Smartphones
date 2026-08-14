@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.43 - Publicar Atualizacao
+title BMCenter Smartphones v10.4.44 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.43"
+set "VERSION=10.4.44"
 
 echo.
 echo ============================================================
@@ -45,7 +45,10 @@ if errorlevel 1 goto :build_error
 call npm run test:photo-engine
 if errorlevel 1 goto :build_error
 
-rem Confere os arquivos realmente usados pelo novo motor da v10.4.43.
+call npm run test:photo-matte
+if errorlevel 1 goto :build_error
+
+rem Confere os arquivos realmente usados pelo novo motor da v10.4.44.
 rem O Interactive Segmenter antigo foi removido de proposito.
 if not exist "dist\mediapipe\models\selfie_multiclass_256x256.tflite" goto :photo_engine_missing
 if not exist "dist\mediapipe\wasm\vision_wasm_internal.wasm" goto :photo_engine_missing
@@ -54,6 +57,10 @@ if not exist "dist\assets\u2netp-*.js" goto :photo_engine_missing
 if not exist "dist\assets\personSegmenter.worker-*.js" goto :photo_engine_missing
 if not exist "dist\models\silueta.onnx" goto :photo_engine_missing
 if not exist "dist\photo-scenes\clean-room.jpg" goto :photo_engine_missing
+if not exist "dist\photo-scenes\real-bright-office.jpg" goto :photo_engine_missing
+if not exist "dist\photo-scenes\real-soft-living.jpg" goto :photo_engine_missing
+if not exist "dist\photo-scenes\real-minimal-office.jpg" goto :photo_engine_missing
+if not exist "dist\photo-scenes\real-warm-office.jpg" goto :photo_engine_missing
 
 echo.
 echo ============================================================
@@ -98,7 +105,7 @@ git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.43 - preservar celular e mao ao trocar o fundo"
+git commit -m "BMCenter v10.4.44 - matte suave e cenarios fotograficos reais"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...

@@ -1,4 +1,4 @@
-/* Photo Studio v10.4.43 - celular e mão preservados com novo recorte local */
+/* Photo Studio v10.4.44 - matte suave em resolução original e cenários fotográficos reais */
 .mask-editor-image{
  width:min(100%,calc(66vh * var(--mask-image-ratio,1)))!important;
  max-width:calc(100% - 32px);

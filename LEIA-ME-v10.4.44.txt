@@ -1,0 +1,27 @@
+BMCenter Smartphones v10.4.44 — RECONSTRUÇÃO DO PHOTO STUDIO
+
+ESTA VERSÃO NÃO REPETE O RECORTE DA V10.4.43
+- A v10.4.43 reduzia a máscara para análise, transformava o resultado em preto/branco e ampliava novamente. Isso criava contorno serrilhado.
+- Ela também fechava todos os espaços internos e acrescentava margem para fora, prendendo pedaços do sofá e do tapete no aparelho.
+- Esses comportamentos foram removidos.
+
+NOVO FLUXO
+- O modelo local fornece uma máscara suave na resolução original da foto.
+- A cópia menor serve apenas para rejeitar componentes ligados ao ambiente antigo; ela nunca desenha a borda visível.
+- Celular, tela, mão, dedos, anel e braço continuam usando os pixels originais e nas coordenadas originais.
+- Espaços reais entre mão, dedos e aparelho mostram o novo ambiente.
+- Uma falha dentro da mão só pode ser reparada quando a posição protegida e a cor original comprovam que o pixel é pele.
+- Não existe expansão final da máscara para fora do aparelho.
+
+CENÁRIOS
+- Quatro cenários renderizados foram substituídos por fotografias reais licenciadas do Pexels.
+- O fundo recebe somente uma suavização óptica discreta, sem a lavagem branca usada anteriormente.
+- Permanecem também os ambientes fotográficos reais de escritório, home office e sala escura.
+
+SALVAMENTO E PUBLICAÇÃO
+- O ZIP de fotos continua separando ORIGINAIS e PREPARADAS dentro da subpasta do aparelho.
+- O publicador valida o modelo local, a nova máscara, os cenários reais e o ZIP antes de enviar ao GitHub.
+
+PRIVACIDADE
+- O recorte continua totalmente local no navegador.
+- As fotos do aparelho não são enviadas para serviços externos.
