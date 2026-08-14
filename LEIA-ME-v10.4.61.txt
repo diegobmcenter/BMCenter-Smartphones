@@ -1,0 +1,39 @@
+BMCenter Smartphones v10.4.61
+
+CORREÇÕES E INCLUSÕES
+
+1. MODAL DO APARELHO NO CELULAR
+- Peças / Acessórios deixa de ficar comprimido/cortado.
+- Histórico deixa de compartilhar uma altura fixa com Peças.
+- Os dois cards passam a crescer conforme o conteúdo no mobile.
+- Linhas de peças foram reorganizadas em duas alturas para caber no celular sem esmagar colunas.
+- Histórico mostra data, tipo e descrição sem corte.
+- Inclusão rápida de peça usa campos em grade responsiva.
+
+2. CONFORTO VISUAL
+- Brilho e modo leitura agora são aplicados acima dos modais também.
+- Tema claro e escuro continuam usando a mesma paleta do sistema.
+
+3. EXCLUSÃO NA CENTRAL DE PEÇAS
+- Excluir uma peça em Em aberto sempre exige confirmação.
+- Se a peça possui cotações, a confirmação avisa que elas também serão removidas.
+
+4. PEDIDO EM MASSA COM VÁRIOS PEDIDOS NO MESMO LANÇAMENTO
+- É possível preparar Pedido 1, clicar em “Salvar este e adicionar outro pedido” e cadastrar Pedido 2, Pedido 3 etc.
+- O mesmo fornecedor pode aparecer em pedidos diferentes.
+- Cada pedido preserva data, previsão, frete, observações, produtos, aparelhos e situação de recebimento próprios.
+- Pedidos preparados podem ser editados ou removidos antes da conclusão.
+- Ao concluir, cada pedido é criado separadamente e mantém seus próprios custos/frete.
+
+VALIDAÇÕES
+- parts-orders.test: OK
+- bulk-parts-order.test: OK
+- multi-bulk-order.test: OK
+- multi-order-launch.test: OK
+- source-contracts.test: OK
+- 41 arquivos JS/JSX/MJS verificados sintaticamente: 0 erros.
+
+REGRAS PRESERVADAS
+- Pedidos e Peças continuam exclusivamente para peças.
+- Aparelhos continuam cadastrados somente em Smartphones.
+- Photo Studio continua removido.

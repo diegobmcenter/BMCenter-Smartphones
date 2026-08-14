@@ -104,3 +104,23 @@ assert.equal(afterDelete.find(p=>p.id==='m1').status,'Em reparo','status Aguarda
 
 assert.throws(()=>createMultiBulkPartsOrder({phones:multiPhones,supplier:'X',products:[{id:'a',name:'Película',unitPrice:1,phoneIds:['m1']},{id:'b',name:'película',unitPrice:2,phoneIds:['m2']}],idFactory:multiId}),/mais de uma vez/,'não deve aceitar o mesmo produto duplicado no pedido');
 console.log('multi-bulk-order.test: OK');
+
+let batchSeq=500;const batchId=()=>`batch-${++batchSeq}`;
+const batchPhones=[
+ {id:'q1',brand:'Samsung',model:'A55',status:'Em reparo',parts:[]},
+ {id:'q2',brand:'Motorola',model:'G84',status:'Em reparo',parts:[]}
+];
+const batchOne=createMultiBulkPartsOrder({phones:batchPhones,supplier:'Fornecedor A',freight:5,orderDate:'2026-08-13',products:[{id:'p1',name:'Película',unitPrice:10,phoneIds:['q1']}],now:'2026-08-14T08:00:00Z',idFactory:batchId});
+const batchTwo=createMultiBulkPartsOrder({phones:batchOne.phones,supplier:'Fornecedor A',freight:8,orderDate:'2026-08-14',products:[{id:'p2',name:'Capinha',unitPrice:20,phoneIds:['q2']}],now:'2026-08-14T08:01:00Z',idFactory:batchId});
+assert.ok(batchOne.order&&batchTwo.order,'dois pedidos separados do mesmo fornecedor devem ser criados no mesmo lançamento');
+assert.notEqual(batchOne.order.id,batchTwo.order.id,'cada pedido precisa continuar independente');
+assert.equal(batchOne.order.orderDate,'2026-08-13');
+assert.equal(batchTwo.order.orderDate,'2026-08-14');
+assert.equal(batchOne.order.freight,5);
+assert.equal(batchTwo.order.freight,8);
+assert.equal(batchOne.order.total,15);
+assert.equal(batchTwo.order.total,28);
+const batchSynced=syncOrdersIntoPhones(batchTwo.phones,[batchOne.order,batchTwo.order]);
+assert.equal(batchSynced.find(p=>p.id==='q1').parts[0].orderId,batchOne.order.id);
+assert.equal(batchSynced.find(p=>p.id==='q2').parts[0].orderId,batchTwo.order.id);
+console.log('multi-order-launch.test: OK');

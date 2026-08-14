@@ -1,134 +1,165 @@
-/* v10.4.60 — correção da inclusão inline de peças no modal do aparelho */
-.v102-app .phone-editor-v57 .v57-part-quick{
-  display:grid!important;
-  grid-template-columns:minmax(96px,1fr) 78px 84px minmax(148px,auto)!important;
-  gap:6px!important;
-  align-items:end!important;
-  padding:5px 7px!important;
-  background:color-mix(in srgb,var(--v59-purple-soft) 72%,var(--v59-card))!important;
-  border-bottom:1px solid var(--v59-line)!important;
-  min-width:0!important;
-  overflow:hidden!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick>label,
-.v102-app .phone-editor-v57 .v57-part-quick>.v57-quick-actions{
-  min-width:0!important;
-  max-width:100%!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick>label{
-  display:grid!important;
-  gap:3px!important;
-  margin:0!important;
-  font-size:7.5px!important;
-  line-height:1!important;
-  color:var(--v59-muted)!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick input,
-.v102-app .phone-editor-v57 .v57-part-quick select,
-.v102-app .phone-editor-v57 .v57-part-quick .money-prefix{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  height:26px!important;
-  min-height:26px!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick input,
-.v102-app .phone-editor-v57 .v57-part-quick select{
-  padding:3px 6px!important;
-  font-size:8.4px!important;
-  border-radius:7px!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick .money-prefix{
-  display:grid!important;
-  grid-template-columns:24px minmax(0,1fr)!important;
-  align-items:center!important;
-  overflow:hidden!important;
-  border:1px solid var(--v59-line)!important;
-  border-radius:7px!important;
-  background:var(--v59-bg)!important;
-}
-.v102-app.theme-dark .phone-editor-v57 .v57-part-quick .money-prefix{background:var(--v59-soft)!important}
-.v102-app .phone-editor-v57 .v57-part-quick .money-prefix>span{
-  width:24px!important;
-  height:24px!important;
-  display:grid!important;
-  place-items:center!important;
-  padding:0!important;
-  border-right:1px solid var(--v59-line)!important;
-  color:var(--v59-muted)!important;
-  font-size:7px!important;
-  font-weight:800!important;
-}
-.v102-app .phone-editor-v57 .v57-part-quick .money-prefix input{
-  height:24px!important;
-  min-height:24px!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  padding:3px 6px!important;
-  box-shadow:none!important;
-}
-.v102-app .phone-editor-v57 .v57-quick-actions{
-  grid-column:auto!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  flex-wrap:nowrap!important;
-  gap:5px!important;
-  width:auto!important;
-  padding-top:0!important;
-}
-.v102-app .phone-editor-v57 .v57-quick-actions button{
-  width:auto!important;
-  min-width:0!important;
-  max-width:none!important;
-  height:25px!important;
-  min-height:25px!important;
-  padding:0 6px!important;
-  border-radius:7px!important;
-  font-size:7.2px!important;
-  font-weight:800!important;
-  white-space:nowrap!important;
-  flex:0 0 auto!important;
-}
-.v102-app .phone-editor-v57 .v57-quick-actions button:first-child{
-  color:var(--v59-purple)!important;
-  border-color:color-mix(in srgb,var(--v59-purple) 26%,var(--v59-line))!important;
-  background:transparent!important;
-}
-.v102-app .phone-editor-v57 .v57-quick-actions .primary{
-  background:linear-gradient(135deg,var(--v59-purple),#6d35e5)!important;
-  color:#fff!important;
-  border-color:transparent!important;
-}
-.v102-app .phone-editor-v57 .v57-quick-actions .primary *{color:#fff!important}
-.v102-app .phone-editor-v57 .v57-quick-actions button:last-child{
-  color:var(--v59-text2)!important;
-  border-color:var(--v59-line)!important;
-  background:var(--v59-bg)!important;
-}
-.v102-app.theme-dark .phone-editor-v57 .v57-quick-actions button:last-child{background:var(--v59-soft)!important}
+/* v10.4.60 — Correção visual da inclusão rápida em Peças / Acessórios */
 
-/* O formulário não pode aumentar a largura do card nem empurrar o Histórico. */
-.v102-app .phone-editor-v57 .v57-middle-grid,
-.v102-app .phone-editor-v57 .v57-middle-grid>.v57-card,
-.v102-app .phone-editor-v57 .v57-parts-table,
-.v102-app .phone-editor-v57 .v57-parts-table>*{
-  min-width:0!important;
+/* fechado continua compacto; aberto cresce só o necessário */
+.v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded{
+  flex:1 1 190px!important;
+  min-height:178px!important;
+  max-height:214px!important;
+}
+.v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded>.v57-card{
+  height:100%!important;
+  min-height:0!important;
+}
+
+/* não comprimir o conteúdo novo dentro do card */
+.v102-app .phone-editor-v57 .v57-parts-card{
+  overflow:hidden!important;
 }
 .v102-app .phone-editor-v57 .v57-parts-table{
   overflow-x:hidden!important;
   overflow-y:auto!important;
+  align-content:start!important;
 }
 
-@media(max-width:900px){
-  .v102-app .phone-editor-v57 .v57-part-quick{
-    grid-template-columns:minmax(0,1fr) minmax(78px,.72fr)!important;
+/* formulário de inclusão: 2 linhas compactas em vez de 6 controles espremidos */
+.v102-app .phone-editor-v57 .v60-part-quick{
+  display:grid!important;
+  gap:5px!important;
+  padding:6px 7px 7px!important;
+  background:color-mix(in srgb,var(--v59-purple-soft) 72%,var(--v59-card))!important;
+  border-top:1px solid var(--v59-line)!important;
+  border-bottom:1px solid var(--v59-line)!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-fields{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.55fr) minmax(82px,.8fr) minmax(78px,.72fr)!important;
+  gap:6px!important;
+  align-items:end!important;
+  min-width:0!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick label{
+  display:grid!important;
+  gap:2px!important;
+  min-width:0!important;
+  margin:0!important;
+  color:var(--v59-muted)!important;
+  font-size:6.8px!important;
+  font-weight:750!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick input,
+.v102-app .phone-editor-v57 .v60-part-quick select{
+  width:100%!important;
+  min-width:0!important;
+  height:25px!important;
+  min-height:25px!important;
+  padding:3px 6px!important;
+  border-radius:6px!important;
+  font-size:7.8px!important;
+  background:var(--v59-bg)!important;
+  color:var(--v59-text2)!important;
+  border:1px solid var(--v59-line)!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick .money-prefix{
+  height:25px!important;
+  min-height:25px!important;
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  align-items:center!important;
+  overflow:hidden!important;
+  border:1px solid var(--v59-line)!important;
+  border-radius:6px!important;
+  background:var(--v59-bg)!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick .money-prefix>span{
+  height:100%!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0 5px!important;
+  border-right:1px solid var(--v59-line)!important;
+  color:var(--v59-muted)!important;
+  font-size:6.8px!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick .money-prefix input{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer{
+  min-height:26px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer>div{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:5px!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer button{
+  width:auto!important;
+  min-width:0!important;
+  height:24px!important;
+  min-height:24px!important;
+  padding:0 8px!important;
+  border-radius:6px!important;
+  font-size:7.2px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer .v60-quote-link{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  padding:0 5px!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--v59-purple)!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer .v60-quote-link:hover{
+  background:var(--v59-purple-soft)!important;
+}
+.v102-app .phone-editor-v57 .v60-part-quick-footer .primary{
+  background:linear-gradient(135deg,var(--v59-purple),#6d35e5)!important;
+  border-color:transparent!important;
+  color:#fff!important;
+}
+
+/* detalhes de uma peça também podem crescer sem ser cortados */
+.v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded .v57-part-detail{
+  max-height:142px!important;
+  overflow-y:auto!important;
+}
+
+/* evita colisões na linha normal da tabela */
+.v102-app .phone-editor-v57 .v57-parts-head,
+.v102-app .phone-editor-v57 .v57-part-row{
+  grid-template-columns:minmax(118px,1.4fr) 86px 60px 74px 24px!important;
+  column-gap:5px!important;
+}
+.v102-app .phone-editor-v57 .v57-part-row>span,
+.v102-app .phone-editor-v57 .v57-part-row>b{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.v102-app .phone-editor-v57 .v57-part-status{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:1000px){
+  .v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded{
+    min-height:0!important;
+    max-height:none!important;
   }
-  .v102-app .phone-editor-v57 .v57-part-quick>label:nth-child(3){grid-column:1/-1!important}
 }
 @media(max-width:720px){
-  .v102-app .phone-editor-v57 .v57-part-quick{grid-template-columns:1fr!important}
-  .v102-app .phone-editor-v57 .v57-part-quick>label:nth-child(3){grid-column:auto!important}
-  .v102-app .phone-editor-v57 .v57-quick-actions{grid-column:auto!important;justify-content:flex-start!important;flex-wrap:wrap!important}
+  .v102-app .phone-editor-v57 .v60-part-quick-fields{grid-template-columns:1fr!important}
+  .v102-app .phone-editor-v57 .v60-part-quick-footer{align-items:stretch!important;flex-direction:column!important}
+  .v102-app .phone-editor-v57 .v60-part-quick-footer>div{justify-content:flex-start!important}
 }

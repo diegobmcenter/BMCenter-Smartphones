@@ -1,12 +1,12 @@
 @echo off
 setlocal EnableExtensions
-chcp 65001 >nul
-title BMCenter Smartphones v10.4.60 - Publicar Atualizacao
 cd /d "%~dp0"
+
+title BMCenter Smartphones v10.4.61 - Publicar Atualizacao
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.60"
+set "VERSION=10.4.61"
 
 echo.
 echo ============================================================
@@ -15,20 +15,23 @@ echo ============================================================
 echo.
 
 echo [1/8] Verificando Node, NPM e Git...
-where node >nul 2>&1 || goto :node_error
-where npm >nul 2>&1 || goto :node_error
-where git >nul 2>&1 || goto :git_error
+where.exe node >nul 2>&1
+if errorlevel 1 goto :node_error
+where.exe npm.cmd >nul 2>&1
+if errorlevel 1 goto :node_error
+where.exe git >nul 2>&1
+if errorlevel 1 goto :git_error
 
 echo [2/8] Instalando dependencias...
-call npm install --no-audit --no-fund
+call npm.cmd install --no-audit --no-fund
 if errorlevel 1 goto :install_error
 
 echo [3/8] Testando pedidos de pecas...
-call npm run test:parts-orders
+call npm.cmd run test:parts-orders
 if errorlevel 1 goto :test_error
 
 echo [4/8] Compilando a versao...
-call npm run build
+call npm.cmd run build
 if errorlevel 1 goto :build_error
 
 echo.
@@ -40,6 +43,7 @@ echo.
 if not exist ".git" (
   echo [5/8] Inicializando repositorio local...
   git init
+  if errorlevel 1 goto :git_operation_error
 ) else (
   echo [5/8] Repositorio Git encontrado.
 )
@@ -57,6 +61,7 @@ echo [6/8] Sincronizando historico do GitHub sem sobrescrever esta versao...
 git fetch origin %BRANCH%
 if errorlevel 1 goto :fetch_error
 git reset --mixed origin/%BRANCH%
+if errorlevel 1 goto :git_operation_error
 
 git config user.name >nul 2>&1
 if errorlevel 1 git config user.name "Diego Moraes"
@@ -65,9 +70,10 @@ if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
 git add -A
+if errorlevel 1 goto :git_operation_error
 git diff --cached --quiet
 if not errorlevel 1 goto :no_changes
-git commit -m "BMCenter v10.4.60 - modal aparelho opcao 2 aprovada"
+git commit -m "BMCenter v10.4.61 - mobile historico pecas e multi-pedidos"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...
@@ -93,29 +99,46 @@ pause
 exit /b 0
 
 :node_error
-echo ERRO: Node.js ou NPM nao foi encontrado.
+echo.
+echo ERRO: Node.js ou NPM nao foi encontrado no PATH.
+echo Feche esta janela, abra um novo Prompt de Comando e teste: node -v e npm -v
 goto :failed
+
 :git_error
-echo ERRO: Git nao foi encontrado.
+echo.
+echo ERRO: Git nao foi encontrado no PATH.
 goto :failed
+
 :install_error
+echo.
 echo ERRO: npm install falhou. Nada foi publicado.
 goto :failed
+
 :test_error
+echo.
 echo ERRO: os testes de pedidos de pecas falharam. Nada foi publicado.
 goto :failed
+
 :build_error
+echo.
 echo ERRO: npm run build falhou. Nada foi publicado.
 goto :failed
+
 :fetch_error
+echo.
 echo ERRO: nao foi possivel consultar o GitHub. Nada foi publicado.
 goto :failed
+
 :git_operation_error
-echo ERRO: nao foi possivel criar o commit. Nada foi publicado.
+echo.
+echo ERRO: uma operacao do Git falhou. Nada foi publicado.
 goto :failed
+
 :push_error
+echo.
 echo ERRO: nao foi possivel enviar ao GitHub.
 goto :failed
+
 :failed
 echo.
 echo Copie a mensagem acima se precisar de ajuda.

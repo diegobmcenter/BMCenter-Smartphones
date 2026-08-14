@@ -1,0 +1,19 @@
+BMCenter Smartphones v10.4.61 — CHECKLIST DE INTERFACE
+
+MOBILE
+- Peças/Acessórios: card com altura automática; sem conteúdo cortado.
+- Histórico: card independente com altura automática; sem conteúdo cortado.
+- Tabela desktop não é forçada no celular; linha vira layout responsivo.
+- Inclusão rápida: campos cabem em duas colunas e botões em linha própria quando necessário.
+
+CONFORTO VISUAL
+- Overlay de brilho: z-index superior ao modal.
+- Overlay de leitura: z-index superior ao modal.
+- Pointer-events desativados: não bloqueiam cliques.
+- Tema claro/escuro: superfícies continuam usando variáveis v59 do tema.
+
+PEDIDOS EM MASSA
+- Lista de pedidos preparados aparece antes do formulário atual.
+- Cada pedido preparado exibe fornecedor, data, quantidade, frete e total.
+- Editar e remover pedido preparado antes da conclusão.
+- Conclusão gera pedidos independentes.
