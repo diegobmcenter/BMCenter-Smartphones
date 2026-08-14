@@ -1,0 +1,12 @@
+VALIDACAO v10.4.65
+
+parts-orders.test: OK
+bulk-parts-order.test: OK
+multi-bulk-order.test: OK
+multi-order-launch.test: OK
+source-contracts.test: OK
+
+Cenario validado:
+Tela R$ 65,00 + Pelicula R$ 4,00 no mesmo aparelho = total exibido R$ 69,00.
+Os itens continuam separados no pedido/ficha: Tela 65,00 e Pelicula 4,00.
+TAB no valor unitario do ultimo produto cria novo produto e direciona o foco para o nome.

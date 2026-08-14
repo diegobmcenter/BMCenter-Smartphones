@@ -122,6 +122,20 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
 }
 
 
+
+export function bulkPhoneProductsTotal(products=[],phoneId,excludeProductId=''){
+ const id=String(phoneId||'');
+ const numeric=value=>{if(typeof value==='number')return Number.isFinite(value)?value:0;let text=String(value??'').trim().replace(/[^0-9,.-]/g,'');if(text.includes(','))text=text.replace(/\./g,'').replace(',','.');const number=Number(text);return Number.isFinite(number)?number:0};
+ return roundMoney((Array.isArray(products)?products:[]).reduce((sum,product)=>{
+  if(excludeProductId&&String(product?.id||'')===String(excludeProductId))return sum;
+  const selected=(Array.isArray(product?.phoneIds)?product.phoneIds:[]).map(String).includes(id);
+  if(!selected)return sum;
+  const prices=product?.pricesByPhone&&typeof product.pricesByPhone==='object'?product.pricesByPhone:{};
+  const raw=Object.prototype.hasOwnProperty.call(prices,id)?prices[id]:product?.unitPrice;
+  return sum+numeric(raw)
+ },0))
+}
+
 export function createMultiBulkPartsOrder({phones=[],products=[],supplier='',freight=0,orderDate='',expectedDate='',notes='',receivedNow=false,now=new Date().toISOString(),idFactory=()=>crypto.randomUUID()}={}){
  const cleanSupplier=String(supplier||'').trim();
  if(!cleanSupplier)throw new Error('Informe o fornecedor.');

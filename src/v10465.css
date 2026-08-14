@@ -1,0 +1,13 @@
+/* v10.4.65 — total por aparelho + cadastro sequencial de produtos por TAB */
+.parts-v62-bulk-dialog .parts-v65-bulk-total-price{
+  width:84px!important;
+  min-width:84px!important;
+  max-width:84px!important;
+}
+.parts-v62-bulk-dialog .parts-v65-bulk-total-price input{
+  text-align:right!important;
+  font-variant-numeric:tabular-nums!important;
+}
+@media(max-width:1180px){
+  .parts-v62-bulk-dialog .parts-v65-bulk-total-price{width:82px!important;min-width:82px!important;max-width:82px!important}
+}

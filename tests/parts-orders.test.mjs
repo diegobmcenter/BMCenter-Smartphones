@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks}from'../src/partsOrders.js';
+import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'../src/partsOrders.js';
 
 const shares=allocateFreight([{id:'a',price:10},{id:'b',price:20},{id:'c',price:30}],10);
 assert.equal(shares.reduce((s,i)=>s+Math.round(i.freightShare*100),0),1000,'frete deve fechar exatamente em centavos');
@@ -93,6 +93,18 @@ assert.equal(multi.order.source,'bulk');
 assert.equal(multi.order.bulkVersion,2);
 assert.equal(multi.order.items.filter(i=>i.partName==='Película').length,3);
 assert.equal(multi.order.items.filter(i=>i.partName==='Capinha').length,2);
+const samePhoneProducts=[
+ {id:'screen',name:'Tela',unitPrice:'65',phoneIds:['m1'],pricesByPhone:{}},
+ {id:'film',name:'Película',unitPrice:'4',phoneIds:['m1'],pricesByPhone:{}}
+];
+assert.equal(bulkPhoneProductsTotal(samePhoneProducts,'m1'),69,'cartão do aparelho deve mostrar a soma de todos os produtos vinculados no mesmo pedido');
+assert.equal(bulkPhoneProductsTotal(samePhoneProducts,'m1','film'),65,'edição do total deve conseguir preservar o valor dos outros produtos');
+const samePhoneOrder=createMultiBulkPartsOrder({phones:[{id:'same-1',brand:'Motorola',model:'G8 Play',status:'Em reparo',parts:[]}],supplier:'Garrido',products:[
+ {id:'screen-2',name:'Tela',unitPrice:65,phoneIds:['same-1'],pricesByPhone:{}},
+ {id:'film-2',name:'Película',unitPrice:4,phoneIds:['same-1'],pricesByPhone:{}}
+],now:'2026-08-14T17:30:00Z',idFactory:multiId});
+assert.equal(samePhoneOrder.order.subtotal,69,'pedido deve manter soma total de dois itens no mesmo aparelho');
+assert.deepEqual(samePhoneOrder.order.items.map(item=>[item.partName,item.price]),[['Tela',65],['Película',4]],'ficha/pedido deve manter os valores discriminados por item');
 const m2parts=multi.phones.find(p=>p.id==='m2').parts.map(p=>p.name);
 assert.deepEqual(m2parts,['Película'],'m2 não foi selecionado para Capinha e não pode recebê-la');
 const multiSynced=syncOrdersIntoPhones(multi.phones,[multi.order]);
