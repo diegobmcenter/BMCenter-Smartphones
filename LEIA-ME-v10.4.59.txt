@@ -1,0 +1,25 @@
+BMCenter Smartphones v10.4.59
+
+Janela completa do aparelho refeita visualmente para ficar fiel ao esboço aprovado da Opção 2.
+
+Principais pontos:
+- dimensões compactas e proporcionais;
+- cards de Dados do aparelho e Dados da compra com hierarquia visual roxa;
+- Peças / Acessórios e Histórico lado a lado;
+- etiquetas coloridas e compactas;
+- footer com metadados e botões compactos;
+- status contextual por cor;
+- campo Cor com marcador visual;
+- observações/tarefas só ocupam espaço se já houver conteúdo;
+- inclusão de etiqueta abre somente sob demanda;
+- temas claro e escuro revisados separadamente.
+
+Validações:
+- parts-orders.test: OK
+- bulk-parts-order.test: OK
+- multi-bulk-order.test: OK
+- source-contracts.test: OK
+- 41 arquivos JS/JSX/MJS analisados, 0 erros sintáticos
+- render visual em 1365x768 sem scroll global no estado padrão
+
+O PUBLICAR-ATUALIZACAO.bat continua executando os testes e o build antes do push.

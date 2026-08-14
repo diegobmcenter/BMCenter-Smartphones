@@ -1,0 +1,38 @@
+BMCenter Smartphones v10.4.59 — VALIDAÇÃO VISUAL FINAL
+
+Referência visual: imagem aprovada pelo usuário (Opção 2, janela completa do aparelho).
+Viewport usado no QA: 1365 x 768.
+Temas testados: claro e escuro.
+
+Métricas reais do render com o mesmo CSS desta versão:
+- modal: 1030 x 620 px
+- modal scrollHeight = clientHeight = 620 px
+- corpo scrollHeight = clientHeight = 564 px
+- corpo scrollWidth = clientWidth = 1015 px
+- sem rolagem global vertical no estado padrão
+- sem rolagem horizontal
+- Dados do aparelho: 144 px
+- Dados da compra: 116 px
+- bloco Peças + Histórico: 165 px
+- Etiquetas: 62 px
+- rodapé: 38 px
+- botão Adicionar item: 90 x 24 px
+- botão Salvar alterações: 110 x 30 px no harness (no app o ícone pode ampliar alguns pixels)
+
+Ajustes visuais conferidos:
+- cabeçalho do modal compacto, com ícone roxo e subtítulo
+- cards com borda fina e cabeçalho lavanda/roxo discreto
+- campos baixos e proporcionais
+- Cor com marcador circular
+- Status com cor contextual
+- Peças e Histórico lado a lado
+- botões de ação compactos
+- Etiquetas coloridas como no esboço aprovado
+- botão Nova etiqueta só abre o campo quando solicitado
+- rodapé com metadados e ações compactas
+- tema claro e escuro usam a mesma hierarquia visual
+
+Regras preservadas:
+- Photo Studio continua removido
+- aparelhos continuam sendo cadastrados somente em Smartphones
+- Pedidos/Peças continuam exclusivos para peças
