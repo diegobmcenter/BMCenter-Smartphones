@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const parts=main.slice(main.indexOf('function Parts(){'),main.indexOf('\n\nfunction PartsInventoryPage'));
-assert.match(main,/APP_VERSION='10\.4\.63'/);
+assert.match(main,/APP_VERSION='10\.4\.64'/);
 assert.match(main,/OKEY='bmcenter-parts-orders'/);
 assert.match(main,/phone-editor-v57/);
 assert.match(main,/subtitle=\"Editar registro do aparelho\"/);

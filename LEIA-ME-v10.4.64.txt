@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.63
+BMCenter Smartphones v10.4.64
 
 CORREÇÕES E INCLUSÕES
 
@@ -39,14 +39,14 @@ REGRAS PRESERVADAS
 - Photo Studio continua removido.
 
 
-v10.4.63 — Pedido em massa compacto
+v10.4.64 — Pedido em massa compacto
 - campo Previsão removido da tela;
 - painel esquerdo compactado;
 - Produtos deste pedido corrigido e com rolagem própria quando necessário;
 - pedidos preparados exibidos em até 4 cards por linha no desktop;
 - mais espaço para seleção de aparelhos e menor necessidade de rolagem.
 
-v10.4.63 — Grade de aparelhos no Pedido em massa
+v10.4.64 — Grade de aparelhos no Pedido em massa
 - filtro Status corrigido para exibir texto e seta sem corte;
 - aparelhos exibidos em 3 cartões por linha no desktop;
 - 2 cartões por linha em larguras intermediárias;

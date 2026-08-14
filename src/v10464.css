@@ -1,0 +1,77 @@
+/* v10.4.64 — Pedido em massa: valor individual inline, sem aumentar o cartão */
+.parts-v62-bulk-dialog .parts-v49-bulk-list>article{
+  min-height:44px!important;
+  height:44px!important;
+  padding:5px 7px!important;
+  display:flex!important;
+  align-items:center!important;
+  overflow:hidden!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-list>article.selected{
+  min-height:44px!important;
+  height:44px!important;
+}
+.parts-v62-bulk-dialog .parts-v64-bulk-card-line{
+  width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-check{
+  min-width:0!important;
+  margin:0!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price{
+  width:78px!important;
+  min-width:78px!important;
+  max-width:78px!important;
+  height:25px!important;
+  display:grid!important;
+  grid-template-columns:21px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid var(--line)!important;
+  border-radius:7px!important;
+  background:var(--surface)!important;
+  overflow:hidden!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price>span{
+  height:100%!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border-right:1px solid var(--line)!important;
+  color:var(--muted)!important;
+  font-size:6.3px!important;
+  font-weight:700!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price input{
+  width:100%!important;
+  min-width:0!important;
+  height:23px!important;
+  min-height:23px!important;
+  padding:0 5px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:7.2px!important;
+  font-weight:700!important;
+}
+.parts-v62-bulk-dialog .parts-v49-bulk-row-price:focus-within{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 10%,transparent)!important;
+}
+@media(max-width:1180px){
+  .parts-v62-bulk-dialog .parts-v49-bulk-row-price{width:76px!important;min-width:76px!important;max-width:76px!important}
+}
+@media(max-width:620px){
+  .parts-v62-bulk-dialog .parts-v49-bulk-list>article,
+  .parts-v62-bulk-dialog .parts-v49-bulk-list>article.selected{height:auto!important;min-height:44px!important}
+  .parts-v62-bulk-dialog .parts-v64-bulk-card-line{grid-template-columns:minmax(0,1fr) 82px!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-row-price{width:82px!important;min-width:82px!important;max-width:82px!important}
+}
