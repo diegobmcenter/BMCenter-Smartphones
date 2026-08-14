@@ -1,0 +1,5 @@
+BMCenter Smartphones v10.4.58
+
+Correção visual da janela completa do aparelho conforme a Opção 2 aprovada.
+Ajuste principal: impedir que o CSS Grid comprima/corte os cards internos e manter proporções compactas em 1365x768.
+Temas claro e escuro tratados separadamente.

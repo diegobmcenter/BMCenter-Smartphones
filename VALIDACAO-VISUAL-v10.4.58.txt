@@ -1,0 +1,30 @@
+BMCenter Smartphones v10.4.58 — VALIDAÇÃO VISUAL
+
+Referência: Opção 2 aprovada para a janela completa do aparelho.
+Viewport de QA: 1365 x 768.
+
+Resultado do render de QA:
+- modal: 990 x 748 px
+- área útil do corpo: 690 px
+- scrollHeight do corpo: 690 px
+- clientHeight do corpo: 690 px
+- estado padrão: SEM rolagem interna
+- tema claro: render conferido
+- tema escuro: render conferido
+
+Correção crítica em relação à v10.4.57:
+O modalbody estava sendo tratado como grid e os cards internos eram comprimidos/cortados para caber no viewport. A v10.4.58 usa corpo normal com overflow controlado, impedindo que Dados do aparelho e Dados da compra sejam esmagados.
+
+Proporções:
+- cabeçalho 58 px
+- cards com cabeçalho 29 px
+- inputs/selects 28 px
+- botões de ações entre 24 e 31 px
+- Peças e Histórico lado a lado
+- Etiquetas compactas
+- rodapé compacto com metadados + ações
+
+Regras preservadas:
+- Photo Studio removido
+- aparelhos cadastrados somente em Smartphones
+- Pedidos/Peças exclusivos para peças

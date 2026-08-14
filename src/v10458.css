@@ -1,0 +1,187 @@
+/* v10.4.58 — correção estrutural do modal Opção 2 aprovada */
+.v102-app .phone-editor-v57{
+  width:min(990px,calc(100vw - 24px))!important;
+  max-width:990px!important;
+  height:min(748px,calc(100dvh - 16px))!important;
+  max-height:calc(100dvh - 16px)!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-rows:58px minmax(0,1fr)!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.v102-app .phone-editor-v57>.modalhead{
+  position:relative!important;
+  top:auto!important;
+  height:58px!important;
+  min-height:58px!important;
+  padding:8px 15px!important;
+}
+.v102-app .phone-editor-v57>.modalbody{
+  display:block!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:7px 13px 8px!important;
+  scrollbar-gutter:stable!important;
+}
+.v102-app .phone-editor-v57>.modalbody>*{
+  min-height:0!important;
+  min-width:0!important;
+}
+.v102-app .phone-editor-v57 .v57-card{
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0 0 6px!important;
+  overflow:hidden!important;
+}
+.v102-app .phone-editor-v57 .v57-card-head{
+  height:29px!important;
+  min-height:29px!important;
+  padding:0 10px!important;
+}
+.v102-app .phone-editor-v57 .v57-card-title b{font-size:11px!important}
+.v102-app .phone-editor-v57 .modal-title-icon{width:34px!important;height:34px!important;flex-basis:34px!important}
+.v102-app .phone-editor-v57 .modal-title-group h2{font-size:17px!important}
+.v102-app .phone-editor-v57 .modal-title-group small{font-size:9.5px!important}
+.v102-app .phone-editor-v57 .modalhead-tools>button,
+.v102-app .phone-editor-v57 .font-scale-controls button{width:31px!important;min-width:31px!important;height:31px!important;min-height:31px!important}
+.v102-app .phone-editor-v57 .font-scale-controls{height:31px!important}
+
+.v102-app .phone-editor-v57 label{font-size:9px!important;gap:2px!important}
+.v102-app .phone-editor-v57 input,
+.v102-app .phone-editor-v57 select{height:28px!important;min-height:28px!important;padding:4px 7px!important;font-size:10.4px!important}
+.v102-app .phone-editor-v57 .field-affix{height:28px!important;min-height:28px!important}
+.v102-app .phone-editor-v57 .field-affix input{height:26px!important;min-height:26px!important}
+
+.v102-app .phone-editor-v57 .v57-device-grid{
+  display:grid!important;
+  grid-template-columns:1.15fr 1.15fr .9fr .8fr .7fr .82fr!important;
+  gap:5px 8px!important;
+  padding:6px 10px 5px!important;
+  align-items:end!important;
+}
+.v102-app .phone-editor-v57 .v57-connector{grid-column:span 2!important}
+.v102-app .phone-editor-v57 .v57-unlock{
+  height:auto!important;
+  margin:0 10px 6px!important;
+}
+.v102-app .phone-editor-v57 .v57-unlock>summary{
+  height:27px!important;
+  min-height:27px!important;
+  font-size:9.3px!important;
+}
+
+.v102-app .phone-editor-v57 .v57-purchase-grid{
+  display:grid!important;
+  grid-template-columns:1fr 1.15fr 1fr 1.5fr .9fr!important;
+  gap:5px 8px!important;
+  padding:6px 10px 5px!important;
+  align-items:end!important;
+}
+.v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(6){grid-column:1!important}
+.v102-app .phone-editor-v57 .v57-status{grid-column:2!important}
+.v102-app .phone-editor-v57 .v57-notes{height:auto!important;margin:0 10px 5px!important}
+.v102-app .phone-editor-v57 .v57-notes>summary{height:20px!important;min-height:20px!important;font-size:8.5px!important}
+
+.v102-app .phone-editor-v57 .v57-middle-grid{
+  display:grid!important;
+  grid-template-columns:.98fr 1.02fr!important;
+  gap:8px!important;
+  align-items:start!important;
+  margin:0 0 6px!important;
+}
+.v102-app .phone-editor-v57 .v57-middle-grid>.v57-card{margin:0!important}
+.v102-app .phone-editor-v57 .v57-outline-action{
+  width:auto!important;
+  min-width:0!important;
+  height:25px!important;
+  min-height:25px!important;
+  padding:0 8px!important;
+  font-size:8.7px!important;
+  border-radius:7px!important;
+}
+
+.v102-app .phone-editor-v57 .v57-parts-head,
+.v102-app .phone-editor-v57 .v57-part-row{
+  grid-template-columns:minmax(145px,1.35fr) 90px 72px 72px 32px!important;
+  gap:5px!important;
+}
+.v102-app .phone-editor-v57 .v57-parts-head{height:24px!important;min-height:24px!important;padding:0 8px!important}
+.v102-app .phone-editor-v57 .v57-parts-head span{font-size:7.8px!important}
+.v102-app .phone-editor-v57 .v57-part-row{height:auto!important;min-height:33px!important;padding:4px 8px!important}
+.v102-app .phone-editor-v57 .v57-part-main b{font-size:9px!important}
+.v102-app .phone-editor-v57 .v57-part-main small{font-size:7.3px!important}
+.v102-app .phone-editor-v57 .v57-part-status{height:19px!important;min-height:19px!important;font-size:7.6px!important}
+.v102-app .phone-editor-v57 .v57-part-actions button{width:24px!important;min-width:24px!important;height:24px!important;min-height:24px!important}
+
+.v102-app .phone-editor-v57 .v57-history-list{padding:3px 8px 4px!important}
+.v102-app .phone-editor-v57 .v57-history-row{
+  grid-template-columns:9px 98px 66px minmax(0,1fr)!important;
+  gap:6px!important;
+  min-height:32px!important;
+  padding:4px 0!important;
+}
+.v102-app .phone-editor-v57 .v57-history-row time{font-size:7.5px!important}
+.v102-app .phone-editor-v57 .v57-history-badge{height:18px!important;min-height:18px!important;font-size:7px!important}
+.v102-app .phone-editor-v57 .v57-history-row>div b{font-size:8.2px!important}
+.v102-app .phone-editor-v57 .v57-history-row>div small{font-size:7.1px!important}
+
+.v102-app .phone-editor-v57 .v57-tags-card{margin-bottom:6px!important}
+.v102-app .phone-editor-v57 .v57-tags-line{min-height:29px!important;padding:5px 8px!important;gap:5px!important}
+.v102-app .phone-editor-v57 .v57-tag{height:21px!important;min-height:21px!important;font-size:7.8px!important}
+.v102-app .phone-editor-v57 .v57-tag-add input,
+.v102-app .phone-editor-v57 .v57-tag-add button{height:23px!important;min-height:23px!important;font-size:7.8px!important}
+
+.v102-app .phone-editor-v57 .v57-bottom-row{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  min-height:40px!important;
+  padding:2px 0 0!important;
+}
+.v102-app .phone-editor-v57 .v57-footer-meta{min-height:34px!important;gap:24px!important;padding-top:4px!important}
+.v102-app .phone-editor-v57 .v57-footer-meta small{font-size:7px!important}
+.v102-app .phone-editor-v57 .v57-footer-meta b{font-size:8.2px!important}
+.v102-app .phone-editor-v57 .v57-actions{
+  position:static!important;
+  margin:0!important;
+  padding:3px 0 0!important;
+  border-top:0!important;
+  background:transparent!important;
+  flex:0 0 auto!important;
+}
+.v102-app .phone-editor-v57 .v57-actions button{
+  width:auto!important;
+  min-width:0!important;
+  height:31px!important;
+  min-height:31px!important;
+  padding:0 11px!important;
+  font-size:9.4px!important;
+}
+
+/* impedir qualquer herança antiga de esmagar o conteúdo */
+.v102-app .phone-editor-v57 :is(.v57-device-grid,.v57-purchase-grid,.v57-middle-grid,.v57-parts-table,.v57-history-list,.v57-tags-line,.v57-bottom-row){
+  max-height:none!important;
+}
+
+@media(max-width:1000px){
+ .v102-app .phone-editor-v57{width:calc(100vw - 18px)!important;height:calc(100dvh - 18px)!important}
+ .v102-app .phone-editor-v57 .v57-device-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .v102-app .phone-editor-v57 .v57-connector{grid-column:auto!important}
+ .v102-app .phone-editor-v57 .v57-purchase-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .v102-app .phone-editor-v57 .v57-bank{grid-column:span 2!important}
+ .v102-app .phone-editor-v57 .v57-middle-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:720px){
+ .v102-app .phone-editor-v57{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;grid-template-rows:56px minmax(0,1fr)!important}
+ .v102-app .phone-editor-v57>.modalhead{height:56px!important;min-height:56px!important;padding:8px 10px!important}
+ .v102-app .phone-editor-v57>.modalbody{padding:8px!important}
+ .v102-app .phone-editor-v57 .v57-device-grid,.v102-app .phone-editor-v57 .v57-purchase-grid,.v102-app .phone-editor-v57 .v57-notes-grid{grid-template-columns:1fr 1fr!important}
+ .v102-app .phone-editor-v57 .v57-bank,.v102-app .phone-editor-v57 .v57-connector{grid-column:1/-1!important}
+ .v102-app .phone-editor-v57 .v57-footer-meta{display:none!important}
+}
