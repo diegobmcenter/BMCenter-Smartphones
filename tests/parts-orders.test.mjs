@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder}from'../src/partsOrders.js';
+import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks}from'../src/partsOrders.js';
 
 const shares=allocateFreight([{id:'a',price:10},{id:'b',price:20},{id:'c',price:30}],10);
 assert.equal(shares.reduce((s,i)=>s+Math.round(i.freightShare*100),0),1000,'frete deve fechar exatamente em centavos');
@@ -72,3 +72,35 @@ const blocked=createBulkPartsOrder({phones:alreadyOrdered,phoneIds:['lock'],part
 assert.equal(blocked.order,null,'não deve duplicar a mesma peça quando já existe pedido ativo');
 assert.equal(blocked.skipped.length,1);
 console.log('bulk-parts-order.test: OK');
+
+
+let multiSeq=100;const multiId=()=>`multi-${++multiSeq}`;
+const multiPhones=[
+ {id:'m1',code:'BM-10',brand:'Apple',model:'iPhone 13',status:'Em reparo',paid:1000,parts:[]},
+ {id:'m2',code:'BM-11',brand:'Samsung',model:'S23',status:'Em reparo',paid:900,parts:[]},
+ {id:'m3',code:'BM-12',brand:'Motorola',model:'Edge',status:'Em testes',paid:800,parts:[]}
+];
+const multi=createMultiBulkPartsOrder({phones:multiPhones,supplier:'Fornecedor Completo',freight:4,orderDate:'2026-08-14',products:[
+ {id:'film',name:'Película',unitPrice:10,phoneIds:['m1','m2','m3'],pricesByPhone:{}},
+ {id:'case',name:'Capinha',unitPrice:20,phoneIds:['m1','m3'],pricesByPhone:{m3:25}}
+],now:'2026-08-14T06:00:00Z',idFactory:multiId});
+assert.ok(multi.order,'pedido multi-produto deve ser criado');
+assert.equal(multi.order.items.length,5,'cada combinação produto x aparelho selecionado vira um item do mesmo pedido');
+assert.equal(multi.order.subtotal,75,'subtotal deve somar produtos e preços individuais');
+assert.equal(multi.order.total,79,'frete deve ser adicionado uma vez ao pedido inteiro');
+assert.equal(multi.order.items.reduce((sum,item)=>sum+Math.round(item.freightShare*100),0),400,'frete multi-produto precisa fechar exatamente em centavos');
+assert.equal(multi.order.source,'bulk');
+assert.equal(multi.order.bulkVersion,2);
+assert.equal(multi.order.items.filter(i=>i.partName==='Película').length,3);
+assert.equal(multi.order.items.filter(i=>i.partName==='Capinha').length,2);
+const m2parts=multi.phones.find(p=>p.id==='m2').parts.map(p=>p.name);
+assert.deepEqual(m2parts,['Película'],'m2 não foi selecionado para Capinha e não pode recebê-la');
+const multiSynced=syncOrdersIntoPhones(multi.phones,[multi.order]);
+assert.equal(multiSynced.find(p=>p.id==='m1').parts.length,2);
+assert.ok(multiSynced.find(p=>p.id==='m1').parts.every(p=>Number(p.effectiveCost)>0),'custos individuais devem ser aplicados');
+const afterDelete=removePartsOrderLinks(multiSynced,multi.order,[]);
+assert.equal(afterDelete.find(p=>p.id==='m1').parts.length,0,'peças criadas pelo pedido em massa devem ser removidas ao excluir o pedido');
+assert.equal(afterDelete.find(p=>p.id==='m1').status,'Em reparo','status Aguardando peças deve voltar para Em reparo quando não há outro pedido pendente');
+
+assert.throws(()=>createMultiBulkPartsOrder({phones:multiPhones,supplier:'X',products:[{id:'a',name:'Película',unitPrice:1,phoneIds:['m1']},{id:'b',name:'película',unitPrice:2,phoneIds:['m2']}],idFactory:multiId}),/mais de uma vez/,'não deve aceitar o mesmo produto duplicado no pedido');
+console.log('multi-bulk-order.test: OK');

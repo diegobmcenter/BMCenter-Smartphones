@@ -1,0 +1,18 @@
+BMCenter Smartphones v10.4.50 — PEDIDOS DE PEÇAS MULTI-PRODUTO
+
+PRINCIPAIS MUDANÇAS
+- Pedidos e Recebidos ficam recolhidos por padrão e expandem somente pelo ícone.
+- Pedido em massa permite vários produtos no mesmo pedido (ex.: 10 películas + 9 capinhas).
+- Cada produto possui sua própria seleção de aparelhos e preço padrão/individual.
+- Botão Selecionar filtrados atua somente no produto atualmente selecionado.
+- Seleção de fornecedor corrigida: o pedido em massa mostra todos os fornecedores cadastrados.
+- Pedidos manuais/em massa podem ser excluídos; o vínculo e os custos são recalculados sem duplicação.
+- Peças criadas pelo novo pedido em massa são removidas ao excluir o pedido, desde que não tenham sido instaladas.
+- Cotações foram redesenhadas no mesmo padrão visual compacto de Pedidos/Recebidos.
+- Em aberto ganhou filtros por peça, status do smartphone e situação da cotação.
+- Cotações ganhou filtros por peça, status do smartphone e fornecedor.
+- O módulo continua exclusivo para PEÇAS. Smartphones continuam cadastrados apenas em Smartphones.
+- Photo Studio continua removido.
+
+PUBLICAÇÃO
+Execute PUBLICAR-ATUALIZACAO.bat. Ele roda testes e build antes de publicar.

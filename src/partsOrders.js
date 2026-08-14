@@ -122,46 +122,92 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
 }
 
 
-export function createBulkPartsOrder({phones=[],phoneIds=[],partName='',supplier='',unitPrice=0,pricesByPhone={},freight=0,orderDate='',expectedDate='',notes='',receivedNow=false,now=new Date().toISOString(),idFactory=()=>crypto.randomUUID()}={}){
- const selectedIds=new Set((Array.isArray(phoneIds)?phoneIds:[]).map(String));
- const cleanName=String(partName||'').trim();
+export function createMultiBulkPartsOrder({phones=[],products=[],supplier='',freight=0,orderDate='',expectedDate='',notes='',receivedNow=false,now=new Date().toISOString(),idFactory=()=>crypto.randomUUID()}={}){
  const cleanSupplier=String(supplier||'').trim();
- if(!cleanName)throw new Error('Informe o nome da peça.');
  if(!cleanSupplier)throw new Error('Informe o fornecedor.');
- if(!selectedIds.size)throw new Error('Selecione pelo menos um aparelho.');
+ const normalizeName=value=>String(value||'').trim().toLocaleLowerCase('pt-BR');
+ const prepared=(Array.isArray(products)?products:[]).map((product,index)=>({
+  ...product,
+  id:product.id||`product-${index+1}`,
+  name:String(product.name||product.partName||'').trim(),
+  unitPrice:roundMoney(product.unitPrice||0),
+  phoneIds:[...new Set((Array.isArray(product.phoneIds)?product.phoneIds:[]).map(String))],
+  pricesByPhone:product.pricesByPhone&&typeof product.pricesByPhone==='object'?product.pricesByPhone:{}
+ })).filter(product=>product.name&&product.phoneIds.length);
+ if(!prepared.length)throw new Error('Adicione pelo menos um produto e selecione os aparelhos dele.');
+ const names=new Set();
+ for(const product of prepared){
+  const key=normalizeName(product.name);
+  if(names.has(key))throw new Error(`O produto "${product.name}" foi adicionado mais de uma vez. Una os aparelhos no mesmo produto.`);
+  names.add(key)
+ }
  const stamp=now||new Date().toISOString(),today=stamp.slice(0,10);
  const skipped=[],items=[];
  let added=0,reused=0;
- const normalizeName=value=>String(value||'').trim().toLocaleLowerCase('pt-BR');
- const targetName=normalizeName(cleanName);
+ const assignments=new Map();
+ prepared.forEach(product=>product.phoneIds.forEach(phoneId=>{
+  const list=assignments.get(phoneId)||[];
+  list.push(product);assignments.set(phoneId,list)
+ }));
  const nextPhones=(Array.isArray(phones)?phones:[]).map(phone=>{
-  if(!selectedIds.has(String(phone.id)))return phone;
+  const selectedProducts=assignments.get(String(phone.id));
+  if(!selectedProducts?.length)return phone;
   if(['Vendido','Descarte/Sucata'].includes(phone?.status)){
-   skipped.push({phoneId:phone.id,reason:'Aparelho encerrado'});return phone
+   selectedProducts.forEach(product=>skipped.push({phoneId:phone.id,productId:product.id,partName:product.name,reason:'Aparelho encerrado'}));
+   return phone
   }
-  const currentParts=Array.isArray(phone.parts)?phone.parts:[];
-  const locked=currentParts.find(part=>normalizeName(part.name)===targetName&&part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
-  if(locked){skipped.push({phoneId:phone.id,reason:'Já existe esta peça em um pedido ativo'});return phone}
-  const reusable=currentParts.find(part=>normalizeName(part.name)===targetName&&!part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
-  const rawPrice=Object.prototype.hasOwnProperty.call(pricesByPhone||{},phone.id)?pricesByPhone[phone.id]:unitPrice;
-  const price=roundMoney(rawPrice);
-  let partId;
-  let parts;
-  if(reusable){
-   partId=reusable.id;
-   parts=currentParts.map(part=>part.id===reusable.id?{...part,selectedQuoteId:'',status:'Comprada'}:part);
-   reused++
-  }else{
-   partId=idFactory();
-   const part={id:partId,name:cleanName,status:'Comprada',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'};
-   parts=[...currentParts,part];added++
+  let parts=Array.isArray(phone.parts)?[...phone.parts]:[];
+  const timelineNames=[];
+  for(const product of selectedProducts){
+   const targetName=normalizeName(product.name);
+   const locked=parts.find(part=>normalizeName(part.name)===targetName&&part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
+   if(locked){skipped.push({phoneId:phone.id,productId:product.id,partName:product.name,reason:'Já existe esta peça em um pedido ativo'});continue}
+   const reusable=parts.find(part=>normalizeName(part.name)===targetName&&!part.orderId&&!['Pedido entregue','Instalada'].includes(part.orderStatus||''));
+   const rawPrice=Object.prototype.hasOwnProperty.call(product.pricesByPhone||{},phone.id)?product.pricesByPhone[phone.id]:product.unitPrice;
+   const price=roundMoney(rawPrice);
+   let partId,bulkCreatedPart=false;
+   if(reusable){
+    partId=reusable.id;
+    parts=parts.map(part=>part.id===reusable.id?{...part,selectedQuoteId:'',status:'Comprada'}:part);
+    reused++
+   }else{
+    partId=idFactory();bulkCreatedPart=true;
+    parts.push({id:partId,name:product.name,status:'Comprada',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'});
+    added++
+   }
+   items.push({id:idFactory(),phoneId:phone.id,partId,partName:product.name,phoneLabel:[phone.brand,phone.model].filter(Boolean).join(' '),quoteId:'',price,confirmedAt:stamp,receivedAt:receivedNow?stamp:'',bulkProductId:product.id,bulkCreatedPart});
+   timelineNames.push(product.name)
   }
-  items.push({id:idFactory(),phoneId:phone.id,partId,partName:cleanName,phoneLabel:[phone.brand,phone.model].filter(Boolean).join(' '),quoteId:'',price,confirmedAt:stamp,receivedAt:receivedNow?stamp:''});
-  return{...phone,parts,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:idFactory(),date:stamp,message:`Compra em massa registrada: ${cleanName}`}]}
+  if(!timelineNames.length)return{...phone,parts};
+  return{...phone,parts,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:idFactory(),date:stamp,message:`Compra em massa registrada: ${timelineNames.join(', ')}`}]} 
  });
  if(!items.length)return{phones:nextPhones,order:null,skipped,added,reused};
- const order=normalizePartsOrder({id:idFactory(),supplier:cleanSupplier,orderDate:orderDate||today,expectedDate:expectedDate||'',freight:roundMoney(freight),notes:String(notes||''),items,createdAt:stamp,updatedAt:stamp,receivedAt:receivedNow?stamp:''});
+ const order=normalizePartsOrder({id:idFactory(),source:'bulk',bulkVersion:2,supplier:cleanSupplier,orderDate:orderDate||today,expectedDate:expectedDate||'',freight:roundMoney(freight),notes:String(notes||''),items,createdAt:stamp,updatedAt:stamp,receivedAt:receivedNow?stamp:''});
  return{phones:nextPhones,order,skipped,added,reused}
+}
+
+export function createBulkPartsOrder({phones=[],phoneIds=[],partName='',supplier='',unitPrice=0,pricesByPhone={},freight=0,orderDate='',expectedDate='',notes='',receivedNow=false,now=new Date().toISOString(),idFactory=()=>crypto.randomUUID()}={}){
+ return createMultiBulkPartsOrder({phones,products:[{id:'single-product',name:partName,unitPrice,phoneIds,pricesByPhone}],supplier,freight,orderDate,expectedDate,notes,receivedNow,now,idFactory})
+}
+
+export function removePartsOrderLinks(phones=[],order={},remainingOrders=[]){
+ const itemByKey=new Map((order?.items||[]).map(item=>[`${item.phoneId}::${item.partId}`,item]));
+ const waitingByPhone=new Set((remainingOrders||[]).flatMap(other=>(other.items||[]).filter(item=>item.confirmedAt&&!item.receivedAt).map(item=>String(item.phoneId))));
+ const stamp=new Date().toISOString();
+ return (Array.isArray(phones)?phones:[]).map(phone=>{
+  let changed=false;
+  const parts=[];
+  for(const part of phone.parts||[]){
+   const item=itemByKey.get(`${phone.id}::${part.id}`);
+   if(!item){parts.push(part);continue}
+   changed=true;
+   if(item.bulkCreatedPart===true&&part.status!=='Instalada')continue;
+   parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
+  }
+  if(!changed)return phone;
+  const status=phone.status==='Aguardando peças'&&!waitingByPhone.has(String(phone.id))?'Em reparo':phone.status;
+  return{...phone,parts,status,lastActivityAt:stamp}
+ })
 }
 
 export function migrateLegacyPartsOrders(phones=[],orders=[],now=new Date().toISOString()){
