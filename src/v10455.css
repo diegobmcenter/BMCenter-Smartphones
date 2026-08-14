@@ -1,0 +1,143 @@
+/* v10.4.55 — Contraste e legibilidade do modal do aparelho */
+.v102-app .phone-editor-modal{
+  --pe55-text: var(--text);
+  --pe55-muted: color-mix(in srgb, var(--text) 68%, var(--surface));
+  --pe55-soft: color-mix(in srgb, var(--text) 82%, var(--surface));
+  --pe55-faint: color-mix(in srgb, var(--text) 54%, var(--surface));
+  --pe55-line: var(--line);
+  --pe55-surface: var(--surface);
+  --pe55-surface-2: var(--surface2);
+  --pe55-accent: var(--accent);
+  color:var(--pe55-text)!important;
+}
+
+/* estrutura geral */
+.v102-app .phone-editor-modal > .modalhead h2{color:var(--pe55-text)!important;font-size:17px!important;font-weight:800!important;letter-spacing:-.01em!important}
+.v102-app .phone-editor-modal .modalbody{color:var(--pe55-text)!important}
+.v102-app .phone-editor-modal .section-title{color:var(--pe55-text)!important;font-size:13px!important;font-weight:800!important;letter-spacing:.01em!important;margin:8px 0 6px!important}
+.v102-app .phone-editor-modal label{color:var(--pe55-soft)!important;font-size:11.5px!important;font-weight:700!important;line-height:1.25!important}
+.v102-app .phone-editor-modal small,
+.v102-app .phone-editor-modal .muted,
+.v102-app .phone-editor-modal .field-help,
+.v102-app .phone-editor-modal .parts-editor-v53-muted,
+.v102-app .phone-editor-modal .parts-editor-v54-hint small,
+.v102-app .phone-editor-modal .parts-editor-v53-piece small,
+.v102-app .phone-editor-modal .parts-editor-v53-quote-count small{color:var(--pe55-muted)!important;font-size:10.4px!important;line-height:1.32!important}
+.v102-app .phone-editor-modal b,
+.v102-app .phone-editor-modal strong{color:var(--pe55-text)!important}
+
+/* campos */
+.v102-app .phone-editor-modal input,
+.v102-app .phone-editor-modal select,
+.v102-app .phone-editor-modal textarea{
+  background:var(--pe55-surface)!important;
+  color:var(--pe55-text)!important;
+  border:1px solid var(--pe55-line)!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+  line-height:1.35!important;
+}
+.v102-app.theme-dark .phone-editor-modal input,
+.v102-app.theme-dark .phone-editor-modal select,
+.v102-app.theme-dark .phone-editor-modal textarea{background:color-mix(in srgb, var(--surface2) 76%, var(--surface))!important}
+.v102-app.theme-light .phone-editor-modal input,
+.v102-app.theme-light .phone-editor-modal select,
+.v102-app.theme-light .phone-editor-modal textarea{background:#fff!important}
+.v102-app .phone-editor-modal input::placeholder,
+.v102-app .phone-editor-modal textarea::placeholder{color:var(--pe55-faint)!important;opacity:1!important;font-weight:500!important}
+.v102-app .phone-editor-modal textarea{min-height:58px!important}
+.v102-app .phone-editor-modal .compact-notes-grid textarea{min-height:60px!important}
+
+/* seções compactas */
+.v102-app .phone-editor-modal .compact-editor-section{border-color:var(--pe55-line)!important;background:transparent!important}
+.v102-app .phone-editor-modal .compact-editor-section > summary{
+  color:var(--pe55-text)!important;
+  font-size:12.4px!important;
+  font-weight:800!important;
+  min-height:37px!important;
+  padding:0 12px!important;
+  background:transparent!important;
+}
+.v102-app .phone-editor-modal .compact-editor-section > summary span:last-child,
+.v102-app .phone-editor-modal .compact-editor-section > summary small{color:var(--pe55-muted)!important;font-size:11px!important;font-weight:700!important}
+.v102-app .phone-editor-modal .compact-editor-section > summary svg{color:var(--pe55-accent)!important}
+
+/* etiquetas, histórico e preview */
+.v102-app .phone-editor-modal .tag-editor,
+.v102-app .phone-editor-modal .price-history-section,
+.v102-app .phone-editor-modal .timeline-section,
+.v102-app .phone-editor-modal .label-preview{background:var(--pe55-surface)!important;border-color:var(--pe55-line)!important}
+.v102-app .phone-editor-modal .tag-list span{background:var(--pe55-surface-2)!important;color:var(--pe55-text)!important;border-color:var(--pe55-line)!important;font-size:11px!important}
+.v102-app .phone-editor-modal .timeline-item b{color:var(--pe55-text)!important;font-size:11px!important}
+.v102-app .phone-editor-modal .timeline-item span{color:var(--pe55-soft)!important;font-size:11px!important}
+.v102-app .phone-editor-modal .label-preview span,
+.v102-app .phone-editor-modal .label-preview small{color:var(--pe55-soft)!important}
+
+/* botões globais do modal */
+.v102-app .phone-editor-modal button{font-weight:700!important}
+.v102-app .phone-editor-modal .actions button{min-height:36px!important;padding:0 14px!important;font-size:12.2px!important;border-radius:10px!important}
+
+/* peças: mais legível sem virar blocão */
+.v102-app .phone-editor-modal .parts-editor-v1053{--p53-text:var(--pe55-text)!important;--p53-muted:var(--pe55-muted)!important;--p53-bg:var(--pe55-surface)!important;--p53-card:var(--pe55-surface-2)!important;--p53-line:var(--pe55-line)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title b{font-size:14px!important;font-weight:800!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-title small{font-size:10.6px!important;color:var(--pe55-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary{font-size:11px!important;color:var(--pe55-muted)!important;gap:7px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-mini-summary b{font-size:11.6px!important;color:var(--pe55-text)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-new{min-height:30px!important;height:30px!important;padding:0 12px!important;font-size:11px!important;border-radius:9px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-table{background:var(--pe55-surface)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-head{min-height:30px!important;height:30px!important;padding:0 10px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-head span{font-size:10px!important;font-weight:800!important;color:var(--pe55-muted)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-row{min-height:40px!important;padding:7px 10px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-piece b{font-size:12.6px!important;line-height:1.15!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-piece small{font-size:10.4px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status{min-height:22px!important;height:22px!important;padding:0 8px!important;font-size:10px!important;border-radius:999px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-cost{font-size:12px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-count b{font-size:11.5px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions{gap:5px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions>button,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu-wrap>button{width:28px!important;height:28px!important;min-height:28px!important;border-radius:8px!important;color:var(--pe55-soft)!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-actions svg,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-menu-wrap svg{width:14px!important;height:14px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint{min-height:24px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v54-hint small{font-size:10.2px!important}
+
+/* formulário inline e detalhes */
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add{padding:8px 10px!important;gap:7px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add label>span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-quote>span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail label,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row label span{font-size:10px!important;color:var(--pe55-muted)!important;font-weight:700!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add input,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-add select,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail input,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail select,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-quote-row input{min-height:30px!important;height:30px!important;font-size:11.5px!important;border-radius:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-quote button,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-inline-actions button,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-head button{min-height:30px!important;height:30px!important;font-size:10.8px!important;border-radius:8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail{padding:9px 10px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-head b{font-size:12px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link{min-height:30px!important;padding:6px 8px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link b{font-size:11px!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link small,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-link span,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-noquotes,
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-detail-foot small,
+.v102-app .phone-editor-modal .parts-editor-v1053 .money-prefix>span{font-size:10px!important;color:var(--pe55-muted)!important}
+
+/* assegurar contraste dos status */
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.blue{color:color-mix(in srgb, var(--pe55-accent) 88%, var(--pe55-text))!important;background:color-mix(in srgb, var(--pe55-accent) 13%, transparent)!important;border-color:color-mix(in srgb, var(--pe55-accent) 30%, var(--pe55-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.green{color:color-mix(in srgb, var(--green) 86%, var(--pe55-text))!important;background:color-mix(in srgb, var(--green) 14%, transparent)!important;border-color:color-mix(in srgb, var(--green) 30%, var(--pe55-line))!important}
+.v102-app .phone-editor-modal .parts-editor-v1053 .parts-editor-v53-status.amber{color:color-mix(in srgb, var(--amber) 88%, var(--pe55-text))!important;background:color-mix(in srgb, var(--amber) 16%, transparent)!important;border-color:color-mix(in srgb, var(--amber) 30%, var(--pe55-line))!important}
+
+/* tema escuro e claro com contraste explícito */
+.v102-app.theme-dark .phone-editor-modal{
+  --pe55-muted: rgba(228,235,248,.82);
+  --pe55-soft: rgba(245,248,255,.94);
+  --pe55-faint: rgba(205,214,229,.74);
+}
+.v102-app.theme-light .phone-editor-modal{
+  --pe55-muted: rgba(45,62,92,.78);
+  --pe55-soft: rgba(17,29,48,.96);
+  --pe55-faint: rgba(69,85,110,.72);
+}

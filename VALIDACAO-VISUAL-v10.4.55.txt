@@ -1,4 +1,4 @@
-VALIDAÇÃO VISUAL v10.4.54
+VALIDAÇÃO VISUAL v10.4.55
 Viewport: 1365x768
 Modal: 920x533 no cenário fechado; sem scroll interno.
 Seção Peças: 846x229 com 3 peças.
