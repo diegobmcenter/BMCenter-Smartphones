@@ -1,186 +1,124 @@
 @echo off
 setlocal EnableExtensions
-title BMCenter Smartphones v10.4.47 - Publicar Atualizacao
+chcp 65001 >nul
+title BMCenter Smartphones v10.4.48 - Publicar Atualizacao
 cd /d "%~dp0"
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.4.47"
+set "VERSION=10.4.48"
 
 echo.
 echo ============================================================
-echo     BMCenter Smartphones v%VERSION% - PUBLICAR
+echo       BMCENTER SMARTPHONES v%VERSION% - PUBLICACAO
 echo ============================================================
 echo.
-echo Pasta:
-echo %CD%
-echo.
-pause
 
-where git >nul 2>&1
-if errorlevel 1 goto :git_error
+echo [1/8] Verificando Node, NPM e Git...
+where node >nul 2>&1 || goto :node_error
+where npm >nul 2>&1 || goto :node_error
+where git >nul 2>&1 || goto :git_error
 
-where npm >nul 2>&1
-if errorlevel 1 goto :npm_missing
-
-echo.
-echo [1/8] Instalando/verificando dependencias...
-echo.
+echo [2/8] Instalando dependencias...
 call npm install --no-audit --no-fund
 if errorlevel 1 goto :install_error
 
-if not exist "node_modules\vite\bin\vite.js" goto :vite_missing
+echo [3/8] Testando pedidos de pecas...
+call npm run test:parts-orders
+if errorlevel 1 goto :test_error
 
-echo.
-echo Dependencias OK.
-
-echo.
-echo [2/8] Testando a versao antes de publicar...
+echo [4/8] Compilando a versao...
 call npm run build
 if errorlevel 1 goto :build_error
 
 echo.
 echo ============================================================
-echo                   BUILD APROVADO
+echo                     BUILD APROVADO
 echo ============================================================
 echo.
 
-echo [3/8] Preparando repositorio...
 if not exist ".git" (
-    git init
-    if errorlevel 1 goto :git_operation_error
+  echo [5/8] Inicializando repositorio local...
+  git init
+) else (
+  echo [5/8] Repositorio Git encontrado.
 )
 
 git branch -M %BRANCH% >nul 2>&1
 
 git remote get-url origin >nul 2>&1
 if errorlevel 1 (
-    git remote add origin "%REPO%"
+  git remote add origin "%REPO%"
 ) else (
-    git remote set-url origin "%REPO%"
+  git remote set-url origin "%REPO%"
 )
 
-echo [4/8] Buscando a versao atual do GitHub...
+echo [6/8] Sincronizando historico do GitHub sem sobrescrever esta versao...
 git fetch origin %BRANCH%
-if errorlevel 1 goto :git_operation_error
-
-echo [5/8] Sincronizando o historico...
-git symbolic-ref HEAD refs/heads/%BRANCH%
+if errorlevel 1 goto :fetch_error
 git reset --mixed origin/%BRANCH%
-if errorlevel 1 goto :git_operation_error
-
-echo [6/8] Preparando os arquivos...
-git add -A
-if errorlevel 1 goto :git_operation_error
-
-git diff --cached --quiet
-if not errorlevel 1 goto :nothing_to_publish
 
 git config user.name >nul 2>&1
-if errorlevel 1 git config user.name "BMCenter Updater"
+if errorlevel 1 git config user.name "Diego Moraes"
 git config user.email >nul 2>&1
 if errorlevel 1 git config user.email "diegobmcenter@users.noreply.github.com"
 
 echo [7/8] Criando a atualizacao...
-git commit -m "BMCenter v10.4.47 - pecas compactas e fluxo direto"
+git add -A
+git diff --cached --quiet
+if not errorlevel 1 goto :no_changes
+git commit -m "BMCenter v10.4.48 - pedidos persistentes de pecas e frete rateado"
 if errorlevel 1 goto :git_operation_error
 
 echo [8/8] Enviando ao GitHub...
-git push -u origin %BRANCH%
+git push origin %BRANCH%
 if errorlevel 1 goto :push_error
 
 echo.
 echo ============================================================
-echo          ATUALIZACAO ENVIADA COM SUCESSO!
+echo                 ATUALIZACAO PUBLICADA
 echo ============================================================
-echo.
-echo GitHub atualizado para v%VERSION%.
-echo A Vercel deve iniciar o deploy automaticamente.
+echo GitHub recebeu a v%VERSION%.
+echo A Vercel fara o deploy automaticamente.
 echo.
 pause
 exit /b 0
 
-:nothing_to_publish
+:no_changes
 echo.
-echo ============================================================
-echo            NENHUMA ALTERACAO PARA PUBLICAR
-echo ============================================================
-echo.
-echo Os arquivos desta pasta ja estao iguais aos do GitHub.
+echo Nenhuma alteracao nova foi encontrada para publicar.
+echo A compilacao e os testes passaram normalmente.
 echo.
 pause
 exit /b 0
 
+:node_error
+echo ERRO: Node.js ou NPM nao foi encontrado.
+goto :failed
 :git_error
-echo.
-echo [ERRO] Git nao foi encontrado neste computador.
-echo.
-pause
-exit /b 1
-
-:npm_missing
-echo.
-echo [ERRO] Node.js / NPM nao foi encontrado neste computador.
-echo.
-pause
-exit /b 1
-
+echo ERRO: Git nao foi encontrado.
+goto :failed
 :install_error
-echo.
-echo ============================================================
-echo          ERRO AO INSTALAR AS DEPENDENCIAS
-echo ============================================================
-echo.
-echo O comando npm install falhou.
-echo Copie ou fotografe as mensagens que apareceram logo acima.
-echo.
-pause
-exit /b 1
-
-:vite_missing
-echo.
-echo ============================================================
-echo          VITE NAO FOI INSTALADO CORRETAMENTE
-echo ============================================================
-echo.
-echo O npm install terminou, mas node_modules\vite\bin\vite.js
-echo nao foi encontrado.
-echo Copie ou fotografe as mensagens acima.
-echo.
-pause
-exit /b 1
-
+echo ERRO: npm install falhou. Nada foi publicado.
+goto :failed
+:test_error
+echo ERRO: os testes de pedidos de pecas falharam. Nada foi publicado.
+goto :failed
 :build_error
-echo.
-echo ============================================================
-echo                 O BUILD FALHOU
-echo ============================================================
-echo.
-echo Nada foi enviado para o GitHub.
-echo Copie ou fotografe o erro que apareceu acima.
-echo.
-pause
-exit /b 1
-
-:push_error
-echo.
-echo ============================================================
-echo               O ENVIO AO GITHUB FALHOU
-echo ============================================================
-echo.
-echo O build passou, mas o GitHub recusou o envio.
-echo Copie ou fotografe a mensagem acima.
-echo.
-pause
-exit /b 1
-
+echo ERRO: npm run build falhou. Nada foi publicado.
+goto :failed
+:fetch_error
+echo ERRO: nao foi possivel consultar o GitHub. Nada foi publicado.
+goto :failed
 :git_operation_error
+echo ERRO: nao foi possivel criar o commit. Nada foi publicado.
+goto :failed
+:push_error
+echo ERRO: nao foi possivel enviar ao GitHub.
+goto :failed
+:failed
 echo.
-echo ============================================================
-echo             ERRO DURANTE A ETAPA DO GIT
-echo ============================================================
-echo.
-echo Copie ou fotografe a mensagem que apareceu acima.
+echo Copie a mensagem acima se precisar de ajuda.
 echo.
 pause
 exit /b 1

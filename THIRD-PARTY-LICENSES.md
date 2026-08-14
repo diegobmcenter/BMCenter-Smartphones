@@ -1,16 +1,15 @@
 # Licenças de terceiros
 
 ## React e React DOM
-
 - Licença: MIT
-- Projeto: https://github.com/facebook/react
+
+## Vite e @vitejs/plugin-react
+- Licença: MIT
 
 ## Lucide React
-
 - Licença: ISC
-- Projeto: https://github.com/lucide-icons/lucide
 
-## QRCode React
-
+## qrcode.react
 - Licença: ISC
-- Projeto: https://github.com/zpao/qrcode.react
+
+O Photo Studio foi removido e esta versão não inclui MediaPipe, ONNX, modelos de segmentação ou bibliotecas de edição de fotos.

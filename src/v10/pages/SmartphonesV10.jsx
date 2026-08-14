@@ -31,7 +31,7 @@ export default function SmartphonesV10({
     const published=profiles.filter(profile=>(x.ads||[]).some(ad=>ad?.publications?.[profile.id]?.status==='published'));
     return <article className="v10-phone-card" key={x.id}>
       <div className="v10-phone-media">
-        <Smartphone size={34}/>
+        {x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={34}/>}
         <button className={x.favorite?'active':''} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={15}/></button>
       </div>
       <div className="v10-phone-info">

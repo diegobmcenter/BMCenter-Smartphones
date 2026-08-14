@@ -18,7 +18,7 @@ export default function AdsV8({
     const pct=profiles.length?Math.round(published/profiles.length*100):0;
     return <article className="v8-publication-row" key={ad.id}>
      <div className="v8-publication-device">
-      <div><Smartphone size={20}/></div>
+      <div>{phone.photos?.[0]?<img src={phone.photos[0].dataUrl} alt=""/>:<Smartphone size={20}/>}</div>
       <section><b>{phone.brand} {phone.model}</b>{showProductCode()&&phone.code&&<small>{phone.code}</small>}<span>{money(phone.expected)}</span></section>
      </div>
      <div className="v8-channel-strip">{profiles.map(profile=>{const pub=ad.publications[profile.id]||{status:'not_published'};return <button key={profile.id} className={pub.status} onClick={()=>cyclePublication(phone.id,ad.id,profile.id)} title={`${profile.name}: ${publicationLabel(pub.status)}`}><i>{String(profile.name||'?').slice(0,2).toUpperCase()}</i><span><b>{profile.name}</b><small>{publicationLabel(pub.status)}</small></span></button>})}</div>

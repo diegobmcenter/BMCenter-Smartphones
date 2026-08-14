@@ -40,7 +40,7 @@ export default function SmartphonesView({
         const published=profiles.filter(profile=>(x.ads||[]).some(ad=>ad?.publications?.[profile.id]?.status==='published'));
         return <article className="v62-phone-card" key={x.id}>
           <div className="v62-phone-photo">
-            <Smartphone size={30}/>
+            {x.photos?.[0]?<img src={x.photos[0].dataUrl} alt=""/>:<Smartphone size={30}/>}
             <button className={x.favorite?'favorite active':'favorite'} onClick={()=>toggleFavorite(x)}><Star size={13}/></button>
           </div>
 

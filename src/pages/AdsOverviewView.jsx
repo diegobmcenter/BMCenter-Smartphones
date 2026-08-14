@@ -19,7 +19,7 @@ export default function AdsOverviewView({
         const pct=profiles.length?Math.round(published/profiles.length*100):0;
         return <article className="v62-ad-card" key={ad.id}>
           <div className="v62-ad-device">
-            <div className="v62-ad-photo"><Smartphone size={26}/></div>
+            <div className="v62-ad-photo">{phone.photos?.[0]?<img src={phone.photos[0].dataUrl} alt=""/>:<Smartphone size={26}/>}</div>
             <div>
               <h3>{phone.brand} {phone.model}</h3>
               {showProductCode()&&phone.code&&<small>{phone.code}</small>}

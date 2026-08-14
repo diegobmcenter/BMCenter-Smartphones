@@ -1,12 +1,13 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.47",
+  "version": "10.4.48",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:parts-orders": "node tests/parts-orders.test.mjs && node tests/source-contracts.test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
