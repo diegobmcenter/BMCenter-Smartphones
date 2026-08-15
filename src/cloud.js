@@ -8,6 +8,8 @@ let applyingRemote=false;
 let currentSession=null;
 const RESET_KEY='__bmcenter_cloud_reset__';
 const BACKUP_PREFIX='__bmcenter_backup__:';
+export const CLOUD_REMOTE_EVENT='bmcenter:remote-state';
+function emitRemoteState(key,value,meta={}){try{window.dispatchEvent(new CustomEvent(CLOUD_REMOTE_EVENT,{detail:{key,value,...meta}}))}catch{}}
 
 export function cloudConfigured(){return Boolean(url&&anon)}
 export function getCloudStatus(){return{configured:cloudConfigured(),clientId}}
@@ -62,13 +64,15 @@ export function subscribeCloudState(onRemoteChange){
      const resetKeys=Array.isArray(row.state_value?.keys)?row.state_value.keys:[];
      resetKeys.forEach(key=>localStorage.removeItem(key));
      applyingRemote=false;
-     onRemoteChange?.('__BM_RESET__');
+     emitRemoteState('__BM_RESET__',row.state_value,{updatedAt:row.updated_at,updatedBy:row.updated_by});
+     onRemoteChange?.('__BM_RESET__',row.state_value,{updatedAt:row.updated_at,updatedBy:row.updated_by});
      continue;
     }
     applyingRemote=true;
     localStorage.setItem(row.state_key,JSON.stringify(row.state_value));
     applyingRemote=false;
-    onRemoteChange?.(row.state_key)
+    emitRemoteState(row.state_key,row.state_value,{updatedAt:row.updated_at,updatedBy:row.updated_by});
+    onRemoteChange?.(row.state_key,row.state_value,{updatedAt:row.updated_at,updatedBy:row.updated_by})
    }
   }catch(error){console.warn('Cloud polling',error)}
   finally{if(!stopped)timer=setTimeout(poll,2500)}
