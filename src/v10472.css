@@ -1,0 +1,9 @@
+/* v10.4.72 — auditoria e status do sistema de backup */
+.v102-route .backup-auto-status{max-width:1380px;margin:0 auto 10px!important;padding:11px 13px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;border:1px solid color-mix(in srgb,var(--green) 28%,var(--line))!important;background:color-mix(in srgb,var(--green) 6%,var(--surface))!important}
+.v102-route .backup-auto-status>div{display:grid!important;gap:2px!important;min-width:0!important}
+.v102-route .backup-auto-status b{font-size:10px!important;color:var(--text)!important}
+.v102-route .backup-auto-status small{font-size:8px!important;line-height:1.4!important;color:var(--muted)!important}
+.v102-route .backup-auto-status button{min-height:31px!important;white-space:nowrap!important}
+.v102-route .backup-auto-status.has-error{border-color:color-mix(in srgb,var(--red) 35%,var(--line))!important;background:color-mix(in srgb,var(--red) 6%,var(--surface))!important}
+.v102-route .backup-auto-status .danger-text{color:var(--red)!important;font-weight:700!important}
+@media(max-width:720px){.v102-route .backup-auto-status{align-items:stretch!important;flex-direction:column!important}.v102-route .backup-auto-status button{width:100%!important}}

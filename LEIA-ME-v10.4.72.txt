@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.71
+BMCenter Smartphones v10.4.72
 
 REVISAO MOBILE COMPLETA
 
@@ -104,3 +104,21 @@ ALTERACOES v10.4.71 - SCROLL FINAL
 - Cabeçalho/filtros da direita tambem direcionam a roda para a lista de aparelhos.
 - Pagina de fundo permanece travada enquanto o modal estiver aberto.
 - Varredura de modais: Modal padrao, Configuracoes de pecas, Cotacao rapida, Compra direta e Editor de pedido passam a travar o fundo e conter overscroll.
+
+
+ALTERACOES v10.4.72 - AUDITORIA COMPLETA DE BACKUP
+- Corrigido o principal defeito: a tela chamava os backups da nuvem de automaticos, mas nao existia agendador global. Agora o backup automatico roda com o sistema aberto, sem precisar acessar a pagina Backup.
+- O checkpoint automatico diario usa uma chave deterministica e pode ser atualizado ao longo do dia quando houver alteracoes, respeitando intervalo de seguranca para evitar excesso de gravacoes.
+- Todo backup enviado para a nuvem e relido imediatamente e validado pelo fingerprint de integridade antes de ser considerado concluido.
+- Backups manuais e arquivos .bmcenter tambem passam por auditoria antes de baixar/restaurar.
+- Antes de restaurar arquivo, restaurar backup da nuvem ou limpar o sistema, e criado um backup de seguranca.
+- Limpar sistema nao apaga mais o cofre de backups da nuvem.
+- O reset em nuvem inventaria todas as chaves existentes antes de apagar, inclusive modulos futuros.
+- Backup completo continua capturando automaticamente qualquer chave local bmcenter-* criada por modulos futuros, com excecao apenas de credenciais/sessao de nuvem e metadados internos do proprio agendador.
+- Modulos essenciais sao materializados no backup mesmo quando ainda nao possuem registros.
+- Capturados/auditados: smartphones, anuncios e historicos internos, observacoes de anuncios, vendedores, fornecedores, contas, usuarios, perfis, configuracoes de cotacao, estoque de pecas, movimentos, pedidos de pecas, templates, bibliotecas de titulo/descricao, checklists, metas, views salvas, tema/cores/brilho/modo leitura, colunas, layouts, escalas de fonte, menus e status personalizados.
+- Rascunhos locais/sessao sao incluidos quando existem, inclusive cadastro de aparelho, cadastro em massa e Pedido em massa em andamento.
+- Pontos de restauracao locais continuam incluidos no backup manual. No backup automatico/safety eles sao omitidos apenas para evitar duplicar backups inteiros dentro de outros backups; ao restaurar esses backups, os pontos locais existentes sao preservados.
+- Falha ao criar um ponto automatico antes de nova versao nao apaga mais pontos de restauracao antigos.
+- Escala de fonte agora tambem e enviada para a sincronizacao em nuvem ao ser alterada no modal.
+- Texto antigo que dizia incluir biblioteca de fotos foi removido, pois o Photo Studio ja nao existe no sistema.

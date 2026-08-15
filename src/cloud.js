@@ -87,11 +87,16 @@ export async function clearCloudState(keys=[]){
  if(!user)throw new Error('Sessão expirada. Entre novamente.');
  applyingRemote=true;
  try{
-  await rest(`app_state?user_id=eq.${user.id}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
+  /* Backups são o cofre de recuperação. Limpar os dados operacionais nunca pode
+     apagar esse cofre junto. Primeiro inventariamos as chaves para que todos os
+     outros dispositivos removam inclusive módulos criados em versões futuras. */
+  const existing=await rest(`app_state?select=state_key&user_id=eq.${user.id}&state_key=not.like.${encodeURIComponent(BACKUP_PREFIX+'*')}`);
+  const resetKeys=[...new Set([...(keys||[]),...(existing||[]).map(row=>row.state_key).filter(key=>key!==RESET_KEY)])];
+  await rest(`app_state?user_id=eq.${user.id}&state_key=not.like.${encodeURIComponent(BACKUP_PREFIX+'*')}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
   const marker={
    user_id:user.id,
    state_key:RESET_KEY,
-   state_value:{keys,deleted_at:new Date().toISOString()},
+   state_value:{keys:resetKeys,deleted_at:new Date().toISOString()},
    updated_by:clientId,
    updated_at:new Date().toISOString()
   };
@@ -100,7 +105,8 @@ export async function clearCloudState(keys=[]){
    headers:{Prefer:'resolution=merge-duplicates,return=minimal'},
    body:JSON.stringify(marker)
   });
-  keys.forEach(key=>localStorage.removeItem(key));
+  resetKeys.forEach(key=>localStorage.removeItem(key));
+  return resetKeys;
  }finally{
   applyingRemote=false;
  }
@@ -112,18 +118,36 @@ export async function pushCloudStateNow(key,value){
  clearTimeout(writeTimers.get(key));
  await rest('app_state?on_conflict=user_id,state_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,state_key:key,state_value:value,updated_by:clientId,updated_at:new Date().toISOString()})})
 }
-export async function createCloudBackup(backup){
+export async function createCloudBackup(backup,options={}){
  const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
- const id=crypto.randomUUID(),createdAt=new Date().toISOString(),stateKey=`${BACKUP_PREFIX}${createdAt}:${id}`;
- await rest('app_state?on_conflict=user_id,state_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,state_key:stateKey,state_value:{...backup,id,createdAt},updated_by:clientId,updated_at:createdAt})});
+ const kind=options.kind||'manual',bucket=options.bucket||'',createdAt=new Date().toISOString(),id=crypto.randomUUID();
+ const stateKey=kind==='automatic'&&bucket?`${BACKUP_PREFIX}auto:${bucket}`:`${BACKUP_PREFIX}${kind}:${createdAt}:${id}`;
+ const stateValue={...backup,id,stateKey,createdAt,backupKind:kind,backupBucket:bucket||null};
+ await rest('app_state?on_conflict=user_id,state_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,state_key:stateKey,state_value:stateValue,updated_by:clientId,updated_at:createdAt})});
+ /* Não considerar o POST concluído como backup válido sem reler o registro. */
+ const verify=await rest(`app_state?select=state_value&user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(stateKey)}`);
+ const stored=verify?.[0]?.state_value;
+ if(!stored)throw new Error('O backup foi enviado, mas não pôde ser confirmado na nuvem.');
+ const expectedFingerprint=backup?.audit?.fingerprint||'';
+ if(expectedFingerprint&&stored?.audit?.fingerprint!==expectedFingerprint)throw new Error('A verificação do backup na nuvem encontrou divergência de integridade.');
  const all=await rest(`app_state?select=state_key,updated_at&user_id=eq.${user.id}&state_key=like.${encodeURIComponent(BACKUP_PREFIX+'*')}&order=updated_at.desc`);
  for(const row of (all||[]).slice(10))await rest(`app_state?user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(row.state_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
- return{id,createdAt}
+ return{id:stateKey,createdAt,kind,bucket,verified:true}
 }
 export async function listCloudBackups(){
  const session=await getCloudSession();const user=session?.user;if(!user)return[];
  const rows=await rest(`app_state?select=state_key,state_value,updated_at&user_id=eq.${user.id}&state_key=like.${encodeURIComponent(BACKUP_PREFIX+'*')}&order=updated_at.desc`);
- return(rows||[]).map(row=>({id:row.state_key,createdAt:row.state_value?.createdAt||row.updated_at,summary:row.state_value?.summary?`${row.state_value.summary.smartphones||0} aparelho(s), ${row.state_value.summary.suppliers||0} fornecedor(es), ${row.state_value.summary.bankAccounts||0} conta(s) bancária(s)`:''}))
+ return(rows||[]).map(row=>({
+  id:row.state_key,
+  createdAt:row.state_value?.createdAt||row.updated_at,
+  kind:row.state_value?.backupKind||'legacy',
+  bucket:row.state_value?.backupBucket||null,
+  appVersion:row.state_value?.appVersion||'',
+  integrity:row.state_value?.audit?.ok===true&&Boolean(row.state_value?.audit?.fingerprint),
+  fingerprint:row.state_value?.audit?.fingerprint||'',
+  totalKeys:row.state_value?.summary?.totalKeys||0,
+  summary:row.state_value?.summary?`${row.state_value.summary.smartphones||0} aparelho(s), ${row.state_value.summary.suppliers||0} fornecedor(es), ${row.state_value.summary.bankAccounts||0} conta(s) bancária(s), ${row.state_value.summary.partsOrders||0} pedido(s) de peça`:''
+ }))
 }
 export async function restoreCloudBackup(id){
  const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');

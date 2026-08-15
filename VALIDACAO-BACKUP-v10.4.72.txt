@@ -1,0 +1,28 @@
+VALIDACAO BACKUP v10.4.72
+
+- parts-orders.test: OK
+- bulk-parts-order.test: OK
+- multi-bulk-order.test: OK
+- multi-order-launch.test: OK
+- parts-status-guard.test: OK
+- bulk-modal-scroll.test: OK
+- modal-scroll-audit.test: OK
+- concurrent-sync.test: OK
+- backup-audit.test: OK
+- source-contracts.test: OK
+- mobile-layout.test: OK
+
+AUDITORIA DE BACKUP
+- wildcard bmcenter-* para modulos futuros: OK
+- sessao/token cloud excluido: OK
+- client-id excluido: OK
+- runtime interno do backup excluido: OK
+- schema essencial materializado: OK
+- fingerprint estavel e sensivel a mudancas: OK
+- scheduler automatico global: OK
+- verificacao read-after-write no Supabase: OK
+- safety antes de restore/clear: OK
+- limpar sistema preserva backups: OK
+- snapshots antigos preservados em falha de auto snapshot: OK
+- restore de backup automatico preserva snapshots locais omitidos: OK
+- texto obsoleto de biblioteca de fotos removido: OK
