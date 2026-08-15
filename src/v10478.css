@@ -1,0 +1,151 @@
+/* BMCenter v10.4.78 — Smartphones: filtros em uma linha + valores compactos.
+   Camada final focada em aproveitar a largura real da página sem criar linhas vazias. */
+
+@media(min-width:721px){
+  /* Busca / Etiquetas / Status / Favoritos / Mais filtros sempre na mesma linha. */
+  .v102-route .v10313-main-toolbar{
+    display:grid!important;
+    grid-template-columns:minmax(230px,1fr) minmax(175px,245px) max-content max-content max-content!important;
+    align-items:center!important;
+    gap:6px!important;
+    width:100%!important;
+    padding:0!important;
+    margin:0 0 10px!important;
+    background:transparent!important;
+    border:0!important;
+    overflow:visible!important;
+  }
+  .v102-route .v10313-main-toolbar>label:first-child{
+    grid-column:auto!important;
+    min-width:0!important;
+    width:100%!important;
+    height:36px!important;
+    margin:0!important;
+  }
+  .v102-route .v10313-main-toolbar>label:first-child input{
+    width:100%!important;
+    min-width:0!important;
+    height:36px!important;
+    min-height:36px!important;
+  }
+  .v102-route .v10313-main-toolbar>.v10478-tag-filter{
+    grid-column:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:245px!important;
+    height:36px!important;
+    min-height:36px!important;
+    margin:0!important;
+    padding:0 28px 0 10px!important;
+  }
+  .v102-route .v10313-main-toolbar>button{
+    grid-column:auto!important;
+    flex:none!important;
+    width:auto!important;
+    min-width:0!important;
+    height:36px!important;
+    min-height:36px!important;
+    margin:0!important;
+    padding:0 10px!important;
+    justify-content:center!important;
+    white-space:nowrap!important;
+  }
+  .v102-route .v10313-main-toolbar>.v1041-status-trigger{min-width:94px!important}
+  .v102-route .v10313-main-toolbar>.v10313-more-filters{min-width:106px!important}
+
+  /* Lista de aparelhos: menos altura vertical e alinhamento único. */
+  .v102-device-list{gap:6px!important}
+  .v102-device-row{
+    grid-template-columns:30px minmax(230px,1fr) minmax(150px,170px) minmax(250px,285px) 148px!important;
+    gap:7px!important;
+    min-height:58px!important;
+    padding:5px 8px!important;
+    align-items:center!important;
+    border-radius:11px!important;
+  }
+  .v102-star{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important}
+  .v102-device-name h3{font-size:11px!important;line-height:1.12!important}
+  .v102-device-name p{margin-top:2px!important;font-size:7px!important;line-height:1.15!important}
+  .v102-device-name small{margin-top:1px!important;font-size:6.5px!important;line-height:1.1!important}
+  .v102-status select{height:30px!important;min-height:30px!important;padding:0 24px 0 8px!important}
+  .v102-status small{margin-top:2px!important;font-size:6.5px!important;line-height:1!important}
+
+  /* Custo / Valor de venda / Lucro: uma faixa compacta, sem três quadrados altos. */
+  .v102-money,.v102-money-editable{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(72px,1fr))!important;
+    gap:0!important;
+    min-width:0!important;
+    width:100%!important;
+    height:34px!important;
+    min-height:34px!important;
+    padding:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:8px!important;
+    background:color-mix(in srgb,var(--surface2) 42%,transparent)!important;
+    overflow:hidden!important;
+  }
+  .v102-inline-money{
+    display:grid!important;
+    grid-template-rows:auto auto!important;
+    align-content:center!important;
+    gap:0!important;
+    width:100%!important;
+    min-width:0!important;
+    height:32px!important;
+    min-height:32px!important;
+    padding:3px 7px!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  .v102-inline-money+ .v102-inline-money{border-left:1px solid var(--line)!important}
+  .v102-inline-money:hover,.v102-inline-money:focus-within{
+    background:color-mix(in srgb,var(--accent-soft) 46%,transparent)!important;
+    border-color:var(--line)!important;
+    box-shadow:none!important;
+  }
+  .v102-inline-money>span{
+    margin:0!important;
+    font-size:6px!important;
+    line-height:1!important;
+    color:var(--faint)!important;
+    white-space:nowrap!important;
+  }
+  .v102-inline-money>div{display:flex!important;align-items:center!important;gap:2px!important;min-width:0!important;height:16px!important}
+  .v102-inline-money small{font-size:6.5px!important;line-height:1!important;flex:0 0 auto!important}
+  .v102-inline-money input{
+    width:100%!important;
+    min-width:0!important;
+    height:16px!important;
+    min-height:16px!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    font-size:8.5px!important;
+    line-height:1!important;
+    box-shadow:none!important;
+  }
+  .v102-row-actions{gap:3px!important}
+  .v102-row-actions>button,.v102-row-actions .v102-menu-anchor>button{
+    width:31px!important;min-width:31px!important;height:30px!important;min-height:30px!important;padding:0!important;
+  }
+}
+
+/* Notebook: continua em uma linha enquanto houver largura útil real. */
+@media(min-width:901px) and (max-width:1120px){
+  .v102-route .v10313-main-toolbar{
+    grid-template-columns:minmax(180px,1fr) minmax(145px,190px) max-content max-content max-content!important;
+  }
+  .v102-route .v10313-main-toolbar>button{padding:0 7px!important;font-size:9px!important}
+  .v102-device-row{
+    grid-template-columns:29px minmax(185px,1fr) minmax(130px,150px) minmax(225px,260px) 140px!important;
+  }
+}
+
+/* Tablet/mobile mantêm quebra responsiva para não sacrificar toque nem causar overflow. */
+@media(max-width:900px){
+  .v102-route .v10313-main-toolbar{padding:0!important;background:transparent!important;border:0!important}
+}

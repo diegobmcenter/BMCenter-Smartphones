@@ -1,0 +1,12 @@
+BMCenter Smartphones v10.4.78
+
+SMARTPHONES — MELHOR APROVEITAMENTO DE ESPAÇO
+
+- Reorganiza a barra para: Busca / Etiquetas / Status / Favoritos / Mais filtros.
+- Mantém todos esses controles em uma única linha no desktop e notebook compatível.
+- Remove a linha inteira desperdiçada pelo filtro de Etiquetas.
+- Compacta as linhas dos aparelhos para reduzir altura sem perder legibilidade.
+- Custo / Valor de venda / Lucro passam a formar uma única faixa compacta e uniforme.
+- Remove os três quadrados individuais altos dos valores e mantém edição inline.
+- Preserva quebra responsiva em tablet/mobile para evitar overflow.
+- Adiciona teste de regressão smartphones-density.test.mjs.
