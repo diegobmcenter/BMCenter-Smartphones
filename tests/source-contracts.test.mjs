@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const parts=main.slice(main.indexOf('function Parts(){'),main.indexOf('\n\nfunction PartsInventoryPage'));
-assert.match(main,/APP_VERSION='10\.4\.68'/);
+assert.match(main,/APP_VERSION='10\.4\.69'/);
 assert.match(main,/OKEY='bmcenter-parts-orders'/);
 const mobileCss=fs.readFileSync(new URL('../src/v10466.css',import.meta.url),'utf8');
 const appFrame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
@@ -63,4 +63,9 @@ assert.doesNotMatch(parts,/blankPhone\(/,'Central de Peças não pode cadastrar 
 assert.doesNotMatch(parts,/save\(IKEY/,'Pedidos não podem dar entrada automática no estoque geral');
 assert.doesNotMatch(phonesView,/setPhotoPhone|photo-shortcut|<Camera/,'Photo Studio/atalho de fotos deve permanecer removido');
 for(const dependency of Object.keys({...pkg.dependencies,...pkg.devDependencies}))assert.doesNotMatch(dependency,/mediapipe|onnx|rembg|transformers/i);
+
+const modalScrollCss=fs.readFileSync(new URL('../src/v10469.css',import.meta.url),'utf8');
+assert.match(main,/bulkDialogRef/,'Pedido em massa precisa capturar a rolagem dentro do modal');
+assert.match(main,/bmcenter-bulk-modal-open/,'Pedido em massa precisa travar a pagina de fundo');
+assert.match(modalScrollCss,/overscroll-behavior:contain/,'Modal precisa conter a rolagem sem propagar para o fundo');
 console.log('source-contracts.test: OK');

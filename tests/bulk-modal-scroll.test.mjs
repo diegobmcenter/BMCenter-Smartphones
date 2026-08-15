@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10469.css',import.meta.url),'utf8');
+assert.match(main,/const bulkDialogRef=useRef\(null\)/);
+assert.match(main,/body\.style\.overflow='hidden'/);
+assert.match(main,/root\.style\.overflow='hidden'/);
+assert.match(main,/addEventListener\('wheel',onWheel,\{passive:false\}\)/);
+assert.match(main,/fallback\.scrollTop\+=event\.deltaY/);
+assert.match(main,/removeEventListener\('wheel',onWheel\)/);
+assert.match(css,/body\.bmcenter-bulk-modal-open\{overflow:hidden!important/);
+assert.match(css,/\.parts-v49-bulk-list\{min-height:0!important;overflow-y:auto!important/);
+console.log('bulk-modal-scroll.test: OK');

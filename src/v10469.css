@@ -1,0 +1,20 @@
+/* v10.4.69 — Pedido em massa: scroll pertence ao modal ativo, nunca à página de fundo. */
+body.bmcenter-bulk-modal-open{overflow:hidden!important;overscroll-behavior:none!important}
+body.bmcenter-bulk-modal-open .parts-v47-backdrop{overscroll-behavior:contain!important;touch-action:none!important}
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog{overscroll-behavior:contain!important}
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog .parts-v50-bulk-main,
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog .parts-v50-bulk-left,
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog .parts-v50-products,
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog .parts-v61-batch-list,
+body.bmcenter-bulk-modal-open .parts-v62-bulk-dialog .parts-v49-bulk-list{
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+  scrollbar-gutter:stable!important;
+}
+/* Garante que as duas colunas tenham uma área real rolável no desktop. */
+@media(min-width:901px){
+  .parts-v62-bulk-dialog .parts-v50-bulk-main{min-height:0!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog .parts-v50-bulk-left{min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important}
+  .parts-v62-bulk-dialog .parts-v50-bulk-select{min-height:0!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important}
+}
