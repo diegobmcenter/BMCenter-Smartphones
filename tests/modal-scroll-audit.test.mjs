@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10470.css',import.meta.url),'utf8');
+assert.match(main,/bmcenter-standard-modal-open/,'modais padrao devem travar o fundo');
+assert.match(main,/bmcenter-parts-overlay-open/,'subjanelas auxiliares de pecas devem travar o fundo');
+assert.match(main,/const auxiliaryPartsOverlayOpen=showRules\|\|quoteModal\|\|!!directBuy\|\|!!orderEditor/);
+assert.match(css,/body\.bmcenter-standard-modal-open/);
+assert.match(css,/body\.bmcenter-parts-overlay-open/);
+assert.match(css,/\.back>\.modal\{overscroll-behavior:contain!important;overflow-y:auto!important\}/);
+assert.match(css,/\.parts-v48-order-editor\{overscroll-behavior:contain!important;max-height:92vh!important;overflow-y:auto!important\}/);
+console.log('modal-scroll-audit.test: OK');

@@ -1,0 +1,25 @@
+BMCenter Smartphones v10.4.70
+
+CORRECAO DE SCROLL
+- Pedido em massa: wheel sobre qualquer ponto da coluna direita e roteado explicitamente para .parts-v49-bulk-list.
+- Lista de aparelhos possui viewport propria no desktop: height 100%, max-height none e overflow-y auto.
+- Esquerda/direita independentes; pagina de fundo bloqueada.
+
+VARREDURA DE OUTRAS SUBJANELAS
+- Modal padrao (.back > .modal): fundo bloqueado e overscroll contido.
+- Configuracoes de pecas: fundo bloqueado.
+- Cotacao rapida: fundo bloqueado.
+- Compra direta: fundo bloqueado.
+- Editor de pedido: fundo bloqueado.
+
+TESTES
+- parts-orders.test: OK (inclui bulk/multi/status guard internos)
+- bulk-modal-scroll.test: OK
+- modal-scroll-audit.test: OK
+- source-contracts.test: OK
+- mobile-layout.test: OK
+- npm run test:parts-orders: OK
+
+BUILD LOCAL DESTE AMBIENTE
+- Nao executado: node_modules/vite nao esta instalado neste runtime.
+- PUBLICAR-ATUALIZACAO.bat executa npm install + testes + npm run build antes de publicar.

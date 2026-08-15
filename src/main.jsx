@@ -11,9 +11,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.69';
+const APP_VERSION='10.4.70';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -971,24 +971,34 @@ function Parts(){
     body.classList.add('bmcenter-bulk-modal-open');
     body.style.overflow='hidden';root.style.overflow='hidden';body.style.overscrollBehavior='none';root.style.overscrollBehavior='none';
     if(scrollbarWidth)body.style.paddingRight=`${scrollbarWidth}px`;
-    const canScroll=(el,delta)=>{if(!el||el.scrollHeight<=el.clientHeight+1)return false;return delta>0?el.scrollTop+el.clientHeight<el.scrollHeight-1:delta<0?el.scrollTop>1:false};
+    const isScrollable=el=>!!el&&el.scrollHeight>el.clientHeight+1;
+    const scrollElement=(el,delta)=>{if(!isScrollable(el))return false;const before=el.scrollTop;el.scrollTop=Math.max(0,Math.min(el.scrollHeight-el.clientHeight,el.scrollTop+delta));return el.scrollTop!==before};
     const onWheel=event=>{
       if(!dialog||Math.abs(event.deltaY)<Math.abs(event.deltaX))return;
       const origin=event.target instanceof Element?event.target:event.target?.parentElement;
-      let node=origin,ancestorScroller=null;
-      while(node&&node!==dialog){
-        const style=getComputedStyle(node),overflowY=style.overflowY;
-        if((overflowY==='auto'||overflowY==='scroll')&&node.scrollHeight>node.clientHeight+1){ancestorScroller=node;break}
-        node=node.parentElement;
-      }
-      if(ancestorScroller){
-        if(!canScroll(ancestorScroller,event.deltaY))event.preventDefault();
+      if(!origin){event.preventDefault();return}
+      /* Cada região do modal é dona do próprio scroll. Em especial, qualquer wheel
+         sobre a coluna direita é enviado explicitamente à lista de aparelhos. */
+      const rightPanel=origin.closest('.parts-v50-bulk-select');
+      const rightList=dialog.querySelector('.parts-v49-bulk-list');
+      if(rightPanel){
+        event.preventDefault();
+        if(scrollElement(rightList,event.deltaY))return;
+        const main=dialog.querySelector('.parts-v50-bulk-main');
+        scrollElement(main,event.deltaY);
         return;
       }
-      const overLeft=origin?.closest?.('.parts-v50-bulk-left,.parts-v50-products');
-      const fallback=overLeft?(dialog.querySelector('.parts-v50-bulk-left')||dialog.querySelector('.parts-v50-products')):dialog.querySelector('.parts-v49-bulk-list');
-      if(fallback&&fallback.scrollHeight>fallback.clientHeight+1){event.preventDefault();fallback.scrollTop+=event.deltaY;return}
+      const batchList=origin.closest('.parts-v61-batch-list');
+      if(batchList){event.preventDefault();scrollElement(batchList,event.deltaY);return}
+      const products=origin.closest('.parts-v50-products');
+      if(products){event.preventDefault();if(scrollElement(products,event.deltaY))return;scrollElement(dialog.querySelector('.parts-v50-bulk-left'),event.deltaY);return}
+      const leftPanel=origin.closest('.parts-v50-bulk-left');
+      if(leftPanel){event.preventDefault();if(scrollElement(leftPanel,event.deltaY))return;scrollElement(dialog.querySelector('.parts-v50-products'),event.deltaY);return}
+      /* Cabeçalho/rodapé: usa o conteúdo principal do modal, nunca a página atrás. */
       event.preventDefault();
+      const main=dialog.querySelector('.parts-v50-bulk-main');
+      if(scrollElement(main,event.deltaY))return;
+      scrollElement(rightList,event.deltaY);
     };
     dialog?.addEventListener('wheel',onWheel,{passive:false});
     return()=>{
@@ -997,6 +1007,15 @@ function Parts(){
       body.style.overflow=previous.bodyOverflow;root.style.overflow=previous.rootOverflow;body.style.overscrollBehavior=previous.bodyOverscroll;root.style.overscrollBehavior=previous.rootOverscroll;body.style.paddingRight=previous.bodyPaddingRight;
     };
   },[bulkOrderOpen]);
+  const auxiliaryPartsOverlayOpen=showRules||quoteModal||!!directBuy||!!orderEditor;
+  useEffect(()=>{
+    if(!auxiliaryPartsOverlayOpen)return;
+    const body=document.body,root=document.documentElement;
+    const previous={bodyOverflow:body.style.overflow,rootOverflow:root.style.overflow,bodyOverscroll:body.style.overscrollBehavior,rootOverscroll:root.style.overscrollBehavior};
+    body.classList.add('bmcenter-parts-overlay-open');
+    body.style.overflow='hidden';root.style.overflow='hidden';body.style.overscrollBehavior='none';root.style.overscrollBehavior='none';
+    return()=>{body.classList.remove('bmcenter-parts-overlay-open');body.style.overflow=previous.bodyOverflow;root.style.overflow=previous.rootOverflow;body.style.overscrollBehavior=previous.bodyOverscroll;root.style.overscrollBehavior=previous.rootOverscroll};
+  },[auxiliaryPartsOverlayOpen]);
   const profiles=load(PKEY);
   const activeSuppliers=[...suppliers].filter(s=>String(s?.name||'').trim()).sort((a,b)=>String(a.name).localeCompare(String(b.name),'pt-BR',{sensitivity:'base'}));
   const toNumber=value=>{if(typeof value==='number')return Number.isFinite(value)?value:0;let text=String(value??'').trim().replace(/[^0-9,.-]/g,'');if(text.includes(','))text=text.replace(/\./g,'').replace(',','.');const number=Number(text);return Number.isFinite(number)?number:0};
@@ -2641,6 +2660,13 @@ function Modal({title,onClose,children,className='',subtitle='',titleIcon=null})
  const[fontScale,setFontScale]=useState(()=>getFontScale(scaleKey));
  const modalHistoryKey=useRef(`bmcenter-modal-${Date.now()}-${Math.random().toString(36).slice(2)}`).current;
  const changeFont=delta=>setFontScale(current=>saveFontScale(scaleKey,Math.round((current+delta)*100)/100));
+ useEffect(()=>{
+  const body=document.body,root=document.documentElement;
+  const previous={bodyOverflow:body.style.overflow,rootOverflow:root.style.overflow,bodyOverscroll:body.style.overscrollBehavior,rootOverscroll:root.style.overscrollBehavior};
+  body.classList.add('bmcenter-standard-modal-open');
+  body.style.overflow='hidden';root.style.overflow='hidden';body.style.overscrollBehavior='none';root.style.overscrollBehavior='none';
+  return()=>{body.classList.remove('bmcenter-standard-modal-open');body.style.overflow=previous.bodyOverflow;root.style.overflow=previous.rootOverflow;body.style.overscrollBehavior=previous.bodyOverscroll;root.style.overscrollBehavior=previous.rootOverscroll};
+ },[]);
  useEffect(()=>{
   const base=history.state||{bmcenterApp:true,bmcenterPage:currentPage};
   history.pushState({...base,bmcenterApp:true,bmcenterPage:currentPage,bmcenterModal:modalHistoryKey},'',location.href);

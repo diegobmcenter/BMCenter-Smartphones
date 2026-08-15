@@ -1,0 +1,38 @@
+/* v10.4.70 — rolagem confinada a todas as subjanelas + coluna direita do Pedido em massa. */
+body.bmcenter-standard-modal-open,
+body.bmcenter-parts-overlay-open{overflow:hidden!important;overscroll-behavior:none!important}
+body.bmcenter-standard-modal-open .back,
+body.bmcenter-parts-overlay-open .parts-v47-backdrop{overscroll-behavior:contain!important}
+body.bmcenter-standard-modal-open .back>.modal{overscroll-behavior:contain!important;overflow-y:auto!important}
+body.bmcenter-parts-overlay-open .parts-v47-direct-dialog,
+body.bmcenter-parts-overlay-open .parts-v47-settings,
+body.bmcenter-parts-overlay-open .parts-fast-price-dialog,
+body.bmcenter-parts-overlay-open .parts-v48-order-editor{overscroll-behavior:contain!important;max-height:92vh!important;overflow-y:auto!important}
+
+/* Desktop: coluna da direita possui uma viewport rolável real, independente da esquerda. */
+@media(min-width:901px){
+  .parts-v62-bulk-dialog .parts-v50-bulk-select{
+    min-height:0!important;
+    height:100%!important;
+    grid-template-rows:auto auto minmax(0,1fr)!important;
+    overflow:hidden!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{
+    min-height:0!important;
+    height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    scrollbar-gutter:stable!important;
+    touch-action:pan-y!important;
+  }
+  .parts-v62-bulk-dialog .parts-v50-bulk-select>header,
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{flex:0 0 auto!important}
+}
+
+/* No mobile o scroll continua no conteúdo do modal, sem escapar para o documento. */
+@media(max-width:900px){
+  .parts-v62-bulk-dialog .parts-v50-bulk-main{overscroll-behavior:contain!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{overscroll-behavior:contain!important;touch-action:pan-y!important}
+}

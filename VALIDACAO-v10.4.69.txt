@@ -1,8 +1,0 @@
-BMCenter Smartphones v10.4.69
-
-CORRECAO
-- Pedido em massa trava o scroll da pagina de fundo enquanto o modal estiver aberto.
-- Roda do mouse/trackpad permanece dentro da subjanela ativa.
-- Painel esquerdo e lista de aparelhos continuam rolaveis de forma independente.
-- Overscroll nao vaza para a pagina atras.
-- Ao fechar o modal, o scroll normal da pagina e restaurado.
