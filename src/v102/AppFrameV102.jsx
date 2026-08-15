@@ -4,6 +4,7 @@ import {Bell,BookOpen,ChevronRight,LogOut,Menu,Moon,SlidersHorizontal,Sun,X} fro
 export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visibleMenus,page,navigate,alerts,version,userEmail,children,onLogout,config,onConfigChange}){
  const theme=config?.themeMode==='light'?'light':'dark';
  const [comfortOpen,setComfortOpen]=React.useState(false);
+ const comfortAnchorRef=React.useRef(null);
  const brightness=Math.min(100,Math.max(65,Number(config?.brightness??100)));
  const readingMode=!!config?.readingMode;
  const dimOpacity=((100-brightness)/100)*0.62;
@@ -19,6 +20,13 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
  const readFontScales=()=>{try{return JSON.parse(localStorage.getItem('bmcenter-font-scales')||'{}')||{}}catch{return{}}};
  const[pageFontScale,setPageFontScale]=React.useState(()=>Math.min(1.15,Math.max(.9,Number(readFontScales()[fontScaleKey]??1))));
  React.useEffect(()=>{const scales=readFontScales();setPageFontScale(Math.min(1.15,Math.max(.9,Number(scales[fontScaleKey]??1))))},[fontScaleKey]);
+ React.useEffect(()=>{
+  if(!comfortOpen)return;
+  const close=event=>{const target=event.target instanceof Element?event.target:null;if(target&&!comfortAnchorRef.current?.contains(target))setComfortOpen(false)};
+  const key=event=>{if(event.key==='Escape')setComfortOpen(false)};
+  document.addEventListener('pointerdown',close);window.addEventListener('keydown',key);
+  return()=>{document.removeEventListener('pointerdown',close);window.removeEventListener('keydown',key)}
+ },[comfortOpen]);
  React.useEffect(()=>{
   document.documentElement.style.setProperty('--bmcenter-screen-dim',String(dimOpacity));
   document.body.classList.toggle('bmcenter-reading-mode',readingMode);
@@ -41,7 +49,7 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
    <header className="v102-topbar">
     <div className="v102-top-left"><button className="v102-mobile-menu" onClick={()=>setMobileOpen(v=>!v)}><Menu size={19}/></button><div className="v102-crumb"><span>BMCenter</span><ChevronRight size={12}/><b>{current.text}</b></div></div>
     <button className="v102-global-search" onClick={()=>window.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true}))}>Pesquisar no BMCenter <kbd>Ctrl K</kbd></button>
-    <div className="v102-top-right"><button className="v102-theme-icon" onClick={toggleTheme} title={theme==='light'?'Ativar tema escuro':'Ativar tema claro'}>{theme==='light'?<Moon size={17}/>:<Sun size={17}/>}</button><div className="font-scale-controls top-font-scale" title="Tamanho da fonte desta página"><button type="button" onClick={()=>changePageFont(-.05)} disabled={pageFontScale<=.9}>−</button><span>{Math.round(pageFontScale*100)}%</span><button type="button" onClick={()=>changePageFont(.05)} disabled={pageFontScale>=1.15}>+</button></div><div className="v102-comfort-anchor"><button className={`v102-comfort-button ${readingMode||brightness<100?'active':''}`} onClick={()=>setComfortOpen(v=>!v)} title="Conforto visual"><SlidersHorizontal size={16}/></button>{comfortOpen&&<div className="v102-comfort-popover"><header><div><b>Conforto visual</b><small>Ideal para trabalhar à noite</small></div><button onClick={()=>setComfortOpen(false)}><X size={14}/></button></header><label><span>Brilho <b>{brightness}%</b></span><input type="range" min="65" max="100" step="5" value={brightness} onChange={e=>onConfigChange?.({...config,brightness:Number(e.target.value)})}/></label><button className={`v102-reading-toggle ${readingMode?'active':''}`} onClick={()=>onConfigChange?.({...config,readingMode:!readingMode})}><BookOpen size={15}/><span><b>Modo leitura</b><small>{readingMode?'Ativado · luz mais confortável':'Reduz o cansaço visual no escuro'}</small></span><i>{readingMode?'ON':'OFF'}</i></button><button className="v102-comfort-reset" onClick={()=>onConfigChange?.({...config,brightness:100,readingMode:false})}>Restaurar conforto padrão</button></div>}</div><button className="v102-bell"><Bell size={16}/>{alerts>0&&<em>{alerts}</em>}</button><span className="v102-version">v{version}</span><span className="v102-avatar">DM</span></div>
+    <div className="v102-top-right"><button className="v102-theme-icon" onClick={toggleTheme} title={theme==='light'?'Ativar tema escuro':'Ativar tema claro'}>{theme==='light'?<Moon size={17}/>:<Sun size={17}/>}</button><div className="font-scale-controls top-font-scale" title="Tamanho da fonte desta página"><button type="button" onClick={()=>changePageFont(-.05)} disabled={pageFontScale<=.9}>−</button><span>{Math.round(pageFontScale*100)}%</span><button type="button" onClick={()=>changePageFont(.05)} disabled={pageFontScale>=1.15}>+</button></div><div ref={comfortAnchorRef} className="v102-comfort-anchor"><button className={`v102-comfort-button ${readingMode||brightness<100?'active':''}`} onClick={()=>setComfortOpen(v=>!v)} title="Conforto visual"><SlidersHorizontal size={16}/></button>{comfortOpen&&<div className="v102-comfort-popover"><header><div><b>Conforto visual</b><small>Ideal para trabalhar à noite</small></div><button onClick={()=>setComfortOpen(false)}><X size={14}/></button></header><label><span>Brilho <b>{brightness}%</b></span><input type="range" min="65" max="100" step="5" value={brightness} onChange={e=>onConfigChange?.({...config,brightness:Number(e.target.value)})}/></label><button className={`v102-reading-toggle ${readingMode?'active':''}`} onClick={()=>onConfigChange?.({...config,readingMode:!readingMode})}><BookOpen size={15}/><span><b>Modo leitura</b><small>{readingMode?'Ativado · luz mais confortável':'Reduz o cansaço visual no escuro'}</small></span><i>{readingMode?'ON':'OFF'}</i></button><button className="v102-comfort-reset" onClick={()=>onConfigChange?.({...config,brightness:100,readingMode:false})}>Restaurar conforto padrão</button></div>}</div><button className="v102-bell"><Bell size={16}/>{alerts>0&&<em>{alerts}</em>}</button><span className="v102-version">v{version}</span><span className="v102-avatar">DM</span></div>
    </header>
    <main className="v102-main" style={{zoom:pageFontScale}}>{children}</main>
   </section>

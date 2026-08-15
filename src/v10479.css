@@ -1,0 +1,56 @@
+/* BMCenter v10.4.79 — menus auto-fecháveis, ações compactas e devoluções de peças. */
+
+/* Smartphones: nome vira o ponto principal de edição; só o menu ... fica exposto. */
+.v10479-device-name-button{
+  display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+  width:auto!important;min-width:0!important;min-height:0!important;height:auto!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;color:inherit!important;box-shadow:none!important;text-align:left!important;
+}
+.v10479-device-name-button:hover h3{color:var(--accent)!important;text-decoration:underline;text-underline-offset:2px}
+.v10479-device-name-button h3{margin:0!important;cursor:pointer!important}
+@media(min-width:721px){
+  .v102-device-row{grid-template-columns:30px minmax(230px,1fr) minmax(150px,170px) minmax(250px,285px) 38px!important}
+  .v102-row-actions{width:38px!important;min-width:38px!important;justify-content:flex-end!important}
+  .v102-row-actions>.v102-menu-anchor>button{width:31px!important;min-width:31px!important;height:30px!important;min-height:30px!important}
+  .v102-context{width:178px!important}
+}
+@media(min-width:901px) and (max-width:1120px){
+  .v102-device-row{grid-template-columns:29px minmax(185px,1fr) minmax(130px,150px) minmax(225px,260px) 36px!important}
+}
+@media(max-width:720px){
+  .v10479-device-name-button{max-width:100%!important}
+  .v10479-device-name-button h3{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .v102-row-actions{justify-content:flex-end!important}
+}
+
+/* Central de Peças — fila operacional de devoluções. */
+.parts-v47-summary>span.attention{border-color:color-mix(in srgb,var(--amber) 45%,var(--line))!important;background:var(--amber-soft)!important;color:var(--amber)!important}
+.parts-v79-return-tab.active{color:var(--amber)!important}
+.parts-v79-return-button{color:var(--amber)!important;border-color:color-mix(in srgb,var(--amber) 35%,var(--line))!important;background:color-mix(in srgb,var(--amber-soft) 55%,transparent)!important}
+.parts-v79-return-label{display:inline-flex!important;align-items:center!important;min-height:22px!important;padding:0 7px!important;border-radius:999px!important;font-size:7px!important;font-weight:800!important;white-space:nowrap!important}
+.parts-v79-return-label.pending{color:var(--amber)!important;background:var(--amber-soft)!important}
+.parts-v79-return-label.returned{color:var(--green)!important;background:var(--green-soft)!important}
+.parts-v79-returns{display:grid!important;gap:6px!important;padding:7px!important}
+.parts-v79-return-card{
+  display:grid!important;grid-template-columns:30px minmax(220px,1fr) 105px 105px auto!important;
+  align-items:center!important;gap:8px!important;min-height:54px!important;padding:7px 9px!important;
+  border:1px solid var(--line)!important;border-radius:10px!important;background:var(--surface)!important;
+}
+.parts-v79-return-card.pending{border-color:color-mix(in srgb,var(--amber) 35%,var(--line))!important}
+.parts-v79-return-card.returned{opacity:.78!important}
+.parts-v79-return-icon{width:28px!important;height:28px!important;display:grid!important;place-items:center!important;border-radius:8px!important;background:var(--amber-soft)!important;color:var(--amber)!important}
+.parts-v79-return-identity{display:grid!important;gap:1px!important;min-width:0!important}
+.parts-v79-return-identity small,.parts-v79-return-meta small{font-size:6.5px!important;color:var(--faint)!important}
+.parts-v79-return-identity b{font-size:9px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.parts-v79-return-identity span{font-size:7px!important;color:var(--muted)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.parts-v79-return-meta{display:grid!important;gap:1px!important}.parts-v79-return-meta b{font-size:8px!important}
+.parts-v79-return-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:5px!important;white-space:nowrap!important}
+.parts-v79-return-actions>span{font-size:7px!important;font-weight:800!important;color:var(--amber)!important}.parts-v79-return-actions>span.returned{color:var(--green)!important}
+.parts-v79-return-actions button{min-height:28px!important;height:28px!important;padding:0 7px!important;font-size:7px!important}
+@media(max-width:900px){
+  .parts-v47-tabs{overflow-x:auto!important;flex-wrap:nowrap!important}
+  .parts-v47-tabs button{flex:0 0 auto!important}
+  .parts-v79-return-card{grid-template-columns:28px minmax(0,1fr) auto!important;grid-template-areas:'icon identity value' 'icon meta meta' 'actions actions actions'!important}
+  .parts-v79-return-icon{grid-area:icon!important}.parts-v79-return-identity{grid-area:identity!important}.parts-v79-return-card>.parts-v79-return-meta:nth-of-type(1){grid-area:meta!important}.parts-v79-return-card>.parts-v79-return-meta:nth-of-type(2){grid-area:value!important}.parts-v79-return-actions{grid-area:actions!important;justify-content:flex-start!important;flex-wrap:wrap!important}
+}

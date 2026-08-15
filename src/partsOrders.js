@@ -24,7 +24,8 @@ export function effectivePartCost(part){
 export function isPartProcurementComplete(part={}){
  const status=String(part?.status||'').trim().toLocaleLowerCase('pt-BR');
  const orderStatus=String(part?.orderStatus||'').trim().toLocaleLowerCase('pt-BR');
- return Boolean(part?.receivedAt)||['recebida','instalada'].includes(status)||['pedido entregue','instalada'].includes(orderStatus)
+ const returnStatus=String(part?.returnStatus||'').trim().toLocaleLowerCase('pt-BR');
+ return Boolean(part?.receivedAt)||['pending','returned'].includes(returnStatus)||['recebida','instalada','para devolver','devolvida'].includes(status)||['pedido entregue','instalada','para devolver','devolvida'].includes(orderStatus)
 }
 
 export function isPartOpenForProcurement(part={},activeOrderIds=null){
@@ -109,6 +110,7 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
    if(!link)return part;
    const {order,item}=link;
    const received=!!item.receivedAt,confirmed=!!item.confirmedAt;
+   const returnStatus=String(item.returnStatus||'');
    if(confirmed&&!received)linkedWaiting=true;
    if(received)linkedReceived=true;
    return{
@@ -122,8 +124,11 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
     effectiveCost:roundMoney(item.effectiveCost),
     orderedAt:item.confirmedAt||'',
     receivedAt:item.receivedAt||'',
-    orderStatus:received?'Pedido entregue':confirmed?'Pedido realizado':'Não pedido',
-    status:received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':part.status
+    returnStatus,
+    returnMarkedAt:item.returnMarkedAt||'',
+    returnedToSupplierAt:item.returnedToSupplierAt||'',
+    orderStatus:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?'Pedido entregue':confirmed?'Pedido realizado':'Não pedido',
+    status:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':part.status
    }
   });
   // Regra v10.4.67: pedidos/peças alteram somente o estado da peça e seus custos.
@@ -228,7 +233,7 @@ export function removePartsOrderLinks(phones=[],order={},remainingOrders=[]){
    if(!item){parts.push(part);continue}
    changed=true;
    if(item.bulkCreatedPart===true&&part.status!=='Instalada')continue;
-   parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
+   parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',returnStatus:'',returnMarkedAt:'',returnedToSupplierAt:'',orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
   }
   if(!changed)return phone;
   // Remover um pedido também não altera o status operacional do aparelho.

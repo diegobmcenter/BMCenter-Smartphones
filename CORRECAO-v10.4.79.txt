@@ -1,0 +1,14 @@
+BMCenter Smartphones v10.4.79
+
+MENUS + AÇÕES DE SMARTPHONES + DEVOLUÇÕES DE PEÇAS
+
+- Menus contextuais passam a fechar automaticamente ao clicar fora ou pressionar ESC.
+- Corrige especificamente o menu "..." dos aparelhos, Conforto visual, Status e Mais filtros.
+- Remove da linha de Smartphones os botões diretos Olho, Editar e Descarte/Sucata.
+- O nome do aparelho agora é clicável e abre diretamente a edição da ficha.
+- "Abrir ficha" e "Descarte/Sucata" ficam dentro do menu "...".
+- A coluna de ações fica muito menor, melhorando o aproveitamento no PC e principalmente no celular.
+- Central de Peças ganha uma aba "Devoluções" com contador de itens pendentes.
+- Peças recebidas podem ser marcadas como "Devolver" diretamente dentro do pedido.
+- A fila de devoluções permite cancelar, concluir como "Devolvido" e consultar itens já devolvidos.
+- O histórico do pedido é preservado; a devolução não apaga a compra nem os vínculos anteriores.

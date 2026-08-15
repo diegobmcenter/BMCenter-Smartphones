@@ -1,0 +1,34 @@
+VALIDAÇÃO v10.4.79
+
+TESTES AUTOMÁTICOS
+- parts-orders.test: OK
+- parts-central-classification.test: OK
+- sold-publication-lifecycle.test: OK
+- bulk-modal-scroll.test: OK
+- modal-scroll-audit.test: OK
+- concurrent-sync.test: OK
+- backup-audit.test: OK
+- source-contracts.test: OK
+- mobile-layout.test: OK
+- ads-runtime-contract.test: OK
+- phone-detail-layout.test: OK
+- ui-space-audit.test: OK
+- smartphones-density.test: OK
+- menu-actions-returns.test: OK
+
+VALIDAÇÃO DE SINTAXE
+- Todos os arquivos JS/JSX: OK via parser TypeScript.
+
+BUILD
+- npm install neste ambiente excedeu o tempo de rede disponível.
+- O PUBLICAR-ATUALIZACAO.bat continua executando npm install + testes + npm run build antes de qualquer push.
+
+REGRESSÕES COBERTAS
+- v10479.css é a última camada visual.
+- APP_VERSION = 10.4.79.
+- menu Conforto visual fecha por clique externo/ESC.
+- menu "..." de Smartphones fecha por clique externo/ESC.
+- ações Olho/Editar/Descarte não ficam mais expostas na linha.
+- nome do aparelho abre a edição.
+- Abrir ficha e Descarte ficam no menu "...".
+- Devoluções persistem em itens de pedidos e sincronizam o estado da peça.

@@ -1,13 +1,13 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.4.78",
+  "version": "10.4.79",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:parts-orders": "node tests/parts-orders.test.mjs && node tests/parts-central-classification.test.mjs && node tests/sold-publication-lifecycle.test.mjs && node tests/bulk-modal-scroll.test.mjs && node tests/modal-scroll-audit.test.mjs && node tests/concurrent-sync.test.mjs && node tests/backup-audit.test.mjs && node tests/source-contracts.test.mjs && node tests/mobile-layout.test.mjs && node tests/ads-runtime-contract.test.mjs && node tests/phone-detail-layout.test.mjs && node tests/ui-space-audit.test.mjs && node tests/smartphones-density.test.mjs"
+    "test:parts-orders": "node tests/parts-orders.test.mjs && node tests/parts-central-classification.test.mjs && node tests/sold-publication-lifecycle.test.mjs && node tests/bulk-modal-scroll.test.mjs && node tests/modal-scroll-audit.test.mjs && node tests/concurrent-sync.test.mjs && node tests/backup-audit.test.mjs && node tests/source-contracts.test.mjs && node tests/mobile-layout.test.mjs && node tests/ads-runtime-contract.test.mjs && node tests/phone-detail-layout.test.mjs && node tests/ui-space-audit.test.mjs && node tests/smartphones-density.test.mjs && node tests/menu-actions-returns.test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
