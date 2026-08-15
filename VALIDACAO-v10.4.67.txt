@@ -1,0 +1,8 @@
+VALIDACAO v10.4.67
+
+- Peças/pedidos não alteram mais status do aparelho.
+- Regressão histórica: recupera último status explicitamente escolhido quando uma versão anterior mudou silenciosamente para Aguardando peças/Em reparo.
+- Mobile: ações Smartphones sem corte horizontal.
+- Mobile: metadados do Pedido em massa forçados em duas linhas compactas.
+- Mobile: fornecedor, frete, data, já recebido e observações não disputam a mesma linha.
+- Mobile: filtros/status, ficha do aparelho e cadastro em massa protegidos contra overflow.

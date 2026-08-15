@@ -1,0 +1,110 @@
+/* BMCenter v10.4.67 — correções mobile: campos cortados + status do aparelho imutável pelo módulo de peças */
+@media(max-width:720px){
+  /* Smartphones: ações sem rolagem/corte horizontal. */
+  .v102-smartphones-hero .v102-page-actions{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+    overflow:visible!important;
+    width:100%!important;
+    padding:0!important;
+  }
+  .v102-smartphones-hero .v102-page-actions>button{
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:30px!important;min-height:30px!important;padding:0 5px!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    justify-content:center!important;font-size:7.8px!important;
+  }
+  .v102-smartphones-hero .v102-page-actions>button:nth-child(4),
+  .v102-smartphones-hero .v102-page-actions>button:nth-child(5){grid-column:span 1!important}
+  .v102-smartphones-hero .v102-page-actions>button:nth-child(5){grid-column:span 2!important}
+
+  /* Cards: status não corta texto e valores continuam compactos. */
+  .v102-device-row{grid-template-columns:29px minmax(0,1fr) 126px!important}
+  .v102-status select{font-size:8.5px!important;padding-right:22px!important;white-space:nowrap!important;text-overflow:ellipsis!important}
+  .v102-money,.v102-money-editable{gap:3px!important}
+  .v102-inline-money{min-width:0!important;overflow:hidden!important}
+  .v102-inline-money>div,.v102-inline-money input{min-width:0!important;width:100%!important}
+
+  /* Página Peças: abas/filtros sempre dentro da viewport. */
+  .parts-v47-workspace,.parts-v47-tabs,.parts-v50-filters,.parts-v47-list,.parts-v47-row{min-width:0!important;max-width:100%!important}
+  .parts-v47-tabs{overflow:hidden!important}
+  .parts-v47-tabs button{font-size:7.2px!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .parts-v50-filters>select{font-size:8px!important;padding-left:6px!important;padding-right:20px!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+  /* Pedido em massa: forçar duas linhas de metadados. Não deixa 5 campos disputarem a mesma linha. */
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr) minmax(0,.9fr)!important;
+    grid-template-areas:
+      "supplier supplier freight"
+      "date received notes"!important;
+    gap:4px!important;
+    padding:6px 7px!important;
+    align-items:end!important;
+  }
+  .parts-v62-bulk-dialog .parts-v62-meta-supplier{grid-area:supplier!important;grid-column:auto!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-freight{grid-area:freight!important;grid-column:auto!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-date{grid-area:date!important;grid-column:auto!important;width:auto!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-received{grid-area:received!important;grid-column:auto!important;width:100%!important;min-width:0!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-notes{grid-area:notes!important;grid-column:auto!important;width:auto!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta>label{min-width:0!important;width:100%!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta input,
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta select,
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta .money-prefix{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta select{padding:0 20px 0 6px!important;text-overflow:ellipsis!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-received{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;padding:0 6px!important;white-space:nowrap!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-received input{width:15px!important;min-width:15px!important;height:15px!important;min-height:15px!important;flex:0 0 15px!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-received span{font-size:7.4px!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+  /* Produtos: botão e campos nunca cortam. */
+  .parts-v62-bulk-dialog .parts-v50-products article{grid-template-columns:minmax(0,1fr) 104px!important}
+  .parts-v62-bulk-dialog .parts-v50-product-actions{min-width:0!important}
+  .parts-v62-bulk-dialog .parts-v50-product-actions button{width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .parts-v62-bulk-dialog .parts-v50-product-fields{grid-template-columns:minmax(0,1fr) 92px!important}
+
+  /* Seleção de aparelhos: busca + status sem texto cortado desnecessariamente. */
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{grid-template-columns:minmax(0,1fr) 145px!important;gap:4px!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters>select{min-width:0!important;width:100%!important;padding:0 22px 0 7px!important;font-size:8px!important;text-overflow:ellipsis!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters>label{min-width:0!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters input{min-width:0!important;width:100%!important}
+
+  /* Rodapé sempre inteiro e legível. */
+  .parts-v62-bulk-dialog>footer{grid-template-columns:minmax(0,1fr) auto!important;overflow:visible!important}
+  .parts-v62-bulk-dialog>footer>div:first-child{min-width:0!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog>footer>div:first-child span,
+  .parts-v62-bulk-dialog>footer>div:first-child b{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+  /* Ficha do aparelho: nenhum campo/afixo pode invadir valor. */
+  .v102-app .phone-editor-v57 .v57-device-grid,
+  .v102-app .phone-editor-v57 .v57-purchase-grid{min-width:0!important;overflow:hidden!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label,
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{min-width:0!important;overflow:hidden!important}
+  .v102-app .phone-editor-v57 .v57-device-grid input,
+  .v102-app .phone-editor-v57 .v57-device-grid select,
+  .v102-app .phone-editor-v57 .v57-purchase-grid input,
+  .v102-app .phone-editor-v57 .v57-purchase-grid select{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+  .v102-app .phone-editor-v57 .field-affix-inline{width:100%!important;min-width:0!important;max-width:100%!important}
+  .v102-app .phone-editor-v57 .field-affix-inline input{width:100%!important;box-sizing:border-box!important}
+
+  /* Cadastro em massa: campos e ações nunca saem do quadro. */
+  .v102-app .batch-phone-modal .batch-shared-section,
+  .v102-app .batch-phone-modal .batch-phone-card,
+  .v102-app .batch-phone-modal .batch-phone-fields{min-width:0!important;max-width:100%!important;overflow:hidden!important}
+  .v102-app .batch-phone-modal .batch-shared-section>.grid>label,
+  .v102-app .batch-phone-modal .batch-phone-fields>label{min-width:0!important}
+  .v102-app .batch-phone-modal input,.v102-app .batch-phone-modal select,.v102-app .batch-phone-modal textarea{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+}
+
+@media(max-width:390px){
+  .v102-smartphones-hero .v102-page-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .v102-smartphones-hero .v102-page-actions>button:nth-child(5){grid-column:1/-1!important}
+  .v102-device-row{grid-template-columns:28px minmax(0,1fr) 118px!important}
+
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta{
+    grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr) minmax(0,.9fr)!important;
+  }
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{grid-template-columns:minmax(0,1fr) 136px!important}
+  .parts-v62-bulk-dialog .parts-v50-products article{grid-template-columns:minmax(0,1fr) 98px!important}
+  .parts-v62-bulk-dialog .parts-v50-product-fields{grid-template-columns:minmax(0,1fr) 88px!important}
+}

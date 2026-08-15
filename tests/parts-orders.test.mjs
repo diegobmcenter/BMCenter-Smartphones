@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,effectivePartCost,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'../src/partsOrders.js';
+import{allocateFreight,normalizePartsOrder,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,effectivePartCost,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'../src/partsOrders.js';
 
 const shares=allocateFreight([{id:'a',price:10},{id:'b',price:20},{id:'c',price:30}],10);
 assert.equal(shares.reduce((s,i)=>s+Math.round(i.freightShare*100),0),1000,'frete deve fechar exatamente em centavos');
@@ -11,7 +11,7 @@ assert.deepEqual(odd.map(i=>i.freightShare),[0.01,0,0],'sobra de centavo deve se
 const order=normalizePartsOrder({id:'o1',supplier:'Fornecedor A',freight:5,items:[{id:'i1',phoneId:'p1',partId:'x1',price:100,confirmedAt:'2026-08-14T00:00:00Z'}]});
 assert.equal(order.total,105);assert.equal(order.status,'ordered');assert.equal(order.items[0].effectiveCost,105);
 const phones=syncOrdersIntoPhones([{id:'p1',status:'Em reparo',paid:200,parts:[{id:'x1',name:'Tela',quotes:[]}]}],[order]);
-assert.equal(phones[0].parts[0].effectiveCost,105);assert.equal(phones[0].status,'Aguardando peças');assert.equal(effectivePartCost(phones[0].parts[0]),105);
+assert.equal(phones[0].parts[0].effectiveCost,105);assert.equal(phones[0].status,'Em reparo','pedido de peça não pode alterar o status operacional do aparelho');assert.equal(effectivePartCost(phones[0].parts[0]),105);
 
 const edited=normalizePartsOrder({...order,freight:8,items:order.items});
 const editedPhones=syncOrdersIntoPhones(phones,[edited]);
@@ -112,7 +112,7 @@ assert.equal(multiSynced.find(p=>p.id==='m1').parts.length,2);
 assert.ok(multiSynced.find(p=>p.id==='m1').parts.every(p=>Number(p.effectiveCost)>0),'custos individuais devem ser aplicados');
 const afterDelete=removePartsOrderLinks(multiSynced,multi.order,[]);
 assert.equal(afterDelete.find(p=>p.id==='m1').parts.length,0,'peças criadas pelo pedido em massa devem ser removidas ao excluir o pedido');
-assert.equal(afterDelete.find(p=>p.id==='m1').status,'Em reparo','status Aguardando peças deve voltar para Em reparo quando não há outro pedido pendente');
+assert.equal(afterDelete.find(p=>p.id==='m1').status,'Em reparo','excluir pedido não pode alterar o status operacional do aparelho');
 
 assert.throws(()=>createMultiBulkPartsOrder({phones:multiPhones,supplier:'X',products:[{id:'a',name:'Película',unitPrice:1,phoneIds:['m1']},{id:'b',name:'película',unitPrice:2,phoneIds:['m2']}],idFactory:multiId}),/mais de uma vez/,'não deve aceitar o mesmo produto duplicado no pedido');
 console.log('multi-bulk-order.test: OK');
@@ -136,3 +136,15 @@ const batchSynced=syncOrdersIntoPhones(batchTwo.phones,[batchOne.order,batchTwo.
 assert.equal(batchSynced.find(p=>p.id==='q1').parts[0].orderId,batchOne.order.id);
 assert.equal(batchSynced.find(p=>p.id==='q2').parts[0].orderId,batchTwo.order.id);
 console.log('multi-order-launch.test: OK');
+
+
+const readyPhone=[{id:'status-ready',status:'Pronto',timeline:[{id:'t1',date:'2026-08-10T10:00:00Z',message:'Status alterado para Pronto'}],parts:[{id:'film-ready',name:'Película'}]}];
+const readyOrder=normalizePartsOrder({id:'ready-order',supplier:'Teste',items:[{id:'ri1',phoneId:'status-ready',partId:'film-ready',price:5,confirmedAt:'2026-08-15T00:00:00Z'}]});
+const readySynced=syncOrdersIntoPhones(readyPhone,[readyOrder]);
+assert.equal(readySynced[0].status,'Pronto','adicionar/comprar peça em aparelho Pronto nunca deve levá-lo para Aguardando peças ou Em reparo');
+const oldBroken=[{id:'legacy-status',status:'Em reparo',timeline:[{id:'tl1',date:'2026-08-12T10:00:00Z',message:'Status alterado para Pronto'},{id:'tl2',date:'2026-08-14T10:00:00Z',message:'Compra em massa registrada: Película'}]}];
+const recovered=recoverLegacyPartOrderStatusMutations(oldBroken);
+assert.equal(recovered[0].status,'Pronto','migração deve recuperar status explícito anterior quando versão antiga alterou status silenciosamente');
+const legitimateRepair=recoverLegacyPartOrderStatusMutations([{id:'legit',status:'Em reparo',timeline:[{id:'x1',date:'2026-08-15T01:00:00Z',message:'Status alterado para Em reparo'}]}]);
+assert.equal(legitimateRepair[0].status,'Em reparo','status Em reparo escolhido explicitamente deve ser preservado');
+console.log('parts-status-guard.test: OK');

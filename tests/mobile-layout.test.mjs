@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {workflowStageForPhone} from '../src/workflow.js';
 
-const css=fs.readFileSync(new URL('../src/v10466.css',import.meta.url),'utf8');
+const css66=fs.readFileSync(new URL('../src/v10466.css',import.meta.url),'utf8');
+const css67=fs.readFileSync(new URL('../src/v10467.css',import.meta.url),'utf8');
+const css=css66+'\n'+css67;
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const frame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
 
@@ -30,4 +32,7 @@ assert.match(css,/env\(safe-area-inset-bottom\)/);
 assert.match(frame,/bmcenter-reading-mode/);
 assert.match(frame,/--bmcenter-screen-dim/);
 
+assert.match(css67,/grid-template-areas:\s*\n\s*"supplier supplier freight"\s*\n\s*"date received notes"/);
+assert.match(css67,/parts-v49-bulk-filters[\s\S]*?145px/);
+assert.match(css67,/v102-smartphones-hero \.v102-page-actions[\s\S]*?repeat\(3,minmax\(0,1fr\)\)/);
 console.log('mobile-layout.test: OK');

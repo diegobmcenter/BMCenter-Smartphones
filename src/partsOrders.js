@@ -114,10 +114,10 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
     status:received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':part.status
    }
   });
-  let status=phone.status;
-  if(linkedWaiting&&!['Vendido','Descarte/Sucata'].includes(status))status='Aguardando peças';
-  else if(!linkedWaiting&&linkedReceived&&status==='Aguardando peças')status='Em reparo';
-  return{...phone,parts,status}
+  // Regra v10.4.67: pedidos/peças alteram somente o estado da peça e seus custos.
+  // O status operacional do APARELHO é sempre controlado pelo usuário e nunca pode
+  // voltar automaticamente para "Aguardando peças" ou "Em reparo".
+  return{...phone,parts,status:phone.status}
  })
 }
 
@@ -219,8 +219,39 @@ export function removePartsOrderLinks(phones=[],order={},remainingOrders=[]){
    parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
   }
   if(!changed)return phone;
-  const status=phone.status==='Aguardando peças'&&!waitingByPhone.has(String(phone.id))?'Em reparo':phone.status;
-  return{...phone,parts,status,lastActivityAt:stamp}
+  // Remover um pedido também não altera o status operacional do aparelho.
+  return{...phone,parts,status:phone.status,lastActivityAt:stamp}
+ })
+}
+
+
+/**
+ * Corrige somente a regressão histórica das versões anteriores em que o módulo de
+ * peças alterava silenciosamente o status do aparelho. A restauração só acontece
+ * quando o status atual é um dos estados automáticos antigos e existe no histórico
+ * um último status EXPLICITAMENTE escolhido pelo usuário diferente do atual.
+ */
+export function recoverLegacyPartOrderStatusMutations(phones=[]){
+ const automaticLegacyStatuses=new Set(['Aguardando peças','Em reparo']);
+ const patterns=[
+  /^Status alterado para\s+(.+)$/i,
+  /^Movido na operação para\s+(.+)$/i,
+ ];
+ return (Array.isArray(phones)?phones:[]).map(phone=>{
+  const current=String(phone?.status||'').trim();
+  if(!automaticLegacyStatuses.has(current))return phone;
+  const timeline=[...(Array.isArray(phone?.timeline)?phone.timeline:[])].sort((a,b)=>String(b?.date||'').localeCompare(String(a?.date||'')));
+  let explicit='';
+  for(const event of timeline){
+   const message=String(event?.message||'').trim();
+   for(const pattern of patterns){
+    const match=message.match(pattern);
+    if(match?.[1]){explicit=String(match[1]).trim();break}
+   }
+   if(explicit)break
+  }
+  if(!explicit||explicit===current)return phone;
+  return{...phone,status:explicit,lastActivityAt:phone.lastActivityAt||new Date().toISOString()}
  })
 }
 
