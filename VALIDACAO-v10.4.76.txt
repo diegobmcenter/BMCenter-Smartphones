@@ -1,0 +1,27 @@
+VALIDACAO v10.4.76
+
+TESTES EXECUTADOS NESTE PACOTE
+- parts-orders.test: OK
+- parts-central-classification.test: OK
+- sold-publication-lifecycle.test: OK
+- bulk-modal-scroll.test: OK
+- modal-scroll-audit.test: OK
+- concurrent-sync.test: OK
+- backup-audit.test: OK
+- source-contracts.test: OK
+- mobile-layout.test: OK
+- ads-runtime-contract.test: OK
+- phone-detail-layout.test: OK
+
+VALIDACAO DA CORRECAO VISUAL
+1. v10476.css e carregado depois de todas as folhas anteriores;
+2. .phone-detail-progress volta a height:auto;
+3. overflow dos cartoes de etapas fica visivel;
+4. desktop usa 8 colunas, tela intermediaria 4 e mobile 2;
+5. modalbody da ficha possui rolagem vertical propria;
+6. rodape da ficha deixa de usar sticky e nao sobrepoe Identificacao/Situacao.
+
+BUILD
+- A tentativa de npm install neste ambiente expirou por indisponibilidade do registro npm.
+- Por isso o Vite nao ficou instalado aqui e o build local nao pode ser executado neste runtime.
+- PUBLICAR-ATUALIZACAO.bat continua protegido: instala dependencias, executa toda a suite acima e somente publica se npm run build for aprovado.

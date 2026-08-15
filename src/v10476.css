@@ -1,0 +1,68 @@
+/* BMCenter v10.4.76 — corrige a ficha detalhada do aparelho em telas de menor altura.
+   Regressão encontrada: v10.css transformava .phone-detail-progress em uma barra de 7px
+   com overflow:hidden, cortando os cartões de etapas criados posteriormente. */
+
+/* Etapas da ficha: voltam a ser cartões completos, nunca uma barra recortada. */
+.v102-app .back>.modal.phone-detail-modal .phone-detail-progress{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  gap:6px!important;
+  margin:0 0 13px!important;
+  padding:0!important;
+  overflow:visible!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.v102-app .back>.modal.phone-detail-modal .phone-detail-progress>div{
+  min-width:0!important;
+  min-height:48px!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+.v102-app .back>.modal.phone-detail-modal .phone-detail-progress>div>i{
+  display:grid!important;
+  width:23px!important;
+  height:23px!important;
+  min-width:23px!important;
+  min-height:23px!important;
+  place-items:center!important;
+}
+.v102-app .back>.modal.phone-detail-modal .phone-detail-progress>div>span{
+  display:block!important;
+  max-width:100%!important;
+  text-align:center!important;
+  white-space:normal!important;
+  line-height:1.2!important;
+}
+
+/* O conteúdo da ficha é a única área que rola dentro da janela. */
+.v102-app .back>.modal.phone-detail-modal>.modalbody{
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable!important;
+}
+
+/* Nesta ficha o rodapé não deve cobrir Identificação/Situação.
+   Ele permanece no fim do conteúdo e é alcançado pela rolagem interna do modal. */
+.v102-app .back>.modal.phone-detail-modal>.modalbody>.actions{
+  position:static!important;
+  bottom:auto!important;
+  margin:18px -16px -16px!important;
+  flex:0 0 auto!important;
+}
+
+@media(max-width:1150px){
+  .v102-app .back>.modal.phone-detail-modal .phone-detail-progress{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:720px){
+  .v102-app .back>.modal.phone-detail-modal .phone-detail-progress{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .v102-app .back>.modal.phone-detail-modal>.modalbody>.actions{
+    margin:16px -14px -14px!important;
+  }
+}
