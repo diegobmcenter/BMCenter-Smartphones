@@ -1,0 +1,390 @@
+/* BMCenter v10.4.66 — revisão mobile global: densidade, navegação e aproveitamento de espaço */
+
+/* Conforto visual deve cobrir inclusive modais/overlays fora de fluxos comuns de stacking. */
+body:has(.v102-app)::before,
+body:has(.v102-app)::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:2147483000;
+  opacity:0;
+  transition:opacity .16s ease,background .16s ease;
+}
+body.bmcenter-dimmed:has(.v102-app)::after{
+  background:#000;
+  opacity:var(--bmcenter-screen-dim,0);
+}
+body.bmcenter-reading-mode:has(.v102-app)::before{
+  background:rgba(244,164,64,.08);
+  opacity:1;
+}
+body.bmcenter-reading-mode:has(.v102-app.theme-dark)::before{background:rgba(255,182,86,.07)}
+/* Evita dupla aplicação dos overlays antigos. */
+.v102-app .v102-reading-warmth,.v102-app .v102-screen-dimmer{display:none!important}
+
+@media(max-width:720px){
+  /* ---------- BASE GLOBAL MOBILE ---------- */
+  html,body{overflow-x:hidden!important}
+  .v102-app,.v102-stage,.v102-main,.v102-route{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+  .v102-stage{grid-template-rows:48px minmax(0,1fr)!important}
+  .v102-topbar{
+    height:48px!important;min-height:48px!important;
+    padding:5px 8px!important;
+    grid-template-columns:minmax(0,1fr) 32px auto!important;
+    grid-template-rows:38px!important;
+    gap:5px!important;
+  }
+  .v102-top-left{grid-column:1!important;grid-row:1!important;gap:5px!important;min-width:0!important}
+  .v102-mobile-menu{width:34px!important;height:34px!important;min-width:34px!important}
+  .v102-crumb{display:flex!important;min-width:0!important;gap:4px!important}
+  .v102-crumb span{display:none!important}
+  .v102-crumb b{max-width:120px!important;font-size:11px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .v102-global-search{
+    grid-column:2!important;grid-row:1!important;
+    width:32px!important;height:32px!important;min-height:32px!important;
+    padding:0!important;font-size:0!important;display:grid!important;place-items:center!important;
+    border-radius:9px!important;
+  }
+  .v102-global-search:before{display:block!important;content:'⌕'!important;font-size:17px!important;line-height:1!important}
+  .v102-global-search kbd{display:none!important}
+  .v102-top-right{grid-column:3!important;grid-row:1!important;gap:3px!important}
+  .v102-theme-icon,.v102-comfort-button,.v102-bell{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
+  .font-scale-controls.top-font-scale{height:32px!important;min-height:32px!important;padding:0!important}
+  .font-scale-controls.top-font-scale button{width:27px!important;min-width:27px!important;height:30px!important;min-height:30px!important;padding:0!important}
+  .font-scale-controls.top-font-scale span,.v102-version,.v102-avatar{display:none!important}
+
+  .v102-page,.v102-publications,.v102-settings-page,.v102-legacy-page,
+  .v102-route .modern-page,.v102-route .facebook-profile-page,.v102-route .profile-analytics-page,.v102-route .v10-reports-page{
+    padding:10px 9px 22px!important;
+  }
+  .v102-route button{min-height:32px!important;padding:5px 8px!important;font-size:10px!important;border-radius:8px!important}
+  .v102-route input,.v102-route select,.v102-route textarea{min-height:34px!important;font-size:11px!important;border-radius:8px!important}
+  .v102-route textarea{min-height:54px!important}
+  .v102-route .panel{padding:9px!important;margin-bottom:8px!important;border-radius:11px!important}
+  .v102-route .title{margin-bottom:10px!important;gap:7px!important}
+  .v102-route .title h1{font-size:20px!important;line-height:1.08!important}
+  .v102-route .title p{margin-top:3px!important;font-size:9px!important;line-height:1.35!important}
+  .v102-hero{margin-bottom:9px!important;gap:8px!important}
+  .v102-hero h1{font-size:22px!important}
+  .v102-hero p{font-size:9px!important;margin-top:3px!important}
+
+  /* ---------- SMARTPHONES ---------- */
+  .v102-smartphones-hero{display:grid!important;gap:7px!important}
+  .v102-smartphones-hero>div:first-child>span{margin-bottom:2px!important;font-size:8px!important}
+  .v102-smartphones-hero .v102-title-line{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;flex-wrap:nowrap!important}
+  .v102-smartphones-hero .v102-title-line h1{font-size:22px!important;white-space:nowrap!important}
+  .v102-receivable{width:auto!important;max-width:165px!important;padding:4px 7px!important;gap:5px!important;border-radius:8px!important}
+  .v102-receivable svg{width:13px!important;height:13px!important}
+  .v102-receivable small{font-size:6.3px!important;line-height:1.15!important}
+  .v102-receivable strong{font-size:10.5px!important;line-height:1.1!important}
+  .v102-smartphones-hero>div:first-child>p{font-size:8px!important;margin:2px 0 0!important}
+  .v102-page-actions{
+    width:100%!important;display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;
+    gap:5px!important;margin:0!important;padding-bottom:2px!important;scrollbar-width:none!important;
+  }
+  .v102-page-actions::-webkit-scrollbar{display:none!important}
+  .v102-page-actions button,.v102-page-actions .primary{
+    flex:0 0 auto!important;width:auto!important;min-width:0!important;height:31px!important;min-height:31px!important;
+    padding:0 8px!important;font-size:8.5px!important;grid-column:auto!important;white-space:nowrap!important;
+  }
+  .v102-page-actions button svg{width:13px!important;height:13px!important}
+
+  .v10313-main-toolbar{
+    display:grid!important;grid-template-columns:minmax(0,1fr) 92px 92px!important;gap:5px!important;margin-bottom:7px!important;
+  }
+  .v10313-main-toolbar>label:first-child{grid-column:1/-1!important}
+  .v10313-main-toolbar>label:first-child,.v10313-main-toolbar>select,.v10313-main-toolbar>button{height:34px!important;min-height:34px!important}
+  .v10313-main-toolbar>select{grid-column:auto!important;min-width:0!important;padding:0 24px 0 8px!important;font-size:9px!important}
+  .v10313-main-toolbar>button{width:auto!important;min-width:0!important;padding:0 7px!important;font-size:9px!important;justify-content:center!important}
+  .v10313-main-toolbar>button:last-child{grid-column:auto!important}
+  .v10313-main-toolbar>button:nth-last-child(-n+2){min-width:0!important}
+  .v1041-status-strip,.v10313-extra-filters{padding:8px!important;margin-bottom:7px!important;border-radius:10px!important}
+  .v1041-status-chips{gap:4px!important}
+  .v1041-status-chips button{min-height:28px!important;padding:0 7px!important;font-size:8px!important}
+  .v10313-filter-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+
+  .v102-device-list{gap:6px!important}
+  .v102-device-row{
+    display:grid!important;
+    grid-template-columns:30px minmax(0,1fr) 118px!important;
+    grid-template-areas:
+      "star name status"
+      ". money money"
+      ". actions actions"!important;
+    gap:5px 7px!important;
+    min-height:0!important;padding:7px 8px!important;border-radius:11px!important;overflow:visible!important;
+  }
+  .v102-star{grid-area:star!important;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;align-self:start!important}
+  .v102-device-name{grid-area:name!important;min-width:0!important;padding-top:1px!important}
+  .v102-device-name h3{font-size:12.5px!important;line-height:1.15!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .v102-device-name p{margin:2px 0 0!important;font-size:7.7px!important;line-height:1.25!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+  .v102-device-name>small{font-size:6.7px!important;margin-top:1px!important}
+  .v102-status{grid-area:status!important;align-self:start!important;min-width:0!important}
+  .v102-status select{width:100%!important;height:30px!important;min-height:30px!important;padding:0 24px 0 7px!important;font-size:8.8px!important;border-radius:8px!important}
+  .v102-status small{display:none!important}
+  .v102-money,.v102-money-editable{grid-area:money!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;min-width:0!important;width:100%!important}
+  .v102-inline-money{display:block!important;min-height:39px!important;height:39px!important;padding:4px 5px!important;border:1px solid var(--line)!important;background:var(--surface2)!important;border-radius:8px!important}
+  .v102-inline-money>span{margin:0 0 1px!important;font-size:6.3px!important;line-height:1.1!important}
+  .v102-inline-money>div{gap:1px!important}
+  .v102-inline-money small{font-size:6.5px!important}
+  .v102-inline-money input{height:18px!important;min-height:18px!important;padding:0!important;font-size:8.8px!important;line-height:1!important}
+  .v102-row-actions{grid-area:actions!important;display:flex!important;justify-content:flex-end!important;gap:4px!important;min-height:0!important}
+  .v102-row-actions>button,.v102-row-actions .v102-menu-anchor>button{width:30px!important;height:29px!important;min-width:30px!important;min-height:29px!important;padding:0!important}
+  .v102-row-actions svg{width:14px!important;height:14px!important}
+
+  /* ---------- HOJE ---------- */
+  .v102-route-today .v102-hero{display:flex!important;align-items:center!important;justify-content:space-between!important}
+  .v102-route-today .v102-hero h1{font-size:20px!important}
+  .v102-total-pill{min-width:54px!important;padding:5px 7px!important;border-radius:9px!important}
+  .v102-total-pill strong{font-size:14px!important}.v102-total-pill span{font-size:6.5px!important}
+  .v102-today-grid{grid-template-columns:1fr!important;gap:7px!important}
+  .v102-stage-card>header{grid-template-columns:30px minmax(0,1fr) 28px!important;padding:7px 8px!important;gap:7px!important}
+  .v102-stage-card>header i{width:29px!important;height:29px!important}.v102-stage-card>header i svg{width:15px!important}
+  .v102-stage-card>header small{font-size:6.5px!important}.v102-stage-card>header h2{font-size:12px!important}
+  .v102-stage-card>header>b{width:25px!important;height:25px!important;font-size:9px!important}
+  .v102-stage-items{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:3px!important;padding:5px!important}
+  .v102-stage-items button{display:grid!important;grid-template-columns:26px minmax(0,1fr)!important;gap:5px!important;min-height:42px!important;padding:5px!important;text-align:left!important}
+  .v102-stage-items button>span{width:25px!important;height:25px!important}.v102-stage-items button b{font-size:8.5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.v102-stage-items button small{font-size:7px!important}
+  .v102-alert-strip{padding:8px!important;margin-top:7px!important}.v102-alert-items{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+
+  /* ---------- MODAL DE APARELHO ---------- */
+  .v102-app .back{padding:0!important;align-items:stretch!important;overflow:hidden!important}
+  .v102-app .phone-editor-v57,.v102-app .batch-phone-modal{
+    width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;
+    border-radius:0!important;border-left:0!important;border-right:0!important;
+  }
+  .v102-app .phone-editor-v57 .modalhead,.v102-app .batch-phone-modal .modalhead{min-height:50px!important;height:50px!important;padding:6px 9px!important}
+  .v102-app .phone-editor-v57 .modalhead h2,.v102-app .batch-phone-modal .modalhead h2{font-size:15px!important}
+  .v102-app .phone-editor-v57 .modalbody,.v102-app .batch-phone-modal .modalbody{padding:8px 8px calc(66px + env(safe-area-inset-bottom))!important;overflow-y:auto!important;overflow-x:hidden!important}
+
+  .v102-app .phone-editor-v57 .v57-card{border-radius:11px!important}
+  .v102-app .phone-editor-v57 .v57-card-head{height:34px!important;min-height:34px!important;padding:0 10px!important}
+  .v102-app .phone-editor-v57 .v57-card-title{gap:6px!important}.v102-app .phone-editor-v57 .v57-card-title svg{width:15px!important;height:15px!important}.v102-app .phone-editor-v57 .v57-card-title b{font-size:12px!important}
+  .v102-app .phone-editor-v57 .v57-outline-action{height:29px!important;min-height:29px!important;padding:0 8px!important;font-size:9.5px!important}
+
+  .v102-app .phone-editor-v57 .v57-device-grid{
+    display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:5px 6px!important;padding:7px 9px!important;
+  }
+  .v102-app .phone-editor-v57 .v57-device-grid>label{grid-column:span 3!important;min-width:0!important;margin:0!important;font-size:9.5px!important;gap:3px!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(3),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(4),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(5),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(6),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(7),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(8){grid-column:span 2!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(11){grid-column:1/-1!important}
+  .v102-app .phone-editor-v57 .v57-device-grid input,.v102-app .phone-editor-v57 .v57-device-grid select{height:34px!important;min-height:34px!important;padding-top:0!important;padding-bottom:0!important;font-size:10.5px!important}
+
+  .v102-app .phone-editor-v57 .v57-purchase-grid{
+    display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:5px 6px!important;padding:7px 9px!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{grid-column:span 3!important;min-width:0!important;margin:0!important;font-size:9.5px!important;gap:3px!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(4){grid-column:1/-1!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(5),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(6),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(7){grid-column:span 2!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid input,.v102-app .phone-editor-v57 .v57-purchase-grid select,.v102-app .phone-editor-v57 .field-affix-inline,.v102-app .phone-editor-v57 .field-affix-inline input{height:34px!important;min-height:34px!important;font-size:10.5px!important}
+  .v102-app .phone-editor-v57 .field-affix-inline .field-prefix{left:8px!important;font-size:8px!important}.v102-app .phone-editor-v57 .field-affix-inline.has-prefix input{padding-left:31px!important}
+  .v102-app .phone-editor-v57 .field-affix-inline .field-suffix{right:8px!important;font-size:8px!important}.v102-app .phone-editor-v57 .field-affix-inline.has-suffix input{padding-right:30px!important}
+  .v102-app .phone-editor-v57 .v57-notes summary{min-height:28px!important;font-size:9px!important}.v102-app .phone-editor-v57 .v57-notes-grid{grid-template-columns:1fr 1fr!important;gap:6px!important}.v102-app .phone-editor-v57 .v57-notes-grid textarea{min-height:52px!important}
+
+  .v102-app .phone-editor-v57 .v57-middle-grid,.v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded{gap:7px!important}
+  .v102-app .phone-editor-v57 .v57-middle-grid>.v57-card,.v102-app .phone-editor-v57 .v57-middle-grid.parts-expanded>.v57-card{grid-template-rows:34px auto!important}
+  .v102-app .phone-editor-v57 .v57-parts-table{max-height:none!important;overflow:visible!important}
+  .v102-app .phone-editor-v57 .v57-part-row{grid-template-columns:minmax(0,1fr) auto 30px!important;min-height:46px!important;padding:6px 8px!important;gap:3px 6px!important}
+  .v102-app .phone-editor-v57 .v57-part-name b{font-size:10.5px!important}.v102-app .phone-editor-v57 .v57-part-name small{font-size:8px!important}
+  .v102-app .phone-editor-v57 .v57-part-status{height:21px!important;min-height:21px!important;max-width:115px!important;padding:0 6px!important;font-size:8px!important}
+  .v102-app .phone-editor-v57 .v57-part-row>.v57-icon-action{width:27px!important;min-width:27px!important;height:27px!important;min-height:27px!important}
+  .v102-app .phone-editor-v57 .v57-part-row>b,.v102-app .phone-editor-v57 .v57-part-row>span:not(.v57-part-status){font-size:8px!important}
+  .v102-app .phone-editor-v57 .v57-history-list{padding:3px 8px 6px!important}
+  .v102-app .phone-editor-v57 .v57-history-row{grid-template-columns:9px 82px minmax(0,1fr)!important;min-height:46px!important;padding:5px 0!important;gap:2px 6px!important}
+  .v102-app .phone-editor-v57 .v57-history-row>time{font-size:7.8px!important}.v102-app .phone-editor-v57 .v57-history-badge{height:19px!important;min-height:19px!important;font-size:7.5px!important}.v102-app .phone-editor-v57 .v57-history-row>div b{font-size:9px!important}.v102-app .phone-editor-v57 .v57-history-row>div small{font-size:7.5px!important}
+  .v102-app .phone-editor-v57 .v57-tags-line{padding:6px 8px!important;gap:4px!important}.v102-app .phone-editor-v57 .v57-tag,.v102-app .phone-editor-v57 .v59-new-tag{min-height:25px!important;height:25px!important;font-size:8px!important}
+  .v102-app .phone-editor-v57 .v57-bottom-row{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;padding-bottom:env(safe-area-inset-bottom)!important}
+  .v102-app .phone-editor-v57 .v57-footer-meta{display:flex!important;gap:10px!important;overflow-x:auto!important}.v102-app .phone-editor-v57 .v57-footer-meta small{font-size:6.5px!important}.v102-app .phone-editor-v57 .v57-footer-meta b{font-size:7.5px!important;white-space:nowrap!important}
+  .v102-app .phone-editor-v57 .v57-actions{display:flex!important;position:sticky!important;bottom:0!important;margin:0!important;padding:6px 0!important;gap:5px!important;background:var(--v59-bg)!important;z-index:10!important}
+  .v102-app .phone-editor-v57 .v57-actions button{flex:0 1 auto!important;width:auto!important;min-height:34px!important;height:34px!important;padding:0 9px!important;font-size:9px!important}
+
+  /* ---------- CADASTRO EM MASSA DE APARELHOS ---------- */
+  .v102-app .batch-phone-modal .batch-shared-section{padding:8px!important;gap:7px!important;border-radius:10px!important}
+  .v102-app .batch-phone-modal .batch-shared-section>header{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important}
+  .v102-app .batch-phone-modal .batch-shared-section>header h3{font-size:11px!important}.v102-app .batch-phone-modal .batch-shared-section>header p{font-size:7.5px!important}.v102-app .batch-phone-modal .batch-shared-section>header span{margin-left:auto!important;font-size:8px!important;padding:3px 6px!important}
+  .v102-app .batch-phone-modal .batch-shared-section>.grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px 6px!important;margin:0!important}
+  .v102-app .batch-phone-modal .batch-shared-section>.grid>label{width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;font-size:9px!important;gap:3px!important}
+  .v102-app .batch-phone-modal .batch-shared-section>.grid input,.v102-app .batch-phone-modal .batch-shared-section>.grid select{height:34px!important;min-height:34px!important;font-size:10px!important}
+  .v102-app .batch-phone-modal .batch-total-purchase{grid-template-columns:1fr 1fr!important;gap:5px!important;margin:3px 0!important;padding:6px!important}
+  .v102-app .batch-phone-modal .batch-split-toggle{grid-column:1/-1!important;min-height:30px!important}.v102-app .batch-phone-modal .batch-split-toggle b{font-size:8.5px!important}.v102-app .batch-phone-modal .batch-split-toggle small{font-size:6.5px!important}
+  .v102-app .batch-phone-modal .batch-split-result{min-height:34px!important;padding:4px 6px!important}.v102-app .batch-phone-modal .batch-split-result small{font-size:6.5px!important}.v102-app .batch-phone-modal .batch-split-result strong{font-size:7.5px!important}
+  .v102-app .batch-phone-modal .batch-shared-section>label{font-size:9px!important;gap:3px!important;margin:0!important}.v102-app .batch-phone-modal .batch-shared-section>label textarea{min-height:46px!important;height:46px!important}
+  .v102-app .batch-phone-list{gap:6px!important}.v102-app .batch-phone-list-head{display:flex!important;flex-direction:row!important;align-items:center!important}.v102-app .batch-phone-list-head h3{font-size:11px!important}.v102-app .batch-phone-list-head p{font-size:7.5px!important}
+  .v102-app .batch-phone-row{padding:7px!important;border-radius:10px!important}
+  .v102-app .batch-phone-row>header{min-height:28px!important;padding:0!important}.v102-app .batch-phone-row>header b{font-size:10px!important}.v102-app .batch-phone-row>header button{min-height:27px!important;height:27px!important;font-size:8px!important}
+  .v102-app .batch-phone-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px 6px!important}
+  .v102-app .batch-phone-fields>label:nth-child(n){width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;font-size:9px!important;gap:3px!important}
+  .v102-app .batch-phone-fields>label.batch-phone-notes{grid-column:1/-1!important}.v102-app .batch-phone-fields input,.v102-app .batch-phone-fields select{height:33px!important;min-height:33px!important;font-size:10px!important}.v102-app .batch-phone-fields textarea{min-height:45px!important;height:45px!important}
+  .v102-app .batch-phone-modal .actions{position:sticky!important;bottom:0!important;margin:8px -8px calc(-66px - env(safe-area-inset-bottom))!important;padding:6px 8px calc(6px + env(safe-area-inset-bottom))!important;display:grid!important;grid-template-columns:auto 1fr 1fr!important;gap:5px!important;background:var(--surface)!important;z-index:20!important}
+  .v102-app .batch-phone-modal .actions button{min-height:34px!important;height:auto!important;padding:6px 8px!important;font-size:8.5px!important;white-space:normal!important}
+
+  /* ---------- PEÇAS E ACESSÓRIOS / MENU ---------- */
+  .parts-command-page.parts-v10447{padding:9px!important}
+  .parts-v47-head{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:7px!important;padding:10px!important;border-radius:11px!important}
+  .parts-v47-head>div:first-child{grid-column:1!important}.parts-v47-head>div:first-child span{font-size:7px!important}.parts-v47-head h1{font-size:20px!important;line-height:1.05!important}.parts-v47-head p{font-size:8px!important;line-height:1.3!important;margin-top:2px!important}
+  .parts-v47-summary{grid-column:2!important;display:flex!important;gap:4px!important;align-self:start!important;flex-wrap:wrap!important;justify-content:flex-end!important}.parts-v47-summary>span{padding:4px 6px!important;font-size:7px!important;border-radius:7px!important}.parts-v47-summary b{font-size:9px!important}
+  .parts-v47-head-actions{grid-column:1/-1!important;display:flex!important;gap:4px!important;overflow-x:auto!important;flex-wrap:nowrap!important}.parts-v47-head-actions button{flex:0 0 auto!important;min-height:31px!important;height:31px!important;padding:0 7px!important;font-size:8px!important}.parts-v47-head-actions .icon-only{width:31px!important;min-width:31px!important}
+  .parts-v48-rule-banner{padding:7px 8px!important;gap:6px!important;margin:6px 0!important}.parts-v48-rule-banner svg{width:13px!important}.parts-v48-rule-banner b{font-size:9px!important}.parts-v48-rule-banner small{font-size:7px!important;line-height:1.25!important}
+  .parts-v47-workspace{padding:7px!important;border-radius:11px!important}.parts-v47-tabs{gap:2px!important}.parts-v47-tabs button{min-height:30px!important;height:30px!important;padding:0 6px!important;font-size:8px!important}.parts-v47-tabs button svg{width:12px!important}.parts-v47-tabs button b{width:16px!important;min-width:16px!important;height:16px!important;font-size:7px!important}
+    .parts-v47-list,.parts-v47-quotes-view{gap:5px!important}
+  .parts-v47-row{display:grid!important;grid-template-columns:26px minmax(0,1fr)!important;gap:4px 7px!important;min-height:0!important;padding:7px!important;border-radius:9px!important}
+  .parts-v47-row-icon{width:25px!important;height:25px!important}.parts-v47-identity b{font-size:10px!important}.parts-v47-identity small{font-size:7.5px!important}
+  .parts-v47-price{grid-column:2!important;display:flex!important;align-items:center!important;gap:6px!important;min-width:0!important}.parts-v47-price small,.parts-v47-price span{font-size:7px!important}.parts-v47-price b{font-size:9px!important}
+  .parts-v47-actions{grid-column:1/-1!important;display:flex!important;justify-content:flex-end!important;gap:4px!important;flex-wrap:nowrap!important}.parts-v47-actions button{min-height:30px!important;height:30px!important;padding:0 7px!important;font-size:8px!important;white-space:nowrap!important}.parts-v47-actions .icon-only{width:30px!important;min-width:30px!important;padding:0!important}
+  .parts-v48-order-card .parts-v50-order-summary{padding:7px!important;gap:7px!important}.parts-v48-order-title h3{font-size:10px!important}.parts-v48-order-title p{font-size:7px!important}.parts-v48-order-total strong{font-size:10px!important}.parts-v50-expand-button{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important}
+
+  /* ---------- PEDIDO EM MASSA DE PEÇAS ---------- */
+  .parts-v47-backdrop{padding:0!important;align-items:stretch!important;justify-content:stretch!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog{width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border-radius:0!important;border:0!important;grid-template-rows:auto auto minmax(0,1fr) auto!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog>header{min-height:52px!important;padding:7px 9px!important;gap:6px!important}.parts-v62-bulk-dialog>header h2{font-size:15px!important;line-height:1.15!important}.parts-v62-bulk-dialog>header span{font-size:7px!important}.parts-v62-bulk-dialog>header p{display:none!important}.parts-v62-bulk-dialog>header .icon-only{width:32px!important;height:32px!important}
+  .parts-v62-bulk-dialog .parts-v61-bulk-batches{padding:6px 8px!important;gap:5px!important}.parts-v62-bulk-dialog .parts-v61-bulk-batches>header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:6px!important}.parts-v62-bulk-dialog .parts-v61-bulk-batches>header b{font-size:9px!important}.parts-v62-bulk-dialog .parts-v61-bulk-batches>header small{font-size:6.5px!important}.parts-v62-bulk-dialog .parts-v61-stage-button{width:auto!important;min-height:30px!important;height:30px!important;padding:0 7px!important;font-size:7.5px!important;white-space:nowrap!important}
+  .parts-v62-bulk-dialog .parts-v61-batch-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;max-height:84px!important;overflow:auto!important}.parts-v62-bulk-dialog .parts-v61-batch-list>article{min-height:37px!important;padding:4px 5px!important;gap:4px!important}.parts-v62-bulk-dialog .parts-v61-batch-list>article>div b{font-size:7.5px!important}.parts-v62-bulk-dialog .parts-v61-batch-list>article>div small{font-size:5.8px!important}
+  .parts-v62-bulk-dialog .parts-v50-bulk-main{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr)!important;min-height:0!important;overflow:auto!important}
+  .parts-v62-bulk-dialog .parts-v50-bulk-left{display:block!important;overflow:visible!important;border-right:0!important;border-bottom:1px solid var(--line)!important;padding:0!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;grid-template-areas:none!important;gap:5px!important;padding:7px 8px!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta>label{font-size:7.5px!important;gap:2px!important;min-width:0!important;margin:0!important}
+  .parts-v62-bulk-dialog .parts-v62-meta-supplier{grid-column:span 4!important;grid-area:auto!important}.parts-v62-bulk-dialog .parts-v62-meta-freight{grid-column:span 2!important;grid-area:auto!important}.parts-v62-bulk-dialog .parts-v62-meta-date{grid-column:span 3!important;grid-area:auto!important;width:auto!important}.parts-v62-bulk-dialog .parts-v62-meta-received{grid-column:span 3!important;grid-area:auto!important}.parts-v62-bulk-dialog .parts-v62-meta-notes{grid-column:1/-1!important;grid-area:auto!important}
+  .parts-v62-bulk-dialog .parts-v62-bulk-meta input,.parts-v62-bulk-dialog .parts-v62-bulk-meta select,.parts-v62-bulk-dialog .parts-v62-bulk-meta .money-prefix{height:32px!important;min-height:32px!important;font-size:9px!important}.parts-v62-bulk-dialog .parts-v62-bulk-meta .money-prefix input{height:30px!important;min-height:30px!important}.parts-v62-bulk-dialog .parts-v62-meta-received{min-height:32px!important;height:32px!important;padding:0 7px!important}.parts-v62-bulk-dialog .parts-v62-meta-received span{font-size:8px!important}
+  .parts-v62-bulk-dialog .parts-v50-products{padding:6px 8px!important;max-height:none!important;overflow:visible!important}.parts-v62-bulk-dialog .parts-v50-products>header{min-height:30px!important}.parts-v62-bulk-dialog .parts-v50-products>header b{font-size:9px!important}.parts-v62-bulk-dialog .parts-v50-products>header small{font-size:6.5px!important}.parts-v62-bulk-dialog .parts-v50-products>header button{height:27px!important;min-height:27px!important;font-size:7.5px!important}
+  .parts-v62-bulk-dialog .parts-v50-products article{display:grid!important;grid-template-columns:minmax(0,1fr) 122px!important;grid-template-areas:"select actions" "fields fields"!important;gap:4px!important;padding:5px!important;min-height:0!important}.parts-v62-bulk-dialog .parts-v50-product-select{grid-area:select!important}.parts-v62-bulk-dialog .parts-v50-product-fields{grid-area:fields!important;grid-template-columns:minmax(0,1fr) 105px!important;gap:5px!important}.parts-v62-bulk-dialog .parts-v50-product-fields input,.parts-v62-bulk-dialog .parts-v50-product-fields .money-prefix{height:30px!important;min-height:30px!important}.parts-v62-bulk-dialog .parts-v50-product-actions{grid-area:actions!important;align-self:center!important}.parts-v62-bulk-dialog .parts-v50-product-actions button{height:27px!important;min-height:27px!important;font-size:7px!important;padding:0 5px!important}
+  .parts-v62-bulk-dialog .parts-v50-bulk-select{min-height:360px!important;display:grid!important;grid-template-rows:auto auto minmax(0,1fr)!important}.parts-v62-bulk-dialog .parts-v50-bulk-select>header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:5px!important;padding:6px 8px!important;min-height:38px!important}.parts-v62-bulk-dialog .parts-v50-bulk-select>header b{font-size:9px!important}.parts-v62-bulk-dialog .parts-v50-bulk-select>header small{font-size:6.5px!important}.parts-v62-bulk-dialog .parts-v50-bulk-select>header>div:last-child{display:flex!important;width:auto!important;gap:4px!important}.parts-v62-bulk-dialog .parts-v50-bulk-select>header button{height:27px!important;min-height:27px!important;padding:0 6px!important;font-size:7px!important;flex:0 0 auto!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-filters{display:grid!important;grid-template-columns:minmax(0,1fr) 118px!important;gap:5px!important;padding:5px 8px!important}.parts-v62-bulk-dialog .parts-v49-bulk-filters>label,.parts-v62-bulk-dialog .parts-v49-bulk-filters>select{height:32px!important;min-height:32px!important}.parts-v62-bulk-dialog .parts-v49-bulk-filters input,.parts-v62-bulk-dialog .parts-v49-bulk-filters select{height:30px!important;min-height:30px!important;font-size:8.5px!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;padding:5px 8px 8px!important;align-content:start!important;overflow:auto!important}.parts-v62-bulk-dialog .parts-v49-bulk-list>article,.parts-v62-bulk-dialog .parts-v49-bulk-list>article.selected{height:auto!important;min-height:48px!important;padding:5px!important;border-radius:8px!important}.parts-v62-bulk-dialog .parts-v64-bulk-card-line{grid-template-columns:minmax(0,1fr) 76px!important;gap:4px!important}.parts-v62-bulk-dialog .parts-v49-bulk-check{gap:4px!important}.parts-v62-bulk-dialog .parts-v49-bulk-check>input{width:14px!important;height:14px!important;min-height:14px!important}.parts-v62-bulk-dialog .parts-v49-bulk-check b{font-size:8px!important;line-height:1.1!important}.parts-v62-bulk-dialog .parts-v49-bulk-check small{font-size:6px!important;line-height:1.15!important}.parts-v62-bulk-dialog .parts-v49-bulk-row-price,.parts-v62-bulk-dialog .parts-v65-bulk-total-price{width:76px!important;min-width:76px!important;max-width:76px!important;height:27px!important;min-height:27px!important}.parts-v62-bulk-dialog .parts-v49-bulk-row-price input{height:25px!important;min-height:25px!important;font-size:8px!important}
+  .parts-v62-bulk-dialog>footer{position:sticky!important;bottom:0!important;z-index:15!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:5px!important;padding:6px 8px calc(6px + env(safe-area-inset-bottom))!important;background:var(--surface)!important}.parts-v62-bulk-dialog>footer span{font-size:6.5px!important}.parts-v62-bulk-dialog>footer b{font-size:7.5px!important}.parts-v62-bulk-dialog>footer>div:last-child{display:flex!important;gap:4px!important}.parts-v62-bulk-dialog>footer button{min-height:30px!important;height:30px!important;padding:0 7px!important;font-size:7.5px!important;white-space:nowrap!important}
+}
+
+@media(max-width:390px){
+  .v102-crumb b{max-width:96px!important}
+  .v102-theme-icon{display:none!important}
+  .v10313-main-toolbar{grid-template-columns:1fr 1fr!important}.v10313-main-toolbar>label:first-child{grid-column:1/-1!important}.v10313-main-toolbar>button:last-child{grid-column:1/-1!important}
+  .v102-device-row{grid-template-columns:29px minmax(0,1fr) 108px!important;padding:6px!important}
+  .v102-stage-items{grid-template-columns:1fr 1fr!important}
+  .parts-v62-bulk-dialog .parts-v61-batch-list{grid-template-columns:1fr!important}
+}
+
+/* Correções finais da auditoria mobile v10.4.66 */
+@media(max-width:720px){
+  /* Peças: o nome real da barra é parts-v50-filters (sem "bar"). */
+  .parts-v50-filters{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:5px!important;
+    padding:5px 0!important;
+  }
+  .parts-v50-filters>.parts-v47-search{grid-column:1/-1!important;min-width:0!important}
+  .parts-v50-filters>select{width:100%!important;min-width:0!important;height:32px!important;min-height:32px!important;padding:0 24px 0 7px!important;font-size:8.5px!important}
+  .parts-v50-filters>.parts-v50-clear-filters{width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important;padding:0!important}
+  .parts-v47-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;overflow:visible!important}
+  .parts-v47-tabs button{min-width:0!important;width:100%!important;padding:0 3px!important;justify-content:center!important;gap:3px!important;white-space:nowrap!important}
+  .parts-v47-tabs button svg{width:11px!important;height:11px!important}.parts-v47-tabs button b{width:15px!important;min-width:15px!important;height:15px!important}
+  .parts-v48-rule-banner{min-height:0!important}
+
+  /* Listas e cards comuns do sistema: densidade consistente. */
+  .v102-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;margin-bottom:7px!important}
+  .v102-kpi-grid article{min-height:58px!important;padding:7px!important;grid-template-columns:29px minmax(0,1fr)!important;gap:7px!important;border-radius:9px!important}
+  .v102-kpi-icon{width:28px!important;height:28px!important;border-radius:8px!important}.v102-kpi-icon svg{width:14px!important}.v102-kpi-grid small{font-size:7px!important}.v102-kpi-grid strong{font-size:12px!important;margin-top:1px!important}.v102-kpi-grid em{font-size:6.5px!important;margin-top:2px!important}
+  .v102-dashboard-grid{grid-template-columns:1fr!important;gap:6px!important}.v102-dashboard-grid>article{padding:9px!important;border-radius:10px!important}.v102-dashboard-grid article>header{margin-bottom:7px!important}.v102-dashboard-grid h2{font-size:11px!important}.v102-flow-row{margin-top:7px!important}.v102-flow-row span,.v102-flow-row b{font-size:8px!important}
+  .v102-activity-list article{min-height:0!important;padding:7px!important;gap:6px!important}.v102-activity-list article>*{min-width:0!important}
+  .v102-batch-command,.v102-activity-toolbar,.v102-toolbar{gap:5px!important;margin-bottom:7px!important}
+
+  /* Modal de aparelho: não deixa prefixos/sufixos invadirem os números. */
+  .v102-app .phone-editor-v57 .field-affix-inline{position:relative!important;display:block!important;overflow:hidden!important}
+  .v102-app .phone-editor-v57 .field-affix-inline .field-prefix,.v102-app .phone-editor-v57 .field-affix-inline .field-suffix{position:absolute!important;top:50%!important;transform:translateY(-50%)!important;z-index:2!important;pointer-events:none!important;line-height:1!important}
+  .v102-app .phone-editor-v57 .field-affix-inline.has-prefix input{padding-left:34px!important;padding-right:7px!important;text-align:left!important}
+  .v102-app .phone-editor-v57 .field-affix-inline.has-suffix input{padding-left:7px!important;padding-right:34px!important}
+  .v102-app .phone-editor-v57 .modalbody{padding-bottom:calc(12px + env(safe-area-inset-bottom))!important}
+  .v102-app .phone-editor-v57 .v57-actions{margin:0!important;padding:7px 0 calc(4px + env(safe-area-inset-bottom))!important}
+
+  /* Cadastro em massa: rodapé nunca fica parcialmente fora da viewport. */
+  .v102-app .batch-phone-modal .modalbody{padding-bottom:calc(10px + env(safe-area-inset-bottom))!important}
+  .v102-app .batch-phone-modal .actions{
+    margin:8px -8px calc(-8px - env(safe-area-inset-bottom))!important;
+    padding:6px 8px calc(7px + env(safe-area-inset-bottom))!important;
+    grid-template-columns:auto minmax(0,1fr) minmax(0,1fr)!important;
+  }
+  .v102-app .batch-phone-modal .actions button{min-width:0!important;width:auto!important}
+
+  /* Pedido em massa: campos densos e 2 aparelhos por linha no telefone. */
+  .parts-v62-bulk-dialog .parts-v50-bulk-main{overscroll-behavior:contain!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-list>article{min-width:0!important;overflow:hidden!important}
+  .parts-v62-bulk-dialog .parts-v64-bulk-card-line{width:100%!important;min-width:0!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-check>div{min-width:0!important}.parts-v62-bulk-dialog .parts-v49-bulk-check b,.parts-v62-bulk-dialog .parts-v49-bulk-check small{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .parts-v62-bulk-dialog>footer{max-width:100vw!important;overflow:hidden!important}
+}
+
+@media(max-width:390px){
+  /* Mesmo em 360–390 px ainda cabem dois aparelhos compactos no pedido de peças. */
+  .parts-v62-bulk-dialog .parts-v49-bulk-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:3px!important;padding-left:5px!important;padding-right:5px!important}
+  .parts-v62-bulk-dialog .parts-v64-bulk-card-line{grid-template-columns:minmax(0,1fr) 66px!important}
+  .parts-v62-bulk-dialog .parts-v49-bulk-row-price,.parts-v62-bulk-dialog .parts-v65-bulk-total-price{width:66px!important;min-width:66px!important;max-width:66px!important}
+}
+
+/* Densidade refinada após medição em viewport Android 390x844. */
+@media(max-width:720px){
+  /* Smartphones: alvo ~110-120 px por aparelho, mantendo leitura e ações completas. */
+  .v102-device-row{gap:3px 6px!important;padding:5px 6px!important}
+  .v102-inline-money{height:34px!important;min-height:34px!important;padding:3px 4px!important}
+  .v102-inline-money>span{font-size:6px!important}.v102-inline-money input{height:16px!important;min-height:16px!important;font-size:8.4px!important}
+  .v102-row-actions>button,.v102-row-actions .v102-menu-anchor>button{width:27px!important;min-width:27px!important;height:26px!important;min-height:26px!important}
+  .v102-row-actions svg{width:13px!important;height:13px!important}
+
+  /* Ficha do aparelho: 12 colunas lógicas para eliminar larguras vazias. */
+  .v102-app .phone-editor-v57 .v57-device-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:4px 5px!important;padding:6px 8px!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(n){grid-column:span 4!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(1),
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(2){grid-column:span 6!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label:nth-child(11){grid-column:span 4!important}
+  .v102-app .phone-editor-v57 .v57-device-grid>label{font-size:8.7px!important;gap:2px!important}
+  .v102-app .phone-editor-v57 .v57-device-grid input,.v102-app .phone-editor-v57 .v57-device-grid select{height:31px!important;min-height:31px!important;font-size:9.6px!important}
+
+  .v102-app .phone-editor-v57 .v57-purchase-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:4px 5px!important;padding:6px 8px!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(1),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(2),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(3){grid-column:span 4!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(4),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(7){grid-column:span 6!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(5),
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label:nth-child(6){grid-column:span 3!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{font-size:8.7px!important;gap:2px!important}
+  .v102-app .phone-editor-v57 .v57-purchase-grid input,.v102-app .phone-editor-v57 .v57-purchase-grid select,.v102-app .phone-editor-v57 .v57-purchase-grid .field-affix-inline,.v102-app .phone-editor-v57 .v57-purchase-grid .field-affix-inline input{height:31px!important;min-height:31px!important;font-size:9.6px!important}
+
+  /* Cadastro em massa: derrota os seletores antigos mais específicos que forçavam flex. */
+  .v102-app .batch-phone-modal .modalbody .batch-shared-section>.grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:4px 5px!important;margin:0!important}
+  .v102-app .batch-phone-modal .modalbody .batch-shared-section>.grid>label:nth-child(1),
+  .v102-app .batch-phone-modal .modalbody .batch-shared-section>.grid>label:nth-child(2),
+  .v102-app .batch-phone-modal .modalbody .batch-shared-section>.grid>label:nth-child(3){grid-column:span 4!important;width:100%!important}
+  .v102-app .batch-phone-modal .modalbody .batch-shared-section>.grid>label:nth-child(4){grid-column:1/-1!important;width:100%!important}
+  .v102-app .batch-phone-modal .batch-shared-section>.grid input,.v102-app .batch-phone-modal .batch-shared-section>.grid select{height:31px!important;min-height:31px!important;font-size:9.5px!important}
+  .v102-app .batch-phone-fields{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:4px 5px!important}
+  .v102-app .batch-phone-fields>label:nth-child(1),.v102-app .batch-phone-fields>label:nth-child(2){grid-column:span 6!important}
+  .v102-app .batch-phone-fields>label:nth-child(n+3):not(.batch-phone-notes){grid-column:span 4!important}
+  .v102-app .batch-phone-fields>label.batch-phone-notes{grid-column:1/-1!important}
+  .v102-app .batch-phone-fields input,.v102-app .batch-phone-fields select{height:30px!important;min-height:30px!important;font-size:9.3px!important}.v102-app .batch-phone-fields textarea{height:40px!important;min-height:40px!important}
+}
+@media(max-width:390px){
+  .v10313-main-toolbar>button:last-child{grid-column:auto!important}
+}
+
+/* Tema escuro: controles secundários do Pedido em massa não podem herdar o branco do CSS legado. */
+@media(max-width:720px){
+  .v102-app.theme-dark .parts-v62-bulk-dialog>header>button,
+  .v102-app.theme-dark .parts-v62-bulk-dialog .parts-v61-stage-button,
+  .v102-app.theme-dark .parts-v62-bulk-dialog .parts-v50-products>header button,
+  .v102-app.theme-dark .parts-v62-bulk-dialog .parts-v50-product-actions button:not(.primary),
+  .v102-app.theme-dark .parts-v62-bulk-dialog .parts-v50-bulk-select>header button,
+  .v102-app.theme-dark .parts-v62-bulk-dialog>footer button:not(.primary){
+    background:var(--surface2)!important;
+    color:var(--text)!important;
+    border-color:var(--line)!important;
+    box-shadow:none!important;
+  }
+}

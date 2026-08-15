@@ -1,0 +1,57 @@
+{
+  "phones": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 970,
+    "rootH": 922,
+    "cardH": 126
+  },
+  "phone": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 844,
+    "rootH": 844,
+    "deviceCardH": 252.8,
+    "purchaseCardH": 218.1,
+    "modalScrollH": 885,
+    "modalClientH": 788
+  },
+  "parts": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 882,
+    "rootH": 882,
+    "partRowH": 90
+  },
+  "bulk": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 844,
+    "rootH": 844,
+    "phoneCardH": 48,
+    "cols": [
+      5,
+      197,
+      5,
+      197
+    ]
+  },
+  "today": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 844,
+    "rootH": 844,
+    "todayItemH": 42
+  },
+  "batch": {
+    "docW": 390,
+    "clientW": 390,
+    "bodyH": 844,
+    "rootH": 844,
+    "sharedH": 332.3,
+    "rowH": 385.0,
+    "gridDisplay": "grid",
+    "modalScrollH": 1250,
+    "modalClientH": 748
+  }
+}

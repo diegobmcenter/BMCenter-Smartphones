@@ -19,6 +19,12 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
  const readFontScales=()=>{try{return JSON.parse(localStorage.getItem('bmcenter-font-scales')||'{}')||{}}catch{return{}}};
  const[pageFontScale,setPageFontScale]=React.useState(()=>Math.min(1.15,Math.max(.9,Number(readFontScales()[fontScaleKey]??1))));
  React.useEffect(()=>{const scales=readFontScales();setPageFontScale(Math.min(1.15,Math.max(.9,Number(scales[fontScaleKey]??1))))},[fontScaleKey]);
+ React.useEffect(()=>{
+  document.documentElement.style.setProperty('--bmcenter-screen-dim',String(dimOpacity));
+  document.body.classList.toggle('bmcenter-reading-mode',readingMode);
+  document.body.classList.toggle('bmcenter-dimmed',brightness<100);
+  return()=>{document.body.classList.remove('bmcenter-reading-mode','bmcenter-dimmed');document.documentElement.style.removeProperty('--bmcenter-screen-dim')}
+ },[dimOpacity,readingMode,brightness]);
  const changePageFont=delta=>setPageFontScale(current=>{const next=Math.min(1.15,Math.max(.9,Math.round((current+delta)*100)/100));const scales=readFontScales();localStorage.setItem('bmcenter-font-scales',JSON.stringify({...scales,[fontScaleKey]:next}));return next});
  return <div className={`v102-app theme-${theme} ${readingMode?'reading-mode':''}`} style={{'--v102-dim':dimOpacity}}>
   <aside className={`v102-sidebar ${mobileOpen?'open':''}`}>

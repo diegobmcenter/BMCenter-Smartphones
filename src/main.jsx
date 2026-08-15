@@ -1,6 +1,7 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,Pencil,MoreVertical,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Target,Gauge,CalendarClock,Copy,Trash2,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
 import{effectivePartCost,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
+import{workflowStageForPhone}from'./workflow.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
@@ -10,9 +11,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.65';
+const APP_VERSION='10.4.66';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 const loadDraft=k=>{try{const value=JSON.parse(localStorage.getItem(k)||'null');return value&&typeof value==='object'&&!value.deleted?value:null}catch{return null}};
@@ -128,6 +129,35 @@ function App({cloudUser,onCloudLogout}){
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
+ const pageRef=useRef(page);
+ useEffect(()=>{pageRef.current=page},[page]);
+ useEffect(()=>{
+  const initialPage=pageRef.current||loadSystemConfig().homePage||'dashboard';
+  const fallback=loadSystemConfig().homePage||'dashboard';
+  const state=history.state||{};
+  /* Mantém sempre uma entrada interna atrás da tela atual. No Android, o primeiro
+     VOLTAR não pode abandonar o PWA/site: ele retorna à página anterior do BMCenter. */
+  if(state?.bmcenterApp!==true||state?.bmcenterAnchor!==true){
+   history.replaceState({...state,bmcenterApp:true,bmcenterPage:fallback,bmcenterAnchor:true},'',location.href);
+   history.pushState({bmcenterApp:true,bmcenterPage:initialPage,bmcenterAnchor:false},'',location.href);
+  }else if(state.bmcenterPage!==initialPage){
+   history.replaceState({...state,bmcenterPage:initialPage},'',location.href);
+  }
+  const handlePopState=event=>{
+   const target=event.state?.bmcenterApp?event.state?.bmcenterPage:null;
+   if(target){
+    pageRef.current=target;sessionStorage.setItem('bmcenter-current-page',target);setPage(target);setMobileMenuOpen(false);requestAnimationFrame(()=>window.scrollTo(0,0));
+    /* Se chegamos à âncora protetora, recria uma entrada ativa para que outro
+       VOLTAR continue dentro do aplicativo em vez de sair do navegador. */
+    if(event.state?.bmcenterAnchor===true)history.pushState({bmcenterApp:true,bmcenterPage:target,bmcenterAnchor:false},'',location.href);
+    return
+   }
+   history.pushState({bmcenterApp:true,bmcenterPage:fallback,bmcenterAnchor:false},'',location.href);
+   pageRef.current=fallback;sessionStorage.setItem('bmcenter-current-page',fallback);setPage(fallback);setMobileMenuOpen(false);requestAnimationFrame(()=>window.scrollTo(0,0));
+  };
+  window.addEventListener('popstate',handlePopState);
+  return()=>window.removeEventListener('popstate',handlePopState);
+ },[]);
  useEffect(()=>{const key='bmcenter-lean-phone-v102';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const lean=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(lean));queueCloudSave(SKEY,lean)}localStorage.setItem(key,'1')},[]);
  useEffect(()=>{const key='bmcenter-phone-schema-v1024';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const migrated=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}localStorage.setItem(key,'1')},[]);
  useEffect(()=>{const key='bmcenter-photo-studio-removed-v10445';if(localStorage.getItem(key)!=='1'){const phones=load(SKEY);if(Array.isArray(phones)){const cleaned=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(cleaned));queueCloudSave(SKEY,cleaned)}localStorage.removeItem('bmcenter-photo-root-local');localStorage.setItem(key,'1')}if('indexedDB'in window)indexedDB.deleteDatabase('bmcenter-photo-studio-v1')},[]);
@@ -193,7 +223,12 @@ function App({cloudUser,onCloudLogout}){
  function isVisible(id){return ['phones','settings'].includes(id)||visibleMenus[id]!==false}
  function saveVisible(next){const safe={...next,phones:true};setVisibleMenus(safe);save(MENUKEY,safe)}
  function saveConfig(next){if(next?.themeMode)localStorage.setItem('bmcenter-last-theme',next.themeMode);setConfig(next);save(CFGKEY,next);pushCloudStateNow(CFGKEY,next).catch(()=>{})}
- function navigate(id){sessionStorage.setItem('bmcenter-current-page',id);setPage(id);setMobileMenuOpen(false)}
+ function navigate(id){
+  if(!id)return;
+  sessionStorage.setItem('bmcenter-current-page',id);
+  if(id!==pageRef.current)history.pushState({bmcenterApp:true,bmcenterPage:id},'',location.href);
+  pageRef.current=id;setPage(id);setMobileMenuOpen(false);requestAnimationFrame(()=>window.scrollTo(0,0))
+ }
  const currentMenu=menuItems.find(item=>item.id===page)||{text:'BMCenter',icon:<LayoutDashboard/>};
 
  return <AppFrameV102
@@ -460,12 +495,13 @@ function GoalsPage(){
 }
 
 function TodayPage(){
- const phones=load(SKEY),profiles=load(PKEY),alerts=getOperationalAlerts(),active=phones.filter(p=>!isClosedPhone(p));
+ const phones=load(SKEY),alerts=getOperationalAlerts(),active=phones.filter(p=>!isClosedPhone(p));
+ const stageFor=phone=>workflowStageForPhone(phone,{hasAds:!!(phone.ads||migrateLegacyAds(phone)).length});
  const groups=[
-  {title:'Analisar',items:active.filter(p=>p.status==='Aguardando análise')},
-  {title:'Comprar peças',items:active.filter(p=>(p.parts||[]).some(part=>['Cotando','Comprar'].includes(part.status)))},
-  {title:'Reparar e testar',items:active.filter(p=>['Em reparo','Em testes','Aguardando peças'].includes(p.status))},
-  {title:'Prontos para anunciar',items:active.filter(p=>['Pronto','Para fotografar','Anúncio preparado'].includes(p.status)&&!(p.ads||migrateLegacyAds(p)).length)}
+  {title:'Analisar',items:active.filter(p=>stageFor(p)==='analyze')},
+  {title:'Comprar peças',items:active.filter(p=>stageFor(p)==='parts')},
+  {title:'Reparar e testar',items:active.filter(p=>stageFor(p)==='repair')},
+  {title:'Prontos para anunciar',items:active.filter(p=>stageFor(p)==='ready')}
  ];
  return <TodayV102 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
 
@@ -2548,7 +2584,18 @@ function Modal({title,onClose,children,className='',subtitle='',titleIcon=null})
  const pageScale=getFontScale(fontScaleId('page',currentPage));
  const scaleKey=fontScaleId('modal',title);
  const[fontScale,setFontScale]=useState(()=>getFontScale(scaleKey));
+ const modalHistoryKey=useRef(`bmcenter-modal-${Date.now()}-${Math.random().toString(36).slice(2)}`).current;
  const changeFont=delta=>setFontScale(current=>saveFontScale(scaleKey,Math.round((current+delta)*100)/100));
+ useEffect(()=>{
+  const base=history.state||{bmcenterApp:true,bmcenterPage:currentPage};
+  history.pushState({...base,bmcenterApp:true,bmcenterPage:currentPage,bmcenterModal:modalHistoryKey},'',location.href);
+  const handlePop=event=>{if(event.state?.bmcenterModal!==modalHistoryKey)onClose?.()};
+  window.addEventListener('popstate',handlePop);
+  return()=>{
+   window.removeEventListener('popstate',handlePop);
+   if(history.state?.bmcenterModal===modalHistoryKey)history.back();
+  };
+ },[]);
  return <div className="back" style={{zoom:1/pageScale}} onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`} style={{zoom:fontScale}}><div className="modalhead"><div className="modal-title-group">{titleIcon&&<span className="modal-title-icon">{titleIcon}</span>}<div><h2>{title}</h2>{subtitle&&<small>{subtitle}</small>}</div></div><div className="modalhead-tools"><div className="font-scale-controls" title="Tamanho da fonte desta janela"><button type="button" onClick={()=>changeFont(-.05)} disabled={fontScale<=.9}>−</button><span>{Math.round(fontScale*100)}%</span><button type="button" onClick={()=>changeFont(.05)} disabled={fontScale>=1.15}>+</button></div><button type="button" onClick={onClose}><X/></button></div></div><div className="modalbody">{children}</div></div></div>
 }
 function Field({label,value,onChange,type='text',prefix='',suffix='',inputMode}){return <label>{label}<div className={`field-affix field-affix-inline ${prefix?'has-prefix':''} ${suffix?'has-suffix':''}`}>{prefix&&<span className="field-prefix">{prefix}</span>}<input type={type} inputMode={inputMode} value={value??''} onChange={e=>onChange(e.target.value)}/>{suffix&&<span className="field-suffix">{suffix}</span>}</div></label>}

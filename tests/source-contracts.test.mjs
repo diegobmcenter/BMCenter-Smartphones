@@ -4,8 +4,17 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const parts=main.slice(main.indexOf('function Parts(){'),main.indexOf('\n\nfunction PartsInventoryPage'));
-assert.match(main,/APP_VERSION='10\.4\.65'/);
+assert.match(main,/APP_VERSION='10\.4\.66'/);
 assert.match(main,/OKEY='bmcenter-parts-orders'/);
+const mobileCss=fs.readFileSync(new URL('../src/v10466.css',import.meta.url),'utf8');
+const appFrame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
+assert.match(main,/bmcenterAnchor/,'Android Back precisa manter uma âncora interna antes de sair do app');
+assert.match(main,/workflowStageForPhone/,'Hoje deve usar a função exclusiva de estágio operacional');
+assert.match(mobileCss,/\.parts-v50-filters\{/,'filtros mobile reais da Central de Peças devem ser compactados');
+assert.match(mobileCss,/\.parts-v62-bulk-dialog \.parts-v49-bulk-list\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/,'Pedido em massa mobile deve mostrar dois aparelhos por linha');
+assert.match(mobileCss,/\.v102-device-row\{/,'cards de Smartphones mobile devem possuir layout compacto próprio');
+assert.match(appFrame,/--bmcenter-screen-dim/,'brilho/modo leitura deve ser aplicado no body inclusive sobre modais');
+
 assert.match(main,/phone-editor-v57/);
 assert.match(main,/subtitle=\"Editar registro do aparelho\"/);
 assert.match(main,/v57-device-card/);

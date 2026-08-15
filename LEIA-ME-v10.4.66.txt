@@ -1,4 +1,20 @@
-BMCenter Smartphones v10.4.65
+BMCenter Smartphones v10.4.66
+
+REVISAO MOBILE COMPLETA
+
+- Botao VOLTAR do Android/navegador passa a navegar dentro do BMCenter e fechar modais antes de sair do app.
+- Smartphones mobile compactado: status ao lado do nome, custos em faixa baixa e acoes menores.
+- Hoje: agrupamento exclusivo pelo status atual; Pronto nao entra mais em Reparar e testar.
+- Cadastro individual compactado; armazenamento/RAM/NFC e compra usam apenas o espaco necessario.
+- Prefixos R$ e sufixos GB corrigidos para nao sobrepor numeros.
+- Cadastro em massa compactado em duas colunas e rodape protegido pela safe area.
+- Central de Pecas compactada: cabecalho, abas, filtros e linhas com maior densidade.
+- Pedido em massa mobile: metadados compactos, produtos visiveis, dois aparelhos por linha e rodape sem cortes.
+- Dashboard, Hoje e componentes comuns receberam padrao de densidade mobile consistente.
+- Brilho e modo leitura agora cobrem tambem modais e overlays.
+
+REGRA VISUAL PERMANENTE DO PROJETO
+No mobile, nenhum campo, coluna, card ou botao deve ocupar mais espaco do que o necessario para seu conteudo e operacao. Priorizar densidade, legibilidade e ausencia de rolagem desnecessaria.
 
 CORREÇÕES E INCLUSÕES
 
@@ -21,7 +37,7 @@ CORREÇÕES E INCLUSÕES
 4. PEDIDO EM MASSA COM VÁRIOS PEDIDOS NO MESMO LANÇAMENTO
 - É possível preparar Pedido 1, clicar em “Salvar este e adicionar outro pedido” e cadastrar Pedido 2, Pedido 3 etc.
 - O mesmo fornecedor pode aparecer em pedidos diferentes.
-- Cada pedido preserva data, previsão, frete, observações, produtos, aparelhos e situação de recebimento próprios.
+- Cada pedido preserva data, frete, observações, produtos, aparelhos e situação de recebimento próprios.
 - Pedidos preparados podem ser editados ou removidos antes da conclusão.
 - Ao concluir, cada pedido é criado separadamente e mantém seus próprios custos/frete.
 
@@ -31,7 +47,8 @@ VALIDAÇÕES
 - multi-bulk-order.test: OK
 - multi-order-launch.test: OK
 - source-contracts.test: OK
-- 41 arquivos JS/JSX/MJS verificados sintaticamente: 0 erros.
+- mobile-layout.test: OK
+- 43 arquivos JS/JSX/MJS verificados sintaticamente: 0 erros.
 
 REGRAS PRESERVADAS
 - Pedidos e Peças continuam exclusivamente para peças.
