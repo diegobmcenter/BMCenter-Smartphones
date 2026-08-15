@@ -1,4 +1,4 @@
-VALIDACAO v10.4.74
+VALIDACAO v10.4.75
 
 - parts-orders.test: OK
 - parts-central-classification.test: OK

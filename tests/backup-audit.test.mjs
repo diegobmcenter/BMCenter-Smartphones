@@ -17,7 +17,7 @@ assert.equal(auditBackupObject(sample,{requiredKeys:['bmcenter-smartphones','bmc
 assert.equal(auditBackupObject(sample,{requiredKeys:['bmcenter-smartphones','bmcenter-suppliers']}).ok,false);
 assert.equal(BACKUP_RUNTIME_KEY,'bmcenter-backup-runtime-v1');
 
-assert.match(main,/APP_VERSION='10\.4\.74'/);
+assert.match(main,/APP_VERSION='10\.4\.75'/);
 assert.match(main,/function backupEligibleKey\(key\)[\s\S]*key\.startsWith\('bmcenter-'\)/,'novos módulos bmcenter-* devem entrar automaticamente no backup');
 assert.match(main,/BACKUP_RUNTIME_KEY/,'metadados operacionais do backup devem ficar fora do próprio backup');
 assert.match(main,/materializeBackupSchema\(storage\)/,'schema essencial precisa ser materializado antes de gerar backup');

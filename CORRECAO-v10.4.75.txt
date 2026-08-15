@@ -1,0 +1,8 @@
+BMCenter Smartphones v10.4.75
+
+CORREÇÃO CRÍTICA
+- Corrige ReferenceError: adContentSpecs is not defined.
+- A página Anúncios passa a reutilizar o helper central e já existente formatPhoneSpecs().
+- Não foi criado um segundo formatador duplicado: pesquisa e exibição de especificações usam a mesma fonte de verdade.
+- Mantém integralmente a regra da v10.4.74: venda encerra anúncios ativos sem apagar histórico de publicação.
+- Adicionado teste de regressão ads-runtime-contract.test.mjs para impedir a volta da referência inválida.
