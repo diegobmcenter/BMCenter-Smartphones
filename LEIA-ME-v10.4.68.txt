@@ -1,4 +1,4 @@
-BMCenter Smartphones v10.4.67
+BMCenter Smartphones v10.4.68
 
 REVISAO MOBILE COMPLETA
 
@@ -80,10 +80,19 @@ ALTERACOES v10.4.65
 - Se ja existir um proximo produto, TAB avanca diretamente para o nome dele.
 
 
-ALTERACOES v10.4.67
+ALTERACOES v10.4.68
 - Pedidos/pecas nunca mais alteram automaticamente o status operacional do aparelho.
 - Correcao automatica conservadora recupera o ultimo status explicitamente escolhido quando versoes anteriores alteraram silenciosamente para Aguardando pecas/Em reparo.
 - Alteracao manual de status pela ficha passa a ser registrada explicitamente no historico.
 - Smartphones mobile: acoes superiores reorganizadas sem corte horizontal.
 - Pedido em massa mobile: fornecedor/frete e data/recebido/observacoes em duas linhas compactas, evitando campos cortados.
 - Filtros, campos monetarios, ficha do aparelho e cadastro em massa protegidos contra overflow.
+
+
+ALTERACOES v10.4.68
+- Mobile Smartphones: os cinco atalhos do topo ficam em uma unica linha e exibem apenas icones.
+- Botao claro/escuro restaurado no topo mobile.
+- Acoes dos cards de smartphones ficam na mesma linha, imediatamente antes do Status.
+- Armazenamento e RAM usam exatamente a mesma altura dos demais campos.
+- Pecas/Acessorios e Historico do aparelho iniciam recolhidos no celular e alternam pelo titulo.
+- Botao Adicionar item e formulario rapido protegidos contra cortes.

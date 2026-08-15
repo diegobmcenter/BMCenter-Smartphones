@@ -36,3 +36,16 @@ assert.match(css67,/grid-template-areas:\s*\n\s*"supplier supplier freight"\s*\n
 assert.match(css67,/parts-v49-bulk-filters[\s\S]*?145px/);
 assert.match(css67,/v102-smartphones-hero \.v102-page-actions[\s\S]*?repeat\(3,minmax\(0,1fr\)\)/);
 console.log('mobile-layout.test: OK');
+
+// v10.4.68 — contratos pedidos para o mobile.
+const css68=fs.readFileSync(new URL('../src/v10468.css',import.meta.url),'utf8');
+const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
+assert.match(css68,/grid-template-columns:repeat\(5,36px\)/);
+assert.match(css68,/\.v102-theme-icon\{display:grid!important/);
+assert.match(css68,/"star name actions status"/);
+assert.match(css68,/field-affix-inline[\s\S]*?height:31px!important/);
+assert.match(main,/partsSectionOpen/);
+assert.match(main,/historySectionOpen/);
+assert.match(main,/v68-section-toggle/);
+assert.match(phonesView,/aria-label="Histórico de vendas"/);
+assert.match(phonesView,/aria-label="Novo aparelho"/);
