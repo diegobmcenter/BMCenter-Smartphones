@@ -1,0 +1,8 @@
+VALIDAÇÃO v10.4.80
+
+- APP_VERSION = 10.4.80.
+- v10480.css é a última camada visual.
+- Desktop: grid da linha = star | name | status | money | actions.
+- Mobile: grid da primeira linha = star | name | status | actions.
+- Valores continuam agrupados em money sem o menu no meio.
+- smartphones-actions-edge.test.mjs protege a posição final do menu.

@@ -1,0 +1,56 @@
+/* BMCenter v10.4.80 — menu de ações sempre no extremo direito da linha. */
+
+/* Desktop/tablet: fixa semanticamente cada bloco na sua coluna. Isto neutraliza
+   grid-area/grid-column herdados de versões mobile antigas que podiam inserir
+   o botão "..." entre Valor de venda e Lucro. */
+@media(min-width:721px){
+  .v102-device-row{
+    grid-template-areas:"star name status money actions"!important;
+    grid-template-columns:30px minmax(230px,1fr) minmax(150px,170px) minmax(250px,285px) 38px!important;
+  }
+  .v102-device-row>.v102-star{grid-area:star!important;grid-column:auto!important;grid-row:auto!important}
+  .v102-device-row>.v102-device-name{grid-area:name!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important}
+  .v102-device-row>.v102-status{grid-area:status!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important}
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{grid-area:money!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important}
+  .v102-device-row>.v102-row-actions{
+    grid-area:actions!important;grid-column:auto!important;grid-row:auto!important;
+    width:38px!important;min-width:38px!important;justify-self:end!important;align-self:center!important;
+    display:flex!important;justify-content:flex-end!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor{margin-left:auto!important}
+}
+
+@media(min-width:721px) and (max-width:1120px){
+  .v102-device-row{
+    grid-template-columns:29px minmax(185px,1fr) minmax(130px,150px) minmax(225px,260px) 36px!important;
+  }
+  .v102-device-row>.v102-row-actions{width:36px!important;min-width:36px!important}
+}
+
+/* Celular: o "..." permanece na primeira linha e é literalmente o último
+   elemento à direita; valores ficam em uma faixa própria abaixo. */
+@media(max-width:720px){
+  .v102-device-row{
+    grid-template-columns:27px minmax(0,1fr) 100px 27px!important;
+    grid-template-areas:
+      "star name status actions"
+      ". money money money"!important;
+    gap:4px 5px!important;
+    align-items:start!important;
+  }
+  .v102-device-row>.v102-star{grid-area:star!important;grid-column:auto!important;grid-row:auto!important}
+  .v102-device-row>.v102-device-name{grid-area:name!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important}
+  .v102-device-row>.v102-status{grid-area:status!important;grid-column:auto!important;grid-row:auto!important;width:100px!important;min-width:100px!important;max-width:100px!important}
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{grid-area:money!important;grid-column:auto!important;grid-row:auto!important;min-width:0!important}
+  .v102-device-row>.v102-row-actions{
+    grid-area:actions!important;grid-column:auto!important;grid-row:auto!important;
+    width:27px!important;min-width:27px!important;align-self:start!important;justify-self:end!important;
+    display:flex!important;justify-content:flex-end!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{
+    width:27px!important;min-width:27px!important;height:27px!important;min-height:27px!important;
+  }
+}

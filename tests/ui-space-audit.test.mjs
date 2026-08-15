@@ -3,12 +3,14 @@ import fs from 'node:fs';
 
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10477.css',import.meta.url),'utf8');
-const finalCss=fs.readFileSync(new URL('../src/v10479.css',import.meta.url),'utf8');
+const previousFinalCss=fs.readFileSync(new URL('../src/v10479.css',import.meta.url),'utf8');
+const finalCss=fs.readFileSync(new URL('../src/v10480.css',import.meta.url),'utf8');
 
-assert.match(main,/import'\.\/v10478\.css';import'\.\/v10479\.css';/,'v10479.css deve ser a última camada visual');
-assert.match(main,/const APP_VERSION='10\.4\.79'/,'versão 10.4.79 não encontrada');
+assert.match(main,/import'\.\/v10479\.css';import'\.\/v10480\.css';/,'v10480.css deve ser a última camada visual');
+assert.match(main,/const APP_VERSION='10\.4\.80'/,'versão 10.4.80 não encontrada');
 assert.ok(fs.readFileSync(new URL('../src/v10478.css',import.meta.url),'utf8').includes('.v102-route .v10313-main-toolbar'),'v10478 deve manter toolbar compacta');
-assert.ok(finalCss.includes('.v10479-device-name-button'),'camada final deve manter ações compactas de Smartphones');
+assert.ok(previousFinalCss.includes('.v10479-device-name-button'),'v10479 deve manter ações compactas de Smartphones');
+assert.ok(finalCss.includes('.v102-device-row>.v102-row-actions'),'v10480 deve fixar ações no extremo direito');
 assert.doesNotMatch(main,/className="phone-detail-progress"/,'barra Comprado/Diagnóstico/Cotação/Pedido/Reparo/Anúncios/Venda deve ser removida');
 assert.doesNotMatch(main,/const stages=\[/,'estrutura antiga de etapas não deve permanecer na ficha');
 assert.match(main,/className="grid sale-data-grid"/,'venda precisa da grade compacta de dados');

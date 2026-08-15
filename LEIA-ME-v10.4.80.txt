@@ -1,0 +1,15 @@
+BMCenter Smartphones v10.4.80
+
+PACOTE COMPLETO DE PUBLICAÇÃO
+
+Esta versão parte integralmente da v10.4.79.
+
+ALTERAÇÃO
+O menu "..." da lista de Smartphones passa a ocupar sempre a última coluna à direita,
+sem interromper a faixa Custo / Valor de venda / Lucro, tanto no desktop quanto no celular.
+
+PUBLICAÇÃO
+1. Extraia o ZIP para uma pasta normal do Windows.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. Aguarde instalação, testes e build.
+4. O BAT publica no GitHub e a Vercel inicia o deploy automaticamente.

@@ -7,7 +7,7 @@ assert.match(css,/phone-detail-progress\{[\s\S]*height:auto!important;/,'etapas 
 assert.match(css,/phone-detail-progress\{[\s\S]*overflow:visible!important;/,'cartões das etapas não podem ser cortados');
 assert.match(css,/phone-detail-modal>\.modalbody\{[\s\S]*overflow-y:auto!important;/,'corpo da ficha precisa ter rolagem interna');
 assert.match(css,/modalbody>\.actions\{[\s\S]*position:static!important;/,'rodapé da ficha não pode cobrir o conteúdo');
-assert.match(main,/const APP_VERSION='10\.4\.79'/,'versão 10.4.79 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.80'/,'versão 10.4.80 não encontrada');
 assert.doesNotMatch(main,/className=\"phone-detail-progress\"/,'etapas Comprado/Diagnóstico/Cotação/Pedido/Reparo/Anúncios/Venda foram removidas na v10.4.79');
 
 console.log('phone-detail-layout.test: OK');

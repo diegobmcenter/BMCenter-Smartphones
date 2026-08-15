@@ -1,0 +1,10 @@
+BMCenter Smartphones v10.4.80
+
+CORREÇÃO — MENU DE AÇÕES NO EXTREMO DIREITO
+
+- Corrige o botão "..." que podia aparecer entre Valor de venda e Lucro.
+- No desktop, a ordem visual da linha fica: favorito | aparelho | status | valores | ...
+- No celular, o botão "..." permanece no extremo direito da primeira linha.
+- Custo / Valor de venda / Lucro continuam juntos na faixa compacta.
+- Mantém integralmente menus auto-fecháveis, clique no nome do aparelho e Devoluções da v10.4.79.
+- Adiciona teste de regressão smartphones-actions-edge.test.mjs.
