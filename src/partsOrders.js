@@ -21,6 +21,18 @@ export function effectivePartCost(part){
  return roundMoney(quoteForPart(part)?.price||0)
 }
 
+export function isPartProcurementComplete(part={}){
+ const status=String(part?.status||'').trim().toLocaleLowerCase('pt-BR');
+ const orderStatus=String(part?.orderStatus||'').trim().toLocaleLowerCase('pt-BR');
+ return Boolean(part?.receivedAt)||['recebida','instalada'].includes(status)||['pedido entregue','instalada'].includes(orderStatus)
+}
+
+export function isPartOpenForProcurement(part={},activeOrderIds=null){
+ if(isPartProcurementComplete(part))return false;
+ if(part?.orderId&&activeOrderIds instanceof Set&&activeOrderIds.has(part.orderId))return false;
+ return true
+}
+
 export function deriveOrderStatus(items=[]){
  if(!items.length)return'draft';
  const confirmed=items.filter(item=>item.confirmedAt).length;

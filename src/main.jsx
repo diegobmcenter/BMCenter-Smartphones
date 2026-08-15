@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}from'react-dom/client';import{Smartphone,Users,ShoppingCart,LayoutDashboard,Plus,LogOut,X,Store,ClipboardCheck,History,FileText,Download,Upload,ShieldCheck,KanbanSquare,BarChart3,Search,CalendarDays,WalletCards,Tags,Package,Clock3,AlertTriangle,TrendingUp,Settings,Bell,ListTodo,Eye,Pencil,MoreVertical,ChevronLeft,ChevronRight,ChevronDown,Star,CheckSquare,DatabaseZap,RefreshCw,RotateCcw,Activity,Archive,Bookmark,UploadCloud,MessageSquare,Paperclip,Target,Gauge,CalendarClock,Copy,Trash2,ExternalLink,Save}from'lucide-react';
 import{QRCodeSVG}from'qrcode.react';
-import{effectivePartCost,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
+import{effectivePartCost,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,isPartProcurementComplete,isPartOpenForProcurement,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
 import{workflowStageForPhone}from'./workflow.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
@@ -14,7 +14,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.72';
+const APP_VERSION='10.4.73';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -1079,7 +1079,7 @@ function Parts(){
     return{phone,part,quotes,cheapest:sorted[0]||null,chosen:selected||sorted[0]||null}
   }));
   const linkedOrderIds=new Set(orders.map(order=>order.id));
-  const quoteableRows=rows.filter(row=>!row.part.orderId||!linkedOrderIds.has(row.part.orderId)).filter(row=>!['Pedido realizado','Pedido enviado','Pedido entregue','Instalada'].includes(row.part.orderStatus||'Não pedido'));
+  const quoteableRows=rows.filter(row=>isPartOpenForProcurement(row.part,linkedOrderIds));
   const rowSearch=row=>`${phoneDisplayName(row.phone)} ${row.phone.code||''} ${row.phone.status||''} ${row.part.name} ${(row.quotes||[]).map(q=>q.supplier).join(' ')}`.toLowerCase().includes(query.toLowerCase());
   const rowCommonFilter=row=>(partFilter==='Todos'||row.part.name===partFilter)&&(phoneStatusPartsFilter==='Todos'||row.phone.status===phoneStatusPartsFilter);
   const visibleRows=quoteableRows.filter(row=>rowSearch(row)&&rowCommonFilter(row));
@@ -1117,7 +1117,7 @@ function Parts(){
     if(!quickPhoneId)return flash('Escolha primeiro o aparelho.');
     if(!name)return flash('Digite o nome da peça.');
     const current=phones.find(phone=>phone.id===quickPhoneId);
-    if((current?.parts||[]).some(item=>item.name.trim().toLowerCase()===name.toLowerCase()&&!['Pedido entregue','Instalada'].includes(item.orderStatus||'Não pedido')))return flash('Essa peça já está na lista deste aparelho.');
+    if((current?.parts||[]).some(item=>item.name.trim().toLowerCase()===name.toLowerCase()&&!isPartProcurementComplete(item)))return flash('Essa peça já está na lista deste aparelho.');
     const stamp=new Date().toISOString();
     const next=phones.map(phone=>phone.id===quickPhoneId?{...phone,parts:[...(phone.parts||[]),{id:crypto.randomUUID(),name,status:'Cotando',quotes:[],selectedQuoteId:'',orderStatus:'Não pedido'}],lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`Peça necessária adicionada: ${name}`}]}:phone);
     savePhonesOnly(next);setQuickPart('');flash('Peça adicionada à lista.')
@@ -1244,7 +1244,7 @@ function Parts(){
   }
 
   function prepareOrdersFromPhones(sourcePhones){
-    const now=new Date().toISOString(),today=now.slice(0,10),sourceRows=sourcePhones.filter(phone=>!isClosedPhone(phone)).flatMap(phone=>(phone.parts||[]).map(part=>{const q=(part.quotes||[]).find(x=>x.id===part.selectedQuoteId);return{phone,part,q}})).filter(x=>x.q&&!x.part.orderId&&!['Pedido realizado','Pedido entregue','Instalada'].includes(x.part.orderStatus||''));
+    const now=new Date().toISOString(),today=now.slice(0,10),sourceRows=sourcePhones.filter(phone=>!isClosedPhone(phone)).flatMap(phone=>(phone.parts||[]).map(part=>{const q=(part.quotes||[]).find(x=>x.id===part.selectedQuoteId);return{phone,part,q}})).filter(x=>x.q&&isPartOpenForProcurement(x.part,linkedOrderIds));
     if(!sourceRows.length){flash('Escolha pelo menos uma cotação antes de preparar o pedido.');return}
     const groups={};sourceRows.forEach(row=>(groups[row.q.supplier]??=[]).push(row));
     let nextOrders=[...orders],created=0;

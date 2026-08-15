@@ -1,4 +1,4 @@
-VALIDACAO BACKUP v10.4.72
+VALIDACAO BACKUP v10.4.73
 
 - parts-orders.test: OK
 - bulk-parts-order.test: OK

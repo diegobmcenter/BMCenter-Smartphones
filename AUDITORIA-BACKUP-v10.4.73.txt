@@ -1,4 +1,4 @@
-AUDITORIA 0 A 100% DO SISTEMA DE BACKUP - BMCenter Smartphones v10.4.72
+AUDITORIA 0 A 100% DO SISTEMA DE BACKUP - BMCenter Smartphones v10.4.73
 
 CAUSA DOS BACKUPS AUTOMATICOS PARADOS
 1. A interface dizia "Backups automaticos na nuvem", mas o codigo anterior so criava backup quando o usuario clicava no botao Criar backup na nuvem.

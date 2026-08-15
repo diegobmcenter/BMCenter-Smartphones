@@ -1,0 +1,24 @@
+VALIDACAO v10.4.73
+
+CORRECAO CENTRAL DE PECAS
+- Peça avulsa Recebida/Instalada não aparece em Em aberto.
+- Peça avulsa Recebida/Instalada não aparece em Cotações.
+- Continua compondo custo do aparelho.
+- Não entra em preparação automática de pedidos.
+- Peça apenas Cotando/Comprar/Comprada continua pendente quando aplicável.
+- Pedido ativo permanece fora de Em aberto.
+
+TESTES
+parts-orders.test: OK
+parts-central-classification.test: OK
+bulk-modal-scroll.test: OK
+modal-scroll-audit.test: OK
+concurrent-sync.test: OK
+backup-audit.test: OK
+source-contracts.test: OK
+mobile-layout.test: OK
+npm run test:parts-orders: OK
+
+BUILD LOCAL DESTE AMBIENTE
+- npm install tentou acessar o registro e expirou por timeout.
+- PUBLICAR-ATUALIZACAO.bat executa npm install, testes e build antes do push.
