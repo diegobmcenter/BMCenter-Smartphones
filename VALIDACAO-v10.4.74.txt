@@ -1,0 +1,23 @@
+VALIDACAO v10.4.74
+
+- parts-orders.test: OK
+- parts-central-classification.test: OK
+- sold-publication-lifecycle.test: OK
+- bulk-modal-scroll.test: OK
+- modal-scroll-audit.test: OK
+- concurrent-sync.test: OK
+- backup-audit.test: OK
+- source-contracts.test: OK
+- mobile-layout.test: OK
+
+Cenario validado por contrato de codigo:
+1. aparelho publicado em um ou varios perfis;
+2. venda registrada;
+3. marketplaceProfiles passam a active=false;
+4. publications passam a removed;
+5. publishedAt e perfis historicos permanecem salvos;
+6. vendido retorna zero em publishedProfileIds;
+7. metricas de tempo usam historicalProfilePublishedAt.
+
+Build Vite nao foi executado neste ambiente porque npm install expirou por indisponibilidade do registro.
+PUBLICAR-ATUALIZACAO.bat executa npm install, todos os testes e npm run build antes de publicar.

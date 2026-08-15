@@ -1,0 +1,19 @@
+/* v10.4.74 — histórico de publicação após venda */
+.v102-app .v1041-published-inline.history span{
+  background:color-mix(in srgb,var(--surface2) 88%,transparent)!important;
+  border:1px dashed color-mix(in srgb,var(--text) 24%,var(--line))!important;
+  color:color-mix(in srgb,var(--text) 72%,var(--surface))!important;
+}
+.v102-app .v1042-profile-list article.history{
+  border-style:dashed;
+}
+.v102-app .v1042-profile-list article.history .v1042-profile-toggle{
+  cursor:default;
+}
+.v102-app .v1042-profile-list article.history .v1042-profile-toggle:disabled{
+  opacity:1;
+}
+.v102-app .v1042-profile-list article.history .v1042-profile-toggle small{
+  white-space:normal;
+  line-height:1.25;
+}

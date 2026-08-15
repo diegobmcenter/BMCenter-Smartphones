@@ -12,9 +12,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.73';
+const APP_VERSION='10.4.74';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -177,6 +177,11 @@ function App({cloudUser,onCloudLogout}){
    if(changed){localStorage.setItem(SKEY,JSON.stringify(recovered));queueCloudSave(SKEY,recovered)}
   }catch(error){console.warn('Correção de status alterado por pedidos de peças não concluída.',error)}
   finally{localStorage.setItem(key,'1')}
+ },[]);
+ useEffect(()=>{
+  const key='bmcenter-sold-publications-v10474';if(localStorage.getItem(key)==='1')return;
+  try{const current=load(SKEY),profiles=load(PKEY);if(Array.isArray(current)){const repaired=repairSoldPublicationStates(current,profiles);if(JSON.stringify(repaired)!==JSON.stringify(current)){localStorage.setItem(SKEY,JSON.stringify(repaired));queueCloudSave(SKEY,repaired);pushCloudStateNow(SKEY,repaired).catch(()=>{});window.dispatchEvent(new CustomEvent(CLOUD_REMOTE_EVENT,{detail:{key:SKEY,value:repaired,source:'sold-publication-migration'}}))}}}
+  catch(error){console.warn('Encerramento de anúncios de aparelhos vendidos não concluído.',error)}finally{localStorage.setItem(key,'1')}
  },[]);
  useEffect(()=>{const key='bmcenter-lean-phone-v102';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const lean=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(lean));queueCloudSave(SKEY,lean)}localStorage.setItem(key,'1')},[]);
  useEffect(()=>{const key='bmcenter-phone-schema-v1024';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const migrated=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}localStorage.setItem(key,'1')},[]);
@@ -510,7 +515,7 @@ function GoalsPage(){
  useRemoteStorageBridge(GOALKEY,setGoals,value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{});
  const phones=load(SKEY),profiles=load(PKEY),month=goals.month||new Date().toISOString().slice(0,7);
  const sales=phones.filter(p=>(p.sale?.soldAt||'').slice(0,7)===month);
- const ads=phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(a=>normalizeAd(a))).reduce((sum,a)=>sum+Object.values(a.publications||{}).filter(x=>x.status==='published'&&(x.date||'').slice(0,7)===month).length,0);
+ const ads=phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(a=>normalizeAd(a))).reduce((sum,a)=>sum+Object.values(a.publications||{}).filter(x=>publicationWasPublished(x)&&(x.date||'').slice(0,7)===month).length,0);
  const prepared=phones.filter(p=>['Pronto','Para fotografar','Anúncio preparado','Anunciado','Vendido'].includes(p.status)&&(p.lastActivityAt||p.date||'').slice(0,7)===month).length;
  const stale=phones.filter(p=>!isClosedPhone(p)&&daysSince(p.lastActivityAt||p.date)>Number(goals.maximumStale||7)).length;
  const persist=next=>{setGoals(next);save(GOALKEY,next)};
@@ -792,8 +797,8 @@ function defaultPhoneColumns(){return[
 ]}
 function loadPhoneColumns(){const saved=load(PHONECOLKEY);if(!Array.isArray(saved)||!saved.length)return defaultPhoneColumns();const defaults=defaultPhoneColumns(),byId=Object.fromEntries(saved.map(x=>[x.id,x]));return defaults.map(d=>({...d,...byId[d.id]})).sort((a,b)=>{const ao=saved.findIndex(x=>x.id===a.id),bo=saved.findIndex(x=>x.id===b.id);return (ao<0?999:ao)-(bo<0?999:bo)})}
 function Phones(){
- const[items,setItems]=useState(load(SKEY)),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
- useRemoteStorageBridge(SKEY,setItems,value=>Array.isArray(value)?value.map(sanitizePhoneForLeanMode):[]);
+ const[items,setItems]=useState(()=>repairSoldPublicationStates(load(SKEY),load(PKEY))),[edit,setEdit]=useState(null),[detail,setDetail]=useState(null),[salePhone,setSalePhone]=useState(null),[actionPhone,setActionPhone]=useState(null),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState([]),[tagFilter,setTagFilter]=useState('Todas'),[onlyFavorites,setOnlyFavorites]=useState(false),[columns,setColumns]=useState(loadPhoneColumns),[columnEditor,setColumnEditor]=useState(false),[batchCreate,setBatchCreate]=useState(false),[draftRevision,setDraftRevision]=useState(0);
+ useRemoteStorageBridge(SKEY,setItems,value=>Array.isArray(value)?repairSoldPublicationStates(value,load(PKEY)).map(sanitizePhoneForLeanMode):[]);
  useRemoteStorageBridge(PHONECOLKEY,setColumns,()=>loadPhoneColumns());
  const tableWrapRef=useRef(null);
  useEffect(()=>{if(tableWrapRef.current)tableWrapRef.current.scrollLeft=0},[query,statusFilter,tagFilter,onlyFavorites]);
@@ -828,11 +833,11 @@ function Phones(){
  function autoFitPhoneColumn(columnId){const table=document.querySelector('.configurable-phone-table');if(!table)return;const cells=[...table.querySelectorAll(`[data-column-id="${columnId}"]`)];let max=12;cells.forEach(cell=>{const clone=cell.cloneNode(true);clone.querySelectorAll('button,input,select,.excel-column-resizer,.universal-resize-handle').forEach(x=>x.remove());clone.style.cssText='position:absolute;visibility:hidden;width:max-content;max-width:none;white-space:nowrap;display:block;padding:0;font:inherit';document.body.appendChild(clone);max=Math.max(max,Math.ceil(clone.scrollWidth+10));clone.remove()});persistColumns(columns.map(c=>c.id===columnId?{...c,width:Math.min(1600,max)}:c))}
  const columnAlign=id=>['accessories','cost','expected','profit','actions','priority','status'].includes(id)?'center':'left';
  const visibleColumns=columns.filter(c=>c.visible&&(c.id!=='code'||showProductCode()));
- function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,accessories=(x.accessories||[]).filter(a=>a.included).length,published=profiles.filter(profile=>(x.ads||migrateLegacyAds(x)).some(ad=>normalizeAd(ad).publications[profile.id]?.status==='published'));
+ function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,accessories=(x.accessories||[]).filter(a=>a.included).length,profileIds=(x.sale?.soldAt||x.status==='Vendido')?historicalProfileIds(x):publishedProfileIds(x),published=profiles.filter(profile=>profileIds.includes(profile.id));
   switch(column.id){
    case'code':return <td className="product-code"><b>{x.code}</b></td>;
    case'device':return <td className="smartphone-device-cell"><b>{x.brand} {x.model}</b><small>{[x.color,x.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small><div className="tag-line">{(x.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}</div></td>;
-   case'profiles':return <td><div className="profile-publication-list">{published.map(profile=><span key={profile.id}>{profile.name}</span>)}{!published.length&&<small>Não anunciado</small>}</div></td>;
+   case'profiles':return <td><div className="profile-publication-list">{published.map(profile=><span key={profile.id}>{profile.name}</span>)}{!published.length&&<small>{x.sale?.soldAt||x.status==='Vendido'?'Sem histórico de anúncio':'Não anunciado'}</small>}</div></td>;
    case'status':return <td><select className="inline-status-select" value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></td>;
    case'cost':return <td className="money-cell">{money(cost)}</td>;
    case'expected':return <td className="money-cell">{money(x.expected)}</td>;
@@ -860,7 +865,7 @@ function Phones(){
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
   {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
   {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);const statusChanged=current&&String(current.status||'')!==String(v.status||'');let saved=touchPhone(addTimeline(v,statusChanged?`Status alterado para ${v.status}`:'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
-  {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>x.id!==salePhone.id?x:touchPhone(addTimeline({...x,status:'Vendido',sale},`Venda registrada por ${money(sale.value)}`))));setSalePhone(null)}}/>}
+  {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>{if(x.id!==salePhone.id)return x;const finalized=finalizeSoldPhonePublications(x,profiles,sale);return touchPhone(addTimeline(finalized,`Venda registrada por ${money(sale.value)} · anúncios encerrados`))}));setSalePhone(null)}}/>}
  </>
 }
 
@@ -1667,14 +1672,16 @@ function defaultAdWorkflow(){
 }
 
 function normalizePublication(value){
- if(!value||typeof value!=='object')return{status:'not_published',date:'',updatedAt:''};
+ if(!value||typeof value!=='object')return{status:'not_published',date:'',updatedAt:'',endedAt:'',endedReason:''};
  const valid=['not_published','published','pending','removed'];
  return{
   status:valid.includes(value.status)?value.status:'not_published',
   date:typeof value.date==='string'?value.date:'',
   updatedAt:typeof value.updatedAt==='string'?value.updatedAt:'',
   renewAt:typeof value.renewAt==='string'?value.renewAt:'',
-  lastRenewedAt:typeof value.lastRenewedAt==='string'?value.lastRenewedAt:''
+  lastRenewedAt:typeof value.lastRenewedAt==='string'?value.lastRenewedAt:'',
+  endedAt:typeof value.endedAt==='string'?value.endedAt:'',
+  endedReason:typeof value.endedReason==='string'?value.endedReason:''
  };
 }
 
@@ -1719,14 +1726,8 @@ function safeAdsPhones(){
     console.error('Erro ao converter anúncios de',p?.code,error);
     ads=[];
    }
-   return{
-    ...p,
-    brand:p.brand||'',
-    model:p.model||'',
-    color:p.color||'',
-    storage:p.storage||'',
-    ads
-   };
+   const normalizedPhone={...p,brand:p.brand||'',model:p.model||'',color:p.color||'',storage:p.storage||'',ads};
+   return p?.sale?.soldAt?finalizeSoldPhonePublications(normalizedPhone,load(PKEY),p.sale||{}):normalizedPhone;
   });
  }catch(error){
   console.error('Erro ao carregar anúncios',error);
@@ -1740,8 +1741,9 @@ function publishedCountForAd(ad){return Object.values(normalizeAd(ad).publicatio
 function TemplateModal({item,onClose,onSave}){const[f,setF]=useState(item),set=(k,v)=>setF({...f,[k]:v});return <Modal title="Modelo de anúncio" onClose={onClose}><div className="grid"><Field label="Nome do modelo" value={f.name} onChange={v=>set('name',v)}/><Field label="Modelo de título" value={f.title} onChange={v=>set('title',v)}/></div><label>Modelo de descrição<textarea className="large-textarea" value={f.description} onChange={e=>set('description',e.target.value)}/></label><div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave(f)}>Salvar modelo</button></div></Modal>}
 function SaleModal({item,profiles,onClose,onSave}){
  const banks=load(BKEY);
+ const saleProfileCandidates=(item.sale?.soldAt?historicalProfileIds(item):publishedProfileIds(item)).filter(id=>profiles.some(p=>p.id===id));
  const initial={
-  value:item.expected||0,profileId:publishedProfileIds(item).filter(id=>profiles.some(p=>p.id===id)).length===1?publishedProfileIds(item).filter(id=>profiles.some(p=>p.id===id))[0]:'',soldAt:new Date().toISOString().slice(0,10),
+  value:item.expected||0,profileId:saleProfileCandidates.length===1?saleProfileCandidates[0]:'',soldAt:new Date().toISOString().slice(0,10),
   paymentMethod:'',bankAccountId:'',marketplaceFee:0,shippingCost:0,
   paymentStatus:'Recebido',receivedAmount:item.expected||0,dueDate:'',
   installments:1,saleChannel:'Facebook Marketplace',deliveryType:'Retirada',
@@ -1807,41 +1809,57 @@ function normalizeMarketplaceProfiles(phone){
   (phone?.ads||migrateLegacyAds(phone)||[]).forEach(ad=>{
    const normalized=normalizeAd(ad);
    Object.entries(normalized.publications||{}).forEach(([profileId,pub])=>{
-    if(pub?.status==='published'&&!source[profileId]){
-     source[profileId]={active:true,publishedAt:pub.date||String(pub.updatedAt||ad.updatedAt||new Date().toISOString()).slice(0,10),updatedAt:pub.updatedAt||ad.updatedAt||''};
+    const hadPublication=!!pub?.date&&['published','removed'].includes(pub?.status);
+    if(hadPublication&&!source[profileId]){
+     source[profileId]={active:pub.status==='published'&&!phone?.sale?.soldAt&&phone?.status!=='Vendido',publishedAt:pub.date||String(pub.updatedAt||ad.updatedAt||new Date().toISOString()).slice(0,10),endedAt:pub.endedAt||'',endedReason:pub.endedReason||'',updatedAt:pub.updatedAt||ad.updatedAt||''};
     }
    });
   });
  }catch{}
+ const saleHistory=Array.isArray(phone?.sale?.publicationProfiles)?phone.sale.publicationProfiles:[];
+ saleHistory.forEach(entry=>{if(entry?.id&&!source[entry.id])source[entry.id]={active:false,publishedAt:entry.publishedAt||'',endedAt:phone?.sale?.soldAt||'',endedReason:'sold',updatedAt:phone?.sale?.updatedAt||''}});
  return source;
 }
-function publishedProfileIds(phone){const map=normalizeMarketplaceProfiles(phone);return Object.entries(map).filter(([,value])=>value?.active!==false).map(([id])=>id)}
-function profilePublishedAt(phone,profileId){const value=normalizeMarketplaceProfiles(phone)?.[profileId];return value?.active!==false?(value?.publishedAt||''):''}
+function historicalProfileIds(phone){const map=normalizeMarketplaceProfiles(phone);return Object.entries(map).filter(([,value])=>!!value&&(value.publishedAt||value.active!==undefined)).map(([id])=>id)}
+function publishedProfileIds(phone){if(phone?.sale?.soldAt||phone?.status==='Vendido')return[];const map=normalizeMarketplaceProfiles(phone);return Object.entries(map).filter(([,value])=>value?.active!==false).map(([id])=>id)}
+function profilePublishedAt(phone,profileId){const value=normalizeMarketplaceProfiles(phone)?.[profileId];return value?.active!==false&&!phone?.sale?.soldAt&&phone?.status!=='Vendido'?(value?.publishedAt||''):''}
+function historicalProfilePublishedAt(phone,profileId){
+ const value=normalizeMarketplaceProfiles(phone)?.[profileId];if(value?.publishedAt)return value.publishedAt;
+ const saleEntry=(phone?.sale?.publicationProfiles||[]).find(entry=>entry?.id===profileId);if(saleEntry?.publishedAt)return saleEntry.publishedAt;
+ try{for(const ad of phone?.ads||migrateLegacyAds(phone)||[]){const pub=normalizeAd(ad).publications?.[profileId];if(pub?.date)return pub.date}}catch{}
+ return''
+}
+function publicationWasPublished(pub){const value=normalizePublication(pub);return !!value.date&&['published','removed'].includes(value.status)}
+function salePublicationSnapshot(phone,profiles=[]){
+ return historicalProfileIds(phone).map(id=>({id,name:profiles.find(profile=>profile.id===id)?.name||'',publishedAt:historicalProfilePublishedAt(phone,id)}));
+}
+function finalizeSoldPhonePublications(phone,profiles=[],saleOverride){
+ const saleSource={...(phone?.sale||{}),...(saleOverride||{})};
+ const soldAt=String(saleSource.soldAt||new Date().toISOString().slice(0,10)).slice(0,10);
+ const stamp=new Date().toISOString();
+ let snapshot=Array.isArray(saleSource.publicationProfiles)&&saleSource.publicationProfiles.length?saleSource.publicationProfiles:salePublicationSnapshot(phone,profiles);
+ if(saleSource.profileId&&!snapshot.some(entry=>entry?.id===saleSource.profileId))snapshot=[...snapshot,{id:saleSource.profileId,name:profiles.find(profile=>profile.id===saleSource.profileId)?.name||saleSource.profileName||'',publishedAt:historicalProfilePublishedAt(phone,saleSource.profileId)}];
+ const map=normalizeMarketplaceProfiles(phone),marketplaceProfiles={};
+ Object.entries(map).forEach(([profileId,value])=>{const entry=value&&typeof value==='object'?value:{};marketplaceProfiles[profileId]={...entry,active:false,publishedAt:entry.publishedAt||historicalProfilePublishedAt(phone,profileId)||'',endedAt:entry.endedAt||soldAt,endedReason:entry.endedReason||'sold',updatedAt:stamp}});
+ const ads=(phone?.ads||migrateLegacyAds(phone)||[]).map(ad=>{const normalized=normalizeAd(ad),publications={...normalized.publications};Object.entries(publications).forEach(([profileId,raw])=>{const pub=normalizePublication(raw);if(pub.status==='published'||pub.status==='pending'||(pub.status==='removed'&&pub.date)){publications[profileId]={...pub,status:'removed',date:pub.date||marketplaceProfiles[profileId]?.publishedAt||'',renewAt:'',endedAt:pub.endedAt||soldAt,endedReason:pub.endedReason||'sold',updatedAt:stamp}}});return normalizeAd({...normalized,publications,workflow:{...normalized.workflow,sold:true},updatedAt:stamp})});
+ return{...phone,status:'Vendido',sale:{...saleSource,soldAt,publicationProfiles:snapshot,publicationsClosedAt:saleSource.publicationsClosedAt||stamp},marketplaceProfiles,ads,lastActivityAt:stamp};
+}
+function soldPublicationStateNeedsRepair(phone){
+ if(!phone||!phone.sale?.soldAt)return false;
+ const map=normalizeMarketplaceProfiles(phone);if(Object.values(map).some(value=>value?.active!==false))return true;
+ try{if((phone.ads||migrateLegacyAds(phone)||[]).some(ad=>Object.values(normalizeAd(ad).publications||{}).some(pub=>pub?.status==='published'||pub?.status==='pending')))return true}catch{}
+ const history=historicalProfileIds(phone);return history.length>0&&!(Array.isArray(phone?.sale?.publicationProfiles)&&phone.sale.publicationProfiles.length)
+}
+function repairSoldPublicationStates(phones,profiles=[]){return(Array.isArray(phones)?phones:[]).map(phone=>soldPublicationStateNeedsRepair(phone)?finalizeSoldPhonePublications(phone,profiles,phone.sale||{}):phone)}
 function salesDaysFromProfile(phone,profileId){
  const soldAt=phone?.sale?.soldAt;
  if(!soldAt)return null;
- const publishedAt=profileId?profilePublishedAt(phone,profileId):'';
+ const publishedAt=profileId?historicalProfilePublishedAt(phone,profileId):'';
  const base=publishedAt||phone?.date||soldAt;
  const diff=Math.round((new Date(soldAt)-new Date(base))/86400000);
  return Number.isFinite(diff)?Math.max(0,diff):null
 }
-function resolvedSaleProfileId(phone,profiles=[]){const sale=phone?.sale||{},raw=sale.profileId||'';if(raw&&profiles.some(p=>p.id===raw))return raw;const norm=v=>String(v||'').trim().toLocaleLowerCase('pt-BR');const named=norm(sale.profileName||sale.profile||sale.sellerProfile||'');if(named){const match=profiles.find(p=>norm(p.name)===named);if(match)return match.id}const published=publishedProfileIds(phone).filter(id=>profiles.some(p=>p.id===id));return published.length===1?published[0]:raw}
-
-function marketplaceProfileName(profile){return profile?.name||'Perfil sem nome'}
-function adContentSpecs(phone){
- return [
-  phone?.brand,phone?.model,
-  phone?.color,
-  phone?.storage?`${phone.storage}GB`:'',
-  phone?.ram?`${phone.ram}GB RAM`:'',
-  phone?.nfc===true?'NFC':'',
-  phone?.biometrics===true?'Biometria':'',
-  phone?.likeNew===true?'Estado de novo':'',
-  phone?.screenProtector===true?'Película':'',
-  phone?.caseIncluded===true?'Capinha':'',
-  phone?.connector||''
- ].filter(Boolean).join(' · ')
-}
+function resolvedSaleProfileId(phone,profiles=[]){const sale=phone?.sale||{},raw=sale.profileId||'';if(raw&&profiles.some(p=>p.id===raw))return raw;const norm=v=>String(v||'').trim().toLocaleLowerCase('pt-BR');const named=norm(sale.profileName||sale.profile||sale.sellerProfile||'');if(named){const match=profiles.find(p=>norm(p.name)===named);if(match)return match.id}const snapshotIds=(sale.publicationProfiles||[]).map(entry=>entry?.id).filter(id=>profiles.some(p=>p.id===id));if(snapshotIds.length===1)return snapshotIds[0];const published=historicalProfileIds(phone).filter(id=>profiles.some(p=>p.id===id));return published.length===1?published[0]:raw}
 function migrateLegacyAds(phone){if(phone.ads)return phone.ads;if(phone.ad?.title||phone.ad?.description)return[{id:crypto.randomUUID(),name:'Anúncio 1',title:phone.ad.title||'',description:phone.ad.description||'',publishedProfiles:phone.ad.publishedProfiles||[],createdAt:phone.ad.updatedAt||new Date().toISOString(),updatedAt:phone.ad.updatedAt||new Date().toISOString()}];return[]}
 function renderAd(text,p){const r={'{marca}':p.brand||'','{modelo}':p.model||'','{cor}':p.color||'','{armazenamento}':p.storage||'','{ram}':p.ram||'','{valor}':money(p.expected),'{codigo}':showProductCode()?(p.code||''):'','{tarefas}':p.tasks||'','{observacoes}':p.notes||''};return Object.entries(r).reduce((x,[k,v])=>x.replaceAll(k,v),text||'').trim()}
 function defaultTemplates(){return[{title:'{marca} {modelo} {armazenamento} {cor} - Seminovo',description:'{marca} {modelo} com {armazenamento}. Aparelho seminovo, revisado e pronto para uso. Valor: {valor}. Entrega a combinar.'},{title:'{modelo} {armazenamento} em ótimo estado',description:'Vendo {marca} {modelo}, cor {cor}, com {armazenamento}. Aparelho testado e funcionando. {observacoes} Valor: {valor}.'}]}
@@ -1910,7 +1928,7 @@ function SalesPage(){
   persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline({...p,status:'Pronto',sale:null},'Registro de venda removido'))));
  }
  function saveEditedSale(phone,sale){
-  persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline({...p,status:'Vendido',sale},`Venda editada para ${money(sale.value)}`))));
+  persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline(finalizeSoldPhonePublications(p,profiles,sale),`Venda editada para ${money(sale.value)} · anúncios permanecem encerrados`))));
   setEditing(null);
  }
 
@@ -2106,7 +2124,7 @@ function DataCenterPage(){
  }
  function exportProfilesCsv(){
   const profiles=load(PKEY),phones=load(SKEY),rows=[['Perfil','Anúncios publicados','Vendas','Valor vendido']];
-  profiles.forEach(profile=>{let published=0;phones.forEach(p=>(p.ads||migrateLegacyAds(p)).forEach(ad=>{if(normalizeAd(ad).publications[profile.id]?.status==='published')published++}));const sales=phones.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);rows.push([profile.name,published,sales.length,sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)])});
+  profiles.forEach(profile=>{const published=phones.filter(p=>!isClosedPhone(p)&&publishedProfileIds(p).includes(profile.id)).length;const sales=phones.filter(p=>resolvedSaleProfileId(p,profiles)===profile.id);rows.push([profile.name,published,sales.length,sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)])});
   downloadText('bmcenter-perfis.csv',rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
  }
  async function clearAll(){

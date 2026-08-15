@@ -1,0 +1,22 @@
+BMCenter Smartphones v10.4.74
+
+ALTERACOES DESTA VERSAO
+
+- Registrar uma venda encerra automaticamente todas as publicacoes ativas daquele aparelho.
+- O anuncio nao e apagado do historico do BMCenter: perfil, data de publicacao e data de encerramento ficam preservados.
+- Aparelho vendido nunca mais entra na contagem de anuncio ativo/publicacao ativa.
+- Se o aparelho estava publicado em varios perfis, todos sao encerrados no momento da venda.
+- A ficha/historico de Smartphones continua mostrando em quais perfis o aparelho esteve anunciado.
+- Para aparelhos vendidos, a janela de perfis vira historico somente leitura.
+- O tempo medio para vender continua usando a data historica de publicacao, mesmo depois do anuncio ser encerrado.
+- Metas e metricas historicas de publicacao continuam contando a publicacao que realmente aconteceu.
+- Foi adicionada migracao automatica para vendas antigas que ainda ficaram marcadas como publicadas.
+- Remover o registro de venda nao reativa anuncios automaticamente, pois o anuncio do Facebook ja pode ter sido excluido.
+
+REGRA DE NEGOCIO
+
+PUBLICACAO ATIVA e HISTORICO DE PUBLICACAO agora sao conceitos separados.
+Venda registrada = publicacao encerrada, mas historico preservado.
+
+Photo Studio continua removido.
+Pedidos e pecas continuam exclusivos para pecas.
