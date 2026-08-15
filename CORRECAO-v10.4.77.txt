@@ -1,0 +1,11 @@
+BMCenter Smartphones v10.4.77
+
+AUDITORIA VISUAL COMPLETA + PERFIS
+
+- Remove da ficha detalhada as etapas Comprado / Diagnóstico / Cotação / Pedido / Reparo / Anúncios / Venda.
+- Audita páginas, modais e sub-janelas para reduzir campos, colunas, paddings e alturas desperdiçadas.
+- Refaz a janela Registrar/Alterar Venda com larguras proporcionais ao conteúdo.
+- Tabelas de consulta passam a usar colunas orientadas pelo conteúdo em vez de esticar sem necessidade.
+- Melhora graficamente a página Perfis do Facebook com KPIs, cores dos perfis e barras de desempenho.
+- Mantém as regras mobile existentes e adiciona responsividade aos novos componentes.
+- Adiciona teste de regressão ui-space-audit.test.mjs.

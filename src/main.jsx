@@ -12,9 +12,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.76';
+const APP_VERSION='10.4.77';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -582,6 +582,11 @@ function ProfileAnalyticsPage(){
   return{profile,published:published.length,sales:sold.length,value,last:[...sold].sort((a,b)=>(b.sale.soldAt||'').localeCompare(a.sale.soldAt||''))[0],averageDays:days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0}
  }).sort((a,b)=>b.sales-a.sales||b.value-a.value);
  const filtered=profiles.filter(p=>`${p.name} ${p.platform||''} ${p.notes||''}`.toLowerCase().includes(query.toLowerCase()));
+ const activeProfiles=profiles.filter(p=>p.active!==false).length;
+ const totalPublications=data.reduce((sum,item)=>sum+item.published,0);
+ const totalProfileSales=data.reduce((sum,item)=>sum+item.sales,0);
+ const totalProfileRevenue=data.reduce((sum,item)=>sum+item.value,0);
+ const maxProfileSales=Math.max(1,...data.map(item=>item.sales));
  function removeProfile(profile){
   const used=phones.some(phone=>publishedProfileIds(phone).includes(profile.id)||(phone.ads||migrateLegacyAds(phone)).some(ad=>normalizeAd(ad).publications?.[profile.id])||resolvedSaleProfileId(phone,profiles)===profile.id);
   if(used&&!confirm(`O perfil "${profile.name}" possui histórico em anúncios ou vendas. Deseja excluí-lo mesmo assim?`))return;
@@ -597,6 +602,12 @@ function ProfileAnalyticsPage(){
   <Title t="Perfis do Facebook" s="Cadastre, organize e acompanhe os perfis usados nas publicações e vendas.">
    <button className="primary" onClick={()=>setEditing({id:crypto.randomUUID(),name:'',platform:'Facebook Marketplace',facebookUrl:'',color:'#1877f2',notes:'',active:true})}><Plus/> Novo perfil</button>
   </Title>
+  <div className="profile-overview-grid">
+   <article><span className="profile-overview-icon blue"><Users size={18}/></span><div><small>Perfis ativos</small><strong>{activeProfiles}</strong><em>{profiles.length-activeProfiles} inativo(s)</em></div></article>
+   <article><span className="profile-overview-icon violet"><FileText size={18}/></span><div><small>Publicações ativas</small><strong>{totalPublications}</strong><em>em {profiles.length} perfil(is)</em></div></article>
+   <article><span className="profile-overview-icon green"><WalletCards size={18}/></span><div><small>Vendas atribuídas</small><strong>{totalProfileSales}</strong><em>histórico por perfil</em></div></article>
+   <article><span className="profile-overview-icon amber"><TrendingUp size={18}/></span><div><small>Valor vendido</small><strong>{money(totalProfileRevenue)}</strong><em>somatório dos perfis</em></div></article>
+  </div>
   <div className="profile-page-tabs">
    <button className={tab==='manage'?'active':''} onClick={()=>setTab('manage')}>Gerenciar perfis</button>
    <button className={tab==='analytics'?'active':''} onClick={()=>setTab('analytics')}>Desempenho</button>
@@ -608,13 +619,14 @@ function ProfileAnalyticsPage(){
     <div><span>{profiles.filter(p=>p.active!==false).length} ativo(s)</span><span>{profiles.filter(p=>p.active===false).length} inativo(s)</span></div>
    </div>
    <div className="facebook-profile-grid">
-    {filtered.map((profile,index)=>{const stats=data.find(x=>x.profile.id===profile.id);return <article className={profile.active===false?'inactive':''} key={profile.id}>
+    {filtered.map((profile,index)=>{const stats=data.find(x=>x.profile.id===profile.id);return <article className={profile.active===false?'inactive':''} style={{'--profile-accent':profile.color||'#1877f2'}} key={profile.id}>
      <header>
       <div className="facebook-profile-avatar" style={{background:profile.color||'#1877f2'}}>{String(profile.name||'FB').slice(0,2).toUpperCase()}</div>
       <div><b>{profile.name||'Perfil sem nome'}</b><span>{profile.platform||'Facebook Marketplace'}</span></div>
       <span className={profile.active===false?'profile-state off':'profile-state'}>{profile.active===false?'Inativo':'Ativo'}</span>
      </header>
      <div className="facebook-profile-stats"><div><strong>{stats?.published||0}</strong><span>Publicações</span></div><div><strong>{stats?.sales||0}</strong><span>Vendas</span></div><div><strong>{money(stats?.value||0)}</strong><span>Valor vendido</span></div></div>
+     <div className="profile-card-performance"><div><small>Desempenho relativo de vendas</small><b>{stats?.sales||0} venda(s)</b></div><span><i style={{width:`${Math.max(stats?.sales?8:0,Math.round((stats?.sales||0)/maxProfileSales*100))}%`}}/></span></div>
      {profile.facebookUrl&&<a href={profile.facebookUrl} target="_blank" rel="noreferrer">Abrir perfil do Facebook</a>}
      {profile.notes&&<p>{profile.notes}</p>}
      <footer>
@@ -1771,7 +1783,7 @@ function SaleModal({item,profiles,onClose,onSave}){
   </div>
 
   <h3 className="section-title">Dados da venda</h3>
-  <div className="grid">
+  <div className="grid sale-data-grid">
    <Field label="Valor vendido" type="number" value={f.value} onChange={v=>set('value',Number(v))}/>
    <label>Perfil que realizou a venda<select value={f.profileId||''} onChange={e=>set('profileId',e.target.value)}><option value="">Não informado</option>{profiles.map(p=><option value={p.id} key={p.id}>{p.name}</option>)}</select></label>
    <Field label="Data da venda" type="date" value={f.soldAt} onChange={v=>set('soldAt',v)}/>
@@ -1785,14 +1797,14 @@ function SaleModal({item,profiles,onClose,onSave}){
   </div>
 
   <h3 className="section-title">Recebimento</h3>
-  <div className="grid">
+  <div className="grid sale-receipt-grid">
    <label>Status<select value={f.paymentStatus||'Recebido'} onChange={e=>changeStatus(e.target.value)}><option>Recebido</option><option>Pendente</option><option>Parcial</option></select></label>
    <Field label="Valor recebido" type="number" value={f.receivedAmount||0} onChange={v=>set('receivedAmount',Number(v))}/>
    <Field label="Vencimento" type="date" value={f.dueDate||''} onChange={v=>set('dueDate',v)}/>
   </div>
 
   <h3 className="section-title">Comprador</h3>
-  <div className="grid">
+  <div className="grid sale-buyer-grid">
    <Field label="Nome do comprador" value={f.buyerName||''} onChange={v=>set('buyerName',v)}/>
    <Field label="Telefone/WhatsApp" value={f.buyerPhone||''} onChange={v=>set('buyerPhone',v)}/>
    <Field label="Cidade/Bairro" value={f.buyerCity||''} onChange={v=>set('buyerCity',v)}/>
@@ -2497,10 +2509,6 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
  const[tab,setTab]=useState('summary'),[tag,setTag]=useState(''),[checkText,setCheckText]=useState(''),[commentText,setCommentText]=useState('');
  const set=(k,v)=>setF({...f,[k]:v});
  const publishedProfiles=[...new Set((f.ads||[]).flatMap(ad=>profiles.filter(p=>normalizeAd(ad).publications[p.id]?.status==='published').map(p=>p.name)))];
- const stages=[
-  ['Comprado',true],['Diagnóstico',(f.diagnostics||[]).length>0],['Cotação',(f.parts||[]).some(p=>(p.quotes||[]).length)],['Pedido',(f.parts||[]).some(p=>p.orderStatus&&p.orderStatus!=='Não pedido')],
-  ['Reparo',['Em reparo','Em testes','Pronto','Para fotografar','Anúncio preparado','Anunciado','Vendido'].includes(f.status)],['Anúncios',(f.ads||[]).length>0],['Venda',!!f.sale?.soldAt]
- ];
  function addTag(){const clean=tag.trim().toUpperCase();if(clean&&!f.tags.includes(clean))set('tags',[...f.tags,clean]);setTag('')}
  function saveAndClose(){onSave(addTimeline(f,'Ficha operacional atualizada'));onClose()}
  return <Modal className="phone-detail-modal" title={`${showProductCode()?f.code+" · ":""}${f.brand} ${f.model}`} onClose={onClose}>
@@ -2509,7 +2517,6 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
    <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{formatPhoneSpecs(f)}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
    <div className="phone-detail-value"><span>Valor de venda</span><strong>{money(f.expected)}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
   </div>
-  <div className="phone-detail-progress">{stages.map(([name,done])=><div className={done?'done':''} key={name}><i>{done?'✓':'○'}</i><span>{name}</span></div>)}</div>
   <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>
 
   {tab==='summary'&&<div className="phone-detail-grid">
@@ -2811,7 +2818,7 @@ function Modal({title,onClose,children,className='',subtitle='',titleIcon=null})
    if(history.state?.bmcenterModal===modalHistoryKey)history.back();
   };
  },[]);
- return <div className="back" style={{zoom:1/pageScale}} onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`} style={{zoom:fontScale}}><div className="modalhead"><div className="modal-title-group">{titleIcon&&<span className="modal-title-icon">{titleIcon}</span>}<div><h2>{title}</h2>{subtitle&&<small>{subtitle}</small>}</div></div><div className="modalhead-tools"><div className="font-scale-controls" title="Tamanho da fonte desta janela"><button type="button" onClick={()=>changeFont(-.05)} disabled={fontScale<=.9}>−</button><span>{Math.round(fontScale*100)}%</span><button type="button" onClick={()=>changeFont(.05)} disabled={fontScale>=1.15}>+</button></div><button type="button" onClick={onClose}><X/></button></div></div><div className="modalbody">{children}</div></div></div>
+ return <div className="back" style={{zoom:1/pageScale}} onMouseDown={e=>e.target===e.currentTarget&&onClose()}><div className={`modal ${className}`} data-modal-title={title} style={{zoom:fontScale}}><div className="modalhead"><div className="modal-title-group">{titleIcon&&<span className="modal-title-icon">{titleIcon}</span>}<div><h2>{title}</h2>{subtitle&&<small>{subtitle}</small>}</div></div><div className="modalhead-tools"><div className="font-scale-controls" title="Tamanho da fonte desta janela"><button type="button" onClick={()=>changeFont(-.05)} disabled={fontScale<=.9}>−</button><span>{Math.round(fontScale*100)}%</span><button type="button" onClick={()=>changeFont(.05)} disabled={fontScale>=1.15}>+</button></div><button type="button" onClick={onClose}><X/></button></div></div><div className="modalbody">{children}</div></div></div>
 }
 function Field({label,value,onChange,type='text',prefix='',suffix='',inputMode}){return <label>{label}<div className={`field-affix field-affix-inline ${prefix?'has-prefix':''} ${suffix?'has-suffix':''}`}>{prefix&&<span className="field-prefix">{prefix}</span>}<input type={type} inputMode={inputMode} value={value??''} onChange={e=>onChange(e.target.value)}/>{suffix&&<span className="field-suffix">{suffix}</span>}</div></label>}
 function Title({t,s,children}){return <div className="title"><div><h1>{t}</h1><p>{s}</p></div>{children}</div>}
