@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1053.css',import.meta.url),'utf8');
+assert.match(main,/import'\.\/v1052\.css';import'\.\/v1053\.css';/,'v1053 deve carregar por último');
+assert.match(main,/const APP_VERSION='10\.5\.3'/,'versão 10.5.3 ausente');
+assert.match(css,/@media\(max-width:900px\)[\s\S]*sale-data-grid[\s\S]*display:flex!important/,'venda mobile deve usar flex-wrap');
+assert.match(css,/sale-field-value\{flex-basis:88px!important;width:88px!important\}/,'valor vendido deve ter largura semântica');
+assert.match(css,/sale-field-installments\{flex-basis:52px!important;width:52px!important\}/,'parcelas deve permanecer pequeno');
+assert.match(css,/v57-purchase-grid\{[\s\S]*display:flex!important/,'dados da compra mobile deve usar flex-wrap');
+assert.match(css,/purchase-field-date\{flex-basis:100px!important;width:100px!important\}/,'data da compra deve ter largura de data');
+assert.match(css,/purchase-field-paid\{flex-basis:80px!important;width:80px!important\}/,'valor pago deve ser compacto');
+assert.doesNotMatch(css,/v57-bank\{grid-column:1\/-1!important\}/,'conta/banco não pode voltar a linha inteira');
+console.log('mobile-semantic-width-v1053.test: OK');

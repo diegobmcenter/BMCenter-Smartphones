@@ -1,0 +1,198 @@
+/* BMCenter v10.5.3 — compactação MOBILE efetiva.
+   Não usa tracks fracionados para os formulários abaixo: cada campo recebe
+   largura semântica e as linhas são preenchidas por flex-wrap. */
+
+@media(max-width:900px){
+  /* ---------- Registrar / editar venda ---------- */
+  .v102-app .back>.modal.sale-register-modal{
+    width:calc(100vw - 10px)!important;
+    max-width:calc(100vw - 10px)!important;
+    max-height:calc(100dvh - 10px)!important;
+    border-radius:11px!important;
+  }
+  .v102-app .sale-register-modal>.modalhead{
+    min-height:42px!important;
+    padding:5px 7px!important;
+  }
+  .v102-app .sale-register-modal>.modalhead .modal-title-group{min-width:0!important;flex:1 1 auto!important}
+  .v102-app .sale-register-modal>.modalhead h2{
+    font-size:12px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .v102-app .sale-register-modal>.modalhead .modalhead-tools{gap:3px!important;flex:none!important}
+  .v102-app .sale-register-modal>.modalhead .font-scale-controls button,
+  .v102-app .sale-register-modal>.modalhead .modalhead-tools>button{
+    width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;padding:0!important;
+  }
+  .v102-app .sale-register-modal>.modalhead .font-scale-controls span{display:none!important}
+  .v102-app .sale-register-modal>.modalbody{
+    padding:5px 7px 58px!important;
+    overflow-x:hidden!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:3px!important;
+    margin:0 0 5px!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four>div{
+    min-width:0!important;
+    min-height:38px!important;
+    padding:4px 5px!important;
+    border-radius:8px!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four span{
+    font-size:5.8px!important;line-height:1.05!important;white-space:normal!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four strong{
+    font-size:8.8px!important;line-height:1.08!important;white-space:nowrap!important;
+  }
+  .v102-app .sale-register-modal .section-title{
+    margin:5px 0 3px!important;
+    font-size:7.5px!important;
+    line-height:1.1!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid){
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:flex-end!important;
+    align-content:flex-start!important;
+    justify-content:flex-start!important;
+    gap:4px 5px!important;
+    width:100%!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid)>label{
+    flex:0 0 auto!important;
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    gap:2px!important;
+    font-size:6.3px!important;
+    line-height:1.05!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid)>label :is(input,select,.field-affix-inline){
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid) :is(input,select,.field-affix-inline){
+    height:29px!important;
+    min-height:29px!important;
+    font-size:7.2px!important;
+    border-radius:7px!important;
+  }
+  /* Linha 1: valor + perfil | Linha 2: data + canal | Linha 3: pagamento + conta.
+     Linha 4 usa quatro campos financeiros/operacionais compactos. */
+  .v102-app .sale-register-modal .sale-field-value{flex-basis:88px!important;width:88px!important}
+  .v102-app .sale-register-modal .sale-field-profile{flex-basis:150px!important;width:150px!important}
+  .v102-app .sale-register-modal .sale-field-date{flex-basis:108px!important;width:108px!important}
+  .v102-app .sale-register-modal .sale-field-channel{flex-basis:150px!important;width:150px!important}
+  .v102-app .sale-register-modal .sale-field-payment{flex-basis:126px!important;width:126px!important}
+  .v102-app .sale-register-modal .sale-field-account{flex-basis:174px!important;width:174px!important}
+  .v102-app .sale-register-modal .sale-field-fee{flex-basis:80px!important;width:80px!important}
+  .v102-app .sale-register-modal .sale-field-shipping{flex-basis:92px!important;width:92px!important}
+  .v102-app .sale-register-modal .sale-field-delivery{flex-basis:96px!important;width:96px!important}
+  .v102-app .sale-register-modal .sale-field-installments{flex-basis:52px!important;width:52px!important}
+
+  .v102-app .sale-register-modal .sale-field-receipt-status{flex-basis:94px!important;width:94px!important}
+  .v102-app .sale-register-modal .sale-field-received{flex-basis:96px!important;width:96px!important}
+  .v102-app .sale-register-modal .sale-field-due{flex-basis:108px!important;width:108px!important}
+
+  .v102-app .sale-register-modal .sale-field-buyer{flex-basis:124px!important;width:124px!important}
+  .v102-app .sale-register-modal .sale-field-phone{flex-basis:106px!important;width:106px!important}
+  .v102-app .sale-register-modal .sale-field-city{flex-basis:104px!important;width:104px!important}
+
+  .v102-app .sale-register-modal>.modalbody>label{
+    display:grid!important;
+    width:min(100%,340px)!important;
+    margin-top:4px!important;
+    gap:2px!important;
+    font-size:6.3px!important;
+  }
+  .v102-app .sale-register-modal>.modalbody>label textarea{
+    width:100%!important;
+    min-height:36px!important;
+    height:36px!important;
+    padding:5px 6px!important;
+    font-size:7px!important;
+  }
+  .v102-app .sale-register-modal>.modalbody>.actions{
+    margin-top:5px!important;
+    padding:6px 7px!important;
+    gap:5px!important;
+  }
+  .v102-app .sale-register-modal>.modalbody>.actions button{
+    min-height:31px!important;
+    padding:5px 9px!important;
+    font-size:7.5px!important;
+  }
+
+  /* ---------- Ficha > Dados da compra ---------- */
+  .v102-app .phone-editor-v57 .v57-purchase-grid{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:flex-end!important;
+    align-content:flex-start!important;
+    justify-content:flex-start!important;
+    gap:4px 5px!important;
+    width:100%!important;
+    padding:6px 7px!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{
+    flex:0 0 auto!important;
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    gap:2px!important;
+    font-size:8px!important;
+    line-height:1.05!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label :is(input,select,.field-affix-inline,.v59-status-wrap){
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid :is(input,select,.field-affix-inline,.v59-status-wrap){
+    height:31px!important;
+    min-height:31px!important;
+    font-size:8.6px!important;
+    border-radius:7px!important;
+  }
+  /* 3 + 3 + 2: aproveita a largura real do telefone sem alongar os campos. */
+  .v102-app .phone-editor-v57 .purchase-field-date{flex-basis:100px!important;width:100px!important}
+  .v102-app .phone-editor-v57 .purchase-field-origin{flex-basis:104px!important;width:104px!important}
+  .v102-app .phone-editor-v57 .purchase-field-payment{flex-basis:116px!important;width:116px!important}
+  .v102-app .phone-editor-v57 .v57-bank{flex-basis:154px!important;width:154px!important}
+  .v102-app .phone-editor-v57 .purchase-field-paid{flex-basis:80px!important;width:80px!important}
+  .v102-app .phone-editor-v57 .purchase-field-sale{flex-basis:80px!important;width:80px!important}
+  .v102-app .phone-editor-v57 .purchase-field-other{flex-basis:86px!important;width:86px!important}
+  .v102-app .phone-editor-v57 .v57-status{flex-basis:138px!important;width:138px!important}
+  .v102-app .phone-editor-v57 .v57-bank small.field-help{
+    max-width:154px!important;
+    font-size:5.8px!important;
+    line-height:1.08!important;
+  }
+}
+
+@media(max-width:370px){
+  /* Só reduz medidas; não volta a transformar campos em linhas inteiras. */
+  .v102-app .sale-register-modal .sale-field-profile{flex-basis:138px!important;width:138px!important}
+  .v102-app .sale-register-modal .sale-field-channel{flex-basis:140px!important;width:140px!important}
+  .v102-app .sale-register-modal .sale-field-account{flex-basis:160px!important;width:160px!important}
+  .v102-app .sale-register-modal .sale-field-fee{flex-basis:76px!important;width:76px!important}
+  .v102-app .sale-register-modal .sale-field-shipping{flex-basis:86px!important;width:86px!important}
+  .v102-app .sale-register-modal .sale-field-delivery{flex-basis:91px!important;width:91px!important}
+  .v102-app .phone-editor-v57 .purchase-field-date{flex-basis:94px!important;width:94px!important}
+  .v102-app .phone-editor-v57 .purchase-field-origin{flex-basis:98px!important;width:98px!important}
+  .v102-app .phone-editor-v57 .purchase-field-payment{flex-basis:108px!important;width:108px!important}
+  .v102-app .phone-editor-v57 .v57-bank{flex-basis:144px!important;width:144px!important}
+}
