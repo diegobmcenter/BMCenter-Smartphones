@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const reports=fs.readFileSync(new URL('../src/v10/pages/ReportsV10.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10490.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10489\.css';import'\.\/v10490\.css';/,'v10490.css deve ser a camada final');
-assert.match(main,/const APP_VERSION='10\.4\.90'/,'versão 10.4.90 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.91'/,'versão 10.4.91 não encontrada');
 assert.match(main,/useState\('this_month'\)/,'relatórios devem iniciar em Este mês');
 for(const id of ['today','last7','this_month','previous_month','last30','this_year','all','custom'])assert.ok(reports.includes(`value="${id}"`),`período ausente: ${id}`);
 assert.match(main,/const sales=allSales\.filter\(p=>dateInRange\(p\.sale\?\.soldAt\)\)/,'vendas precisam respeitar período');
