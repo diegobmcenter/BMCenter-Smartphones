@@ -36,11 +36,55 @@ export function quoteForPart(part){
  return quotes.find(q=>q.id===part?.selectedQuoteId)||[...quotes].sort((a,b)=>Number(a.price||0)-Number(b.price||0))[0]||null
 }
 
+
+export function partGrossCost(part={}){
+ if(part?.effectiveCost!==undefined&&part?.effectiveCost!==null&&part?.effectiveCost!=='')return roundMoney(part.effectiveCost);
+ return roundMoney(Number(part?.purchasePrice??part?.price??0)+Number(part?.freightShare||0))
+}
+
+export function partsOperationalCounters(phones=[],orders=[]){
+ const normalizedOrders=normalizePartsOrders(orders);
+ const activePhones=(Array.isArray(phones)?phones:[]).filter(phone=>!['Vendido','Descarte/Sucata'].includes(phone?.status));
+ const linkedOrderIds=new Set(normalizedOrders.map(order=>order.id));
+ const rows=activePhones.flatMap(phone=>(phone.parts||[]).map(part=>{
+  const validQuotes=(Array.isArray(part?.quotes)?part.quotes:[]).filter(q=>q?.supplier&&Number(q?.price)>=0);
+  return{part,quotes:validQuotes}
+ }));
+ const openRows=rows.filter(row=>isPartOpenForProcurement(row.part,linkedOrderIds));
+ const returnRows=normalizedOrders.flatMap(order=>(order.items||[]).filter(item=>item?.returnStatus));
+ const pendingReturns=returnRows.filter(item=>item.returnStatus==='pending').length;
+ const financialPending=returnRows.filter(item=>item.returnStatus==='returned'&&!['received','supplier_credit'].includes(item.returnFinancialStatus)).length;
+ return{
+  open:openRows.length,
+  quotes:openRows.filter(row=>row.quotes.length).length,
+  orders:normalizedOrders.filter(order=>order.status!=='received').length,
+  received:normalizedOrders.filter(order=>order.status==='received').length,
+  returns:pendingReturns+financialPending
+ }
+}
+
+
+export function partsPeriodReportMetrics(orders=[],dateInRange=()=>true){
+ const normalizedOrders=normalizePartsOrders(orders);
+ const rows=normalizedOrders.flatMap(order=>(order.items||[]).map(item=>({order,item,gross:partGrossCost(item)})));
+ const purchased=rows.filter(row=>row.item.confirmedAt&&dateInRange(row.item.confirmedAt||row.order.orderDate||row.order.createdAt));
+ const returned=rows.filter(row=>row.item.returnStatus==='returned'&&dateInRange(row.item.returnedToSupplierAt||row.item.returnRefundDate||row.item.returnFinancialUpdatedAt));
+ const settled=rows.filter(row=>row.item.returnStatus==='returned'&&['received','supplier_credit'].includes(row.item.returnFinancialStatus)&&dateInRange(row.item.returnFinancialUpdatedAt||row.item.returnRefundDate||row.item.returnedToSupplierAt));
+ const supplierSpend={};
+ purchased.forEach(row=>{const supplier=row.order.supplier||'Fornecedor não informado';supplierSpend[supplier]=roundMoney((supplierSpend[supplier]||0)+row.gross)});
+ return{
+  purchasedQty:purchased.length,
+  purchasedValue:roundMoney(purchased.reduce((sum,row)=>sum+row.gross,0)),
+  returnsQty:returned.length,
+  recoveredValue:roundMoney(settled.reduce((sum,row)=>sum+returnRecoveredAmount(row.item),0)),
+  unrecoveredLoss:roundMoney(settled.reduce((sum,row)=>sum+Math.max(0,row.gross-returnRecoveredAmount(row.item)),0)),
+  supplierSpend
+ }
+}
+
 export function effectivePartCost(part){
- let gross=0;
- if(part?.effectiveCost!==undefined&&part?.effectiveCost!==null&&part?.effectiveCost!=='')gross=roundMoney(part.effectiveCost);
- else if(part?.purchasePrice!==undefined&&part?.purchasePrice!==null&&part?.purchasePrice!=='')gross=roundMoney(Number(part.purchasePrice||0)+Number(part.freightShare||0));
- else gross=roundMoney(quoteForPart(part)?.price||0);
+ let gross=partGrossCost(part);
+ if(!gross&&part?.purchasePrice===undefined&&part?.price===undefined&&part?.effectiveCost===undefined)gross=roundMoney(quoteForPart(part)?.price||0);
  return roundMoney(Math.max(0,gross-returnRecoveredAmount({...part,effectiveCost:gross})))
 }
 

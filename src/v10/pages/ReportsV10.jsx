@@ -1,6 +1,6 @@
 import React from 'react';
-import {AlertTriangle,BarChart3,CalendarDays,CircleDollarSign,Package,Tag,TrendingDown,TrendingUp,Users} from 'lucide-react';
-export default function ReportsV10({forecast7,forecast30,stockExpected,profileData,supplierData,tags,channelSummary,bankSummary,monthly,discarded=[],discardLoss=0,money,formatMonth,period,setPeriod,customStart,setCustomStart,customEnd,setCustomEnd,periodLabel,rangeLabel}){
+import {AlertTriangle,BarChart3,CalendarDays,CircleDollarSign,Package,RotateCcw,ShoppingCart,Tag,Tags,TrendingDown,TrendingUp,Users} from 'lucide-react';
+export default function ReportsV10({forecast7,forecast30,stockExpected,profileData,supplierData,partsCurrent={open:0,quotes:0,orders:0,returns:0},partsPeriod={purchasedQty:0,purchasedValue:0,returnsQty:0,recoveredValue:0,unrecoveredLoss:0},tags,channelSummary,bankSummary,monthly,discarded=[],discardLoss=0,money,formatMonth,period,setPeriod,customStart,setCustomStart,customEnd,setCustomEnd,periodLabel,rangeLabel}){
  return <div className="v10-page v10-reports-page">
   <header className="v10-hero"><div><span>ANÁLISE</span><h1>Relatórios</h1><p>Uma leitura objetiva de vendas, estoque, perfis, fornecedores e recebimentos.</p></div></header>
   <section className="v10490-report-period">
@@ -10,12 +10,28 @@ export default function ReportsV10({forecast7,forecast30,stockExpected,profileDa
    </select>
    {period==='custom'&&<div className="v10490-custom-range"><input type="date" value={customStart} onChange={e=>setCustomStart(e.target.value)}/><span>até</span><input type="date" value={customEnd} onChange={e=>setCustomEnd(e.target.value)}/></div>}
    <span className="v10490-range-chip" title={periodLabel}>{rangeLabel}</span>
-   <small>O período filtra vendas, compras, perfis, recebimentos, perdas e histórico. Previsões e estoque permanecem atuais.</small>
+   <small>O período filtra vendas, compras, perfis, recebimentos, perdas e histórico. Previsões, estoque e pendências operacionais permanecem atuais.</small>
   </section>
   <section className="v10-report-metrics">
    <article><TrendingUp/><div><small>Previsão 7 dias</small><strong>{money(forecast7)}</strong></div></article>
    <article><BarChart3/><div><small>Previsão 30 dias</small><strong>{money(forecast30)}</strong></div></article>
    <article><Package/><div><small>Estoque previsto · atual</small><strong>{money(stockExpected)}</strong></div></article><article className="v1042-loss-metric"><TrendingDown/><div><small>Prejuízo · período</small><strong>{money(discardLoss)}</strong><span>{discarded.length} aparelho(s)</span></div></article>
+  </section>
+  <section className="v10493-parts-overview">
+   <header><Package/><div><span>CENTRAL DE PEÇAS</span><h2>Resumo de peças</h2></div></header>
+   <div className="v10493-parts-group"><b className="v10493-parts-group-label">ATUAL</b><div className="v10493-parts-current">
+    <article><Package/><div><small>Em aberto</small><strong>{partsCurrent.open}</strong></div></article>
+    <article><Tags/><div><small>Cotações</small><strong>{partsCurrent.quotes}</strong></div></article>
+    <article><ShoppingCart/><div><small>Pedidos</small><strong>{partsCurrent.orders}</strong></div></article>
+    <article><RotateCcw/><div><small>Devoluções</small><strong>{partsCurrent.returns}</strong></div></article>
+   </div></div>
+   <div className="v10493-parts-group"><b className="v10493-parts-group-label">{periodLabel}</b><div className="v10493-parts-period">
+    <article><ShoppingCart/><div><small>Peças compradas</small><strong>{partsPeriod.purchasedQty}</strong></div></article>
+    <article><CircleDollarSign/><div><small>Valor comprado</small><strong>{money(partsPeriod.purchasedValue)}</strong></div></article>
+    <article><RotateCcw/><div><small>Devolvidas</small><strong>{partsPeriod.returnsQty}</strong></div></article>
+    <article className="good"><TrendingUp/><div><small>Valor recuperado</small><strong>{money(partsPeriod.recoveredValue)}</strong></div></article>
+    <article className="bad"><TrendingDown/><div><small>Perda não recuperada</small><strong>{money(partsPeriod.unrecoveredLoss)}</strong></div></article>
+   </div></div>
   </section>
   <section className="v10-report-grid">
    <article><header><Users/><div><span>PERFIS · {periodLabel}</span><h2>Desempenho por perfil</h2></div></header><div className="v10-ranked-list">{profileData.filter(x=>x.qty).map((x,i)=><div key={x.name}><span>{i+1}</span><div><b>{x.name}</b><small>{x.qty} venda(s)</small></div><strong>{money(x.revenue)}</strong></div>)}{!profileData.some(x=>x.qty)&&<em>Sem vendas neste período.</em>}</div></article>
