@@ -6,6 +6,25 @@ const dateKey=value=>String(value||'').slice(0,10);
 const time=value=>{const t=new Date(value||0).getTime();return Number.isFinite(t)?t:0};
 const daysBetween=(a,b)=>{const start=time(a),end=time(b);return start&&end?Math.max(0,Math.round((end-start)/dayMs)):0};
 const closed=phone=>['Vendido','Descarte/Sucata'].includes(String(phone?.status||''));
+const localDayTime=value=>{if(!value)return 0;let d;if(/^\d{4}-\d{2}-\d{2}$/.test(String(value)))d=new Date(`${value}T12:00:00`);else d=new Date(value);if(!Number.isFinite(d.getTime()))return 0;d.setHours(0,0,0,0);return d.getTime()};
+const meaningfulTimeline=message=>{const text=String(message||'').trim().toLocaleLowerCase('pt-BR');if(!text)return false;return !/^(cadastro atualizado|ficha operacional atualizada)$/.test(text)};
+export function lastOperationalActivityDate(phone,extraDates=[]){
+ const dates=[];const add=value=>{if(value&&Number.isFinite(new Date(value).getTime()))dates.push(value)};
+ add(phone?.date);
+ (phone?.timeline||[]).forEach(entry=>{if(meaningfulTimeline(entry?.message))add(entry?.date)});
+ (phone?.parts||[]).forEach(part=>{add(part?.updatedAt);(part?.quotes||[]).forEach(quote=>add(quote?.updatedAt));});
+ (phone?.mediaLibrary||[]).forEach(media=>add(media?.date));
+ (phone?.priceHistory||[]).forEach(entry=>add(entry?.date));
+ const map=phone?.marketplaceProfiles&&typeof phone.marketplaceProfiles==='object'&&!Array.isArray(phone.marketplaceProfiles)?phone.marketplaceProfiles:{};
+ Object.values(map).forEach(entry=>{add(entry?.updatedAt);add(entry?.publishedAt);add(entry?.endedAt)});
+ (phone?.ads||[]).forEach(ad=>{add(ad?.createdAt);add(ad?.updatedAt);Object.values(ad?.publications||{}).forEach(pub=>{add(pub?.updatedAt);add(pub?.date);add(pub?.endedAt)})});
+ (phone?.diagnostics||[]).forEach(entry=>{add(entry?.updatedAt);add(entry?.date)});
+ if(phone?.sale){add(phone.sale.updatedAt);add(phone.sale.soldAt)};
+ (extraDates||[]).forEach(add);
+ return dates.sort((a,b)=>new Date(b).getTime()-new Date(a).getTime())[0]||phone?.date||'';
+}
+export function operationalIdleDays(phone,now=new Date(),extraDates=[]){const start=localDayTime(lastOperationalActivityDate(phone,extraDates)),end=localDayTime(now);return start&&end?Math.max(0,Math.floor((end-start)/dayMs)):0}
+
 
 export function phoneOtherCosts(phone){
  const scalar=n(phone?.otherCosts);
@@ -50,7 +69,7 @@ export function adCoverageMetrics(phones=[],profiles=[]){
 export function stockAgingRows(phones=[],now=new Date()){
  const end=time(now)||Date.now();
  return(phones||[]).filter(phone=>!closed(phone)).map(phone=>{
-  const purchaseDate=dateKey(phone?.date)||phone?.lastActivityAt||'',publicationDate=firstPublicationDate(phone),purchaseDays=purchaseDate?Math.max(0,Math.floor((end-time(purchaseDate))/dayMs)):0,idleDays=phone?.lastActivityAt?Math.max(0,Math.floor((end-time(phone.lastActivityAt))/dayMs)):purchaseDays,publishedDays=publicationDate?Math.max(0,Math.floor((end-time(publicationDate))/dayMs)):0;
+  const purchaseDate=dateKey(phone?.date)||phone?.lastActivityAt||'',publicationDate=firstPublicationDate(phone),purchaseDays=purchaseDate?Math.max(0,Math.floor((end-time(purchaseDate))/dayMs)):0,idleDays=operationalIdleDays(phone,now),publishedDays=publicationDate?Math.max(0,Math.floor((end-time(publicationDate))/dayMs)):0;
   const severity=idleDays>=21||purchaseDays>=45?'critical':idleDays>=10||purchaseDays>=25?'attention':'normal';
   const score=(severity==='critical'?200:severity==='attention'?100:0)+idleDays+purchaseDays*.35+publishedDays*.3;
   return{phone,purchaseDays,idleDays,publishedDays,severity,score,invested:intelligencePhoneCost(phone),expected:n(phone?.expected)};
@@ -83,15 +102,15 @@ function returnPendingActions(orders=[]){
  return result;
 }
 export function smartActionQueue(phones=[],profiles=[],orders=[],now=new Date(),options={}){
- const today=dateKey(now),photoTarget=Math.max(1,n(options.photoTarget)||6),activeProfiles=(profiles||[]).filter(p=>p?.active!==false),actions=[];
+ const today=dateKey(now),defaultPhotoTarget=Math.max(1,n(options.photoTarget)||10),activeProfiles=(profiles||[]).filter(p=>p?.active!==false),actions=[];
  (phones||[]).forEach(phone=>{
   const name=modelLabel(phone),phoneId=phone.id;
   if(phone?.sale?.soldAt){const sale=phone.sale,net=saleNetValueBI(sale),received=sale.receivedAmount===undefined?(sale.paymentStatus==='Pendente'?0:net):Math.max(0,n(sale.receivedAmount)),pending=Math.max(0,net-received);if(pending>0&&sale.dueDate&&dateKey(sale.dueDate)<today)actions.push({id:`receivable:${phoneId}`,phoneId,priority:100,type:'receivable',title:`Recebimento vencido · ${name}`,detail:`Vencimento ${dateKey(sale.dueDate)} · pendente ${pending.toFixed(2)}`,date:sale.dueDate});return}
   if(closed(phone))return;
-  const idle=phone?.lastActivityAt?Math.max(0,Math.floor((time(now)-time(phone.lastActivityAt))/dayMs)):0;
+  const idle=operationalIdleDays(phone,now);
   if(phone.nextActionDate&&dateKey(phone.nextActionDate)<today)actions.push({id:`task:${phoneId}`,phoneId,priority:98,type:'task',title:`Tarefa vencida · ${name}`,detail:phone.nextAction||'Próxima ação vencida',date:phone.nextActionDate});
   if(!n(phone.expected))actions.push({id:`price:${phoneId}`,phoneId,priority:88,type:'price',title:`Definir preço · ${name}`,detail:'Valor de venda ainda não informado'});
-  const photoCount=Array.isArray(phone.mediaLibrary)?phone.mediaLibrary.length:0;
+  const photoCount=Array.isArray(phone.mediaLibrary)?phone.mediaLibrary.length:0,photoTarget=Math.max(1,n(phone.photoTarget)||defaultPhotoTarget);
   if(['Pronto','Para fotografar'].includes(phone.status)&&photoCount<photoTarget)actions.push({id:`photos:${phoneId}`,phoneId,priority:84,type:'photos',title:`Fotografar · ${name}`,detail:`${photoCount}/${photoTarget} foto(s) vinculada(s)`});
   const coverage=publishedProfileIdsBI(phone,activeProfiles).length;
   if(['Pronto','Para fotografar','Anúncio preparado','Anunciado'].includes(phone.status)&&coverage===0)actions.push({id:`ads:${phoneId}`,phoneId,priority:86,type:'ads',title:`Anunciar · ${name}`,detail:'Nenhum perfil com publicação ativa'});

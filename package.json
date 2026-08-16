@@ -1,13 +1,13 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.5.0",
+  "version": "10.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:parts-orders": "node tests/parts-orders.test.mjs && node tests/parts-central-classification.test.mjs && node tests/sold-publication-lifecycle.test.mjs && node tests/bulk-modal-scroll.test.mjs && node tests/modal-scroll-audit.test.mjs && node tests/concurrent-sync.test.mjs && node tests/backup-audit.test.mjs && node tests/source-contracts.test.mjs && node tests/mobile-layout.test.mjs && node tests/ads-runtime-contract.test.mjs && node tests/phone-detail-layout.test.mjs && node tests/ui-space-audit.test.mjs && node tests/smartphones-density.test.mjs && node tests/menu-actions-returns.test.mjs && node tests/smartphones-actions-edge.test.mjs && node tests/smartphones-mobile-regression.test.mjs && node tests/smartphones-mobile-v10482.test.mjs && node tests/smartphones-mobile-v10483.test.mjs && node tests/returns-financial.test.mjs && node tests/returns-financial-mobile.test.mjs && node tests/reports-mobile-visual.test.mjs && node tests/reports-mobile-density-v10489.test.mjs && node tests/publication-safety.test.mjs && node tests/reports-period-v10490.test.mjs && node tests/reports-desktop-density-v10491.test.mjs && node tests/backup-storage-architecture.test.mjs && node tests/reports-parts-v10493.test.mjs && node tests/intelligence-v1050.test.mjs && node tests/intelligence-ui-backup-v1050.test.mjs"
+    "test:parts-orders": "node tests/parts-orders.test.mjs && node tests/parts-central-classification.test.mjs && node tests/sold-publication-lifecycle.test.mjs && node tests/bulk-modal-scroll.test.mjs && node tests/modal-scroll-audit.test.mjs && node tests/concurrent-sync.test.mjs && node tests/backup-audit.test.mjs && node tests/source-contracts.test.mjs && node tests/mobile-layout.test.mjs && node tests/ads-runtime-contract.test.mjs && node tests/phone-detail-layout.test.mjs && node tests/ui-space-audit.test.mjs && node tests/smartphones-density.test.mjs && node tests/menu-actions-returns.test.mjs && node tests/smartphones-actions-edge.test.mjs && node tests/smartphones-mobile-regression.test.mjs && node tests/smartphones-mobile-v10482.test.mjs && node tests/smartphones-mobile-v10483.test.mjs && node tests/returns-financial.test.mjs && node tests/returns-financial-mobile.test.mjs && node tests/reports-mobile-visual.test.mjs && node tests/reports-mobile-density-v10489.test.mjs && node tests/publication-safety.test.mjs && node tests/reports-period-v10490.test.mjs && node tests/reports-desktop-density-v10491.test.mjs && node tests/backup-storage-architecture.test.mjs && node tests/reports-parts-v10493.test.mjs && node tests/intelligence-v1050.test.mjs && node tests/intelligence-ui-backup-v1050.test.mjs && node tests/phone-sale-detail-v1051.test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

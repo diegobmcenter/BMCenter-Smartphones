@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const ignore=fs.readFileSync(new URL('../.gitignore',import.meta.url),'utf8');
 const bat=fs.readFileSync(new URL('../PUBLICAR-ATUALIZACAO.bat',import.meta.url),'utf8');
-assert.match(main,/const APP_VERSION='10\.5\.0'/);
+assert.match(main,/const APP_VERSION='10\.5\.1'/);
 assert.match(ignore,/^node_modules\/$/m,'node_modules precisa ser ignorado');
 assert.match(ignore,/^dist\/$/m,'dist precisa ser ignorado');
 assert.match(bat,/git rm -r --cached --ignore-unmatch node_modules/,'BAT deve limpar node_modules rastreado');
