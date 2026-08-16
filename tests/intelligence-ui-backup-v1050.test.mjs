@@ -6,7 +6,7 @@ const dash=fs.readFileSync(new URL('../src/v102/pages/DashboardV102.jsx',import.
 const today=fs.readFileSync(new URL('../src/v102/pages/TodayV102.jsx',import.meta.url),'utf8');
 const reports=fs.readFileSync(new URL('../src/v10/pages/ReportsV10.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v1050.css',import.meta.url),'utf8');
-assert.match(main,/APP_VERSION='10\.5\.5'/);
+assert.match(main,/APP_VERSION='10\.5\.6'/);
 assert.match(main,/import'\.\/v1050\.css'/);
 assert.match(main,/mediaLibrary:Array\.isArray\(item\.mediaLibrary\)/,'fotos vinculadas devem persistir dentro do aparelho');
 assert.match(main,/otherCosts:parseMoneyInput\(f\.otherCosts\)/,'outros custos precisam ser normalizados e persistidos');

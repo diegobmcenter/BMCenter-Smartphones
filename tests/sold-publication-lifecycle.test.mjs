@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import{syncRecordedSaleValue}from'../src/saleAccounting.js';
 
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const phonesView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
@@ -24,7 +25,7 @@ function extractFunction(source,name){
 }
 
 const functionNames=['defaultAdWorkflow','normalizePublication','normalizeAd','migrateLegacyAds','normalizeMarketplaceProfiles','historicalProfileIds','publishedProfileIds','historicalProfilePublishedAt','publicationWasPublished','salePublicationSnapshot','finalizeSoldPhonePublications','salesDaysFromProfile'];
-const runtime=new Function('crypto',`${functionNames.map(name=>extractFunction(main,name)).join('\n')}\nreturn {${functionNames.join(',')}};`)(globalThis.crypto);
+const runtime=new Function('crypto','syncRecordedSaleValue',`${functionNames.map(name=>extractFunction(main,name)).join('\n')}\nreturn {${functionNames.join(',')}};`)(globalThis.crypto,syncRecordedSaleValue);
 
 const profiles=[{id:'p1',name:'Paty Cat'},{id:'p2',name:'Diego Moraes'}];
 const phone={
@@ -40,6 +41,7 @@ const phone={
 };
 const sold=runtime.finalizeSoldPhonePublications(phone,profiles,{soldAt:'2026-08-15',value:330,profileId:'p1'});
 assert.equal(sold.status,'Vendido');
+assert.equal(sold.expected,330,'valor exibido do aparelho deve acompanhar o valor real vendido');
 assert.equal(sold.marketplaceProfiles.p1.active,false);
 assert.equal(sold.marketplaceProfiles.p2.active,false);
 assert.equal(sold.ads[0].publications.p1.status,'removed');

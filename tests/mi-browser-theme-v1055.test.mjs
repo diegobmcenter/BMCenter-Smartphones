@@ -4,7 +4,7 @@ const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const frame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v1055.css',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
-assert.match(main,/const APP_VERSION='10\.5\.5'/);
+assert.match(main,/const APP_VERSION='10\.5\.6'/);
 assert.match(main,/import'\.\/v1055\.css';/);
 assert.match(frame,/bmcenter-theme-light/);
 assert.match(frame,/bmcenter-theme-dark/);

@@ -3,6 +3,7 @@ import{QRCodeSVG}from'qrcode.react';
 import{effectivePartCost,partsOperationalCounters,partsPeriodReportMetrics,returnRefundTotal,returnRecoveredAmount,returnPartRefundDraft,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,isPartProcurementComplete,isPartOpenForProcurement,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
 import{workflowStageForPhone}from'./workflow.js';
 import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAllocation,intelligencePhoneCost,modelKey,operationalIdleDays,phoneOtherCosts,profitabilityForPhone,purchaseSuggestion,smartActionQueue,stockAgingRows,turnoverByModel}from'./businessIntelligence.js';
+import{phoneSaleDisplayValue,restoreSuggestedValueAfterSaleRemoval,soldSaleValueNeedsRepair,syncRecordedSaleValue}from'./saleAccounting.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
@@ -15,7 +16,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.5';
+const APP_VERSION='10.5.6';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -192,6 +193,16 @@ function App({cloudUser,onCloudLogout}){
  useEffect(()=>{const key='bmcenter-phone-schema-v1024';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){const migrated=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}localStorage.setItem(key,'1')},[]);
  useEffect(()=>{const key='bmcenter-photo-studio-removed-v10445';if(localStorage.getItem(key)!=='1'){const phones=load(SKEY);if(Array.isArray(phones)){const cleaned=phones.map(sanitizePhoneForLeanMode);localStorage.setItem(SKEY,JSON.stringify(cleaned));queueCloudSave(SKEY,cleaned)}localStorage.removeItem('bmcenter-photo-root-local');localStorage.setItem(key,'1')}if('indexedDB'in window)indexedDB.deleteDatabase('bmcenter-photo-studio-v1')},[]);
  useEffect(()=>{const key='bmcenter-photo-target-default-v1051';if(localStorage.getItem(key)==='1')return;const phones=load(SKEY);if(Array.isArray(phones)){let changed=false;const migrated=phones.map(phone=>{const current=Number(phone?.photoTarget||0);if(!current||current===6){changed=true;return{...phone,photoTarget:10}}return phone});if(changed){localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated)}}localStorage.setItem(key,'1')},[]);
+ useEffect(()=>{
+  const key='bmcenter-sold-sale-value-v1056';if(localStorage.getItem(key)==='1')return;
+  try{
+   const current=load(SKEY);
+   if(Array.isArray(current)){
+    const migrated=current.map(phone=>phone?.sale?.soldAt&&phone?.sale?.value!==undefined?syncRecordedSaleValue(phone,phone.sale):phone);
+    if(JSON.stringify(migrated)!==JSON.stringify(current)){localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated);pushCloudStateNow(SKEY,migrated).catch(()=>{});window.dispatchEvent(new CustomEvent(CLOUD_REMOTE_EVENT,{detail:{key:SKEY,value:migrated,source:'sold-sale-value-v1056'}}))}
+   }
+  }catch(error){console.warn('Sincronização do valor real de venda não concluída.',error)}finally{localStorage.setItem(key,'1')}
+ },[]);
  const[visibleMenus,setVisibleMenus]=useState(()=>loadMenuSettings());
  const[remoteRevision,setRemoteRevision]=useState(0);
  const[commandOpen,setCommandOpen]=useState(false);
@@ -461,7 +472,7 @@ function CommandPalette({menuItems,onNavigate,onClose}){
    <div className="command-input"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Ir para menu ou procurar aparelho..."/><kbd>Esc</kbd></div>
    <div className="command-results">
     <small>MENUS</small>{menus.slice(0,8).map(x=><button key={x.id} onClick={()=>onNavigate(x.id)}><span>{x.icon}</span><b>{x.text}</b><em>Abrir</em></button>)}
-    {!!devices.length&&<small>SMARTPHONES</small>}{devices.map(p=><button key={p.id} onClick={()=>onNavigate('phones')}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><span>{p.status}</span></div><em>{money(p.expected)}</em></button>)}
+    {!!devices.length&&<small>SMARTPHONES</small>}{devices.map(p=><button key={p.id} onClick={()=>onNavigate('phones')}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><span>{p.status}</span></div><em>{money(phoneSaleDisplayValue(p))}</em></button>)}
     {!!ads.length&&<small>ANÚNCIOS</small>}{ads.map(x=><button key={x.ad.id} onClick={()=>onNavigate('ads')}><FileText/><div><b>{showProductCode()&&<>{x.phone.code} · </>}{x.ad.name}</b><span>{x.ad.title||'Sem título'}</span></div><em>{publishedCountForAd(x.ad)}/{profiles.length}</em></button>)}
     {!menus.length&&!devices.length&&!ads.length&&<div className="command-empty">Nenhum resultado encontrado.</div>}
    </div>
@@ -567,7 +578,7 @@ function GlobalSearchPage(){
   <div className="global-search-box"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Digite modelo, nome, telefone, etiqueta..."/><span>{phoneResults.length+sellerResults.length+supplierResults.length+adResults.length} resultado(s)</span></div>
   {!query?<div className="search-welcome"><Search size={38}/><b>Comece digitando acima</b><span>A pesquisa consulta todas as áreas do BMCenter.</span></div>:
   <div className="global-results">
-   <SearchSection title="Smartphones" count={phoneResults.length}>{phoneResults.map(p=><div className="search-result" key={p.id}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><small>{p.nfc===true?'NFC · ':''}{p.status}</small></div><strong>{money(p.expected)}</strong></div>)}</SearchSection>
+   <SearchSection title="Smartphones" count={phoneResults.length}>{phoneResults.map(p=><div className="search-result" key={p.id}><Smartphone/><div><b>{showProductCode()&&<>{p.code} · </>}{p.brand} {p.model}</b><small>{p.nfc===true?'NFC · ':''}{p.status}</small></div><strong>{money(phoneSaleDisplayValue(p))}</strong></div>)}</SearchSection>
    <SearchSection title="Anúncios" count={adResults.length}>{adResults.map(x=><div className="search-result" key={x.ad.id}><FileText/><div><b>{showProductCode()&&<>{x.phone.code} · </>}{x.ad.name}</b><small>{x.ad.title||'Sem título'}</small></div><strong>{publishedCountForAd(x.ad)}/{profiles.length}</strong></div>)}</SearchSection>
    <SearchSection title="Vendedores" count={sellerResults.length}>{sellerResults.map(x=><div className="search-result" key={x.id}><Users/><div><b>{x.name}</b><small>{x.phone||'Sem telefone'} · {x.city||''}</small></div></div>)}</SearchSection>
    <SearchSection title="Fornecedores" count={supplierResults.length}>{supplierResults.map(x=><div className="search-result" key={x.id}><Store/><div><b>{x.name}</b><small>{x.phone||x.whatsapp||'Sem telefone'} · {x.category||''}</small></div></div>)}</SearchSection>
@@ -844,8 +855,8 @@ function Phones(){
    if(phone.id!==id)return phone;
    const partsCost=phoneSelectedPartsCost(phone);
    if(field==='cost')return touchPhone({...phone,paid:Math.max(0,numeric-partsCost)});
-   if(field==='expected')return touchPhone({...phone,expected:numeric});
-   if(field==='profit')return touchPhone({...phone,expected:Math.max(0,phoneTotalCost(phone)+numeric)});
+   if(field==='expected')return touchPhone(phone?.sale?.soldAt?syncRecordedSaleValue(phone,{...phone.sale,value:numeric}):{...phone,expected:numeric});
+   if(field==='profit'){const nextValue=Math.max(0,phoneTotalCost(phone)+numeric);return touchPhone(phone?.sale?.soldAt?syncRecordedSaleValue(phone,{...phone.sale,value:nextValue}):{...phone,expected:nextValue})}
    return phone
   }))
  };
@@ -857,14 +868,14 @@ function Phones(){
  function autoFitPhoneColumn(columnId){const table=document.querySelector('.configurable-phone-table');if(!table)return;const cells=[...table.querySelectorAll(`[data-column-id="${columnId}"]`)];let max=12;cells.forEach(cell=>{const clone=cell.cloneNode(true);clone.querySelectorAll('button,input,select,.excel-column-resizer,.universal-resize-handle').forEach(x=>x.remove());clone.style.cssText='position:absolute;visibility:hidden;width:max-content;max-width:none;white-space:nowrap;display:block;padding:0;font:inherit';document.body.appendChild(clone);max=Math.max(max,Math.ceil(clone.scrollWidth+10));clone.remove()});persistColumns(columns.map(c=>c.id===columnId?{...c,width:Math.min(1600,max)}:c))}
  const columnAlign=id=>['accessories','cost','expected','profit','actions','priority','status'].includes(id)?'center':'left';
  const visibleColumns=columns.filter(c=>c.visible&&(c.id!=='code'||showProductCode()));
- function cell(column,x){const cost=phoneTotalCost(x),profit=Number(x.expected||0)-cost,accessories=(x.accessories||[]).filter(a=>a.included).length,profileIds=(x.sale?.soldAt||x.status==='Vendido')?historicalProfileIds(x):publishedProfileIds(x),published=profiles.filter(profile=>profileIds.includes(profile.id));
+ function cell(column,x){const cost=phoneTotalCost(x),displaySaleValue=phoneSaleDisplayValue(x),profit=displaySaleValue-cost,accessories=(x.accessories||[]).filter(a=>a.included).length,profileIds=(x.sale?.soldAt||x.status==='Vendido')?historicalProfileIds(x):publishedProfileIds(x),published=profiles.filter(profile=>profileIds.includes(profile.id));
   switch(column.id){
    case'code':return <td className="product-code"><b>{x.code}</b></td>;
    case'device':return <td className="smartphone-device-cell"><b>{x.brand} {x.model}</b><small>{[x.color,x.storage].filter(Boolean).join(' · ')||'Sem detalhes'}</small><div className="tag-line">{(x.tags||[]).slice(0,3).map(t=><span key={t}>{t}</span>)}</div></td>;
    case'profiles':return <td><div className="profile-publication-list">{published.map(profile=><span key={profile.id}>{profile.name}</span>)}{!published.length&&<small>{x.sale?.soldAt||x.status==='Vendido'?'Sem histórico de anúncio':'Não anunciado'}</small>}</div></td>;
    case'status':return <td><select className="inline-status-select" value={x.status} onChange={e=>changeStatus(x.id,e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></td>;
    case'cost':return <td className="money-cell">{money(cost)}</td>;
-   case'expected':return <td className="money-cell">{money(x.expected)}</td>;
+   case'expected':return <td className="money-cell">{money(displaySaleValue)}</td>;
    case'profit':return <td className="money-cell"><span className={profit>=0?'profit-positive':'profit-negative'}>{money(profit)}</span></td>;
    case'actions':return <td className="smartphone-actions-cell"><div className="smartphone-actions-primary"><button className={x.favorite?'phone-action favorite-button active':'phone-action'} onClick={()=>toggleFavorite(x)} title="Favorito"><Star size={18}/></button><button className="phone-action view-action" onClick={()=>setDetail(x)} title="Abrir ficha"><Eye size={18}/></button><button className="phone-action edit-action" onClick={()=>setEdit(x)} title="Editar aparelho"><FileText size={18}/></button><button className="phone-action duplicate-action" onClick={()=>duplicatePhone(x)} title="Duplicar aparelho"><Copy size={18}/></button><button className="phone-action more-action" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();setActionPhone({phone:x,anchor:{top:r.bottom+6,left:Math.max(12,r.right-190)}})}} title="Mais ações">•••</button></div></td>;
    default:return null
@@ -1828,7 +1839,7 @@ function SaleModal({item,profiles,onClose,onSave}){
  const[f,setF]=useState(initial);
  const set=(k,v)=>setF({...f,[k]:v});
  const net=Number(f.value||0)-Number(f.marketplaceFee||0)-Number(f.shippingCost||0);
- const received=Math.min(net,Number(f.receivedAmount||0));
+ const received=f.paymentStatus==='Recebido'?Math.max(0,net):Math.min(Math.max(0,net),Number(f.receivedAmount||0));
  const pending=Math.max(0,net-received);
 
  function changeStatus(status){
@@ -1909,7 +1920,9 @@ function salePublicationSnapshot(phone,profiles=[]){
  return historicalProfileIds(phone).map(id=>({id,name:profiles.find(profile=>profile.id===id)?.name||'',publishedAt:historicalProfilePublishedAt(phone,id)}));
 }
 function finalizeSoldPhonePublications(phone,profiles=[],saleOverride){
- const saleSource={...(phone?.sale||{}),...(saleOverride||{})};
+ const syncedPhone=syncRecordedSaleValue(phone,saleOverride||{});
+ const saleSource={...(syncedPhone?.sale||{})};
+ phone=syncedPhone;
  const soldAt=String(saleSource.soldAt||new Date().toISOString().slice(0,10)).slice(0,10);
  const stamp=new Date().toISOString();
  let snapshot=Array.isArray(saleSource.publicationProfiles)&&saleSource.publicationProfiles.length?saleSource.publicationProfiles:salePublicationSnapshot(phone,profiles);
@@ -1925,7 +1938,7 @@ function soldPublicationStateNeedsRepair(phone){
  try{if((phone.ads||migrateLegacyAds(phone)||[]).some(ad=>Object.values(normalizeAd(ad).publications||{}).some(pub=>pub?.status==='published'||pub?.status==='pending')))return true}catch{}
  const history=historicalProfileIds(phone);return history.length>0&&!(Array.isArray(phone?.sale?.publicationProfiles)&&phone.sale.publicationProfiles.length)
 }
-function repairSoldPublicationStates(phones,profiles=[]){return(Array.isArray(phones)?phones:[]).map(phone=>soldPublicationStateNeedsRepair(phone)?finalizeSoldPhonePublications(phone,profiles,phone.sale||{}):phone)}
+function repairSoldPublicationStates(phones,profiles=[]){return(Array.isArray(phones)?phones:[]).map(phone=>(soldPublicationStateNeedsRepair(phone)||soldSaleValueNeedsRepair(phone))?finalizeSoldPhonePublications(phone,profiles,phone.sale||{}):phone)}
 function salesDaysFromProfile(phone,profileId){
  const soldAt=phone?.sale?.soldAt;
  if(!soldAt)return null;
@@ -2000,7 +2013,7 @@ function SalesPage(){
 
  function removeSale(phone){
   if(!confirm(`Remover o registro de venda de ${phone.code}?`))return;
-  persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline({...p,status:'Pronto',sale:null},'Registro de venda removido'))));
+  persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline({...p,status:'Pronto',expected:restoreSuggestedValueAfterSaleRemoval(p),sale:null},'Registro de venda removido · valor sugerido restaurado'))));
  }
  function saveEditedSale(phone,sale){
   persist(phones.map(p=>p.id!==phone.id?p:touchPhone(addTimeline(finalizeSoldPhonePublications(p,profiles,sale),`Venda editada para ${money(sale.value)} · anúncios permanecem encerrados`))));
@@ -2627,7 +2640,7 @@ function PhoneDetailModal({item,profiles,orders=[],onClose,onSave}){
   <div className="phone-detail-hero">
    <div className="phone-detail-cover"><Smartphone size={46}/></div>
    <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{formatPhoneSpecs(f)}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
-   <div className="phone-detail-value"><span>Valor de venda</span><strong>{money(f.expected)}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
+   <div className="phone-detail-value"><span>Valor de venda</span><strong>{money(phoneSaleDisplayValue(f))}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
   </div>
   <div className="v105-phone-profitability"><div><small>Compra</small><b>{money(profitability.purchase)}</b></div><div><small>Peças</small><b>{money(profitability.parts)}</b></div><div><small>Outros</small><b>{money(profitability.other)}</b></div><div><small>{f.sale?.soldAt?'Líquido':'Venda prevista'}</small><b>{money(profitability.revenue)}</b></div><div className={profitability.profit>=0?'good':'bad'}><small>Lucro real</small><b>{money(profitability.profit)}</b></div><div><small>Margem / ROI</small><b>{profitability.marginPct.toFixed(1).replace('.',',')}% · {profitability.roiPct.toFixed(1).replace('.',',')}%</b></div></div>
   <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['photos','Fotos'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>

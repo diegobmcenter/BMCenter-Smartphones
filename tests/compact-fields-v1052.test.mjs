@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v1053\.css';import'\.\/v1054\.css';/,'v1054.css deve carregar por último');
-assert.match(main,/const APP_VERSION='10\.5\.5'/,'versão 10.5.5 ausente');
+assert.match(main,/const APP_VERSION='10\.5\.6'/,'versão 10.5.6 ausente');
 for(const cls of ['sale-field-value','sale-field-profile','sale-field-date','sale-field-installments','purchase-field-date','purchase-field-origin','purchase-field-paid','purchase-field-sale','purchase-field-other']) assert.ok(main.includes(cls),`classe semântica ausente: ${cls}`);
 assert.match(main,/function Field\(\{label,value,onChange,type='text',prefix='',suffix='',inputMode,className=''\}\)\{return <label className=\{className\}>/,'Field precisa aceitar className');
 assert.match(css,/sale-register-modal \.sale-data-grid,[\s\S]*display:flex!important/,'venda desktop deve usar flex sem esticar campos');

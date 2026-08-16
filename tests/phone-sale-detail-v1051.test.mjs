@@ -5,7 +5,7 @@ import{lastOperationalActivityDate,operationalIdleDays,smartActionQueue}from'../
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
 
-assert.match(main,/APP_VERSION='10\.5\.5'/);
+assert.match(main,/APP_VERSION='10\.5\.6'/);
 assert.match(main,/import'\.\/v1053\.css';import'\.\/v1054\.css';/);
 
 const purchaseStart=main.indexOf('<section className="v57-card v57-purchase-card">');
