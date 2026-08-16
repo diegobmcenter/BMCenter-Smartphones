@@ -1,0 +1,77 @@
+/* BMCenter v10.4.86 — correção visual mobile da devolução financeira.
+   Remove expansão vertical indevida do resumo no celular e compacta o modal. */
+
+@media(max-width:720px){
+  .parts-v84-refund-dialog{
+    grid-template-rows:auto auto auto auto auto!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .parts-v84-refund-dialog>header,
+  .parts-v84-refund-dialog>footer{
+    position:sticky!important;
+    z-index:2!important;
+  }
+  .parts-v84-refund-dialog>header{top:0!important}
+  .parts-v84-refund-dialog>footer{bottom:0!important}
+
+  .parts-v84-refund-original{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  .parts-v84-refund-original>div{
+    min-height:0!important;
+    padding:6px 7px!important;
+  }
+  .parts-v84-refund-original b{font-size:10px!important;line-height:1.15!important}
+
+  .parts-v84-refund-fields{
+    grid-template-columns:1fr 1fr!important;
+    align-items:end!important;
+    overflow:visible!important;
+  }
+  .parts-v84-refund-fields label{
+    align-content:start!important;
+  }
+  .parts-v84-refund-fields label:first-child,
+  .parts-v84-refund-fields label:nth-child(4),
+  .parts-v84-refund-fields label:nth-child(5){
+    grid-column:1/-1!important;
+  }
+  .parts-v84-refund-fields input,
+  .parts-v84-refund-fields select,
+  .parts-v84-refund-fields .money-prefix{
+    height:34px!important;
+    min-height:34px!important;
+  }
+
+  .parts-v84-refund-impact{
+    grid-template-columns:1fr 1fr!important;
+    align-items:start!important;
+    gap:8px!important;
+    margin:0 8px 8px!important;
+    padding:10px!important;
+    min-height:0!important;
+  }
+  .parts-v84-refund-impact>div{
+    min-height:0!important;
+    align-content:start!important;
+  }
+  .parts-v84-refund-impact strong{
+    font-size:11px!important;
+    line-height:1.2!important;
+  }
+  .parts-v84-refund-impact p{
+    margin:4px 0 0!important;
+    font-size:7px!important;
+  }
+
+  .parts-v84-refund-dialog>footer{
+    padding:8px!important;
+    background:var(--surface)!important;
+  }
+  .parts-v84-refund-dialog>footer button{
+    min-height:34px!important;
+  }
+}
