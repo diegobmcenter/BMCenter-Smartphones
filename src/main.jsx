@@ -2,6 +2,7 @@ import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}fr
 import{QRCodeSVG}from'qrcode.react';
 import{effectivePartCost,partsOperationalCounters,partsPeriodReportMetrics,returnRefundTotal,returnRecoveredAmount,returnPartRefundDraft,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,isPartProcurementComplete,isPartOpenForProcurement,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
 import{workflowStageForPhone}from'./workflow.js';
+import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAllocation,intelligencePhoneCost,modelKey,phoneOtherCosts,profitabilityForPhone,purchaseSuggestion,smartActionQueue,stockAgingRows,turnoverByModel}from'./businessIntelligence.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
@@ -12,9 +13,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.93';
+const APP_VERSION='10.5.0';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -30,7 +31,7 @@ function saveDeviceSessionDraft(key,value){try{sessionStorage.setItem(key,JSON.s
 function clearDeviceSessionDraft(key){try{sessionStorage.removeItem(key)}catch{}}
 const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
 function phoneSelectedPartsCost(phone){return (phone.parts||[]).reduce((sum,part)=>sum+effectivePartCost(part),0)}
-function phoneTotalCost(phone){return Number(phone.paid||0)+phoneSelectedPartsCost(phone)}
+function phoneTotalCost(phone){return intelligencePhoneCost(phone)}
 function formatDate(value){if(!value)return'—';const[y,m,d]=value.split('-');return d&&m&&y?`${d}/${m}/${y}`:value}
 function formatMonth(value){if(!value)return'—';const[y,m]=value.split('-');return m&&y?`${m}/${y}`:value}
 function capacityLabel(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
@@ -39,6 +40,10 @@ function normalizeCapacityInput(value){return stripUnit(value,'GB').replace(/[^0
 function normalizeRamInput(value){return stripUnit(value,'GB').replace(/[^0-9+.,\s]/g,'').replace(/\s*\+\s*/g,'+').replace(/\+{2,}/g,'+')}
 function normalizeMoneyInput(value){return String(value??'').replace(/^\s*R\$\s*/i,'').replace(/[^0-9.,]/g,'').trim()}
 function parseMoneyInput(value){const raw=normalizeMoneyInput(value);if(!raw)return 0;if(raw.includes(','))return Number(raw.replace(/\./g,'').replace(',','.'))||0;return Number(raw)||0}
+async function photoThumbnail(file){
+ return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(reader.error||new Error('Falha ao ler foto'));reader.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error('Imagem inválida'));img.onload=()=>{const max=160,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.42))};img.src=reader.result};reader.readAsDataURL(file)})
+}
+async function mediaEntriesFromFiles(files){const stamp=new Date().toISOString(),items=[];for(const file of files){if(!String(file.type||'').startsWith('image/'))continue;try{items.push({id:crypto.randomUUID(),name:file.name||`foto-${items.length+1}.jpg`,type:file.type||'image/jpeg',size:Number(file.size||0),date:stamp,thumbnail:await photoThumbnail(file)})}catch(error){console.warn('Foto ignorada',error)}}return items}
 function formatPhoneSpecs(phone){return [phone?.color,capacityLabel(phone?.storage),phone?.ram&&`${capacityLabel(phone.ram)} RAM`,phone?.nfc===true?'NFC':'',phone?.connector||'',phone?.screenProtector===true?'Película':'',phone?.caseIncluded===true?'Capinha':'',phone?.likeNew===true?'Estado de novo':'',phone?.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
 const DEFAULT_PHONE_STATUSES=['Descarte/Sucata','Aguardando análise','Aguardando peças','Anunciado','Anúncio preparado','Conta Google/FRP','Em reparo','Em testes','Para fotografar','Preparar sistema','Pronto','Reservado','Vendido'];
 function sortPhoneStatuses(list){return [...new Set((Array.isArray(list)?list:[]).map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}))}
@@ -353,7 +358,7 @@ function normalizeUnlockCredentials(phone){
  return normalized
 }
 function sanitizePhoneForLeanMode(phone){
- const {priority,nextAction,nextActionDate,expectedSaleDate,sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,photos,photoScene,previousPhotoScene,photoStudioSettings,archived,archivedAt,imei1,imei2,serial,devicePassword,...clean}=phone||{};
+ const {sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,photos,photoScene,previousPhotoScene,photoStudioSettings,imei1,imei2,serial,devicePassword,...clean}=phone||{};
  return {...clean,nfc:phone?.nfc===true?true:phone?.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(phone)}
 }
 
@@ -532,7 +537,8 @@ function GoalsPage(){
 }
 
 function TodayPage(){
- const phones=load(SKEY),alerts=getOperationalAlerts(),active=phones.filter(p=>!isClosedPhone(p));
+ const[detail,setDetail]=useState(null);
+ const phones=load(SKEY),profiles=load(PKEY),orders=normalizePartsOrders(load(OKEY)),alerts=getOperationalAlerts(),active=phones.filter(p=>!isClosedPhone(p));
  const stageFor=phone=>workflowStageForPhone(phone,{hasAds:!!(phone.ads||migrateLegacyAds(phone)).length});
  const groups=[
   {title:'Analisar',items:active.filter(p=>stageFor(p)==='analyze')},
@@ -540,7 +546,10 @@ function TodayPage(){
   {title:'Reparar e testar',items:active.filter(p=>stageFor(p)==='repair')},
   {title:'Prontos para anunciar',items:active.filter(p=>stageFor(p)==='ready')}
  ];
- return <TodayV102 groups={groups} alerts={alerts} phoneDisplayName={phoneDisplayName}/>
+ const actions=smartActionQueue(phones,profiles,orders,new Date());
+ const openPhone=phoneId=>{const phone=phones.find(item=>String(item.id)===String(phoneId));if(phone)setDetail(phone)};
+ const persistPhone=phone=>{const next=phones.map(item=>item.id===phone.id?touchPhone(phone):item);save(SKEY,next);setDetail(phone)};
+ return <><TodayV102 groups={groups} alerts={alerts} actions={actions} phoneDisplayName={phoneDisplayName} onOpenPhone={openPhone}/>{detail&&<PhoneDetailModal item={phones.find(item=>item.id===detail.id)||detail} profiles={profiles} orders={orders} onClose={()=>setDetail(null)} onSave={persistPhone}/>}</>
 
 }
 
@@ -793,7 +802,9 @@ function Dashboard(){
   {label:'Cadastros incompletos',value:dataIssues,detail:'precisam de revisão',kind:'amber'},
   {label:'Parados há 7+ dias',value:stale.length,detail:'sem movimentação',kind:'red'}
  ];
- return <DashboardV102 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length}/>
+ const orders=normalizePartsOrders(load(OKEY));
+ const capital=capitalAllocation(phones),aging=stockAgingRows(phones,today),suggestions=businessSuggestions(phones,profiles,orders,today);
+ return <DashboardV102 metrics={metrics} workflow={workflow} workflowMax={workflowMax} attention={attention} salesByProfile={salesByProfile} money={money} active={active.length} capital={capital} aging={aging} suggestions={suggestions}/>
 }
 
 
@@ -875,7 +886,7 @@ function Phones(){
   />
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>{setBatchCreate(false);refreshDrafts()}} onSave={created=>{persist([...created,...items]);setBatchCreate(false);refreshDrafts()}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
-  {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
+  {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} orders={normalizePartsOrders(load(OKEY))} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
   {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);const statusChanged=current&&String(current.status||'')!==String(v.status||'');let saved=touchPhone(addTimeline(v,statusChanged?`Status alterado para ${v.status}`:'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
   {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>{if(x.id!==salePhone.id)return x;const finalized=finalizeSoldPhonePublications(x,profiles,sale);return touchPhone(addTimeline(finalized,`Venda registrada por ${money(sale.value)} · anúncios encerrados`))}));setSalePhone(null)}}/>}
  </>
@@ -1630,12 +1641,14 @@ function Ads(){
   const matches=text.includes(query.toLowerCase());
   if(!matches)return false;
   if(publicationFilter==='missing')return !publishedProfileIds(phone).length;
+  if(publicationFilter==='incomplete')return profiles.length>0&&publishedProfileIds(phone).length<profiles.length;
   if(publicationFilter==='old')return publishedProfileIds(phone).some(profileId=>{const date=profilePublishedAt(phone,profileId);return date&&(today-new Date(date))/86400000>30});
   return true;
  });
  const pct=(current,previous)=>previous?Math.round((current-previous)/previous*100):(current?100:0);
  const salesDelta=pct(periodSales.length,previousSales.length),revenueDelta=pct(revenue,previousRevenue),ticketDelta=pct(ticket,previousTicket);
  const coverage=activePhones.length?Math.round(announcedPhones.length/activePhones.length*1000)/10:0;
+ const coverageMetrics=adCoverageMetrics(phones,profiles);
 
  function setPublished(phoneId,profileId,active){
   const stamp=new Date().toISOString(),date=stamp.slice(0,10);
@@ -1682,6 +1695,7 @@ function Ads(){
    <article><span className="blue"><FileText/></span><div><strong>{publishedLinks}</strong><b>Anúncios ativos</b><small><em>Em todos os perfis</em></small></div></article>
    <article><span className="pink"><Target/></span><div><strong>{best?.profile.name||'—'}</strong><b>Melhor perfil</b><small><em>{best?`${best.sales} vendas`:'Sem vendas'}</em></small></div></article>
   </section>
+  <section className="v105-ad-coverage"><header><div><span>COBERTURA DE PUBLICAÇÃO</span><b>{coverageMetrics.coveragePct.toFixed(0)}%</b></div><button onClick={()=>openPublication('incomplete')}>Completar {coverageMetrics.incomplete+coverageMetrics.none} aparelho(s) →</button></header><div><article><small>Completos</small><strong>{coverageMetrics.complete}</strong></article><article><small>Parciais</small><strong>{coverageMetrics.incomplete}</strong></article><article><small>Sem publicação</small><strong>{coverageMetrics.none}</strong></article>{coverageMetrics.byProfile.map(item=><article key={item.profile.id}><small>{item.profile.name}</small><strong>{item.published}/{coverageMetrics.totalPhones}</strong></article>)}</div></section>
 
   <section className="ads-ref-main-grid">
    <section className="ads-ref-card ads-ref-generator">
@@ -1704,7 +1718,7 @@ function Ads(){
     <footer><span className="violet">● Vendas</span><span className="green">● Faturamento</span><span className="orange">◇ Tempo médio para vender</span></footer>
    </section>
 
-   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
+   <aside className="ads-ref-side"><section className="ads-ref-card ads-ref-actions"><h2>⚡ Ações rápidas</h2><button onClick={()=>openPublication('incomplete')}><Target/><span>Completar cobertura dos perfis</span><ChevronRight/></button><button onClick={()=>openPublication('missing')}><FileText/><span>Ver aparelhos sem anúncios</span><ChevronRight/></button><button onClick={()=>openPublication('old')}><CalendarClock/><span>Aparelhos há mais de 30 dias</span><ChevronRight/></button><button onClick={()=>{setBatchResults(activePhones.map(phone=>({phoneId:phone.id,name:phoneDisplayName(phone),...localVariation(phone)})));setBatchOpen(true)}}><RefreshCw/><span>Gerar em lote com IA</span><ChevronRight/></button><button onClick={()=>setReportOpen(true)}><BarChart3/><span>Relatório de desempenho</span><ChevronRight/></button></section>
     <section className="ads-ref-card ads-ref-summary"><h3>Resumo do período</h3><dl><div><dt>Vendas</dt><dd>{periodSales.length}<span>▲ {Math.abs(salesDelta)}%</span></dd></div><div><dt>Faturamento</dt><dd>{money(revenue)}<span>▲ {Math.abs(revenueDelta)}%</span></dd></div><div><dt>Ticket médio</dt><dd>{money(ticket)}<span>▲ {Math.abs(ticketDelta)}%</span></dd></div><div><dt>Tempo médio para vender</dt><dd>{averageDaysList.length?`${avgDays.toFixed(1).replace('.',',')} dias`:'—'}<em>▼ 1,2 dia</em></dd></div><div><dt>Anúncios ativos</dt><dd>{publishedLinks}</dd></div></dl><button onClick={()=>setReportOpen(true)}><BarChart3 size={15}/> Ver relatório completo</button></section>
    </aside>
   </section>
@@ -2172,7 +2186,12 @@ function ReportsPage(){
  const bankSummary={};sales.forEach(p=>{const bank=banks.find(b=>b.id===p.sale.bankAccountId)?.name||'Não informado';bankSummary[bank]=(bankSummary[bank]||0)+saleReceivedValue(p.sale)});
  const discardDate=p=>{const explicit=p.discardedAt;if(explicit)return explicit;const event=[...(p.timeline||[])].filter(e=>String(e.message||'').toLowerCase().includes('status alterado para descarte/sucata')).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))[0];return event?.date||p.lastActivityAt||p.date||''};
  const discarded=phones.filter(p=>p.status==='Descarte/Sucata'&&dateInRange(discardDate(p))),discardLoss=discarded.reduce((sum,p)=>sum+Number(p.paid||0),0);
- return <ReportsV10 forecast7={forecast7} forecast30={forecast30} stockExpected={active.reduce((a,p)=>a+Number(p.expected||0),0)} profileData={profileData} supplierData={supplierData} partsCurrent={partsCurrent} partsPeriod={partsPeriod} tags={tags} channelSummary={channelSummary} bankSummary={bankSummary} monthly={monthly} discarded={discarded} discardLoss={discardLoss} money={money} formatMonth={formatMonth} period={period} setPeriod={setPeriod} customStart={customStart} setCustomStart={setCustomStart} customEnd={customEnd} setCustomEnd={setCustomEnd} periodLabel={periodLabels[period]} rangeLabel={rangeLabel}/>
+ const profitabilityRows=sales.map(phone=>({phone,...profitabilityForPhone(phone)})).sort((a,b)=>b.profit-a.profit);
+ const profitabilitySummary=profitabilityRows.reduce((acc,row)=>({revenue:acc.revenue+row.revenue,cost:acc.cost+row.cost,profit:acc.profit+row.profit}),{revenue:0,cost:0,profit:0});
+ profitabilitySummary.marginPct=profitabilitySummary.revenue?profitabilitySummary.profit/profitabilitySummary.revenue*100:0;profitabilitySummary.roiPct=profitabilitySummary.cost?profitabilitySummary.profit/profitabilitySummary.cost*100:0;
+ const turnoverSource=phones.filter(phone=>!phone.sale?.soldAt||dateInRange(phone.sale.soldAt));
+ const turnover=turnoverByModel(turnoverSource);
+ return <ReportsV10 forecast7={forecast7} forecast30={forecast30} stockExpected={active.reduce((a,p)=>a+Number(p.expected||0),0)} profileData={profileData} supplierData={supplierData} partsCurrent={partsCurrent} partsPeriod={partsPeriod} tags={tags} channelSummary={channelSummary} bankSummary={bankSummary} monthly={monthly} discarded={discarded} discardLoss={discardLoss} profitabilitySummary={profitabilitySummary} profitabilityRows={profitabilityRows} turnover={turnover} money={money} formatMonth={formatMonth} period={period} setPeriod={setPeriod} customStart={customStart} setCustomStart={setCustomStart} customEnd={customEnd} setCustomEnd={setCustomEnd} periodLabel={periodLabels[period]} rangeLabel={rangeLabel}/>
 }
 function DataCenterPage(){
  const[snapshots,setSnapshots]=useState(()=>normalizeSnapshotList(load(SNAPKEY)));
@@ -2588,11 +2607,14 @@ function UnlockCredentialsSummary({phone}){
  return <div className="unlock-summary"><span>Desbloqueio</span><div>{items.map((item,index)=><div key={item.id}><b>{item.label||`Alternativa ${index+1}`}</b><small>{item.type==='pattern'?`Padrão: ${(item.pattern||[]).join(' → ')||'não definido'}`:`${item.value||'não informado'}`}{item.note?` · ${item.note}`:''}</small></div>)}</div></div>
 }
 
-function PhoneDetailModal({item,profiles,onClose,onSave}){
- const[f,setF]=useState(()=>({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
+function PhoneDetailModal({item,profiles,orders=[],onClose,onSave}){
+ const[f,setF]=useState(()=>({...item,nfc:item.nfc===true?true:item.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(item),timeline:Array.isArray(item.timeline)?item.timeline:[],tags:Array.isArray(item.tags)?item.tags:[],parts:Array.isArray(item.parts)?item.parts:[],customChecklist:Array.isArray(item.customChecklist)?item.customChecklist:[],comments:Array.isArray(item.comments)?item.comments:[],attachments:Array.isArray(item.attachments)?item.attachments:[],mediaLibrary:Array.isArray(item.mediaLibrary)?item.mediaLibrary:[],photoTarget:Math.max(1,Number(item.photoTarget||6)),tagColors:item.tagColors&&typeof item.tagColors==='object'?item.tagColors:{},ads:(item.ads||migrateLegacyAds(item)).map(normalizeAd)}));
  const[tab,setTab]=useState('summary'),[tag,setTag]=useState(''),[checkText,setCheckText]=useState(''),[commentText,setCommentText]=useState('');
  const set=(k,v)=>setF({...f,[k]:v});
  const publishedProfiles=[...new Set((f.ads||[]).flatMap(ad=>profiles.filter(p=>normalizeAd(ad).publications[p.id]?.status==='published').map(p=>p.name)))];
+ const profitability=profitabilityForPhone(f),operationalTimeline=buildOperationalTimeline(f,orders,profiles),photoCount=f.mediaLibrary.length,photoReady=photoCount>=Number(f.photoTarget||6);
+ async function addMedia(files){const entries=await mediaEntriesFromFiles([...files]);if(!entries.length)return;const next={...f,mediaLibrary:[...(f.mediaLibrary||[]),...entries]};setF(next);onSave(next)}
+ function removeMedia(id){const next={...f,mediaLibrary:f.mediaLibrary.filter(photo=>photo.id!==id)};setF(next);onSave(next)}
  function addTag(){const clean=tag.trim().toUpperCase();if(clean&&!f.tags.includes(clean))set('tags',[...f.tags,clean]);setTag('')}
  function saveAndClose(){onSave(addTimeline(f,'Ficha operacional atualizada'));onClose()}
  return <Modal className="phone-detail-modal" title={`${showProductCode()?f.code+" · ":""}${f.brand} ${f.model}`} onClose={onClose}>
@@ -2601,18 +2623,21 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
    <div><span>{f.status}</span><h2>{f.brand} {f.model}</h2><p>{formatPhoneSpecs(f)}</p><div className="tag-line">{f.tags.map(t=><span style={{borderColor:f.tagColors?.[t]||undefined,color:f.tagColors?.[t]||undefined}} key={t}>{t}</span>)}</div></div>
    <div className="phone-detail-value"><span>Valor de venda</span><strong>{money(f.expected)}</strong><small>Custo estimado {money(phoneTotalCost(f))}</small></div>
   </div>
-  <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>
+  <div className="v105-phone-profitability"><div><small>Compra</small><b>{money(profitability.purchase)}</b></div><div><small>Peças</small><b>{money(profitability.parts)}</b></div><div><small>Outros</small><b>{money(profitability.other)}</b></div><div><small>{f.sale?.soldAt?'Líquido':'Venda prevista'}</small><b>{money(profitability.revenue)}</b></div><div className={profitability.profit>=0?'good':'bad'}><small>Lucro real</small><b>{money(profitability.profit)}</b></div><div><small>Margem / ROI</small><b>{profitability.marginPct.toFixed(1).replace('.',',')}% · {profitability.roiPct.toFixed(1).replace('.',',')}%</b></div></div>
+  <div className="tabs phone-detail-tabs">{[['summary','Resumo'],['workflow','Operação'],['photos','Fotos'],['checklist','Checklist'],['ads','Anúncios'],['timeline','Histórico'],['comments','Comentários'],['attachments','Anexos'],['notes','Observações']].map(([id,name])=><button className={tab===id?'active':''} onClick={()=>setTab(id)} key={id}>{name}</button>)}</div>
 
   {tab==='summary'&&<div className="phone-detail-grid">
    <section><h3>Identificação</h3>{showProductCode()&&<InfoRow label="Código" value={f.code}/>}<InfoRow label="NFC" value={f.nfc===true?'Sim':f.nfc===false?'Não':'Não informado'}/><InfoRow label="Conector" value={f.connector||'Não informado'}/><UnlockCredentialsSummary phone={f}/><InfoRow label="Compra" value={formatDate(f.date)}/></section>
    <section><h3>Situação</h3><label>Status<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><InfoRow label="Parado há" value={`${daysSince(f.lastActivityAt||f.date)} dias`}/><InfoRow label="Próxima ação" value={f.nextAction}/></section>
-   <section><h3>Resumo operacional</h3><InfoRow label="Peças necessárias" value={f.parts.length}/><InfoRow label="Anúncios" value={f.ads.length}/><InfoRow label="Publicado em" value={publishedProfiles.join(', ')||'Nenhum perfil'}/></section>
+   <section><h3>Resumo operacional</h3><InfoRow label="Peças necessárias" value={f.parts.length}/><InfoRow label="Fotos" value={`${photoCount}/${f.photoTarget||6}${photoReady?' · pronto':''}`}/><InfoRow label="Previsão de venda" value={formatDate(f.expectedSaleDate)}/><InfoRow label="Publicado em" value={publishedProfiles.join(', ')||'Nenhum perfil'}/></section>
   </div>}
 
   {tab==='workflow'&&<div className="phone-workflow-detail">
    <div className="workflow-status-box"><label>Status atual<select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><label>Próxima ação<input value={f.nextAction||''} onChange={e=>set('nextAction',e.target.value)}/></label><label>Data<input type="date" value={f.nextActionDate||''} onChange={e=>set('nextActionDate',e.target.value)}/></label></div>
    <h3>Peças e cotações</h3>{f.parts.map(p=><div className="detail-part-row" key={p.id}><div><b>{p.name}</b><small>{p.status}</small></div><span>{(p.quotes||[]).length} cotação(ões)</span><strong>{money(effectivePartCost(p))}</strong></div>)}{!f.parts.length&&<Empty text="Nenhuma peça necessária."/>}
   </div>}
+
+  {tab==='photos'&&<div className="v105-photos-tab"><header><div><span>SESSÃO DE FOTOS</span><h3>{photoCount} foto(s) vinculada(s)</h3><p>As miniaturas ficam ligadas automaticamente a este aparelho e entram no backup. Os arquivos originais permanecem na câmera/galeria do dispositivo.</p></div><label>Meta<input type="number" min="1" max="20" value={f.photoTarget||6} onChange={e=>set('photoTarget',Math.max(1,Number(e.target.value)||6))}/></label></header><div className="v105-photo-actions"><label className="primary"><Smartphone size={15}/> Tirar foto<input type="file" accept="image/*" capture="environment" onChange={async e=>{await addMedia(e.target.files||[]);e.target.value=''}}/></label><label><Upload size={15}/> Importar fotos<input type="file" accept="image/*" multiple onChange={async e=>{await addMedia(e.target.files||[]);e.target.value=''}}/></label><span className={photoReady?'ready':''}>{photoReady?'✓ Pronto para anunciar':`${Math.max(0,Number(f.photoTarget||6)-photoCount)} foto(s) para a meta`}</span></div><div className="v105-photo-grid">{f.mediaLibrary.map(photo=><article key={photo.id}><img src={photo.thumbnail} alt={photo.name}/><div><b>{photo.name}</b><small>{new Date(photo.date).toLocaleString('pt-BR')}</small></div><button className="danger" onClick={()=>removeMedia(photo.id)}>×</button></article>)}</div>{!photoCount&&<Empty text="Nenhuma foto vinculada. Use Tirar foto para associar automaticamente ao aparelho."/>}</div>}
 
   {tab==='checklist'&&<div className="custom-checklist-tab">
    <div className="checklist-add"><input value={checkText} onChange={e=>setCheckText(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();if(checkText.trim()){set('customChecklist',[...f.customChecklist,{id:crypto.randomUUID(),text:checkText.trim(),done:false}]);setCheckText('')}}}} placeholder="Nova tarefa personalizada"/><button onClick={()=>{if(checkText.trim()){set('customChecklist',[...f.customChecklist,{id:crypto.randomUUID(),text:checkText.trim(),done:false}]);setCheckText('')}}}>Adicionar</button></div>
@@ -2622,7 +2647,7 @@ function PhoneDetailModal({item,profiles,onClose,onSave}){
 
   {tab==='ads'&&<div className="phone-detail-ads">{f.ads.map(ad=><article key={ad.id}><header><div><b>{ad.name}</b><small>{ad.title||'Título não preparado'}</small></div><strong>{publishedCountForAd(ad)}/{profiles.length}</strong></header><div>{profiles.map(profile=>{const pub=ad.publications[profile.id]||{status:'not_published'};return <span className={pub.status} key={profile.id}>{publicationIcon(pub.status)} {profile.name}</span>})}</div></article>)}{!f.ads.length&&<Empty text="Nenhum anúncio criado."/>}</div>}
 
-  {tab==='timeline'&&<div className="phone-master-timeline">{[...f.timeline].reverse().map(t=><div key={t.id}><i/><div><b>{new Date(t.date).toLocaleString('pt-BR')}</b><span>{t.message}</span></div></div>)}</div>}
+  {tab==='timeline'&&<div className="phone-master-timeline v105-master-timeline">{operationalTimeline.map(t=><div className={t.tone||'blue'} key={t.id}><i/><div><b>{new Date(t.date).toLocaleString('pt-BR')} · {t.label}</b><span>{t.message}</span></div></div>)}</div>}
 
   {tab==='comments'&&<div className="phone-comments-tab"><div className="comment-add"><textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Escreva um comentário interno..."/><button className="primary" onClick={()=>{if(!commentText.trim())return;set('comments',[{id:crypto.randomUUID(),text:commentText.trim(),date:new Date().toISOString(),author:'Diego Moraes'},...f.comments]);setCommentText('')}}><MessageSquare/> Adicionar</button></div><div className="comment-list">{f.comments.map(c=><article key={c.id}><header><b>{c.author||'Usuário'}</b><time>{new Date(c.date).toLocaleString('pt-BR')}</time></header><p>{c.text}</p><button className="danger" onClick={()=>set('comments',f.comments.filter(x=>x.id!==c.id))}>Excluir</button></article>)}</div>{!f.comments.length&&<Empty text="Nenhum comentário interno."/>}</div>}
 
@@ -2784,7 +2809,7 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
    if(!confirm('Descartar o rascunho deste aparelho?'))return;
    clearDraft(PHONE_DRAFT_KEY);setDraftRecovered(false);onClose()
   }
-  function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);const ready={...f,parts:(f.parts||[]).map(item=>({...item,quotes:(item.quotes||[]).map(q=>({...q,price:parseMoneyInput(q.price)}))}))};onSave(ready)}
+  function finishPhone(){if(isNewPhone)clearDraft(PHONE_DRAFT_KEY);const ready={...f,paid:parseMoneyInput(f.paid),expected:parseMoneyInput(f.expected),otherCosts:parseMoneyInput(f.otherCosts),parts:(f.parts||[]).map(item=>({...item,quotes:(item.quotes||[]).map(q=>({...q,price:parseMoneyInput(q.price)}))}))};onSave(ready)}
   const set=(k,v)=>setF(current=>({...current,[k]:v}));
   const stampPart=partItem=>({...partItem,updatedAt:new Date().toISOString()});
   const resetPartDraft=()=>{setPart('');setPartStatus('Cotando');setPartCost('')};
@@ -2837,6 +2862,8 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
         <label className="v57-bank">Conta/banco usado no pagamento<select value={f.bankAccountId||''} onChange={e=>set('bankAccountId',e.target.value)}><option value="">Não informado</option>{banks.map(b=><option value={b.id} key={b.id}>{b.bank} · {b.accountName}</option>)}</select>{!banks.length&&<small className="field-help">Cadastre uma conta em Configurações → Contas bancárias.</small>}</label>
         <Field label="Valor pago" value={normalizeMoneyInput(f.paid)} prefix="R$" inputMode="decimal" onChange={v=>set('paid',normalizeMoneyInput(v))}/>
         <Field label="Valor de venda" value={normalizeMoneyInput(f.expected)} prefix="R$" inputMode="decimal" onChange={v=>set('expected',normalizeMoneyInput(v))}/>
+        <Field label="Outros custos" value={normalizeMoneyInput(f.otherCosts||0)} prefix="R$" inputMode="decimal" onChange={v=>set('otherCosts',normalizeMoneyInput(v))}/>
+        <Field label="Previsão de venda" type="date" value={f.expectedSaleDate||''} onChange={v=>set('expectedSaleDate',v)}/>
         <label className="v57-status">Status<div className={`v59-status-wrap ${phoneStatusTone}`}><i/><select value={f.status} onChange={e=>set('status',e.target.value)}>{statuses.map(s=><option key={s}>{s}</option>)}</select></div></label>
       </div>
       {hasPhoneNotes&&<details className="v57-notes"><summary>Observações e tarefas</summary><div className="v57-notes-grid"><label>Tarefas pendentes<textarea value={f.tasks} onChange={e=>set('tasks',e.target.value)} placeholder="Trocar tela, limpar, testar câmera..."/></label><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label></div></details>}
@@ -2953,5 +2980,5 @@ function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],otherCosts:0,expectedSaleDate:'',nextAction:'',nextActionDate:'',mediaLibrary:[],photoTarget:6,priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><CloudGate/></AppErrorBoundary>);

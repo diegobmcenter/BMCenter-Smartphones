@@ -1,0 +1,32 @@
+import assert from'node:assert/strict';
+import fs from'node:fs';
+import{decodeStorageRaw,encodeStorageValue}from'../src/backupAudit.js';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const dash=fs.readFileSync(new URL('../src/v102/pages/DashboardV102.jsx',import.meta.url),'utf8');
+const today=fs.readFileSync(new URL('../src/v102/pages/TodayV102.jsx',import.meta.url),'utf8');
+const reports=fs.readFileSync(new URL('../src/v10/pages/ReportsV10.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1050.css',import.meta.url),'utf8');
+assert.match(main,/APP_VERSION='10\.5\.0'/);
+assert.match(main,/import'\.\/v1050\.css'/);
+assert.match(main,/mediaLibrary:Array\.isArray\(item\.mediaLibrary\)/,'fotos vinculadas devem persistir dentro do aparelho');
+assert.match(main,/otherCosts:parseMoneyInput\(f\.otherCosts\)/,'outros custos precisam ser normalizados e persistidos');
+assert.match(main,/expectedSaleDate/,'previsão de venda precisa existir no cadastro');
+assert.match(main,/buildOperationalTimeline/,'timeline operacional completa deve ser usada');
+assert.match(main,/photoThumbnail/,'fluxo integrado de fotos deve gerar miniatura persistente');
+assert.match(main,/async function addMedia\(files\)[\s\S]*onSave\(next\)/,'Foto capturada deve ser persistida imediatamente no aparelho e no backup');
+assert.match(dash,/Capital por etapa/);assert.match(dash,/RADAR DE ESTOQUE/);assert.match(dash,/SUGESTÕES AUTOMÁTICAS/);
+assert.match(today,/PRIORIDADES AUTOMÁTICAS/);assert.match(reports,/Preço máximo sugerido/);assert.match(reports,/Rentabilidade das vendas/);assert.match(reports,/GIRO POR MODELO/);
+assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/,'KPIs desktop devem permanecer compactos');
+assert.match(css,/@media\(max-width:720px\)/,'novos recursos precisam de regra mobile explícita');
+// Todos os novos dados persistentes ficam dentro de bmcenter-smartphones, já coberto pelo backup prefix-based.
+assert.doesNotMatch(main,/localStorage\.setItem\(['"](?:mediaLibrary|otherCosts|expectedSaleDate)/,'novos dados não podem criar chave fora da arquitetura de backup');
+
+const intelligencePhonePayload=[{id:'p-v1050',otherCosts:45,expectedSaleDate:'2026-09-10',nextAction:'Revisar preço',nextActionDate:'2026-08-20',photoTarget:6,mediaLibrary:[{id:'foto-1',name:'frente.jpg',date:'2026-08-16T03:30:00.000Z',thumbnail:'data:image/jpeg;base64,abc'}]}];
+const restoredIntelligencePayload=decodeStorageRaw(encodeStorageValue(intelligencePhonePayload,'json'));
+assert.equal(restoredIntelligencePayload.encoding,'json');
+assert.deepEqual(restoredIntelligencePayload.value,intelligencePhonePayload,'backup v7 precisa restaurar integralmente os novos dados de inteligência e fotos');
+assert.match(today,/onOpenPhone/,'Fila inteligente deve abrir o aparelho diretamente');
+assert.match(main,/const max=160/,'Miniaturas devem permanecer pequenas para proteger armazenamento e backup');
+assert.match(css,/v105-turnover-table[^\n]*overflow-x:hidden!important/,'Tabela de giro deve caber no mobile sem rolagem horizontal');
+assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/,'Indicadores mobile devem priorizar grade compacta');
+console.log('intelligence-ui-backup-v1050.test: OK');

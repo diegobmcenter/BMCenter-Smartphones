@@ -1,8 +1,11 @@
-import React from 'react';
-import {AlertTriangle,BarChart3,CalendarDays,CircleDollarSign,Package,RotateCcw,ShoppingCart,Tag,Tags,TrendingDown,TrendingUp,Users} from 'lucide-react';
-export default function ReportsV10({forecast7,forecast30,stockExpected,profileData,supplierData,partsCurrent={open:0,quotes:0,orders:0,returns:0},partsPeriod={purchasedQty:0,purchasedValue:0,returnsQty:0,recoveredValue:0,unrecoveredLoss:0},tags,channelSummary,bankSummary,monthly,discarded=[],discardLoss=0,money,formatMonth,period,setPeriod,customStart,setCustomStart,customEnd,setCustomEnd,periodLabel,rangeLabel}){
+import React,{useMemo,useState} from 'react';
+import {AlertTriangle,BarChart3,CalendarDays,CircleDollarSign,Gauge,Package,RotateCcw,ShoppingCart,Tag,Tags,TrendingDown,TrendingUp,Users,WalletCards} from 'lucide-react';
+export default function ReportsV10({forecast7,forecast30,stockExpected,profileData,supplierData,partsCurrent={open:0,quotes:0,orders:0,returns:0},partsPeriod={purchasedQty:0,purchasedValue:0,returnsQty:0,recoveredValue:0,unrecoveredLoss:0},tags,channelSummary,bankSummary,monthly,discarded=[],discardLoss=0,profitabilitySummary={revenue:0,cost:0,profit:0,marginPct:0,roiPct:0},profitabilityRows=[],turnover=[],money,formatMonth,period,setPeriod,customStart,setCustomStart,customEnd,setCustomEnd,periodLabel,rangeLabel}){
+ const[targetProfit,setTargetProfit]=useState(350),[purchaseModel,setPurchaseModel]=useState('');
+ const selectedModel=useMemo(()=>turnover.find(item=>item.key===(purchaseModel||turnover[0]?.key))||turnover[0]||null,[turnover,purchaseModel]);
+ const maxPurchase=selectedModel?Math.max(0,Number(selectedModel.avgSale||0)-Number(selectedModel.avgParts||0)-Number(selectedModel.avgOther||0)-Math.max(0,Number(targetProfit)||0)):0;
  return <div className="v10-page v10-reports-page">
-  <header className="v10-hero"><div><span>ANÁLISE</span><h1>Relatórios</h1><p>Uma leitura objetiva de vendas, estoque, perfis, fornecedores e recebimentos.</p></div></header>
+  <header className="v10-hero"><div><span>ANÁLISE</span><h1>Relatórios</h1><p>Uma leitura objetiva de vendas, estoque, rentabilidade, giro, perfis e fornecedores.</p></div></header>
   <section className="v10490-report-period">
    <div className="v10490-period-label"><CalendarDays size={14}/><b>Período</b></div>
    <select value={period} onChange={e=>setPeriod(e.target.value)} aria-label="Período dos relatórios">
@@ -17,6 +20,13 @@ export default function ReportsV10({forecast7,forecast30,stockExpected,profileDa
    <article><BarChart3/><div><small>Previsão 30 dias</small><strong>{money(forecast30)}</strong></div></article>
    <article><Package/><div><small>Estoque previsto · atual</small><strong>{money(stockExpected)}</strong></div></article><article className="v1042-loss-metric"><TrendingDown/><div><small>Prejuízo · período</small><strong>{money(discardLoss)}</strong><span>{discarded.length} aparelho(s)</span></div></article>
   </section>
+  <section className="v105-profit-strip"><header><WalletCards size={15}/><div><span>RENTABILIDADE REAL · {periodLabel}</span><b>Resultado líquido das vendas</b></div></header><div>
+   <article><small>Receita líquida</small><strong>{money(profitabilitySummary.revenue)}</strong></article>
+   <article><small>Custo real</small><strong>{money(profitabilitySummary.cost)}</strong></article>
+   <article className={profitabilitySummary.profit>=0?'good':'bad'}><small>Lucro líquido</small><strong>{money(profitabilitySummary.profit)}</strong></article>
+   <article><small>Margem</small><strong>{Number(profitabilitySummary.marginPct||0).toFixed(1).replace('.',',')}%</strong></article>
+   <article><small>ROI</small><strong>{Number(profitabilitySummary.roiPct||0).toFixed(1).replace('.',',')}%</strong></article>
+  </div></section>
   <section className="v10493-parts-overview">
    <header><Package/><div><span>CENTRAL DE PEÇAS</span><h2>Resumo de peças</h2></div></header>
    <div className="v10493-parts-group"><b className="v10493-parts-group-label">ATUAL</b><div className="v10493-parts-current">
@@ -33,6 +43,11 @@ export default function ReportsV10({forecast7,forecast30,stockExpected,profileDa
     <article className="bad"><TrendingDown/><div><small>Perda não recuperada</small><strong>{money(partsPeriod.unrecoveredLoss)}</strong></div></article>
    </div></div>
   </section>
+  <section className="v105-intelligence-grid">
+   <article className="v105-turnover-card"><header><Gauge/><div><span>GIRO POR MODELO · {periodLabel}</span><h2>O que vende melhor</h2></div></header><div className="v105-turnover-table"><div className="head"><span>Modelo</span><span>Vendas</span><span>Giro</span><span>Margem</span><span>Lucro médio</span></div>{turnover.slice(0,10).map(row=><div className="row" key={row.key}><b>{row.name}</b><span>{row.qty}</span><span>{row.avgDays.toFixed(0)}d</span><span className={row.avgMargin>=0?'good':'bad'}>{row.avgMargin.toFixed(1).replace('.',',')}%</span><strong>{money(row.avgProfit)}</strong></div>)}{!turnover.length&&<em>Sem histórico suficiente neste período.</em>}</div></article>
+   <article className="v105-buy-calculator"><header><ShoppingCart/><div><span>COMPRA INTELIGENTE</span><h2>Preço máximo sugerido</h2></div></header>{selectedModel?<><div className="v105-buy-fields"><label>Modelo<select value={selectedModel.key} onChange={e=>setPurchaseModel(e.target.value)}>{turnover.map(row=><option key={row.key} value={row.key}>{row.name}</option>)}</select></label><label>Lucro desejado<div><span>R$</span><input type="number" min="0" step="10" value={targetProfit} onChange={e=>setTargetProfit(e.target.value)}/></div></label></div><div className="v105-buy-result"><small>Pagar no máximo</small><strong>{money(maxPurchase)}</strong><span>{selectedModel.qty} venda(s) usadas · giro médio {selectedModel.avgDays.toFixed(0)}d</span></div><dl><div><dt>Venda líquida média</dt><dd>{money(selectedModel.avgSale)}</dd></div><div><dt>Peças médias</dt><dd>{money(selectedModel.avgParts)}</dd></div><div><dt>Outros custos médios</dt><dd>{money(selectedModel.avgOther)}</dd></div><div><dt>Lucro alvo</dt><dd>{money(targetProfit)}</dd></div></dl></>:<em>Registre vendas para gerar uma sugestão baseada no seu próprio histórico.</em>}</article>
+  </section>
+  <section className="v105-phone-profit"><header><CircleDollarSign/><div><span>POR APARELHO · {periodLabel}</span><h2>Rentabilidade das vendas</h2></div></header><div className="v105-phone-profit-table"><div className="head"><span>Aparelho</span><span>Custo</span><span>Líquido</span><span>Lucro</span><span>Margem</span></div>{profitabilityRows.slice(0,12).map(row=><div className="row" key={row.phone.id}><b>{[row.phone.brand,row.phone.model].filter(Boolean).join(' ')}</b><span>{money(row.cost)}</span><span>{money(row.revenue)}</span><strong className={row.profit>=0?'good':'bad'}>{money(row.profit)}</strong><span>{row.marginPct.toFixed(1).replace('.',',')}%</span></div>)}{!profitabilityRows.length&&<em>Sem vendas neste período.</em>}</div></section>
   <section className="v10-report-grid">
    <article><header><Users/><div><span>PERFIS · {periodLabel}</span><h2>Desempenho por perfil</h2></div></header><div className="v10-ranked-list">{profileData.filter(x=>x.qty).map((x,i)=><div key={x.name}><span>{i+1}</span><div><b>{x.name}</b><small>{x.qty} venda(s)</small></div><strong>{money(x.revenue)}</strong></div>)}{!profileData.some(x=>x.qty)&&<em>Sem vendas neste período.</em>}</div></article>
    <article><header><Package/><div><span>COMPRAS · {periodLabel}</span><h2>Gastos com peças</h2></div></header><div className="v10-ranked-list">{supplierData.map((x,i)=><div key={x.name}><span>{i+1}</span><div><b>{x.name}</b><small>Fornecedor</small></div><strong>{money(x.value)}</strong></div>)}{!supplierData.length&&<em>Sem gastos neste período.</em>}</div></article>
