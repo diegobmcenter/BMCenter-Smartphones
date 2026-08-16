@@ -1,0 +1,11 @@
+BMCenter Smartphones v10.4.82
+
+PACOTE COMPLETO DE PUBLICAÇÃO
+
+Esta versão parte integralmente da v10.4.81 e corrige a causa raiz do grid mobile dos cards de Smartphones.
+
+PUBLICAÇÃO
+1. Extraia o ZIP para uma pasta normal do Windows.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. Aguarde dependências, testes e build.
+4. O BAT publica no GitHub e a Vercel inicia o deploy.
