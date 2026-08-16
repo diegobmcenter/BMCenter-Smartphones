@@ -2,7 +2,7 @@ import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}fr
 import{QRCodeSVG}from'qrcode.react';
 import{effectivePartCost,returnRefundTotal,returnRecoveredAmount,returnPartRefundDraft,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,isPartProcurementComplete,isPartOpenForProcurement,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal}from'./partsOrders.js';
 import{workflowStageForPhone}from'./workflow.js';
-import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject}from'./backupAudit.js';
+import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
 import BatchActionsView from './pages/BatchActionsView.jsx';
@@ -14,7 +14,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.4.91';
+const APP_VERSION='10.4.92';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -2243,7 +2243,7 @@ function DataCenterPage(){
 }
 
 const BACKUP_FORMAT='bmcenter-complete-backup';
-const BACKUP_FORMAT_VERSION=6;
+const BACKUP_FORMAT_VERSION=7;
 const BACKUP_REQUIRED_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,STATUSKEY,FONT_SCALE_KEY];
 function backupEligibleKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session',BACKUP_RUNTIME_KEY].includes(key);
@@ -2293,30 +2293,32 @@ function backupCriticalAudit(storage){
   phoneDraftCaptured:storage[PHONE_DRAFT_KEY]!==undefined,
   batchPhoneDraftCaptured:storage[BATCH_DRAFT_KEY]!==undefined,
   phoneStatuses:storage[STATUSKEY]!==undefined,
-  counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts,partsOrders:Array.isArray(storage[OKEY])?storage[OKEY].length:0,inventoryItems:Array.isArray(storage[IKEY])?storage[IKEY].length:0}
+  counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts,partsOrders:Array.isArray(storage[OKEY])?storage[OKEY].length:0,inventoryItems:Array.isArray(storage[IKEY])?storage[IKEY].length:0,returns:Array.isArray(storage[OKEY])?storage[OKEY].reduce((sum,order)=>sum+(order?.items||[]).filter(item=>['pending','returned'].includes(item?.returnStatus)).length,0):0,financialReturns:Array.isArray(storage[OKEY])?storage[OKEY].reduce((sum,order)=>sum+(order?.items||[]).filter(item=>item?.returnStatus==='returned'&&item?.returnFinancialStatus).length,0):0}
  }
 }
 function captureCompleteBackup(options={}){
- const storage={},sessionStorageData={},excludeKeys=new Set(options.excludeKeys||[]);
+ const storage={},sessionStorageData={},storageEncoding={},sessionStorageEncoding={},excludeKeys=new Set(options.excludeKeys||[]);
  for(let index=0;index<localStorage.length;index++){
   const key=localStorage.key(index);
   if(!key||!backupEligibleKey(key)||excludeKeys.has(key))continue;
-  const raw=localStorage.getItem(key);
-  try{storage[key]=JSON.parse(raw)}catch{storage[key]=raw}
+  const raw=localStorage.getItem(key),decoded=decodeStorageRaw(raw);
+  storage[key]=decoded.value;storageEncoding[key]=decoded.encoding
  }
  for(let index=0;index<sessionStorage.length;index++){
   const key=sessionStorage.key(index);
   if(!key||!backupEligibleSessionKey(key))continue;
-  const raw=sessionStorage.getItem(key);
-  try{sessionStorageData[key]=JSON.parse(raw)}catch{sessionStorageData[key]=raw}
+  const raw=sessionStorage.getItem(key),decoded=decodeStorageRaw(raw);
+  sessionStorageData[key]=decoded.value;sessionStorageEncoding[key]=decoded.encoding
  }
  materializeBackupSchema(storage);
+ Object.keys(storage).forEach(key=>{if(!storageEncoding[key])storageEncoding[key]='json'});
+ Object.keys(sessionStorageData).forEach(key=>{if(!sessionStorageEncoding[key])sessionStorageEncoding[key]='json'});
  const eligibleLocalKeys=[];
  for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&backupEligibleKey(key)&&!excludeKeys.has(key))eligibleLocalKeys.push(key)}
  const missingKeys=eligibleLocalKeys.filter(key=>!Object.prototype.hasOwnProperty.call(storage,key));
  if(missingKeys.length)throw new Error(`Backup incompleto: ${missingKeys.join(', ')}`);
  const critical=backupCriticalAudit(storage);
- const preliminary={format:BACKUP_FORMAT,formatVersion:BACKUP_FORMAT_VERSION,appVersion:APP_VERSION,storage,sessionStorage:sessionStorageData};
+ const preliminary={format:BACKUP_FORMAT,formatVersion:BACKUP_FORMAT_VERSION,appVersion:APP_VERSION,storage,sessionStorage:sessionStorageData,storageEncoding,sessionStorageEncoding};
  const integrity=auditBackupObject(preliminary,{requiredKeys:BACKUP_REQUIRED_KEYS});
  if(!integrity.ok)throw new Error(`Backup reprovado na auditoria: ${integrity.errors.join('; ')}`);
  const audit={
@@ -2331,7 +2333,7 @@ function captureCompleteBackup(options={}){
    missingRequiredKeys:integrity.missingRequired,
    verifiedAt:new Date().toISOString()
   };
- return{
+ const complete={
   audit,
   format:BACKUP_FORMAT,
   formatVersion:BACKUP_FORMAT_VERSION,
@@ -2339,6 +2341,8 @@ function captureCompleteBackup(options={}){
   exportedAt:new Date().toISOString(),
   storage,
   sessionStorage:sessionStorageData,
+  storageEncoding,
+  sessionStorageEncoding,
   summary:{
    smartphones:Array.isArray(storage[SKEY])?storage[SKEY].length:0,
    suppliers:Array.isArray(storage[FKEY])?storage[FKEY].length:0,
@@ -2352,7 +2356,10 @@ function captureCompleteBackup(options={}){
    totalKeys:Object.keys(storage).length,
    totalSessionKeys:Object.keys(sessionStorageData).length
   }
- }
+ };
+ const finalAudit=auditBackupObject(complete,{requiredKeys:BACKUP_REQUIRED_KEYS});
+ if(!finalAudit.ok)throw new Error(`Backup final reprovado na auditoria: ${finalAudit.errors.join('; ')}`);
+ return complete
 }
 function normalizeBackupFile(data){
  if(data?.format===BACKUP_FORMAT&&data.storage&&typeof data.storage==='object')return data;
@@ -2369,13 +2376,15 @@ function normalizeBackupFile(data){
  return{format:BACKUP_FORMAT,formatVersion:1,appVersion:data?.version||'legado',exportedAt:data?.exportedAt||null,storage:legacyMap,sessionStorage:{},summary:{totalKeys:Object.keys(legacyMap).length}}
 }
 async function applyCompleteBackup(backup,{replace=true}={}){
- const normalized=normalizeBackupFile(backup);
- if(Array.isArray(normalized.storage?.[SKEY]))normalized.storage[SKEY]=normalized.storage[SKEY].map(sanitizePhoneForLeanMode);
+ const source=normalizeBackupFile(backup);
+ const normalized={...source,storage:{...(source.storage||{})},sessionStorage:{...(source.sessionStorage||{})},storageEncoding:{...(source.storageEncoding||{})},sessionStorageEncoding:{...(source.sessionStorageEncoding||{})}};
  delete normalized.photoAssets;
  if(!normalized.storage||typeof normalized.storage!=='object')throw new Error('O arquivo não contém dados restauráveis.');
  materializeBackupSchema(normalized.storage);
+ if(Number(normalized.formatVersion||0)>=7)Object.keys(normalized.storage).forEach(key=>{if(!normalized.storageEncoding[key])normalized.storageEncoding[key]='json'});
  const preflight=auditBackupObject(normalized,{requiredKeys:BACKUP_REQUIRED_KEYS});
  if(!preflight.ok)throw new Error(`Backup reprovado antes da restauração: ${preflight.errors.join('; ')}`);
+ if(Array.isArray(normalized.storage?.[SKEY]))normalized.storage[SKEY]=normalized.storage[SKEY].map(sanitizePhoneForLeanMode);
  const entries=Object.entries(normalized.storage).filter(([key])=>backupEligibleKey(key));
  if(!entries.length)throw new Error('Nenhum dado do BMCenter foi encontrado no arquivo.');
  if(replace){
@@ -2383,23 +2392,27 @@ async function applyCompleteBackup(backup,{replace=true}={}){
   for(let index=0;index<localStorage.length;index++){const key=localStorage.key(index);if(key&&backupEligibleKey(key))current.push(key)}
   current.filter(key=>!Object.prototype.hasOwnProperty.call(normalized.storage,key)&&!(preserveLocalSnapshots&&key===SNAPKEY)).forEach(key=>localStorage.removeItem(key));
  }
- for(const[key,value]of entries)localStorage.setItem(key,JSON.stringify(value));
+ const legacyRawKeys=new Set(['bmcenter-last-theme','bmcenter-last-version']);
+ const encodeLocal=(key,value)=>Number(normalized.formatVersion||0)>=7
+  ?encodeStorageValue(value,normalized.storageEncoding?.[key])
+  :(legacyRawKeys.has(key)&&typeof value==='string'?value:JSON.stringify(value));
+ for(const[key,value]of entries)localStorage.setItem(key,encodeLocal(key,value));
  const sessionEntries=Object.entries(normalized.sessionStorage||{}).filter(([key])=>backupEligibleSessionKey(key));
  if(replace){
   const currentSession=[];
   for(let index=0;index<sessionStorage.length;index++){const key=sessionStorage.key(index);if(key&&backupEligibleSessionKey(key))currentSession.push(key)}
   currentSession.filter(key=>!Object.prototype.hasOwnProperty.call(normalized.sessionStorage||{},key)).forEach(key=>sessionStorage.removeItem(key));
  }
- for(const[key,value]of sessionEntries)sessionStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));
+ const encodeSession=(key,value)=>Number(normalized.formatVersion||0)>=7
+  ?encodeStorageValue(value,normalized.sessionStorageEncoding?.[key])
+  :(typeof value==='string'?value:JSON.stringify(value));
+ for(const[key,value]of sessionEntries)sessionStorage.setItem(key,encodeSession(key,value));
  const failed=[];
- for(const[key,value]of entries){
-  const raw=localStorage.getItem(key);
-  let restored;try{restored=JSON.parse(raw)}catch{restored=raw}
-  if(JSON.stringify(restored)!==JSON.stringify(value))failed.push(key)
- }
+ for(const[key,value]of entries){if(localStorage.getItem(key)!==encodeLocal(key,value))failed.push(key)}
+ for(const[key,value]of sessionEntries){if(sessionStorage.getItem(key)!==encodeSession(key,value))failed.push(`session:${key}`)}
  if(failed.length)throw new Error(`Falha de integridade ao restaurar: ${failed.join(', ')}`);
  await Promise.all(entries.map(([key,value])=>pushCloudStateNow(key,value)));
- const restoredAudit=auditBackupObject({storage:Object.fromEntries(entries),sessionStorage:Object.fromEntries(sessionEntries)},{requiredKeys:BACKUP_REQUIRED_KEYS});
+ const restoredAudit=auditBackupObject({format:BACKUP_FORMAT,formatVersion:BACKUP_FORMAT_VERSION,storage:Object.fromEntries(entries),sessionStorage:Object.fromEntries(sessionEntries),storageEncoding:Object.fromEntries(entries.map(([key])=>[key,'json'])),sessionStorageEncoding:Object.fromEntries(sessionEntries.map(([key])=>[key,'json']))},{requiredKeys:BACKUP_REQUIRED_KEYS});
  if(!restoredAudit.ok)throw new Error(`Restauração concluída com auditoria reprovada: ${restoredAudit.errors.join('; ')}`);
  return normalized;
 }
@@ -2501,7 +2514,7 @@ function BackupPage(){
   <Title t="Backup completo" s="Proteja e restaure os dados, configurações e personalizações do BMCenter com verificação de integridade.">
    <button onClick={makeCloudBackup} disabled={busy}><UploadCloud/> Criar backup manual</button>
   </Title>
-  <div className="backup-integrity-banner"><ShieldCheck/><div><b>Auditoria integral ativada</b><small>O arquivo captura todas as chaves permanentes BMCenter presentes no navegador e materializa os módulos essenciais: aparelhos, anúncios, fornecedores, contas, perfis, pedidos e peças, estoque, configurações, tema, fontes, layouts, menus, status, metas, checklists, bibliotecas e novos módulos futuros que usem o prefixo BMCenter.</small></div></div>
+  <div className="backup-integrity-banner"><ShieldCheck/><div><b>Auditoria integral ativada</b><small>O arquivo captura todas as chaves permanentes BMCenter presentes no navegador e materializa os módulos essenciais: aparelhos, anúncios, fornecedores, contas, perfis, pedidos e peças, devoluções e reembolsos financeiros, estoque, configurações, tema, fontes, layouts, menus, status, metas, checklists, bibliotecas, rascunhos e novos módulos futuros que usem o prefixo BMCenter.</small></div></div>
   <div className={`panel backup-auto-status ${autoError?'has-error':''}`}><div><b>Backup automático na nuvem</b><small>{autoText}</small>{autoError&&<small className="danger-text">Última falha: {autoError}</small>}<small>É executado globalmente, sem precisar abrir esta página. O backup automático do dia é atualizado quando existem alterações e o intervalo de segurança permite.</small></div><button onClick={makeAutomaticNow} disabled={busy}>Executar e verificar agora</button></div>
   <div className="backup-grid complete-backup-grid">
    <div className="panel backup-card"><Download size={38}/><h2>Baixar backup completo</h2><p>Gera um arquivo único com dados, configurações, personalizações e preferências BMCenter. O antigo Photo Studio foi removido e não existem arquivos de fotos internos para incluir.</p><button className="primary" disabled={busy} onClick={exportData}>Baixar arquivo .bmcenter</button></div>

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10480.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10479\.css';import'\.\/v10480\.css';/,'v10480.css deve carregar por último');
-assert.match(main,/const APP_VERSION='10\.4\.91'/,'versão 10.4.80 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.92'/,'versão 10.4.80 não encontrada');
 assert.match(css,/grid-template-areas:"star name status money actions"!important/,'desktop precisa manter ações no extremo direito');
 assert.match(css,/"star name status actions"\s*"\. money money money"!important/,'mobile precisa manter ações no extremo direito');
 assert.match(css,/\.v102-device-row>\.v102-row-actions/,'ações precisam de posicionamento explícito no card');

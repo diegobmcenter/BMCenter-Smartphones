@@ -1,3 +1,4 @@
+import{auditBackupObject}from'./backupAudit.js';
 const url=(import.meta.env.VITE_SUPABASE_URL||'').replace(/\/$/,'');
 const anon=import.meta.env.VITE_SUPABASE_ANON_KEY||'';
 const SESSION_KEY='bmcenter-cloud-session';
@@ -130,6 +131,8 @@ export async function createCloudBackup(backup,options={}){
  if(!stored)throw new Error('O backup foi enviado, mas não pôde ser confirmado na nuvem.');
  const expectedFingerprint=backup?.audit?.fingerprint||'';
  if(expectedFingerprint&&stored?.audit?.fingerprint!==expectedFingerprint)throw new Error('A verificação do backup na nuvem encontrou divergência de integridade.');
+ const storedAudit=auditBackupObject(stored,{requiredKeys:Array.isArray(backup?.audit?.requiredKeys)?backup.audit.requiredKeys:[]});
+ if(!storedAudit.ok)throw new Error(`O backup gravado na nuvem falhou na auditoria: ${storedAudit.errors.join('; ')}`);
  const all=await rest(`app_state?select=state_key,updated_at&user_id=eq.${user.id}&state_key=like.${encodeURIComponent(BACKUP_PREFIX+'*')}&order=updated_at.desc`);
  for(const row of (all||[]).slice(10))await rest(`app_state?user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(row.state_key)}`,{method:'DELETE',headers:{Prefer:'return=minimal'}});
  return{id:stateKey,createdAt,kind,bucket,verified:true}
@@ -153,7 +156,10 @@ export async function restoreCloudBackup(id){
  const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');
  const rows=await rest(`app_state?select=state_value&user_id=eq.${user.id}&state_key=eq.${encodeURIComponent(id)}`);
  if(!rows?.[0]?.state_value)throw new Error('Backup não encontrado.');
- return rows[0].state_value
+ const backup=rows[0].state_value;
+ const audit=auditBackupObject(backup,{requiredKeys:Array.isArray(backup?.audit?.requiredKeys)?backup.audit.requiredKeys:[]});
+ if(backup?.audit?.fingerprint&&!audit.ok)throw new Error(`Backup da nuvem corrompido ou divergente: ${audit.errors.join('; ')}`);
+ return backup
 }
 export async function deleteCloudBackup(id){
  const session=await getCloudSession();const user=session?.user;if(!user)throw new Error('Sessão expirada.');

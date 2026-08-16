@@ -4,7 +4,7 @@ const page=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',impor
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10478.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10478\.css';import'\.\/v10479\.css';/,'v10479 deve ser a última camada visual');
-assert.match(main,/const APP_VERSION='10\.4\.91'/,'versão 10.4.80 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.92'/,'versão 10.4.80 não encontrada');
 const toolbar=page.match(/<section className="v102-toolbar v10313-main-toolbar">([\s\S]*?)<\/section>/)?.[1]||'';
 assert.ok(toolbar,'toolbar de Smartphones não encontrada');
 const searchAt=toolbar.indexOf('Buscar modelo ou etiqueta');
