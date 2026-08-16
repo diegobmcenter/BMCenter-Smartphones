@@ -1,0 +1,202 @@
+/* BMCenter v10.4.83 — correção estrutural e visual mobile da lista de Smartphones.
+   Regra soberana baseada na largura REAL da lista, independente do viewport/zoom.
+   Objetivo: estrela + nome + ... + status na primeira linha; valores compactos na segunda. */
+
+/* A lista vira container em TODAS as larguras. Assim o mobile não depende de @media. */
+.v102-device-list{
+  container-type:inline-size!important;
+  container-name:bm-smartphones-list!important;
+}
+
+/* Celular/tablet estreito: composição fechada e previsível. */
+@container bm-smartphones-list (max-width:850px){
+  .v102-device-row{
+    display:grid!important;
+    grid-template-columns:34px minmax(0,1fr) 32px 132px!important;
+    grid-template-rows:auto 36px!important;
+    grid-template-areas:none!important;
+    column-gap:6px!important;
+    row-gap:6px!important;
+    align-items:start!important;
+    min-height:0!important;
+    padding:8px 9px!important;
+    overflow:visible!important;
+  }
+
+  .v102-device-row>.v102-star{
+    grid-area:auto!important;
+    grid-column:1!important;
+    grid-row:1!important;
+    width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
+    align-self:start!important;
+  }
+
+  .v102-device-row>.v102-device-name{
+    grid-area:auto!important;
+    grid-column:2!important;
+    grid-row:1!important;
+    min-width:0!important;
+    width:100%!important;
+    align-self:start!important;
+  }
+  .v102-device-row>.v102-device-name .v10479-device-name-button{
+    width:auto!important;max-width:100%!important;min-width:0!important;
+  }
+  .v102-device-row>.v102-device-name h3{
+    font-size:13px!important;line-height:1.15!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row>.v102-device-name p{
+    display:block!important;margin:4px 0 0!important;
+    font-size:7.8px!important;line-height:1.15!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row>.v102-device-name small{
+    display:block!important;margin-top:2px!important;font-size:6.8px!important;line-height:1!important;
+  }
+
+  /* Menu ... entre nome e status no mobile. */
+  .v102-device-row>.v102-row-actions{
+    grid-area:auto!important;
+    grid-column:3!important;
+    grid-row:1!important;
+    display:block!important;
+    width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important;
+    margin:0!important;padding:0!important;
+    align-self:start!important;justify-self:end!important;
+    overflow:visible!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{
+    width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important;
+    margin:0!important;padding:0!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{
+    display:grid!important;place-items:center!important;border-radius:8px!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button svg{width:14px!important;height:14px!important}
+  .v102-device-row .v102-context{right:0!important;left:auto!important;top:35px!important;z-index:700!important}
+
+  .v102-device-row>.v102-status{
+    grid-area:auto!important;
+    grid-column:4!important;
+    grid-row:1!important;
+    width:132px!important;min-width:132px!important;max-width:132px!important;
+    align-self:start!important;
+  }
+  .v102-device-row>.v102-status select{
+    display:block!important;
+    width:132px!important;min-width:132px!important;max-width:132px!important;
+    height:34px!important;min-height:34px!important;
+    padding:0 25px 0 9px!important;
+    border-radius:9px!important;
+    font-size:9.4px!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row>.v102-status small{
+    display:block!important;margin-top:3px!important;font-size:6.3px!important;line-height:1!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+
+  /* Valores: só a largura que precisam. Nada de cartões gigantes. */
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{
+    grid-area:auto!important;
+    grid-column:2/5!important;
+    grid-row:2!important;
+    display:grid!important;
+    grid-template-columns:88px 104px 88px!important;
+    gap:4px!important;
+    width:max-content!important;
+    max-width:100%!important;
+    min-width:0!important;
+    height:36px!important;min-height:36px!important;
+    padding:0!important;margin:0!important;
+    border:0!important;background:transparent!important;
+    overflow:visible!important;
+    align-self:start!important;justify-self:start!important;
+  }
+
+  .v102-device-row .v102-inline-money{
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-items:stretch!important;
+    gap:1px!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:36px!important;min-height:36px!important;
+    padding:4px 6px!important;margin:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:8px!important;
+    background:var(--surface2)!important;
+    overflow:hidden!important;
+    box-shadow:none!important;
+  }
+  .v102-device-row .v102-inline-money+.v102-inline-money{border-left:1px solid var(--line)!important}
+  .v102-device-row .v102-inline-money>span{
+    display:block!important;
+    margin:0!important;
+    min-height:6px!important;
+    font-size:6.1px!important;line-height:1!important;
+    color:var(--faint)!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row .v102-inline-money>div{
+    display:flex!important;
+    align-items:center!important;
+    gap:2px!important;
+    width:100%!important;min-width:0!important;
+    height:15px!important;min-height:15px!important;
+    overflow:visible!important;
+  }
+  .v102-device-row .v102-inline-money small{
+    display:block!important;flex:0 0 auto!important;
+    margin:0!important;
+    font-size:6.8px!important;line-height:15px!important;
+    color:var(--muted)!important;
+  }
+  .v102-device-row .v102-inline-money input{
+    display:block!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:15px!important;min-height:15px!important;max-height:15px!important;
+    margin:0!important;padding:0!important;
+    border:0!important;border-radius:0!important;
+    background:transparent!important;
+    color:var(--text)!important;
+    -webkit-text-fill-color:var(--text)!important;
+    opacity:1!important;
+    font-size:9.2px!important;font-weight:800!important;line-height:15px!important;
+    box-shadow:none!important;outline:0!important;
+    overflow:visible!important;
+  }
+  .v102-device-row .v102-inline-money.good input{
+    color:var(--green)!important;-webkit-text-fill-color:var(--green)!important;
+  }
+  .v102-device-row .v102-inline-money.bad input{
+    color:var(--red)!important;-webkit-text-fill-color:var(--red)!important;
+  }
+}
+
+/* Aparelhos realmente estreitos: conserva legibilidade sem aumentar altura. */
+@container bm-smartphones-list (max-width:360px){
+  .v102-device-row{
+    grid-template-columns:31px minmax(0,1fr) 28px 108px!important;
+    grid-template-rows:auto 36px!important;
+    column-gap:5px!important;row-gap:6px!important;
+    padding:7px!important;
+  }
+  .v102-device-row>.v102-star{width:31px!important;min-width:31px!important;height:31px!important;min-height:31px!important}
+  .v102-device-row>.v102-row-actions,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important}
+  .v102-device-row>.v102-status{width:108px!important;min-width:108px!important;max-width:108px!important}
+  .v102-device-row>.v102-status select{width:108px!important;min-width:108px!important;max-width:108px!important;height:31px!important;min-height:31px!important;font-size:8.7px!important;padding:0 22px 0 7px!important}
+  .v102-device-row>.v102-device-name h3{font-size:12px!important}
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{
+    grid-column:1/5!important;
+    width:100%!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4px!important;
+  }
+}

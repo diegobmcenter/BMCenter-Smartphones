@@ -1,0 +1,8 @@
+VALIDAÇÃO v10.4.83
+
+- Layout mobile responde à largura real da lista via container query.
+- Valores financeiros permanecem visíveis e compactos.
+- Menu ... permanece entre nome e Status no mobile e no extremo direito no desktop.
+- Revisão visual REAL executada em Chromium nas larguras 393px, 360px, 832px e 1366px.
+- 19 contratos/testes da suíte executados com sucesso, incluindo regressões anteriores e v10.4.83.
+- Ver VALIDACAO-VISUAL-v10.4.83.txt para medidas renderizadas.

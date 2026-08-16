@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10483.css',import.meta.url),'utf8');
+assert.match(main,/import'\.\/v10482\.css';import'\.\/v10483\.css';/,'v10483 precisa ser a camada visual final');
+assert.match(main,/const APP_VERSION='10\.4\.83'/,'versão 10.4.83 não encontrada');
+assert.match(css,/container-type:inline-size!important/,'lista precisa responder à largura real do conteúdo');
+assert.match(css,/@container bm-smartphones-list \(max-width:850px\)/,'regra mobile precisa usar container query');
+assert.match(css,/grid-template-columns:34px minmax\(0,1fr\) 32px 132px!important/,'topo precisa reservar estrela, nome, menu e status');
+assert.match(css,/grid-template-columns:88px 104px 88px!important/,'valores precisam ser compactos e proporcionais');
+assert.match(css,/height:36px!important;min-height:36px!important/,'faixa financeira não pode ficar alta');
+assert.match(css,/font-size:9\.2px!important;font-weight:800!important/,'valor financeiro deve continuar legível');
+assert.match(css,/-webkit-text-fill-color:var\(--text\)!important/,'valor não pode desaparecer no navegador móvel');
+assert.doesNotMatch(css,/grid-template-columns:repeat\(3,minmax\(120px,1fr\)\)/,'mobile não pode criar colunas financeiras exageradas');
+console.log('smartphones-mobile-v10483.test: OK');

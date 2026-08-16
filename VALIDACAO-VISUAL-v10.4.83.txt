@@ -1,0 +1,29 @@
+VALIDAÇÃO VISUAL REAL — v10.4.83
+
+A lista de Smartphones foi renderizada em navegador Chromium headless usando a cascata CSS completa do pacote e o mesmo DOM dos cartões.
+
+VIEWPORT 393 px
+- Card: 373 x 114,75 px
+- Estrela: 34 x 34 px
+- Menu ...: 32 x 32 px
+- Status: 132 px de largura
+- Faixa financeira: 288 x 36 px
+- Custo: 88 x 36 px — valor visível
+- Valor de venda: 104 x 36 px — valor visível
+- Lucro: 88 x 36 px — valor visível
+
+VIEWPORT 360 px
+- Card: 340 x 112,75 px
+- Status: 108 px de largura
+- Faixa financeira: 324 x 36 px
+- Três valores uniformes, aproximadamente 105 px cada, todos visíveis
+
+VIEWPORT 832 px
+- Composição compacta mantida sem desperdício de largura nos valores.
+
+VIEWPORT 1366 px
+- Card: 61,19 px de altura
+- Menu ... permanece no extremo direito
+- Custo / Valor de venda / Lucro permanecem compactos e visíveis
+
+RESULTADO VISUAL: APROVADO.
