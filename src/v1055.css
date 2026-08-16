@@ -1,0 +1,23 @@
+/* BMCenter v10.5.5 — tema explícito para Mi Browser e Chromium com Auto Dark.
+   Não depende de :has() para tematizar html/body. */
+html.bmcenter-theme-dark,
+body.bmcenter-theme-dark{
+  background:#101317!important;
+  color-scheme:dark!important;
+}
+html.bmcenter-theme-light,
+body.bmcenter-theme-light{
+  background:#eef2f6!important;
+  color-scheme:only light!important;
+}
+html.bmcenter-theme-light .v102-app,
+body.bmcenter-theme-light .v102-app{
+  color-scheme:only light!important;
+}
+html.bmcenter-theme-dark .v102-app,
+body.bmcenter-theme-dark .v102-app{
+  color-scheme:dark!important;
+}
+/* Controles nativos devem acompanhar o tema escolhido pelo BMCenter. */
+html.bmcenter-theme-light .v102-app :is(input,select,textarea,button){color-scheme:only light!important}
+html.bmcenter-theme-dark .v102-app :is(input,select,textarea,button){color-scheme:dark!important}

@@ -28,7 +28,7 @@ assert.equal(phones[0].parts[0].returnRefundMethod,'Pix');
 assert.equal(effectivePartCost(phones[0].parts[0]),10,'aparelho deve receber custo líquido da peça');
 assert.equal(phones[0].status,'Em reparo','devolução não pode mudar status operacional do aparelho');
 
-assert.match(main,/const APP_VERSION='10\.5\.4'/);
+assert.match(main,/const APP_VERSION='10\.5\.5'/);
 assert.match(main,/partRefund:numberText\(returnPartRefundDraft\(item\)\)/,'modal deve usar o preço original como rascunho em devolução nova');
 assert.match(main,/DEVOLUÇÃO FINANCEIRA/,'devolução deve abrir janela financeira');
 assert.match(main,/Reembolso\/crédito pendente/,'deve ser possível registrar devolução com financeiro pendente');

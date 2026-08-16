@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const frame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1055.css',import.meta.url),'utf8');
+const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+assert.match(main,/const APP_VERSION='10\.5\.5'/);
+assert.match(main,/import'\.\/v1055\.css';/);
+assert.match(frame,/bmcenter-theme-light/);
+assert.match(frame,/bmcenter-theme-dark/);
+assert.match(frame,/meta\[name="color-scheme"\]/);
+assert.match(frame,/only light/);
+assert.match(css,/html\.bmcenter-theme-light/);
+assert.match(css,/color-scheme:only light!important/);
+assert.match(css,/color-scheme:dark!important/);
+assert.match(html,/meta name="color-scheme"/);
+assert.match(html,/bmcenter-last-theme/);
+console.log('mi-browser-theme-v1055.test: OK');

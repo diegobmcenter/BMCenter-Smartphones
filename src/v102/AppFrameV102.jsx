@@ -16,6 +16,20 @@ export default function AppFrameV102({mobileOpen,setMobileOpen,menuItems,visible
   {title:'Dados e sistema',ids:['data','backup','settings']}
  ];
  const toggleTheme=()=>onConfigChange?.({...config,themeMode:theme==='light'?'dark':'light',accent:'v102',applyThemeGlobally:true});
+ React.useEffect(()=>{
+  const root=document.documentElement,body=document.body,dark=theme==='dark';
+  const lightClass='bmcenter-theme-light',darkClass='bmcenter-theme-dark',activeClass=dark?darkClass:lightClass;
+  root.classList.remove(lightClass,darkClass);body.classList.remove(lightClass,darkClass);
+  root.classList.add(activeClass);body.classList.add(activeClass);
+  root.dataset.bmTheme=theme;body.dataset.bmTheme=theme;
+  root.style.setProperty('color-scheme',dark?'dark':'only light','important');
+  body.style.setProperty('color-scheme',dark?'dark':'only light','important');
+  const themeMeta=document.querySelector('meta[name="theme-color"]');
+  if(themeMeta)themeMeta.setAttribute('content',dark?'#101317':'#eef2f6');
+  let schemeMeta=document.querySelector('meta[name="color-scheme"]');
+  if(!schemeMeta){schemeMeta=document.createElement('meta');schemeMeta.setAttribute('name','color-scheme');document.head.appendChild(schemeMeta)}
+  schemeMeta.setAttribute('content',dark?'dark':'only light');
+ },[theme]);
  const fontScaleKey=`page:${String(page||'dashboard').toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
  const readFontScales=()=>{try{return JSON.parse(localStorage.getItem('bmcenter-font-scales')||'{}')||{}}catch{return{}}};
  const[pageFontScale,setPageFontScale]=React.useState(()=>Math.min(1.15,Math.max(.9,Number(readFontScales()[fontScaleKey]??1))));

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10483.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10482\.css';import'\.\/v10483\.css';import'\.\/v10484\.css';/,'v10483 deve permanecer antes da nova camada final');
-assert.match(main,/const APP_VERSION='10\.5\.4'/,'versão 10.5.1 não encontrada');
+assert.match(main,/const APP_VERSION='10\.5\.5'/,'versão 10.5.1 não encontrada');
 assert.match(css,/container-type:inline-size!important/,'lista precisa responder à largura real do conteúdo');
 assert.match(css,/@container bm-smartphones-list \(max-width:850px\)/,'regra mobile precisa usar container query');
 assert.match(css,/grid-template-columns:34px minmax\(0,1fr\) 32px 132px!important/,'topo precisa reservar estrela, nome, menu e status');
