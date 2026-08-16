@@ -1,0 +1,73 @@
+/* BMCenter v10.4.84 — devoluções com recuperação financeira real.
+   Pedido histórico permanece bruto; custo do aparelho usa somente valor efetivamente recuperado. */
+
+.parts-v84-finance-mini{display:inline-flex!important;align-items:center!important;min-height:21px!important;padding:0 6px!important;border-radius:999px!important;font-size:6.8px!important;font-weight:800!important;white-space:nowrap!important}
+.parts-v84-finance-mini.settled{color:var(--green)!important;background:var(--green-soft)!important}
+.parts-v84-finance-mini.pending,.parts-v84-finance-pending{color:var(--amber)!important;background:var(--amber-soft)!important}
+.parts-v84-recovered,.parts-v84-return-finance b{color:var(--green)!important}
+.parts-v84-return-card.financial-pending{border-color:color-mix(in srgb,var(--amber) 52%,var(--line))!important}
+.parts-v84-return-card.financial-pending .parts-v84-return-finance b{color:var(--amber)!important}
+.parts-v84-return-card{
+  grid-template-columns:28px minmax(180px,1.5fr) 100px 100px 100px minmax(250px,auto)!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-height:54px!important;
+  padding:7px 9px!important;
+}
+.parts-v84-return-card .parts-v79-return-meta{min-width:0!important}
+.parts-v84-return-card .parts-v79-return-meta b{font-size:8px!important;white-space:nowrap!important}
+.parts-v84-return-card .parts-v79-return-actions{min-width:0!important;gap:4px!important}
+.parts-v84-return-card .parts-v79-return-actions button{white-space:nowrap!important}
+
+.parts-v84-refund-dialog{
+  width:min(720px,calc(100vw - 28px))!important;
+  max-height:calc(100dvh - 28px)!important;
+  display:grid!important;
+  grid-template-rows:auto auto auto minmax(0,1fr) auto!important;
+  overflow:hidden!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.34)!important;
+}
+.parts-v84-refund-dialog>header{
+  min-height:54px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;
+  padding:9px 12px!important;border-bottom:1px solid var(--line)!important;background:var(--surface)!important;
+}
+.parts-v84-refund-dialog>header>div{display:grid!important;gap:1px!important;min-width:0!important}
+.parts-v84-refund-dialog>header span{font-size:7px!important;font-weight:850!important;letter-spacing:.7px!important;color:var(--accent)!important}
+.parts-v84-refund-dialog>header h2{margin:0!important;font-size:16px!important;line-height:1.1!important}
+.parts-v84-refund-dialog>header p{margin:0!important;font-size:8px!important;color:var(--muted)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.parts-v84-refund-original{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:8px 10px 0!important}
+.parts-v84-refund-original>div{min-height:48px!important;display:grid!important;align-content:center!important;gap:2px!important;padding:6px 8px!important;border:1px solid var(--line)!important;border-radius:9px!important;background:var(--surface2)!important}
+.parts-v84-refund-original small,.parts-v84-refund-impact small{font-size:7px!important;color:var(--muted)!important}
+.parts-v84-refund-original b{font-size:11px!important}
+.parts-v84-refund-fields{display:grid!important;grid-template-columns:1.35fr 1fr 1fr!important;gap:7px!important;padding:8px 10px!important}
+.parts-v84-refund-fields label{display:grid!important;gap:3px!important;margin:0!important;font-size:8px!important;font-weight:750!important;color:var(--muted)!important;min-width:0!important}
+.parts-v84-refund-fields label:nth-child(4){grid-column:1/3!important}
+.parts-v84-refund-fields input,.parts-v84-refund-fields select,.parts-v84-refund-fields .money-prefix{height:32px!important;min-height:32px!important;min-width:0!important}
+.parts-v84-refund-fields input,.parts-v84-refund-fields select{font-size:9px!important}
+.parts-v84-refund-impact{margin:0 10px 8px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;padding:8px!important;border:1px solid color-mix(in srgb,var(--green) 28%,var(--line))!important;border-radius:10px!important;background:color-mix(in srgb,var(--green-soft) 55%,var(--surface))!important}
+.parts-v84-refund-impact.pending{border-color:color-mix(in srgb,var(--amber) 32%,var(--line))!important;background:color-mix(in srgb,var(--amber-soft) 58%,var(--surface))!important}
+.parts-v84-refund-impact>div{display:grid!important;gap:1px!important}.parts-v84-refund-impact strong{font-size:13px!important}.parts-v84-refund-impact>div:first-child strong{color:var(--green)!important}.parts-v84-refund-impact.pending>div:first-child strong{color:var(--amber)!important}
+.parts-v84-refund-impact p{grid-column:1/-1!important;margin:2px 0 0!important;font-size:7.5px!important;line-height:1.35!important;color:var(--muted)!important}
+.parts-v84-refund-dialog>footer{display:flex!important;justify-content:flex-end!important;gap:6px!important;padding:8px 10px!important;border-top:1px solid var(--line)!important;background:var(--surface)!important}
+.parts-v84-refund-dialog>footer button{min-height:31px!important;padding:5px 9px!important}
+
+@media(max-width:900px){
+  .parts-v84-return-card{grid-template-columns:28px minmax(0,1fr) 90px 90px 90px!important;grid-template-areas:'icon identity original recovered net' 'actions actions actions actions actions'!important}
+  .parts-v84-return-card .parts-v79-return-icon{grid-area:icon!important}.parts-v84-return-card .parts-v79-return-identity{grid-area:identity!important}
+  .parts-v84-return-card>.parts-v79-return-meta:nth-of-type(1){grid-area:original!important}.parts-v84-return-card>.parts-v79-return-meta:nth-of-type(2){grid-area:recovered!important}.parts-v84-return-card>.parts-v79-return-meta:nth-of-type(3){grid-area:net!important}
+  .parts-v84-return-card .parts-v79-return-actions{grid-area:actions!important;justify-content:flex-start!important;flex-wrap:wrap!important}
+}
+@media(max-width:720px){
+  .parts-v84-return-card{grid-template-columns:28px minmax(0,1fr) auto!important;grid-template-areas:'icon identity original' 'icon recovered net' 'actions actions actions'!important;gap:5px 7px!important;padding:7px!important}
+  .parts-v84-return-card>.parts-v79-return-meta:nth-of-type(1){grid-area:original!important}.parts-v84-return-card>.parts-v79-return-meta:nth-of-type(2){grid-area:recovered!important}.parts-v84-return-card>.parts-v79-return-meta:nth-of-type(3){grid-area:net!important}
+  .parts-v84-refund-dialog{width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;border:0!important;border-radius:0!important}
+  .parts-v84-refund-original{padding:8px 8px 0!important;gap:5px!important}.parts-v84-refund-original>div{min-height:45px!important;padding:5px 6px!important}
+  .parts-v84-refund-fields{grid-template-columns:1fr 1fr!important;padding:8px!important;gap:7px!important;overflow-y:auto!important}
+  .parts-v84-refund-fields label:first-child,.parts-v84-refund-fields label:nth-child(4){grid-column:1/-1!important}
+  .parts-v84-refund-impact{margin:0 8px 8px!important;padding:7px!important}
+  .parts-v84-refund-dialog>footer{padding:8px!important}
+}

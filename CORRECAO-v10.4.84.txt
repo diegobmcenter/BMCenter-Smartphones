@@ -1,0 +1,19 @@
+BMCenter Smartphones v10.4.84
+
+DEVOLUÇÕES COM RECUPERAÇÃO FINANCEIRA
+
+- "Para devolver" continua sendo apenas controle operacional e não altera custo.
+- Ao concluir a devolução, abre a janela Devolução financeira.
+- A janela registra valor recuperado da peça, frete recuperado, situação financeira, forma e data.
+- Reembolso/crédito pendente NÃO reduz o custo do aparelho.
+- Reembolso recebido reduz o custo do aparelho somente pelo valor efetivamente recuperado.
+- Crédito confirmado no fornecedor também é tratado como valor recuperado.
+- Reembolso parcial preserva como custo a parcela não recuperada (ex.: frete perdido).
+- O total histórico do pedido original nunca é reescrito pela devolução.
+- O pedido passa a expor Recuperado e Custo líquido separadamente.
+- A fila Devoluções mostra Custo original, Recuperado/A recuperar e Custo líquido.
+- Devoluções fisicamente concluídas mas com financeiro pendente entram no contador de atenção.
+- Novo filtro "Financeiro pendente".
+- Reabrir uma devolução com valor já recuperado exige confirmação e devolve esse valor ao custo do aparelho.
+- A devolução nunca altera o status operacional do smartphone.
+- Compatibilidade preservada para devoluções registradas nas versões anteriores: elas aparecem como financeiro pendente/não informado até serem regularizadas.

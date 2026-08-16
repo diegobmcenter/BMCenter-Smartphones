@@ -7,7 +7,7 @@ const page=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',impor
 const frame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10479.css',import.meta.url),'utf8');
 
-assert.match(main,/const APP_VERSION='10\.4\.83'/);
+assert.match(main,/const APP_VERSION='10\.4\.84'/);
 assert.match(main,/import'\.\/v10478\.css';import'\.\/v10479\.css';/);
 assert.match(frame,/comfortAnchorRef/);
 assert.match(frame,/document\.addEventListener\('pointerdown',close\)/,'Conforto visual deve fechar ao clicar fora');
@@ -21,9 +21,9 @@ assert.doesNotMatch(row,/v10423-scrap-shortcut/,'descarte não pode ficar expost
 assert.match(row,/<Eye size=\{15\}\/> Abrir ficha/,'olho precisa existir no menu ...');
 assert.match(row,/<Archive size=\{15\}\/> Descarte\/Sucata/,'descarte precisa existir no menu ...');
 
-assert.match(main,/Devoluções <b>\{pendingReturns\.length\}<\/b>/,'Central de Peças precisa da aba Devoluções');
+assert.match(main,/Devoluções <b>\{returnAttentionCount\}<\/b>/,'Central de Peças precisa da aba Devoluções');
 assert.match(main,/changeReturnState\(order\.id,item\.id,'pending'\)/,'item recebido precisa poder ir para devolução');
-assert.match(main,/changeReturnState\(row\.order\.id,row\.item\.id,'returned'\)/,'fila precisa concluir devolução');
+assert.match(main,/openReturnSettlement\(row\)/,'fila precisa abrir o financeiro ao concluir devolução');
 assert.match(css,/\.parts-v79-return-card/,'fila de devoluções precisa de layout próprio');
 
 const order=normalizePartsOrder({id:'o1',supplier:'Fornecedor',freight:0,items:[{id:'i1',phoneId:'p1',partId:'x1',partName:'Tela',price:100,confirmedAt:'2026-08-15T10:00:00Z',receivedAt:'2026-08-15T11:00:00Z',returnStatus:'pending',returnMarkedAt:'2026-08-15T12:00:00Z'}]});

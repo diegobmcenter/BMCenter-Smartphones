@@ -10,15 +10,31 @@ export function roundMoney(value){
  return Math.round((Number(value)||0)*100)/100
 }
 
+export function returnRefundTotal(part={}){
+ return roundMoney(Number(part?.returnPartRefund||0)+Number(part?.returnFreightRefund||0))
+}
+
+export function returnRecoveredAmount(part={}){
+ const returned=String(part?.returnStatus||'').toLowerCase()==='returned';
+ const financial=String(part?.returnFinancialStatus||'').toLowerCase();
+ if(!returned||!['received','supplier_credit'].includes(financial))return 0;
+ const gross=part?.effectiveCost!==undefined&&part?.effectiveCost!==null&&part?.effectiveCost!==''
+  ?roundMoney(part.effectiveCost)
+  :roundMoney(Number(part?.purchasePrice||part?.price||0)+Number(part?.freightShare||0));
+ return Math.min(Math.max(0,gross),Math.max(0,returnRefundTotal(part)))
+}
+
 export function quoteForPart(part){
  const quotes=Array.isArray(part?.quotes)?part.quotes:[];
  return quotes.find(q=>q.id===part?.selectedQuoteId)||[...quotes].sort((a,b)=>Number(a.price||0)-Number(b.price||0))[0]||null
 }
 
 export function effectivePartCost(part){
- if(part?.effectiveCost!==undefined&&part?.effectiveCost!==null&&part?.effectiveCost!=='')return roundMoney(part.effectiveCost);
- if(part?.purchasePrice!==undefined&&part?.purchasePrice!==null&&part?.purchasePrice!=='')return roundMoney(Number(part.purchasePrice||0)+Number(part.freightShare||0));
- return roundMoney(quoteForPart(part)?.price||0)
+ let gross=0;
+ if(part?.effectiveCost!==undefined&&part?.effectiveCost!==null&&part?.effectiveCost!=='')gross=roundMoney(part.effectiveCost);
+ else if(part?.purchasePrice!==undefined&&part?.purchasePrice!==null&&part?.purchasePrice!=='')gross=roundMoney(Number(part.purchasePrice||0)+Number(part.freightShare||0));
+ else gross=roundMoney(quoteForPart(part)?.price||0);
+ return roundMoney(Math.max(0,gross-returnRecoveredAmount({...part,effectiveCost:gross})))
 }
 
 export function isPartProcurementComplete(part={}){
@@ -75,6 +91,8 @@ export function normalizePartsOrder(order={}){
  const freight=roundMoney(order.freight||0);
  const status=deriveOrderStatus(items);
  const allReceived=status==='received';
+ const returnedRecovered=roundMoney(items.reduce((sum,item)=>sum+returnRecoveredAmount(item),0));
+ const returnedPending=roundMoney(items.reduce((sum,item)=>sum+(item.returnStatus==='returned'&&item.returnFinancialStatus==='pending'?returnRefundTotal(item):0),0));
  return{
   ...order,
   id:order.id||crypto.randomUUID(),
@@ -88,6 +106,9 @@ export function normalizePartsOrder(order={}){
   items,
   subtotal,
   total:roundMoney(subtotal+freight),
+  returnedRecovered,
+  returnedPending,
+  netCost:roundMoney(Math.max(0,subtotal+freight-returnedRecovered)),
   createdAt:order.createdAt||new Date().toISOString(),
   updatedAt:order.updatedAt||new Date().toISOString()
  }
@@ -127,6 +148,13 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
     returnStatus,
     returnMarkedAt:item.returnMarkedAt||'',
     returnedToSupplierAt:item.returnedToSupplierAt||'',
+    returnFinancialStatus:item.returnFinancialStatus||'',
+    returnPartRefund:roundMoney(item.returnPartRefund||0),
+    returnFreightRefund:roundMoney(item.returnFreightRefund||0),
+    returnRefundMethod:item.returnRefundMethod||'',
+    returnRefundDate:item.returnRefundDate||'',
+    returnFinancialUpdatedAt:item.returnFinancialUpdatedAt||'',
+    returnRecoveredAmount:returnRecoveredAmount(item),
     orderStatus:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?'Pedido entregue':confirmed?'Pedido realizado':'Não pedido',
     status:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':part.status
    }
@@ -233,7 +261,7 @@ export function removePartsOrderLinks(phones=[],order={},remainingOrders=[]){
    if(!item){parts.push(part);continue}
    changed=true;
    if(item.bulkCreatedPart===true&&part.status!=='Instalada')continue;
-   parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',returnStatus:'',returnMarkedAt:'',returnedToSupplierAt:'',orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
+   parts.push({...part,orderId:'',orderItemId:'',purchaseSupplier:'',purchasePrice:undefined,freightShare:undefined,effectiveCost:undefined,orderedAt:'',receivedAt:'',returnStatus:'',returnMarkedAt:'',returnedToSupplierAt:'',returnFinancialStatus:'',returnPartRefund:0,returnFreightRefund:0,returnRefundMethod:'',returnRefundDate:'',returnFinancialUpdatedAt:'',returnRecoveredAmount:0,orderStatus:'Não pedido',status:part.status==='Instalada'?'Instalada':'Cotando',selectedQuoteId:item.quoteId||part.selectedQuoteId||''})
   }
   if(!changed)return phone;
   // Remover um pedido também não altera o status operacional do aparelho.

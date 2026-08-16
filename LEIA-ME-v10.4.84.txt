@@ -1,0 +1,15 @@
+BMCenter Smartphones v10.4.84
+
+PACOTE COMPLETO DE PUBLICAÇÃO
+
+Esta versão parte integralmente da v10.4.83 e preserva todas as correções anteriores.
+
+PRINCIPAL ALTERAÇÃO
+A Central de Peças agora separa devolução física de recuperação financeira. O pedido original permanece como histórico bruto e o custo do aparelho só cai quando existe reembolso recebido ou crédito confirmado.
+
+PUBLICAÇÃO
+1. Extraia o ZIP em uma pasta normal do Windows.
+2. Execute PUBLICAR-ATUALIZACAO.bat.
+3. O BAT instala dependências, executa os testes e compila o projeto.
+4. Somente se tudo passar ele sincroniza e envia a v10.4.84 ao GitHub.
+5. A Vercel inicia o deploy automaticamente após o push.
