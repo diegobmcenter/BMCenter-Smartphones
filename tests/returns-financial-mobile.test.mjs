@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10486.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10484\.css';import'\.\/v10486\.css';/,'v10486.css deve sobrepor a camada anterior');
-assert.match(main,/const APP_VERSION='10\.4\.88'/,'versão 10.4.88 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.89'/,'versão 10.4.89 não encontrada');
 assert.match(css,/grid-template-rows:auto auto auto auto auto!important/,'modal mobile deve usar apenas linhas automáticas');
 assert.match(css,/\.parts-v84-refund-dialog>header\{top:0!important\}/,'header deve ficar fixo no topo');
 assert.match(css,/\.parts-v84-refund-dialog>footer\{bottom:0!important\}/,'footer deve ficar fixo no rodapé');

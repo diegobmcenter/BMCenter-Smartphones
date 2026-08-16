@@ -7,7 +7,7 @@ const previousFinalCss=fs.readFileSync(new URL('../src/v10479.css',import.meta.u
 const finalCss=fs.readFileSync(new URL('../src/v10482.css',import.meta.url),'utf8');
 
 assert.match(main,/import'\.\/v10481\.css';import'\.\/v10482\.css';/,'v10482.css deve ser a última camada visual');
-assert.match(main,/const APP_VERSION='10\.4\.88'/,'versão 10.4.82 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.89'/,'versão 10.4.82 não encontrada');
 assert.ok(fs.readFileSync(new URL('../src/v10478.css',import.meta.url),'utf8').includes('.v102-route .v10313-main-toolbar'),'v10478 deve manter toolbar compacta');
 assert.ok(previousFinalCss.includes('.v10479-device-name-button'),'v10479 deve manter ações compactas de Smartphones');
 assert.ok(finalCss.includes('.v102-device-row>.v102-row-actions'),'v10482 deve posicionar ações explicitamente no mobile');

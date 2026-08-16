@@ -1,0 +1,75 @@
+/* BMCenter v10.4.89 — regra compacta final para métricas de Relatórios no mobile.
+   O celular mantém 2x2 mesmo em 360px: nenhuma métrica usa uma linha inteira sozinha. */
+
+@media(max-width:720px){
+  .v102-route .v10-report-metrics{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:6px!important;
+    margin:0 0 10px!important;
+  }
+  .v102-route .v10-report-metrics article{
+    min-width:0!important;
+    min-height:62px!important;
+    height:auto!important;
+    display:grid!important;
+    grid-template-columns:26px minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:7px!important;
+    padding:8px!important;
+    border-radius:10px!important;
+  }
+  .v102-route .v10-report-metrics article>svg{
+    width:26px!important;
+    height:26px!important;
+    padding:6px!important;
+    border-radius:8px!important;
+  }
+  .v102-route .v10-report-metrics article>div{
+    min-width:0!important;
+    display:grid!important;
+    align-content:center!important;
+    gap:1px!important;
+  }
+  .v102-route .v10-report-metrics small{
+    display:block!important;
+    margin:0!important;
+    font-size:7.2px!important;
+    line-height:1.15!important;
+    overflow-wrap:anywhere!important;
+  }
+  .v102-route .v10-report-metrics strong{
+    display:block!important;
+    margin:0!important;
+    font-size:12px!important;
+    line-height:1.15!important;
+    letter-spacing:-.15px!important;
+    white-space:nowrap!important;
+  }
+  .v102-route .v1042-loss-metric span{
+    display:block!important;
+    margin:1px 0 0!important;
+    font-size:6.4px!important;
+    line-height:1.1!important;
+  }
+}
+
+/* Até em celulares estreitos permanecem 2 colunas. */
+@media(max-width:420px){
+  .v102-route .v10-report-metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .v102-route .v10-report-metrics article{
+    min-height:58px!important;
+    grid-template-columns:24px minmax(0,1fr)!important;
+    gap:6px!important;
+    padding:7px!important;
+  }
+  .v102-route .v10-report-metrics article>svg{
+    width:24px!important;
+    height:24px!important;
+    padding:5px!important;
+  }
+  .v102-route .v10-report-metrics small{font-size:6.8px!important}
+  .v102-route .v10-report-metrics strong{font-size:11px!important}
+}
