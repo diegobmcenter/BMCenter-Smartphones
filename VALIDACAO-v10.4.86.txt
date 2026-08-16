@@ -1,7 +1,0 @@
-VALIDAÇÃO v10.4.86
-
-- APP_VERSION atualizada para 10.4.86.
-- v10486.css importada após v10484.css.
-- Modal de devolução financeira no mobile não usa mais linha flexível de 1fr.
-- Cabeçalho e rodapé fixos com rolagem interna preservados no celular.
-- Quadro de impacto financeiro compacto no mobile.

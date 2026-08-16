@@ -1,8 +1,0 @@
-BMCenter Smartphones v10.4.86
-
-CORREÇÃO VISUAL MOBILE — DEVOLUÇÃO FINANCEIRA
-
-- Corrige o bug visual do modal de devolução financeira no celular.
-- Remove a expansão vertical indevida do quadro de impacto financeiro.
-- Mantém cabeçalho e rodapé fixos no mobile com rolagem interna correta.
-- Compacta o resumo financeiro e os campos sem perder informações.

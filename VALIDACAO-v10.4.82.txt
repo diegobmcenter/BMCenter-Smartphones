@@ -1,7 +1,0 @@
-VALIDAÇÃO v10.4.82
-
-- Corrigida ordem do shorthand grid-area no layout mobile.
-- Menu (...) fica na coluna 3 e Status na coluna 4 da primeira linha.
-- Custo / Valor de venda / Lucro ficam na segunda linha, colunas 2 até 5.
-- Container query adicionada como proteção contra zoom/viewport móvel.
-- Teste smartphones-mobile-v10482.test.mjs impede regressão da causa raiz.

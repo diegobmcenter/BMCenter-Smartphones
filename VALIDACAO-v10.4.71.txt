@@ -1,9 +1,0 @@
-VALIDACAO v10.4.71 - SINCRONIZACAO CONCORRENTE
-
-- Atualizacao remota normal NAO recarrega a pagina.
-- Pagina, modal, scroll e formularios em andamento sao preservados.
-- Smartphones e Pecas recebem dados remotos em memoria sem remontar a tela.
-- Dashboard/Hoje e telas baseadas em localStorage sao rerenderizadas em tempo real.
-- Pedido em massa possui rascunho local por aba/dispositivo em sessionStorage.
-- O rascunho nao e sincronizado para outro dispositivo e sobrevive a refresh acidental.
-- Somente um RESET TOTAL remoto pode recarregar a aplicacao.

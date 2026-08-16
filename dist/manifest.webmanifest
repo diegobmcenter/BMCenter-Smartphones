@@ -1,0 +1,9 @@
+{
+  "name": "BMCenter Smartphones",
+  "short_name": "BMCenter",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#2563eb",
+  "description": "Gestão operacional de smartphones em nuvem"
+}

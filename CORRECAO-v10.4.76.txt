@@ -1,9 +1,0 @@
-BMCenter Smartphones v10.4.76
-
-CORREÇÃO VISUAL — FICHA DETALHADA DO APARELHO
-- Corrige os cartões de etapas que apareciam como pequenas faixas verdes/cinzas cortadas.
-- A causa era uma regra antiga de v10.css que forçava .phone-detail-progress para 7px de altura e overflow oculto.
-- A v10.4.76 restaura os cartões completos com 8 colunas no desktop, 4 em telas intermediárias e 2 no mobile.
-- Corrige também a área inferior da ficha para que o rodapé não fique sobre Identificação, Situação ou outros conteúdos.
-- O conteúdo passa a rolar dentro da própria ficha e os botões ficam no final do conteúdo, sem sobreposição.
-- Adicionado teste de regressão phone-detail-layout.test.mjs.

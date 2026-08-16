@@ -1,8 +1,0 @@
-BMCenter Smartphones v10.4.83
-
-Correção estrutural e visual da lista de Smartphones no celular.
-
-PUBLICAÇÃO
-1. Extraia o ZIP.
-2. Execute PUBLICAR-ATUALIZACAO.bat.
-3. O BAT valida testes e build antes do push.
