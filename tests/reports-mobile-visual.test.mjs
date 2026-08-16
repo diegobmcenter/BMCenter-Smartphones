@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10487.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10486\.css';import'\.\/v10487\.css';/,'v10487.css deve ser importado depois de v10486.css');
-assert.match(main,/const APP_VERSION='10\.4\.87'/,'versão 10.4.87 não encontrada');
+assert.match(main,/const APP_VERSION='10\.4\.88'/,'versão 10.4.88 não encontrada');
 assert.match(css,/\.v102-route \.v10-report-metrics\{[\s\S]*repeat\(2,minmax\(0,1fr\)\)!important/,'métricas mobile devem ter 2 colunas');
 assert.match(css,/@media\(max-width:420px\)\{[\s\S]*\.v102-route \.v10-report-metrics\{[\s\S]*grid-template-columns:1fr!important/,'telas muito estreitas devem cair para 1 coluna');
 assert.match(css,/\.v102-route \.v10-monthly-table\{[\s\S]*overflow-x:auto!important/,'tabela mensal deve permitir scroll horizontal controlado');

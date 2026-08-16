@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const ignore=fs.readFileSync(new URL('../.gitignore',import.meta.url),'utf8');
+const bat=fs.readFileSync(new URL('../PUBLICAR-ATUALIZACAO.bat',import.meta.url),'utf8');
+assert.match(main,/const APP_VERSION='10\.4\.88'/);
+assert.match(ignore,/^node_modules\/$/m,'node_modules precisa ser ignorado');
+assert.match(ignore,/^dist\/$/m,'dist precisa ser ignorado');
+assert.match(bat,/git rm -r --cached --ignore-unmatch node_modules/,'BAT deve limpar node_modules rastreado');
+assert.match(bat,/git rm -r --cached --ignore-unmatch dist/,'BAT deve limpar dist rastreado');
+assert.match(bat,/git ls-remote origin refs\/heads\/%BRANCH%/,'BAT deve confirmar SHA remoto');
+assert.match(bat,/if \/I not "%LOCAL_SHA%"=="%REMOTE_SHA%" goto :verify_error/,'BAT deve falhar se o SHA remoto divergir');
+console.log('publication-safety.test: OK');
