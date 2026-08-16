@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10489.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10487\.css';import'\.\/v10489\.css';/,'v10489.css deve ser a última correção de relatórios');
-assert.match(main,/const APP_VERSION='10\.5\.1'/,'versão 10.5.1 não encontrada');
+assert.match(main,/const APP_VERSION='10\.5\.2'/,'versão 10.5.1 não encontrada');
 assert.match(css,/@media\(max-width:720px\)[\s\S]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/,'relatórios mobile precisam manter grade 2x2');
 assert.match(css,/@media\(max-width:420px\)[\s\S]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/,'celular estreito não pode cair para uma coluna');
 assert.match(css,/min-height:58px!important/,'cards estreitos devem permanecer compactos');

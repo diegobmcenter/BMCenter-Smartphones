@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10482.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v10481\.css';import'\.\/v10482\.css';/,'v10482 precisa ser a última camada visual');
-assert.match(main,/const APP_VERSION='10\.5\.1'/,'versão 10.4.82 não encontrada');
+assert.match(main,/const APP_VERSION='10\.5\.2'/,'versão 10.4.82 não encontrada');
 for(const [selector,column,row] of [
   ['\\.v102-device-row>\\.v102-star','1','1'],
   ['\\.v102-device-row>\\.v102-device-name','2','1'],

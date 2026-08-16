@@ -1,0 +1,139 @@
+/* BMCenter v10.5.2 — compactação real, sem esticar campos para preencher linhas.
+   Desktop usa larguras semânticas; mobile usa grades densas apenas onde necessário. */
+
+/* --------------------------------------------------------------------------
+   REGISTRAR / EDITAR VENDA — larguras proporcionais ao conteúdo
+   -------------------------------------------------------------------------- */
+@media(min-width:721px){
+  .v102-app .back>.modal.sale-register-modal{
+    width:min(940px,calc(100vw - 28px))!important;
+    max-width:940px!important;
+  }
+  .v102-app .sale-register-modal>.modalbody{
+    padding:7px 10px 8px!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    justify-content:flex-start!important;
+    gap:5px!important;
+    margin:0 0 6px!important;
+  }
+  .v102-app .sale-register-modal .sale-summary-four>div{
+    flex:0 0 142px!important;
+    width:142px!important;
+    min-width:142px!important;
+    min-height:42px!important;
+    padding:5px 8px!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid){
+    display:flex!important;
+    flex-wrap:wrap!important;
+    justify-content:flex-start!important;
+    align-items:flex-end!important;
+    gap:5px 6px!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid)>label{
+    flex:none!important;
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid)>label :is(input,select,.field-affix-inline){
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .v102-app .sale-register-modal .sale-field-value{width:112px!important}
+  .v102-app .sale-register-modal .sale-field-profile{width:182px!important}
+  .v102-app .sale-register-modal .sale-field-date{width:128px!important}
+  .v102-app .sale-register-modal .sale-field-channel{width:166px!important}
+  .v102-app .sale-register-modal .sale-field-payment{width:148px!important}
+  .v102-app .sale-register-modal .sale-field-account{width:205px!important}
+  .v102-app .sale-register-modal .sale-field-fee{width:116px!important}
+  .v102-app .sale-register-modal .sale-field-shipping{width:128px!important}
+  .v102-app .sale-register-modal .sale-field-delivery{width:148px!important}
+  .v102-app .sale-register-modal .sale-field-installments{width:78px!important}
+  .v102-app .sale-register-modal .sale-field-receipt-status{width:126px!important}
+  .v102-app .sale-register-modal .sale-field-received{width:124px!important}
+  .v102-app .sale-register-modal .sale-field-due{width:128px!important}
+  .v102-app .sale-register-modal .sale-field-buyer{width:215px!important}
+  .v102-app .sale-register-modal .sale-field-phone{width:150px!important}
+  .v102-app .sale-register-modal .sale-field-city{width:190px!important}
+
+  .v102-app .sale-register-modal .section-title{margin:6px 0 3px!important}
+  .v102-app .sale-register-modal>.modalbody>label{max-width:620px!important}
+  .v102-app .sale-register-modal>.modalbody>label textarea{width:100%!important}
+}
+
+/* --------------------------------------------------------------------------
+   DADOS DA COMPRA — cada campo ocupa somente o espaço necessário
+   -------------------------------------------------------------------------- */
+@media(min-width:721px){
+  .v102-app .phone-editor-v57 .v57-purchase-grid{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:flex-end!important;
+    justify-content:flex-start!important;
+    gap:4px!important;
+    padding:6px 8px!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{
+    flex:none!important;
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label :is(input,select,.field-affix-inline,.v59-status-wrap){
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .v102-app .phone-editor-v57 .purchase-field-date{width:112px!important}
+  .v102-app .phone-editor-v57 .purchase-field-origin{width:128px!important}
+  .v102-app .phone-editor-v57 .purchase-field-payment{width:130px!important}
+  .v102-app .phone-editor-v57 .v57-bank{width:178px!important}
+  .v102-app .phone-editor-v57 .purchase-field-paid{width:96px!important}
+  .v102-app .phone-editor-v57 .purchase-field-sale{width:96px!important}
+  .v102-app .phone-editor-v57 .purchase-field-other{width:96px!important}
+  .v102-app .phone-editor-v57 .v57-status{width:145px!important}
+  .v102-app .phone-editor-v57 .v57-bank small.field-help{
+    max-width:178px!important;
+    font-size:6.5px!important;
+    line-height:1.1!important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE — compacto, sem campos desnecessariamente em linha inteira
+   -------------------------------------------------------------------------- */
+@media(max-width:720px){
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid){
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .v102-app .sale-register-modal :is(.sale-data-grid,.sale-receipt-grid,.sale-buyer-grid)>label{
+    width:auto!important;
+    min-width:0!important;
+    grid-column:auto!important;
+  }
+  .v102-app .sale-register-modal .sale-field-account,
+  .v102-app .sale-register-modal .sale-field-profile{grid-column:span 2!important}
+  .v102-app .sale-register-modal .sale-receipt-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .v102-app .sale-register-modal .sale-buyer-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .v102-app .sale-register-modal .sale-summary-four{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+
+  .v102-app .phone-editor-v57 .v57-purchase-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:4px 5px!important;
+  }
+  .v102-app .phone-editor-v57 .v57-purchase-grid>label{
+    width:auto!important;
+    min-width:0!important;
+    grid-column:auto!important;
+  }
+  .v102-app .phone-editor-v57 .v57-bank{grid-column:1/-1!important}
+  .v102-app .phone-editor-v57 .v57-status{grid-column:auto!important}
+}

@@ -28,7 +28,7 @@ assert.equal(auditBackupObject(tampered,{requiredKeys:['bmcenter-smartphones']})
 assert.equal(auditBackupObject(sample,{requiredKeys:['bmcenter-smartphones','bmcenter-suppliers']}).ok,false);
 assert.equal(BACKUP_RUNTIME_KEY,'bmcenter-backup-runtime-v1');
 
-assert.match(main,/APP_VERSION='10\.5\.1'/);
+assert.match(main,/APP_VERSION='10\.5\.2'/);
 assert.match(main,/const BACKUP_FORMAT_VERSION=7/,'formato v7 deve preservar serialização exata');
 assert.match(main,/function backupEligibleKey\(key\)[\s\S]*key\.startsWith\('bmcenter-'\)/,'novos módulos bmcenter-* devem entrar automaticamente no backup');
 assert.match(main,/decodeStorageRaw\(raw\)/,'backup precisa distinguir valores raw de JSON');

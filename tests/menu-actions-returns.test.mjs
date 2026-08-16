@@ -7,7 +7,7 @@ const page=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',impor
 const frame=fs.readFileSync(new URL('../src/v102/AppFrameV102.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10479.css',import.meta.url),'utf8');
 
-assert.match(main,/const APP_VERSION='10\.5\.1'/);
+assert.match(main,/const APP_VERSION='10\.5\.2'/);
 assert.match(main,/import'\.\/v10478\.css';import'\.\/v10479\.css';/);
 assert.match(frame,/comfortAnchorRef/);
 assert.match(frame,/document\.addEventListener\('pointerdown',close\)/,'Conforto visual deve fechar ao clicar fora');
