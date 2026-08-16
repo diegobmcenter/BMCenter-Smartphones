@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {effectivePartCost,returnRefundTotal,returnRecoveredAmount,normalizePartsOrder,syncOrdersIntoPhones} from '../src/partsOrders.js';
+import {effectivePartCost,returnRefundTotal,returnRecoveredAmount,returnPartRefundDraft,normalizePartsOrder,syncOrdersIntoPhones} from '../src/partsOrders.js';
 
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v10484.css',import.meta.url),'utf8');
@@ -12,6 +12,9 @@ assert.equal(returnRefundTotal({...gross,returnPartRefund:100,returnFreightRefun
 assert.equal(returnRecoveredAmount({...gross,returnStatus:'returned',returnFinancialStatus:'received',returnPartRefund:100,returnFreightRefund:0}),100);
 assert.equal(effectivePartCost({...gross,returnStatus:'returned',returnFinancialStatus:'received',returnPartRefund:100,returnFreightRefund:0}),10,'reembolso parcial deve preservar frete não recuperado');
 assert.equal(effectivePartCost({...gross,returnStatus:'returned',returnFinancialStatus:'supplier_credit',returnPartRefund:100,returnFreightRefund:10}),0,'crédito confirmado integral deve zerar custo da peça');
+assert.equal(returnPartRefundDraft({...gross,returnStatus:'pending',returnPartRefund:0}),100,'devolução nova deve pré-preencher o valor original da peça');
+assert.equal(returnPartRefundDraft({...gross,returnStatus:'returned',returnPartRefund:65}),65,'edição financeira deve preservar reembolso parcial já salvo');
+assert.equal(returnPartRefundDraft({...gross,returnStatus:'returned',returnPartRefund:0}),0,'edição financeira deve preservar zero salvo intencionalmente');
 
 const order=normalizePartsOrder({id:'o1',supplier:'Fornecedor',freight:10,items:[
  {id:'i1',phoneId:'p1',partId:'x1',partName:'Tela',price:100,confirmedAt:'2026-08-15T10:00:00Z',receivedAt:'2026-08-15T11:00:00Z',returnStatus:'returned',returnedToSupplierAt:'2026-08-15T12:00:00Z',returnFinancialStatus:'received',returnPartRefund:100,returnFreightRefund:0,returnRefundMethod:'Pix',returnRefundDate:'2026-08-15'}
@@ -25,7 +28,8 @@ assert.equal(phones[0].parts[0].returnRefundMethod,'Pix');
 assert.equal(effectivePartCost(phones[0].parts[0]),10,'aparelho deve receber custo líquido da peça');
 assert.equal(phones[0].status,'Em reparo','devolução não pode mudar status operacional do aparelho');
 
-assert.match(main,/const APP_VERSION='10\.4\.84'/);
+assert.match(main,/const APP_VERSION='10\.4\.85'/);
+assert.match(main,/partRefund:numberText\(returnPartRefundDraft\(item\)\)/,'modal deve usar o preço original como rascunho em devolução nova');
 assert.match(main,/DEVOLUÇÃO FINANCEIRA/,'devolução deve abrir janela financeira');
 assert.match(main,/Reembolso\/crédito pendente/,'deve ser possível registrar devolução com financeiro pendente');
 assert.match(main,/Crédito confirmado no fornecedor/,'deve suportar crédito confirmado');

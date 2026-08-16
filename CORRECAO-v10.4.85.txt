@@ -1,0 +1,10 @@
+BMCenter Smartphones v10.4.85
+
+DEVOLUÇÃO FINANCEIRA — VALOR DA PEÇA PRÉ-PREENCHIDO
+
+- Ao abrir uma devolução financeira nova, "Valor da peça recuperado" já vem preenchido com o valor original da peça.
+- Exemplo: peça de R$ 75,00 abre automaticamente com R$ 75,00 no campo recuperado.
+- O usuário continua podendo editar o valor antes de confirmar, permitindo reembolso parcial.
+- Frete recuperado continua iniciando em R$ 0,00, pois depende da política real do fornecedor.
+- Ao editar uma devolução financeira já registrada, o sistema preserva o valor salvo anteriormente, inclusive parcial ou zero.
+- Nenhuma regra de custo, histórico do pedido ou recuperação financeira da v10.4.84 foi alterada.

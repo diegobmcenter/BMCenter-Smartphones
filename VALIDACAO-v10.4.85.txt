@@ -1,0 +1,8 @@
+VALIDAÇÃO v10.4.85
+
+- APP_VERSION: 10.4.85
+- Devolução nova: valor recuperado da peça = preço original da peça.
+- Edição de devolução existente: mantém valor salvo, inclusive parcial/zero.
+- Frete recuperado permanece independente e inicia em zero.
+- Regras financeiras da v10.4.84 preservadas.
+- Suíte automatizada completa deve passar antes da publicação.

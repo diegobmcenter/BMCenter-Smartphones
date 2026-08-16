@@ -14,6 +14,13 @@ export function returnRefundTotal(part={}){
  return roundMoney(Number(part?.returnPartRefund||0)+Number(part?.returnFreightRefund||0))
 }
 
+export function returnPartRefundDraft(part={}){
+ const status=String(part?.returnStatus||'').toLowerCase();
+ // Ao iniciar uma devolução, o valor recuperado da peça parte sempre do preço original.
+ // Em uma devolução já registrada, preserva o valor salvo (inclusive zero ou parcial).
+ return status==='returned'?roundMoney(Number(part?.returnPartRefund||0)):roundMoney(Number(part?.price??part?.purchasePrice??0))
+}
+
 export function returnRecoveredAmount(part={}){
  const returned=String(part?.returnStatus||'').toLowerCase()==='returned';
  const financial=String(part?.returnFinancialStatus||'').toLowerCase();
