@@ -7,15 +7,15 @@ const previousFinalCss=fs.readFileSync(new URL('../src/v10479.css',import.meta.u
 const finalCss=fs.readFileSync(new URL('../src/v10482.css',import.meta.url),'utf8');
 
 assert.match(main,/import'\.\/v10481\.css';import'\.\/v10482\.css';/,'v10482.css deve ser a última camada visual');
-assert.match(main,/const APP_VERSION='10\.5\.3'/,'versão 10.4.82 não encontrada');
+assert.match(main,/const APP_VERSION='10\.5\.4'/,'versão 10.4.82 não encontrada');
 assert.ok(fs.readFileSync(new URL('../src/v10478.css',import.meta.url),'utf8').includes('.v102-route .v10313-main-toolbar'),'v10478 deve manter toolbar compacta');
 assert.ok(previousFinalCss.includes('.v10479-device-name-button'),'v10479 deve manter ações compactas de Smartphones');
 assert.ok(finalCss.includes('.v102-device-row>.v102-row-actions'),'v10482 deve posicionar ações explicitamente no mobile');
 assert.doesNotMatch(main,/className="phone-detail-progress"/,'barra Comprado/Diagnóstico/Cotação/Pedido/Reparo/Anúncios/Venda deve ser removida');
 assert.doesNotMatch(main,/const stages=\[/,'estrutura antiga de etapas não deve permanecer na ficha');
-assert.match(main,/className="grid sale-data-grid"/,'venda precisa da grade compacta de dados');
-assert.match(main,/className="grid sale-receipt-grid"/,'venda precisa da grade compacta de recebimento');
-assert.match(main,/className="grid sale-buyer-grid"/,'venda precisa da grade compacta de comprador');
+assert.match(main,/className="sale-data-grid"/,'venda precisa do layout compacto de dados');
+assert.match(main,/className="sale-receipt-grid"/,'venda precisa do layout compacto de recebimento');
+assert.match(main,/className="sale-buyer-grid"/,'venda precisa do layout compacto de comprador');
 assert.match(main,/className="profile-overview-grid"/,'Perfis precisa do novo resumo gráfico');
 assert.match(main,/className="profile-card-performance"/,'cards de Perfil precisam do indicador gráfico');
 assert.match(main,/data-modal-title=\{title\}/,'Modal precisa expor título para dimensionamento auditado');

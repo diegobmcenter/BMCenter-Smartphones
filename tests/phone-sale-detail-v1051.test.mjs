@@ -3,10 +3,10 @@ import fs from'node:fs';
 import{lastOperationalActivityDate,operationalIdleDays,smartActionQueue}from'../src/businessIntelligence.js';
 
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
-const css=fs.readFileSync(new URL('../src/v1051.css',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
 
-assert.match(main,/APP_VERSION='10\.5\.3'/);
-assert.match(main,/import'\.\/v1050\.css';import'\.\/v1051\.css';/);
+assert.match(main,/APP_VERSION='10\.5\.4'/);
+assert.match(main,/import'\.\/v1053\.css';import'\.\/v1054\.css';/);
 
 const purchaseStart=main.indexOf('<section className="v57-card v57-purchase-card">');
 const purchaseEnd=main.indexOf('</section>',purchaseStart);
@@ -14,7 +14,7 @@ const purchase=main.slice(purchaseStart,purchaseEnd);
 assert.ok(purchaseStart>0&&purchaseEnd>purchaseStart,'bloco Dados da compra não encontrado');
 assert.doesNotMatch(purchase,/Previsão de venda/,'Previsão de venda deve ser removida de Dados do aparelho');
 assert.match(purchase,/className="v57-status"/,'Status deve permanecer em Dados da compra');
-assert.match(css,/v57-purchase-grid>label:nth-child\(8\)\{grid-column:span 6!important\}/,'Status deve aproveitar o espaço liberado no desktop');
+assert.match(css,/purchase-data-compact \.v57-status\{flex:0 0 145px!important;width:145px!important/,'Status deve usar largura semântica no desktop');
 
 assert.match(main,/photoTarget:10,priceHistory/,'novo aparelho deve usar meta de 10 fotos');
 assert.match(main,/bmcenter-photo-target-default-v1051/,'deve existir migração da meta antiga de 6 para 10');
@@ -28,9 +28,9 @@ assert.doesNotMatch(main,/!f\.ads\.length&&<Empty text="Nenhum anúncio criado\.
 assert.match(main,/idleDays=operationalIdleDays\(item,new Date\(\),orderActivityDates\)/,'Parado há deve usar atividade operacional real');
 assert.match(main,/v1051-workflow-parts/,'Peças e cotações devem usar o layout compacto novo');
 
-assert.match(css,/sale-data-grid[\s\S]*grid-template-columns:repeat\(12,minmax\(0,1fr\)\)/,'Venda desktop deve usar grade compacta');
-assert.match(css,/sale-summary-four>div\{[\s\S]*min-height:46px/,'resumo da venda não deve usar cards altos');
-assert.match(css,/@media\(max-width:720px\)[\s\S]*sale-data-grid[\s\S]*repeat\(2,minmax\(0,1fr\)\)/,'Venda mobile deve continuar compacta em duas colunas');
+assert.match(css,/sale-data-grid[\s\S]*display:flex!important/,'Venda deve usar fluxo compacto próprio');
+assert.match(css,/sale-summary-four>div\{min-height:42px!important/,'resumo da venda não deve usar cards altos');
+assert.match(css,/@media\(max-width:900px\)[\s\S]*sale-data-grid>label\.sale-field-value\{flex:0 0 88px!important/,'Venda mobile deve usar larguras semânticas');
 
 const phone={date:'2026-08-01',lastActivityAt:'2026-08-16T10:00:00Z',timeline:[{date:'2026-08-02T12:00:00Z',message:'Cadastro atualizado'},{date:'2026-08-10T12:00:00Z',message:'Status alterado para Pronto'}],parts:[],ads:[],marketplaceProfiles:{}};
 assert.equal(String(lastOperationalActivityDate(phone)).slice(0,10),'2026-08-10','Cadastro atualizado não deve zerar o tempo parado');

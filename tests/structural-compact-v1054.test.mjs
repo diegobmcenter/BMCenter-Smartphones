@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
+assert.match(main,/className="sale-data-grid"/,'Venda deve usar container próprio sem .grid');
+assert.doesNotMatch(main,/className="grid sale-data-grid"/,'Venda não pode voltar à classe genérica .grid');
+assert.match(main,/className="purchase-data-compact"/,'Dados da compra deve usar container próprio');
+assert.doesNotMatch(main,/className="v57-purchase-grid"/,'Dados da compra não pode voltar ao grid legado');
+assert.match(css,/sale-data-grid>label\.sale-field-value\{flex:0 0 88px!important;width:88px!important;max-width:88px!important\}/,'Valor vendido deve ter largura semântica mobile');
+assert.match(css,/purchase-data-compact>label\.purchase-field-date\{flex:0 0 96px!important;width:96px!important;max-width:96px!important\}/,'Data da compra deve ter largura semântica mobile');
+assert.match(main,/const APP_VERSION='10\.5\.4'/,'Versão 10.5.4 não encontrada');
+console.log('structural-compact-v1054.test: OK');
