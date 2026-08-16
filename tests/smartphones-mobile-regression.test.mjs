@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10481.css',import.meta.url),'utf8');
+assert.match(main,/import'\.\/v10480\.css';import'\.\/v10481\.css';/,'v10481 deve ser a última camada visual');
+assert.match(main,/const APP_VERSION='10\.4\.81'/,'versão 10.4.81 não encontrada');
+assert.match(css,/@media\(max-width:720px\)/,'correção deve ser específica para mobile');
+assert.match(css,/grid-template-columns:34px minmax\(0,1fr\) 30px minmax\(112px,128px\)/,'mobile deve reservar estrela, nome, menu e status');
+assert.match(css,/\.v102-device-row>\.v102-row-actions\{[\s\S]*?grid-column:3!important;grid-row:1!important/,'menu deve ficar ao lado do nome antes do status no mobile');
+assert.match(css,/\.v102-device-row>\.v102-status\{[\s\S]*?grid-column:4!important;grid-row:1!important/,'status deve permanecer à direita no topo');
+assert.match(css,/\.v102-device-row>\.v102-money,[\s\S]*?grid-column:2\/5!important;grid-row:2!important/,'valores devem ocupar faixa completa abaixo');
+assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/,'três valores devem ter larguras uniformes');
+console.log('smartphones-mobile-regression.test: OK');

@@ -1,0 +1,8 @@
+VALIDAÇÃO v10.4.81
+
+- APP_VERSION = 10.4.81.
+- v10481.css é a última camada visual.
+- Desktop preserva a posição final do menu ... da v10.4.80.
+- Mobile posiciona estrela/nome/menu/status explicitamente na primeira linha.
+- Mobile posiciona Custo/Valor de venda/Lucro em faixa completa na segunda linha.
+- smartphones-mobile-regression.test.mjs impede retorno da regressão.

@@ -1,0 +1,110 @@
+/* BMCenter v10.4.81 — correção da regressão mobile dos cards de Smartphones.
+   Desktop mantém o menu ... no extremo direito. No celular, restaura a composição
+   aprovada: estrela + nome + menu + status na primeira linha e valores completos abaixo. */
+
+@media(max-width:720px){
+  .v102-device-row{
+    display:grid!important;
+    grid-template-columns:34px minmax(0,1fr) 30px minmax(112px,128px)!important;
+    grid-template-rows:auto auto!important;
+    grid-template-areas:none!important;
+    column-gap:6px!important;
+    row-gap:7px!important;
+    align-items:start!important;
+    min-height:0!important;
+    padding:8px!important;
+    overflow:visible!important;
+  }
+
+  /* Posicionamento numérico deliberado: evita conflito com grid-area de folhas antigas. */
+  .v102-device-row>.v102-star{
+    grid-column:1!important;grid-row:1!important;grid-area:auto!important;
+    width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;
+    align-self:start!important;
+  }
+  .v102-device-row>.v102-device-name{
+    grid-column:2!important;grid-row:1!important;grid-area:auto!important;
+    min-width:0!important;width:100%!important;align-self:start!important;
+  }
+  .v102-device-row>.v102-device-name .v10479-device-name-button{max-width:100%!important}
+  .v102-device-row>.v102-device-name h3{
+    font-size:13px!important;line-height:1.15!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row>.v102-device-name p{
+    margin-top:5px!important;font-size:8px!important;line-height:1.2!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    -webkit-line-clamp:1!important;
+  }
+  .v102-device-row>.v102-device-name small{margin-top:2px!important;font-size:7px!important;line-height:1.1!important}
+
+  .v102-device-row>.v102-row-actions{
+    grid-column:3!important;grid-row:1!important;grid-area:auto!important;
+    width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;
+    display:block!important;align-self:start!important;justify-self:end!important;
+    margin:0!important;padding:0!important;overflow:visible!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{
+    width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;
+    margin:0!important;padding:0!important;
+  }
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{display:grid!important;place-items:center!important;border-radius:8px!important}
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button svg{width:14px!important;height:14px!important}
+  .v102-device-row .v102-context{right:0!important;left:auto!important;top:34px!important;z-index:500!important}
+
+  .v102-device-row>.v102-status{
+    grid-column:4!important;grid-row:1!important;grid-area:auto!important;
+    width:100%!important;min-width:0!important;max-width:none!important;align-self:start!important;
+  }
+  .v102-device-row>.v102-status select{
+    width:100%!important;height:34px!important;min-height:34px!important;
+    padding:0 25px 0 9px!important;font-size:9.5px!important;border-radius:9px!important;
+    white-space:nowrap!important;text-overflow:ellipsis!important;
+  }
+  .v102-device-row>.v102-status small{margin-top:3px!important;font-size:6.5px!important;line-height:1!important}
+
+  /* Valores voltam a ocupar toda a largura útil abaixo do nome/status. */
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{
+    grid-column:2/5!important;grid-row:2!important;grid-area:auto!important;
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:40px!important;min-height:40px!important;
+    gap:5px!important;padding:0!important;margin:0!important;
+    border:0!important;background:transparent!important;overflow:visible!important;
+  }
+  .v102-device-row .v102-inline-money{
+    display:grid!important;grid-template-rows:auto auto!important;align-content:center!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:40px!important;min-height:40px!important;
+    padding:5px 7px!important;margin:0!important;
+    border:1px solid var(--line)!important;border-radius:9px!important;
+    background:var(--surface2)!important;overflow:hidden!important;box-shadow:none!important;
+  }
+  .v102-device-row .v102-inline-money+.v102-inline-money{border-left:1px solid var(--line)!important}
+  .v102-device-row .v102-inline-money>span{margin:0 0 2px!important;font-size:6.8px!important;line-height:1!important;white-space:nowrap!important}
+  .v102-device-row .v102-inline-money>div{display:flex!important;align-items:center!important;gap:2px!important;height:18px!important;min-width:0!important}
+  .v102-device-row .v102-inline-money small{font-size:7px!important;line-height:1!important;flex:0 0 auto!important}
+  .v102-device-row .v102-inline-money input{
+    width:100%!important;min-width:0!important;height:18px!important;min-height:18px!important;
+    padding:0!important;border:0!important;background:transparent!important;
+    font-size:9.5px!important;line-height:1!important;box-shadow:none!important;
+  }
+}
+
+@media(max-width:390px){
+  .v102-device-row{
+    grid-template-columns:31px minmax(0,1fr) 28px 112px!important;
+    column-gap:5px!important;padding:7px!important;
+  }
+  .v102-device-row>.v102-star{width:31px!important;min-width:31px!important;height:31px!important;min-height:31px!important}
+  .v102-device-row>.v102-row-actions,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor,
+  .v102-device-row>.v102-row-actions .v102-menu-anchor>button{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important}
+  .v102-device-row>.v102-status select{height:31px!important;min-height:31px!important;font-size:8.8px!important}
+  .v102-device-row>.v102-device-name h3{font-size:12px!important}
+  .v102-device-row>.v102-money,
+  .v102-device-row>.v102-money-editable{height:38px!important;min-height:38px!important;gap:4px!important}
+  .v102-device-row .v102-inline-money{height:38px!important;min-height:38px!important;padding:4px 6px!important}
+}
