@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const reports=fs.readFileSync(new URL('../src/v10/pages/ReportsV10.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10490.css',import.meta.url),'utf8');
+assert.match(main,/import'\.\/v10489\.css';import'\.\/v10490\.css';/,'v10490.css deve ser a camada final');
+assert.match(main,/const APP_VERSION='10\.4\.90'/,'versão 10.4.90 não encontrada');
+assert.match(main,/useState\('this_month'\)/,'relatórios devem iniciar em Este mês');
+for(const id of ['today','last7','this_month','previous_month','last30','this_year','all','custom'])assert.ok(reports.includes(`value="${id}"`),`período ausente: ${id}`);
+assert.match(main,/const sales=allSales\.filter\(p=>dateInRange\(p\.sale\?\.soldAt\)\)/,'vendas precisam respeitar período');
+assert.match(main,/supplier&&dateInRange\(referenceDate\)/,'gastos com peças precisam respeitar período');
+assert.match(main,/p\.status==='Descarte\/Sucata'&&dateInRange\(discardDate\(p\)\)/,'descarte precisa respeitar período');
+assert.match(reports,/Previsão 7 dias/,'previsão de 7 dias deve permanecer atual');
+assert.match(reports,/Estoque previsto · atual/,'estoque deve ser identificado como atual');
+assert.match(css,/@media\(max-width:720px\)[\s\S]*grid-template-columns:minmax\(118px,\.82fr\) minmax\(0,1\.18fr\)!important/,'filtro mobile precisa ser compacto em duas colunas');
+console.log('reports-period-v10490.test: OK');
