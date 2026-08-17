@@ -1,0 +1,163 @@
+/* BMCenter v10.5.12 — valor total + dividir + resultado na mesma faixa compacta */
+
+/* Cabeçalho volta a ser apenas título + contador. O checkbox sai daqui. */
+.v102-app .batch-shared-header{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+}
+.v102-app .batch-shared-header>span{
+  flex:0 0 auto!important;
+  align-self:flex-start!important;
+  padding:2px 5px!important;
+  margin:0!important;
+  font-size:7px!important;
+  line-height:1.2!important;
+}
+
+/* Faixa financeira: nada de card de largura total. */
+.v102-app .batch-phone-modal .batch-total-purchase,
+.v102-app .batch-phone-modal .batch-total-purchase.active{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:flex-end!important;
+  justify-content:flex-start!important;
+  gap:6px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.v102-app .batch-phone-modal .batch-total-purchase>.batch-total-field{
+  flex:0 0 150px!important;
+  width:150px!important;
+  max-width:150px!important;
+  min-width:0!important;
+  gap:2px!important;
+  margin:0!important;
+}
+.v102-app .batch-phone-modal .batch-total-purchase>.batch-total-field .field-affix-inline{
+  width:100%!important;
+  height:28px!important;
+  min-height:28px!important;
+}
+.v102-app .batch-phone-modal .batch-total-inline-toggle{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  flex:0 0 132px!important;
+  width:132px!important;
+  max-width:132px!important;
+  min-width:0!important;
+  min-height:28px!important;
+  height:28px!important;
+  padding:0 6px!important;
+  margin:0!important;
+  border:1px solid var(--line)!important;
+  border-radius:8px!important;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  box-sizing:border-box!important;
+}
+.v102-app .batch-phone-modal .batch-total-inline-toggle input{
+  flex:0 0 13px!important;
+  width:13px!important;
+  min-width:13px!important;
+  max-width:13px!important;
+  height:13px!important;
+  min-height:13px!important;
+  margin:0!important;
+  padding:0!important;
+}
+.v102-app .batch-phone-modal .batch-total-inline-toggle span{
+  min-width:0!important;
+  font-size:7.3px!important;
+  font-weight:700!important;
+  line-height:1.1!important;
+  white-space:normal!important;
+}
+.v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result{
+  flex:0 0 180px!important;
+  width:180px!important;
+  max-width:180px!important;
+  min-width:0!important;
+  min-height:28px!important;
+  height:28px!important;
+  padding:3px 7px!important;
+  margin:0!important;
+  gap:0!important;
+  box-sizing:border-box!important;
+}
+.v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result small{
+  font-size:5.9px!important;
+  line-height:1.05!important;
+}
+.v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result strong{
+  font-size:6.8px!important;
+  line-height:1.05!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Observação continua baixa; não cria um segundo bloco alto. */
+.v102-app .batch-shared-section>label textarea{
+  min-height:32px!important;
+  height:32px!important;
+  max-height:42px!important;
+  padding:5px 7px!important;
+}
+
+@media(max-width:720px){
+  .v102-app .batch-shared-section{gap:4px!important;padding:7px!important}
+  .v102-app .batch-shared-header{align-items:flex-start!important;gap:5px!important}
+  .v102-app .batch-shared-title p{font-size:6.3px!important;line-height:1.12!important}
+  .v102-app .batch-shared-header>span{padding:0!important;background:transparent!important}
+
+  /* Mesmo no celular os três controles permanecem na MESMA linha. */
+  .v102-app .batch-phone-modal .batch-total-purchase,
+  .v102-app .batch-phone-modal .batch-total-purchase.active{
+    display:grid!important;
+    grid-template-columns:minmax(92px,.92fr) minmax(102px,1fr) minmax(96px,1.05fr)!important;
+    gap:4px!important;
+    width:100%!important;
+    max-width:100%!important;
+    align-items:end!important;
+  }
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-total-field,
+  .v102-app .batch-phone-modal .batch-total-inline-toggle,
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    flex:none!important;
+  }
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-total-field .field-affix-inline,
+  .v102-app .batch-phone-modal .batch-total-inline-toggle,
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result{
+    height:31px!important;
+    min-height:31px!important;
+  }
+  .v102-app .batch-phone-modal .batch-total-inline-toggle{padding:0 5px!important;gap:4px!important}
+  .v102-app .batch-phone-modal .batch-total-inline-toggle span{font-size:6.8px!important;line-height:1.02!important}
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result{padding:3px 5px!important}
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result small{font-size:5.5px!important}
+  .v102-app .batch-phone-modal .batch-total-purchase>.batch-split-result strong{font-size:6.3px!important}
+  .v102-app .batch-shared-section>label textarea{min-height:34px!important;height:34px!important;max-height:42px!important}
+}
+
+@media(max-width:390px){
+  .v102-app .batch-phone-modal .batch-total-purchase,
+  .v102-app .batch-phone-modal .batch-total-purchase.active{
+    grid-template-columns:minmax(88px,.9fr) minmax(98px,1fr) minmax(92px,1fr)!important;
+  }
+  .v102-app .batch-phone-modal .batch-total-inline-toggle span{font-size:6.5px!important}
+}

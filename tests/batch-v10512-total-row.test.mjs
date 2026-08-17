@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1062.css',import.meta.url),'utf8');
+assert.match(main,/className="batch-total-inline-toggle"/,'toggle de divisão deve ficar junto do total');
+assert.doesNotMatch(main,/<header className="batch-shared-header">[\s\S]*?batch-inline-toggle[\s\S]*?<\/header>/,'toggle não pode continuar no cabeçalho');
+assert.match(main,/batch-total-purchase[\s\S]*batch-total-field[\s\S]*batch-total-inline-toggle[\s\S]*batch-split-result/,'total, dividir e resultado precisam estar na mesma faixa');
+assert.match(css,/grid-template-columns:minmax\(92px,.92fr\) minmax\(102px,1fr\) minmax\(96px,1.05fr\)!important/,'mobile deve manter os 3 controles lado a lado');
+assert.match(css,/width:max-content!important/,'desktop não deve esticar faixa financeira na linha inteira');
+console.log('batch-v10512-total-row.test: OK');
