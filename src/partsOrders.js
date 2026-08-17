@@ -82,9 +82,23 @@ export function partsPeriodReportMetrics(orders=[],dateInRange=()=>true){
  }
 }
 
+export function isPartCostCommitted(part={}){
+ const status=String(part?.status||'').trim().toLocaleLowerCase('pt-BR');
+ const orderStatus=String(part?.orderStatus||'').trim().toLocaleLowerCase('pt-BR');
+ const returnStatus=String(part?.returnStatus||'').trim().toLocaleLowerCase('pt-BR');
+ // Cotação é apenas previsão e nunca compõe o custo do aparelho. O custo passa a ser
+ // realizado quando existe pedido confirmado/recebido, compra direta concluída ou devolução
+ // de uma peça que necessariamente já havia sido adquirida.
+ if(['pending','returned'].includes(returnStatus))return true;
+ if(part?.orderedAt||part?.receivedAt)return true;
+ if(['pedido realizado','pedido enviado','pedido entregue','instalada','para devolver','devolvida'].includes(orderStatus))return true;
+ if(['comprada','recebida','instalada','para devolver','devolvida'].includes(status))return true;
+ return false
+}
+
 export function effectivePartCost(part){
- let gross=partGrossCost(part);
- if(!gross&&part?.purchasePrice===undefined&&part?.price===undefined&&part?.effectiveCost===undefined)gross=roundMoney(quoteForPart(part)?.price||0);
+ if(!isPartCostCommitted(part))return 0;
+ const gross=partGrossCost(part);
  return roundMoney(Math.max(0,gross-returnRecoveredAmount({...part,effectiveCost:gross})))
 }
 
