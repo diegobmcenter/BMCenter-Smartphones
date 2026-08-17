@@ -8,5 +8,5 @@ assert.match(main,/className="purchase-data-compact"/,'Dados da compra deve usar
 assert.doesNotMatch(main,/className="v57-purchase-grid"/,'Dados da compra não pode voltar ao grid legado');
 assert.match(css,/sale-data-grid>label\.sale-field-value\{flex:0 0 88px!important;width:88px!important;max-width:88px!important\}/,'Valor vendido deve ter largura semântica mobile');
 assert.match(css,/purchase-data-compact>label\.purchase-field-date\{flex:0 0 96px!important;width:96px!important;max-width:96px!important\}/,'Data da compra deve ter largura semântica mobile');
-assert.match(main,/const APP_VERSION='10\.5\.6'/,'Versão 10.5.6 não encontrada');
+assert.match(main,/const APP_VERSION='\d+\.\d+\.\d+'/, 'APP_VERSION deve existir no código');
 console.log('structural-compact-v1054.test: OK');

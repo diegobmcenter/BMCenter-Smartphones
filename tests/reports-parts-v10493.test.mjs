@@ -36,7 +36,7 @@ assert.equal(metrics.recoveredValue,100,'somente financeiro efetivamente liquida
 assert.equal(metrics.unrecoveredLoss,10,'frete não reembolsado deve permanecer como perda efetiva');
 assert.deepEqual(metrics.supplierSpend,{'TEC Cell':110},'gasto por fornecedor deve usar compras efetivas do período, não simples cotações');
 
-assert.match(main,/const APP_VERSION='10\.5\.6'/);
+assert.match(main,/const APP_VERSION='\d+\.\d+\.\d+'/, 'APP_VERSION deve existir no código');
 assert.match(main,/partsOperationalCounters\(phones,orders\)/,'Central de Peças deve usar o contador compartilhado');
 assert.match(main,/partsPeriodReportMetrics\(partOrders,dateInRange\)/,'Relatórios devem usar métricas históricas de peças filtradas pelo período');
 assert.match(view,/CENTRAL DE PEÇAS/);

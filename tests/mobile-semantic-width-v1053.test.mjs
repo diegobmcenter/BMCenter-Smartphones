@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v1053\.css';import'\.\/v1054\.css';/,'v1054 deve carregar por último');
-assert.match(main,/const APP_VERSION='10\.5\.6'/,'versão 10.5.6 ausente');
+assert.match(main,/const APP_VERSION='\d+\.\d+\.\d+'/, 'APP_VERSION deve existir no código');
 assert.match(css,/sale-register-modal \.sale-data-grid,[\s\S]*display:flex!important/,'venda mobile deve usar flex-wrap');
 assert.match(css,/sale-field-value\{flex:0 0 88px!important;width:88px!important/,'valor vendido deve ter largura semântica');
 assert.match(css,/sale-field-installments\{flex:0 0 48px!important;width:48px!important/,'parcelas deve permanecer pequeno');

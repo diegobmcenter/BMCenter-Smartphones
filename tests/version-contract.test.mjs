@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
+const bat=fs.readFileSync(new URL('../PUBLICAR-ATUALIZACAO.bat',import.meta.url),'utf8');
+const match=main.match(/const APP_VERSION='([^']+)'/);
+assert.ok(match,'APP_VERSION não encontrado em main.jsx');
+assert.equal(match[1],pkg.version,'APP_VERSION e package.json precisam ter a mesma versão');
+assert.match(bat,new RegExp(`set "VERSION=${pkg.version.replace(/\./g,'\\.')}"`),'BAT precisa usar a mesma versão do package.json');
+assert.match(bat,new RegExp(`BMCenter Smartphones v${pkg.version.replace(/\./g,'\\.')}`),'título do BAT precisa usar a versão atual');
+console.log('version-contract.test: OK');
