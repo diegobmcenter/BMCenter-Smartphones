@@ -185,6 +185,23 @@ export function normalizePartsOrders(value){
 
 export function orderStatusLabel(status){return PARTS_ORDER_STATUSES[status]||status||'Rascunho'}
 
+export function undoPartsOrderStep(order={},itemId=null,step='auto'){
+ const normalized=normalizePartsOrder(order);
+ const targetId=itemId==null?'':String(itemId);
+ const targets=normalized.items.filter(item=>!targetId||String(item.id)===targetId);
+ if(!targets.length)return{order:normalized,changed:false,blocked:false,step:'none'};
+ if(targets.some(item=>item.returnStatus))return{order:normalized,changed:false,blocked:true,step:'blocked'};
+ const resolved=step==='auto'?(targets.some(item=>item.receivedAt)?'receive':'confirm'):step;
+ let changed=false;
+ const items=normalized.items.map(item=>{
+  if(targetId&&String(item.id)!==targetId)return item;
+  if(resolved==='receive'&&item.receivedAt){changed=true;return{...item,receivedAt:''}};
+  if(resolved==='confirm'&&item.confirmedAt&&!item.receivedAt){changed=true;return{...item,confirmedAt:''}};
+  return item
+ });
+ return{order:normalizePartsOrder({...normalized,items}),changed,blocked:false,step:resolved}
+}
+
 export function syncOrdersIntoPhones(phones=[],orders=[]){
  const normalizedOrders=normalizePartsOrders(orders);
  const links=new Map();
@@ -221,7 +238,7 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
     returnFinancialUpdatedAt:item.returnFinancialUpdatedAt||'',
     returnRecoveredAmount:returnRecoveredAmount(item),
     orderStatus:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?'Pedido entregue':confirmed?'Pedido realizado':'Não pedido',
-    status:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':part.status
+    status:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':['Comprada','Recebida'].includes(part.status)?'Cotando':part.status
    }
   });
   // Regra v10.4.67: pedidos/peças alteram somente o estado da peça e seus custos.

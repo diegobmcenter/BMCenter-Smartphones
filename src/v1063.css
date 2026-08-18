@@ -1,0 +1,14 @@
+/* v10.5.14 — desfazer pedido/recebimento por pedido completo ou peça individual */
+.parts-v10514-summary-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:max-content}
+.parts-v50-order-summary{grid-template-columns:minmax(0,1fr) auto auto!important}
+.parts-v10514-undo-summary{height:29px!important;min-height:29px!important;padding:0 8px!important;display:inline-flex!important;align-items:center;gap:4px;border-color:color-mix(in srgb,var(--amber) 45%,var(--line))!important;color:var(--amber)!important;background:color-mix(in srgb,var(--amber) 7%,var(--surface2))!important;font-size:8px!important;font-weight:800!important}
+.parts-v48-line-actions{gap:4px;flex-wrap:wrap;align-items:center}
+.parts-v10514-undo-button{border-color:color-mix(in srgb,var(--amber) 42%,var(--line))!important;color:var(--amber)!important;background:color-mix(in srgb,var(--amber) 6%,var(--surface2))!important}
+@media(max-width:700px){
+ .parts-v50-order-summary{grid-template-columns:minmax(0,1fr) auto!important}
+ .parts-v50-order-summary .parts-v48-order-total{grid-column:1/2!important;text-align:left!important;padding-left:38px!important}
+ .parts-v10514-summary-actions{grid-column:2;grid-row:1/3;align-self:center}
+ .parts-v10514-undo-summary{width:29px!important;min-width:29px!important;padding:0!important;justify-content:center}
+ .parts-v10514-undo-summary span{display:none}
+ .parts-v48-line-actions{grid-column:2/-1;justify-content:flex-start}
+}
