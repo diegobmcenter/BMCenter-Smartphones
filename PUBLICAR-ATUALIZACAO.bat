@@ -2,11 +2,11 @@
 setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
 
-title BMCenter Smartphones v10.5.14 - Publicar Atualizacao
+title BMCenter Smartphones v10.5.15 - Publicar Atualizacao
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.5.14"
+set "VERSION=10.5.15"
 
 echo.
 echo ============================================================
@@ -82,7 +82,7 @@ if errorlevel 1 goto :git_operation_error
 git diff --cached --quiet
 if not errorlevel 1 goto :no_changes
 
-git commit -m "BMCenter v10.5.14 - desfazer pedidos e recebimentos"
+git commit -m "BMCenter v10.5.15 - desfazer pedidos abertos e recebidos"
 if errorlevel 1 goto :git_operation_error
 
 git push origin %BRANCH%
