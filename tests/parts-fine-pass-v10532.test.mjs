@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v10530.css',import.meta.url),'utf8');
+assert.match(main,/parts-v10532-focus-bar/,'cada aba deve exibir resumo/foco operacional');
+assert.match(main,/orderTypeLabel\(order\)/,'cards de pedido precisam identificar BMCenter, avulso ou misto');
+assert.match(main,/orderOriginLabel\(order\)/,'cards de pedido precisam identificar a origem');
+assert.match(main,/Histórico recebido/,'cards da aba Recebidos precisam destacar o contexto histórico');
+assert.match(css,/\.parts-v10532-order-badges/,'badges dos pedidos precisam de estilo próprio');
+assert.match(css,/\.parts-v10532-tone-misto/,'pedidos mistos precisam de diferenciação visual');
+assert.match(css,/\.parts-v10532-tone-received/,'recebidos precisam de diferenciação visual');
+console.log('parts fine pass v10.5.32: OK');

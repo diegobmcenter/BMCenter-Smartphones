@@ -7,10 +7,13 @@ assert.match(main,/overviewWaitingRows\.length/,'contador aguardando deve repres
 assert.match(main,/overviewReceivedRows\.length/,'contador recebidas deve representar linhas exibíveis');
 assert.match(main,/overviewReturnRows\.length/,'devoluções pendentes devem ter linhas clicáveis');
 assert.match(main,/overviewSearch/,'Central de Peças precisa de filtro geral de busca');
-assert.match(main,/overviewStatus/,'Central de Peças precisa de filtro geral por status do aparelho');
+assert.match(main,/overviewPeriod/,'Central de Peças precisa de filtro geral por período');
 assert.match(main,/overviewSupplier/,'Central de Peças precisa de filtro geral por fornecedor');
+assert.match(main,/overviewType/,'Central de Peças precisa de filtro geral por tipo');
+assert.match(main,/overviewOrigin/,'Central de Peças precisa de filtro geral por origem');
+assert.doesNotMatch(main,/const\[overviewStatus,setOverviewStatus\]/,'status do aparelho não deve mais ser filtro global da Central de Peças');
 assert.match(main,/overviewOrderMatches\(order\)/,'pedidos devem respeitar filtros gerais');
-assert.match(main,/overviewItemMatches\(row\.order,row\.item,row\.phone\)/,'devoluções devem respeitar filtros gerais');
+assert.match(main,/overviewItemMatches\(row\.order,row\.item,row\.phone,/,'devoluções devem respeitar filtros gerais');
 assert.match(css,/\.parts-v10518-overview-filters/,'filtros gerais precisam de layout próprio');
 assert.match(css,/@media\(max-width:720px\)/,'nova área precisa ser responsiva no celular');
-console.log('parts overview v10.5.18: ok');
+console.log('parts overview v10.5.18/v10.5.31+: ok');
