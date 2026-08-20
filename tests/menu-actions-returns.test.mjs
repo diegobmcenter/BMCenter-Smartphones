@@ -21,7 +21,7 @@ assert.doesNotMatch(row,/v10423-scrap-shortcut/,'descarte não pode ficar expost
 assert.match(row,/<Eye size=\{15\}\/> Abrir ficha/,'olho precisa existir no menu ...');
 assert.match(row,/<Archive size=\{15\}\/> Descarte\/Sucata/,'descarte precisa existir no menu ...');
 
-assert.match(main,/Devoluções <b>\{operationalCounts\.returns\}<\/b>/,'Central de Peças precisa da aba Devoluções');
+assert.match(main,/Devoluções <b>\{(?:operationalCounts|overviewCounts)\.returns\}<\/b>/,'Central de Peças precisa da aba Devoluções');
 assert.match(main,/changeReturnState\(order\.id,item\.id,'pending'\)/,'item recebido precisa poder ir para devolução');
 assert.match(main,/openReturnSettlement\(row\)/,'fila precisa abrir o financeiro ao concluir devolução');
 assert.match(css,/\.parts-v79-return-card/,'fila de devoluções precisa de layout próprio');

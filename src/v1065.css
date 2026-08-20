@@ -1,0 +1,27 @@
+/* BMCenter v10.5.18 — resumo clicável e filtros gerais da Central de Peças */
+.parts-v10518-summary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px!important}
+.parts-v10518-summary>button{appearance:none;border:1px solid var(--border,#dfe4ea);background:var(--card,#fff);color:inherit;border-radius:10px;padding:7px 9px;min-width:0;text-align:left;display:flex;align-items:baseline;gap:5px;cursor:pointer;font:inherit}
+.parts-v10518-summary>button b{font-size:17px;line-height:1}
+.parts-v10518-summary>button:hover,.parts-v10518-summary>button.active{border-color:var(--primary,#2563eb);box-shadow:0 0 0 1px color-mix(in srgb,var(--primary,#2563eb) 35%,transparent)}
+.parts-v10518-summary>button.attention{border-color:#d97706}
+.parts-v10518-overview-tools{margin:-2px 0 9px;padding:7px 9px;border:1px solid var(--border,#dfe4ea);border-radius:11px;background:var(--card,#fff)}
+.parts-v10518-overview-filters{display:grid;grid-template-columns:minmax(220px,1.7fr) minmax(145px,.8fr) minmax(150px,.9fr) auto;gap:6px;align-items:center}
+.parts-v10518-overview-filters label{height:34px;border:1px solid var(--border,#dfe4ea);border-radius:8px;display:flex;align-items:center;gap:6px;padding:0 9px;min-width:0}
+.parts-v10518-overview-filters label input{border:0!important;background:transparent!important;box-shadow:none!important;min-width:0;width:100%;height:30px!important;padding:0!important}
+.parts-v10518-overview-filters select,.parts-v10518-overview-filters button{height:34px!important;min-height:34px!important;margin:0!important}
+.parts-v10518-clear{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.parts-v10518-filter-note{display:block;margin-top:5px;opacity:.68;font-size:11px}
+.parts-v10518-overview-detail{margin:0 0 10px;border:1px solid var(--border,#dfe4ea);border-radius:12px;background:var(--card,#fff);overflow:hidden}
+.parts-v10518-overview-detail>header{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border,#dfe4ea)}
+.parts-v10518-overview-detail>header small{display:block;font-size:9px;letter-spacing:.07em;opacity:.62}.parts-v10518-overview-detail>header h3{margin:1px 0 0;font-size:14px}
+.parts-v10518-overview-list{display:grid;gap:0}.parts-v10518-overview-list>article{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,.8fr) auto;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border,#dfe4ea)}
+.parts-v10518-overview-list>article:last-child{border-bottom:0}.parts-v10518-overview-identity,.parts-v10518-overview-order{min-width:0}.parts-v10518-overview-identity b,.parts-v10518-overview-order b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.parts-v10518-overview-identity span,.parts-v10518-overview-order small{display:block;font-size:10px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.parts-v10518-overview-list>article>button{min-height:30px!important;height:30px!important;padding:0 10px!important}
+@media(max-width:720px){
+ .parts-v10518-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%}
+ .parts-v10518-summary>button{padding:7px 8px;font-size:11px}.parts-v10518-summary>button b{font-size:15px}
+ .parts-v10518-overview-tools{padding:6px;margin-bottom:7px}
+ .parts-v10518-overview-filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px}
+ .parts-v10518-overview-filters label{grid-column:1/-1;height:32px}.parts-v10518-overview-filters select,.parts-v10518-overview-filters button{height:32px!important;min-height:32px!important;font-size:11px!important}
+ .parts-v10518-overview-list>article{grid-template-columns:minmax(0,1fr) auto;padding:7px 8px;gap:5px}.parts-v10518-overview-order{grid-column:1/2}.parts-v10518-overview-list>article>button{grid-column:2;grid-row:1/3}
+}
+@media(max-width:430px){.parts-v10518-summary{gap:4px!important}.parts-v10518-summary>button{border-radius:8px;padding:6px}.parts-v10518-overview-filters{grid-template-columns:1fr 1fr}.parts-v10518-overview-detail>header{padding:7px 8px}}

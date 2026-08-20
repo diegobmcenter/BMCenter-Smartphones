@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1065.css',import.meta.url),'utf8');
+assert.match(main,/overviewDetail==='waiting'/,'resumo precisa abrir detalhe de aguardando');
+assert.match(main,/overviewWaitingRows\.length/,'contador aguardando deve representar linhas exibíveis');
+assert.match(main,/overviewReceivedRows\.length/,'contador recebidas deve representar linhas exibíveis');
+assert.match(main,/overviewReturnRows\.length/,'devoluções pendentes devem ter linhas clicáveis');
+assert.match(main,/overviewSearch/,'Central de Peças precisa de filtro geral de busca');
+assert.match(main,/overviewStatus/,'Central de Peças precisa de filtro geral por status do aparelho');
+assert.match(main,/overviewSupplier/,'Central de Peças precisa de filtro geral por fornecedor');
+assert.match(main,/overviewOrderMatches\(order\)/,'pedidos devem respeitar filtros gerais');
+assert.match(main,/overviewItemMatches\(row\.order,row\.item,row\.phone\)/,'devoluções devem respeitar filtros gerais');
+assert.match(css,/\.parts-v10518-overview-filters/,'filtros gerais precisam de layout próprio');
+assert.match(css,/@media\(max-width:720px\)/,'nova área precisa ser responsiva no celular');
+console.log('parts overview v10.5.18: ok');
