@@ -55,3 +55,16 @@
 @media(max-width:1180px){.parts-v10534-overview-filters{grid-template-columns:minmax(220px,1.5fr) repeat(2,minmax(140px,.9fr)) auto auto auto!important}.parts-v10534-overview-meta{align-items:flex-start!important;flex-direction:column!important}}
 @media(max-width:760px){.parts-v10534-overview-filters{grid-template-columns:1fr 1fr!important}.parts-v10534-overview-meta{gap:8px!important}.parts-v10534-filter-chips{justify-content:flex-start!important}}
 @media(max-width:520px){.parts-v10534-overview-tools{padding:7px!important}.parts-v10534-overview-filters{grid-template-columns:1fr!important}.parts-v10534-overview-filters label,.parts-v10534-overview-filters select,.parts-v10534-overview-filters button{min-height:34px!important;height:34px!important}}
+
+/* BMCenter v10.5.35 — compactação e reaproveitamento de espaço na Central de Peças */
+.parts-v10535-head-main{display:grid!important;gap:8px!important;min-width:0!important}
+.parts-v10535-inline-filters{display:grid!important;grid-template-columns:repeat(4,minmax(120px,1fr)) auto!important;gap:8px!important;align-items:center!important;max-width:100%!important}
+.parts-v10535-inline-filters select,.parts-v10535-inline-filters button{min-height:34px!important;height:34px!important}
+.parts-v10535-filter-chips{margin-top:0!important;gap:6px!important}
+.parts-v10535-filter-chips .parts-v10531-filter-chip{min-height:24px!important;padding:0 8px!important;font-size:7px!important}
+.parts-v10531-context-filters{grid-template-columns:minmax(170px,1.2fr) repeat(4,minmax(112px,.74fr)) auto!important;gap:6px!important}
+.parts-v10531-context-filters label,.parts-v10531-context-filters select,.parts-v10531-context-filters button{min-height:34px!important;height:34px!important}
+.parts-v10532-focus-bar{margin:8px 0 12px!important}
+@media(max-width:1180px){.parts-v10535-inline-filters{grid-template-columns:repeat(3,minmax(120px,1fr)) auto auto!important}.parts-v10531-context-filters{grid-template-columns:minmax(150px,1fr) repeat(3,minmax(110px,.72fr)) auto auto!important}}
+@media(max-width:860px){.parts-v10535-inline-filters{grid-template-columns:repeat(2,minmax(0,1fr)) auto!important}.parts-v10531-context-filters{grid-template-columns:repeat(2,minmax(0,1fr)) auto!important}}
+@media(max-width:560px){.parts-v10535-inline-filters,.parts-v10531-context-filters{grid-template-columns:1fr!important}.parts-v10535-filter-chips{justify-content:flex-start!important}}
