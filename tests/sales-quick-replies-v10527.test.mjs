@@ -1,0 +1,35 @@
+import assert from'node:assert/strict';
+import fs from'node:fs';
+import{buildSalesQuickReplies,normalizeSalesReplySettings}from'../src/salesQuickReplies.js';
+
+const phone={id:'p1',brand:'Motorola',model:'G24',storage:'128',ram:'8',color:'Azul',nfc:true,biometrics:true,screenProtector:true,caseIncluded:true,likeNew:true,expected:649,status:'Anunciado'};
+const replies=buildSalesQuickReplies(phone,{location:'Maringá'});
+assert.equal(replies.length,4,'devem existir exatamente quatro respostas rápidas');
+assert.deepEqual(replies.map(item=>item.id),['availability','price','details','complete']);
+assert.match(replies[0].text,/Sim, está disponível!/);
+assert.match(replies[0].text,/Motorola G24 128GB/);
+assert.match(replies[0].text,/R\$\s*649,00/);
+assert.match(replies[0].text,/Maringá/);
+assert.match(replies[2].text,/8GB RAM/);
+assert.match(replies[2].text,/NFC/);
+assert.match(replies[2].text,/biometria/);
+assert.match(replies[2].text,/película/);
+assert.match(replies[2].text,/capinha/);
+assert.match(buildSalesQuickReplies({...phone,status:'Reservado'})[0].text,/reservado/);
+assert.match(buildSalesQuickReplies({...phone,status:'Vendido'})[0].text,/não está disponível/);
+assert.equal(normalizeSalesReplySettings({location:' Sarandi '}).location,'Sarandi');
+assert.equal(normalizeSalesReplySettings({}).location,'Maringá');
+
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const smartphoneView=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1074.css',import.meta.url),'utf8');
+assert.match(main,/const SALESREPLYKEY='bmcenter-sales-reply-settings'/,'configuração deve usar arquitetura bmcenter-*');
+assert.match(main,/ALL_CLOUD_KEYS=\[[\s\S]*SALESREPLYKEY/,'configuração deve participar da sincronização/backup');
+assert.match(main,/function QuickReplyModal/,'modal de respostas rápidas deve existir');
+assert.match(main,/v10527-reply-trigger/,'ficha do aparelho deve expor Resposta rápida');
+assert.match(main,/import'.\/v1074\.css';/,'camada visual v10.5.27 deve carregar por último');
+assert.match(smartphoneView,/Resposta rápida/,'menu de ações do aparelho deve abrir respostas rápidas sem exigir ficha');
+assert.match(smartphoneView,/setQuickReplyPhone/,'lista deve encaminhar o aparelho selecionado ao modal');
+assert.doesNotMatch(css,/#fff\b/i,'CSS v10.5.27 não deve forçar branco no tema escuro');
+assert.doesNotMatch(css,/var\(--card|var\(--border/,'CSS deve usar tokens reais do tema');
+console.log('sales-quick-replies-v10527.test: OK');
