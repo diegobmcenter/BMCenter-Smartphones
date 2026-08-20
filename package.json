@@ -1,7 +1,7 @@
 {
   "name": "bmcenter-smartphones",
   "private": true,
-  "version": "10.5.33",
+  "version": "10.5.34",
   "type": "module",
   "scripts": {
     "dev": "vite",

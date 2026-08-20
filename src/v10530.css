@@ -41,3 +41,17 @@
 .parts-v47-tabs button.active{box-shadow:inset 0 -2px 0 var(--accent)!important}.parts-v47-tabs button.active b{color:var(--accent)!important}
 .parts-v50-quote-card,.parts-v48-order-card,.parts-v79-returns>section{box-shadow:0 2px 8px rgba(15,23,42,.03)!important}
 @media(max-width:700px){.parts-v10532-focus-bar{padding:10px!important}.parts-v10532-order-badges{gap:5px!important}.parts-v10532-badge{min-height:20px!important;padding:0 7px!important}}
+
+/* BMCenter v10.5.34 — filtros globais acima e mais compactos */
+.parts-v10534-overview-tools{margin:0 0 10px!important;padding:8px 10px!important;border-radius:12px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--surface2) 92%,white) 0%,var(--surface) 100%)!important}
+.parts-v10534-overview-filters{grid-template-columns:minmax(240px,1.9fr) repeat(4,minmax(132px,.7fr)) auto!important;gap:8px!important}
+.parts-v10534-overview-filters label,.parts-v10534-overview-filters select,.parts-v10534-overview-filters button{min-height:36px!important;height:36px!important}
+.parts-v10534-overview-filters input{height:36px!important}
+.parts-v10534-overview-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin-top:7px!important;min-width:0!important}
+.parts-v10534-overview-meta>.parts-v10518-filter-note{margin:0!important;font-size:7px!important;line-height:1.35!important;color:var(--muted)!important}
+.parts-v10534-filter-chips{margin-top:0!important;justify-content:flex-end!important}
+.parts-v10534-filter-chips .parts-v10531-filter-chip{min-height:25px!important;padding:0 8px!important;font-size:7px!important}
+.parts-v10518-head{margin-top:0!important}
+@media(max-width:1180px){.parts-v10534-overview-filters{grid-template-columns:minmax(220px,1.5fr) repeat(2,minmax(140px,.9fr)) auto auto auto!important}.parts-v10534-overview-meta{align-items:flex-start!important;flex-direction:column!important}}
+@media(max-width:760px){.parts-v10534-overview-filters{grid-template-columns:1fr 1fr!important}.parts-v10534-overview-meta{gap:8px!important}.parts-v10534-filter-chips{justify-content:flex-start!important}}
+@media(max-width:520px){.parts-v10534-overview-tools{padding:7px!important}.parts-v10534-overview-filters{grid-template-columns:1fr!important}.parts-v10534-overview-filters label,.parts-v10534-overview-filters select,.parts-v10534-overview-filters button{min-height:34px!important;height:34px!important}}
