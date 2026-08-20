@@ -68,3 +68,9 @@
 @media(max-width:1180px){.parts-v10535-inline-filters{grid-template-columns:repeat(3,minmax(120px,1fr)) auto auto!important}.parts-v10531-context-filters{grid-template-columns:minmax(150px,1fr) repeat(3,minmax(110px,.72fr)) auto auto!important}}
 @media(max-width:860px){.parts-v10535-inline-filters{grid-template-columns:repeat(2,minmax(0,1fr)) auto!important}.parts-v10531-context-filters{grid-template-columns:repeat(2,minmax(0,1fr)) auto!important}}
 @media(max-width:560px){.parts-v10535-inline-filters,.parts-v10531-context-filters{grid-template-columns:1fr!important}.parts-v10535-filter-chips{justify-content:flex-start!important}}
+
+/* BMCenter v10.5.36 — botão limpar global só com ícone */
+.parts-v10536-icon-clear{width:34px!important;min-width:34px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+.parts-v10535-inline-filters{grid-template-columns:repeat(4,minmax(120px,1fr)) 34px!important}
+@media(max-width:1180px){.parts-v10535-inline-filters{grid-template-columns:repeat(3,minmax(120px,1fr)) auto 34px!important}}
+@media(max-width:860px){.parts-v10535-inline-filters{grid-template-columns:repeat(2,minmax(0,1fr)) 34px!important}}
