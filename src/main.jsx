@@ -4,6 +4,7 @@ import{effectivePartCost,partsOperationalCounters,partsPeriodReportMetrics,retur
 import{workflowStageForPhone}from'./workflow.js';
 import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAllocation,intelligencePhoneCost,modelKey,operationalIdleDays,phoneOtherCosts,profitabilityForPhone,purchaseSuggestion,smartActionQueue,stockAgingRows,turnoverByModel}from'./businessIntelligence.js';
 import{phoneSaleDisplayValue,restoreSuggestedValueAfterSaleRemoval,soldSaleValueNeedsRepair,syncRecordedSaleValue}from'./saleAccounting.js';
+import{syncPhonePublicationStatus}from'./publicationStatus.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
@@ -16,9 +17,9 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.16';
+const APP_VERSION='10.5.17';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
-const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{localStorage.setItem(k,JSON.stringify(v));queueCloudSave(k,v)};
+const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{const next=k===SKEY&&Array.isArray(v)?v.map(phone=>syncPhonePublicationStatus(phone,normalizeMarketplaceProfiles(phone))):v;localStorage.setItem(k,JSON.stringify(next));queueCloudSave(k,next)};
 function useRemoteStorageBridge(key,setter,normalize){
  const normalizeRef=useRef(normalize);normalizeRef.current=normalize;
  useEffect(()=>{const handler=event=>{if(event.detail?.key!==key)return;const raw=event.detail?.value;const next=normalizeRef.current?normalizeRef.current(raw):raw;setter(next)};window.addEventListener(CLOUD_REMOTE_EVENT,handler);return()=>window.removeEventListener(CLOUD_REMOTE_EVENT,handler)},[key,setter])
@@ -140,7 +141,7 @@ function fontScaleId(kind,name){return `${kind}:${String(name||'default').toLowe
 function getFontScale(id){const value=Number(loadFontScales()[id]??1);return Math.min(1.15,Math.max(.9,Number.isFinite(value)?value:1))}
 function saveFontScale(id,value){const next={...loadFontScales(),[id]:Math.min(1.15,Math.max(.9,Number(value)||1))};localStorage.setItem(FONT_SCALE_KEY,JSON.stringify(next));queueCloudSave(FONT_SCALE_KEY,next);return next[id]}
 function App({cloudUser,onCloudLogout}){
- const migrationV1042=useMemo(()=>{ensureStatusV1042();const migrated=ensurePhoneCodeSequenceV1042();try{if(localStorage.getItem('bmcenter-parts-orders-migration-v10448')!=='1'){const result=migrateLegacyPartsOrders(load(SKEY),load(OKEY));localStorage.setItem(OKEY,JSON.stringify(result.orders));localStorage.setItem(SKEY,JSON.stringify(result.phones));queueCloudSave(OKEY,result.orders);queueCloudSave(SKEY,result.phones);localStorage.setItem('bmcenter-parts-orders-migration-v10448','1')}}catch(error){console.warn('Migração de pedidos de peças não concluída.',error)}return migrated},[]);void migrationV1042;
+ const migrationV1042=useMemo(()=>{ensureStatusV1042();const migrated=ensurePhoneCodeSequenceV1042();try{if(localStorage.getItem('bmcenter-parts-orders-migration-v10448')!=='1'){const result=migrateLegacyPartsOrders(load(SKEY),load(OKEY));localStorage.setItem(OKEY,JSON.stringify(result.orders));localStorage.setItem(SKEY,JSON.stringify(result.phones));queueCloudSave(OKEY,result.orders);queueCloudSave(SKEY,result.phones);localStorage.setItem('bmcenter-parts-orders-migration-v10448','1')}}catch(error){console.warn('Migração de pedidos de peças não concluída.',error)}try{const before=load(SKEY),after=repairSoldPublicationStates(before,load(PKEY));if(JSON.stringify(before)!==JSON.stringify(after))save(SKEY,after)}catch(error){console.warn('Sincronização de status de publicação não concluída.',error)}return migrated},[]);void migrationV1042;
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
@@ -371,7 +372,8 @@ function normalizeUnlockCredentials(phone){
 }
 function sanitizePhoneForLeanMode(phone){
  const {sellerId,purchaseSupplierId,accessories,photoChecklist,photoNotes,photos,photoScene,previousPhotoScene,photoStudioSettings,imei1,imei2,serial,devicePassword,...clean}=phone||{};
- return {...clean,nfc:phone?.nfc===true?true:phone?.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(phone)}
+ const normalized={...clean,nfc:phone?.nfc===true?true:phone?.nfc===false?false:null,unlockCredentials:normalizeUnlockCredentials(phone)};
+ return syncPhonePublicationStatus(normalized,normalizeMarketplaceProfiles(normalized))
 }
 
 function loadMenuSettings(){
@@ -1737,13 +1739,13 @@ function Ads(){
    if(phone.id!==phoneId)return phone;
    const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};
    const marketplaceProfiles={...map,[profileId]:{...current,active,publishedAt:active?(current.publishedAt||date):current.publishedAt||'',updatedAt:stamp}};
-   const profile=profiles.find(item=>item.id===profileId);
-   return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`${active?'Publicado':'Removido'} no perfil ${profile?.name||'selecionado'}`));
+   const profile=profiles.find(item=>item.id===profileId),base={...phone,marketplaceProfiles,lastActivityAt:stamp},synced=syncPhonePublicationStatus(base,marketplaceProfiles,{returnToReadyWhenEmpty:!active});
+   return touchPhone(addTimeline(synced,`${active?'Publicado':'Removido'} no perfil ${profile?.name||'selecionado'}${synced.status!==phone.status?` · status ${synced.status}`:''}`));
   });persist(next)
  }
  function setPublishedDate(phoneId,profileId,publishedAt){
   if(!publishedAt)return;const stamp=new Date().toISOString();
-  const next=phones.map(phone=>{if(phone.id!==phoneId)return phone;const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};const marketplaceProfiles={...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}};const profile=profiles.find(item=>item.id===profileId);return touchPhone(addTimeline({...phone,marketplaceProfiles,lastActivityAt:stamp},`Data de publicação ajustada para ${formatDate(publishedAt)} no perfil ${profile?.name||'selecionado'}`))});persist(next)
+  const next=phones.map(phone=>{if(phone.id!==phoneId)return phone;const map=normalizeMarketplaceProfiles(phone),current=map[profileId]||{};const marketplaceProfiles={...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}};const profile=profiles.find(item=>item.id===profileId),base={...phone,marketplaceProfiles,lastActivityAt:stamp},synced=syncPhonePublicationStatus(base,marketplaceProfiles);return touchPhone(addTimeline(synced,`Data de publicação ajustada para ${formatDate(publishedAt)} no perfil ${profile?.name||'selecionado'}${synced.status!==phone.status?` · status ${synced.status}`:''}`))});persist(next)
  }
  function localVariation(phone){
   const name=[phone.brand,phone.model].filter(Boolean).join(' ')||'Smartphone',storage=phone.storage?`${phone.storage}GB`:'',ram=phone.ram?`${phone.ram}GB RAM`:'';
@@ -2007,7 +2009,7 @@ function soldPublicationStateNeedsRepair(phone){
  try{if((phone.ads||migrateLegacyAds(phone)||[]).some(ad=>Object.values(normalizeAd(ad).publications||{}).some(pub=>pub?.status==='published'||pub?.status==='pending')))return true}catch{}
  const history=historicalProfileIds(phone);return history.length>0&&!(Array.isArray(phone?.sale?.publicationProfiles)&&phone.sale.publicationProfiles.length)
 }
-function repairSoldPublicationStates(phones,profiles=[]){return(Array.isArray(phones)?phones:[]).map(phone=>(soldPublicationStateNeedsRepair(phone)||soldSaleValueNeedsRepair(phone))?finalizeSoldPhonePublications(phone,profiles,phone.sale||{}):phone)}
+function repairSoldPublicationStates(phones,profiles=[]){return(Array.isArray(phones)?phones:[]).map(phone=>{const repaired=(soldPublicationStateNeedsRepair(phone)||soldSaleValueNeedsRepair(phone))?finalizeSoldPhonePublications(phone,profiles,phone.sale||{}):phone;return syncPhonePublicationStatus(repaired,normalizeMarketplaceProfiles(repaired))})}
 function salesDaysFromProfile(phone,profileId){
  const soldAt=phone?.sale?.soldAt;
  if(!soldAt)return null;

@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {Archive,Check,ChevronDown,Clock3,Eye,Filter,MoreHorizontal,Plus,RotateCcw,Search,Settings,Star,Trash2,UsersRound,WalletCards,X,TrendingUp} from 'lucide-react';
 import{phoneSaleDisplayValue}from'../../saleAccounting.js';
+import{syncPhonePublicationStatus}from'../../publicationStatus.js';
 function capacity(value){const text=String(value??'').trim();if(!text)return'';return /gb$/i.test(text)?text:`${text}GB`}
 function specs(phone){return [phone.color,capacity(phone.storage),phone.ram&&`${capacity(phone.ram)} RAM`,phone.nfc===true?'NFC':'',phone.connector||'',phone.screenProtector===true?'Película':'',phone.caseIncluded===true?'Capinha':'',phone.likeNew===true?'Estado de novo':'',phone.biometrics===true?'Biometria':''].filter(Boolean).join(' · ')||'Sem detalhes'}
 function InlineMoney({label,value,onCommit,tone=''}){const[draft,setDraft]=useState(String(Number(value||0).toFixed(2)).replace('.',','));useEffect(()=>setDraft(String(Number(value||0).toFixed(2)).replace('.',',')),[value]);const commit=()=>{const normalized=Number(String(draft).replace(/\./g,'').replace(',','.'));if(Number.isFinite(normalized))onCommit(Math.max(0,normalized));else setDraft(String(Number(value||0).toFixed(2)).replace('.',','))};return <label className={`v102-inline-money ${tone}`}><span>{label}</span><div><small>R$</small><input inputMode="decimal" value={draft} onChange={e=>setDraft(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==='Enter')e.currentTarget.blur();if(e.key==='Escape'){setDraft(String(Number(value||0).toFixed(2)).replace('.',','));e.currentTarget.blur()}}}/></div></label>}
@@ -77,14 +78,14 @@ export default function SmartphonesV102({filtered,statuses,statusFilter,setStatu
   if(phone?.sale?.soldAt||phone?.status==='Vendido')return;
   const map=profileMap(phone),current=map[profileId]||{},currentlyActive=current?.active!==false&&!!map[profileId];
   const stamp=new Date().toISOString(),date=stamp.slice(0,10);
-  const updated={...phone,marketplaceProfiles:{...map,[profileId]:{...current,active:!currentlyActive,publishedAt:!currentlyActive?(current.publishedAt||date):(current.publishedAt||''),updatedAt:stamp}},lastActivityAt:stamp};
+  const marketplaceProfiles={...map,[profileId]:{...current,active:!currentlyActive,publishedAt:!currentlyActive?(current.publishedAt||date):(current.publishedAt||''),updatedAt:stamp}},base={...phone,marketplaceProfiles,lastActivityAt:stamp},updated=syncPhonePublicationStatus(base,marketplaceProfiles,{returnToReadyWhenEmpty:currentlyActive});
   persist(items.map(item=>item.id===phone.id?updated:item));
   setProfilePhone(updated);
  };
  const updateProfileDate=(phone,profileId,publishedAt)=>{
   if(!publishedAt||phone?.sale?.soldAt||phone?.status==='Vendido')return;
   const map=profileMap(phone),current=map[profileId]||{},stamp=new Date().toISOString();
-  const updated={...phone,marketplaceProfiles:{...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}},lastActivityAt:stamp};
+  const marketplaceProfiles={...map,[profileId]:{...current,active:true,publishedAt,updatedAt:stamp}},base={...phone,marketplaceProfiles,lastActivityAt:stamp},updated=syncPhonePublicationStatus(base,marketplaceProfiles);
   persist(items.map(item=>item.id===phone.id?updated:item));
   setProfilePhone(updated);
  };
