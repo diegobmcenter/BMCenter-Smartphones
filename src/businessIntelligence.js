@@ -122,6 +122,65 @@ export function smartActionQueue(phones=[],profiles=[],orders=[],now=new Date(),
  return actions.sort((a,b)=>b.priority-a.priority||String(a.date||'').localeCompare(String(b.date||'')));
 }
 
+
+export function todayProductionQueue(phones=[],profiles=[],orders=[],now=new Date(),options={}){
+ const activeProfiles=(profiles||[]).filter(profile=>profile?.active!==false),photoDefault=Math.max(1,n(options.photoTarget)||10),actions=[],waiting=[];
+ const waitingOrders=new Map();
+ (orders||[]).forEach(order=>(order?.items||[]).forEach(item=>{
+  if(!item?.phoneId||!item?.confirmedAt||item?.receivedAt||item?.returnStatus)return;
+  const key=String(item.phoneId),rows=waitingOrders.get(key)||[];
+  rows.push({order,item});waitingOrders.set(key,rows);
+ }));
+ const addAction=item=>actions.push(item);
+ const addWaiting=item=>waiting.push(item);
+ (phones||[]).forEach(phone=>{
+  const phoneId=phone?.id,name=modelLabel(phone),status=String(phone?.status||'').trim(),key=String(phoneId||'');
+  if(!phoneId)return;
+  if(phone?.sale?.soldAt){
+   const sale=phone.sale,net=saleNetValueBI(sale),received=sale.receivedAmount===undefined?(sale.paymentStatus==='Pendente'?0:net):Math.max(0,n(sale.receivedAmount)),pending=Math.max(0,net-received);
+   if(pending>0)addAction({id:`receivable:${phoneId}`,phoneId,priority:sale.dueDate&&dateKey(sale.dueDate)<dateKey(now)?100:90,type:'receivable',title:name,detail:`Recebimento pendente · R$ ${pending.toFixed(2).replace('.',',')}`,cta:'Abrir venda'});
+   return;
+  }
+  if(closed(phone))return;
+  const orderRows=waitingOrders.get(key)||[];
+  const publishedIds=publishedProfileIdsBI(phone,activeProfiles),coverage=publishedIds.length,photoCount=Array.isArray(phone.mediaLibrary)?phone.mediaLibrary.length:0,photoTarget=Math.max(1,n(phone.photoTarget)||photoDefault);
+  const overdueTask=phone.nextActionDate&&dateKey(phone.nextActionDate)<dateKey(now);
+  if(overdueTask){addAction({id:`task:${phoneId}`,phoneId,priority:99,type:'task',title:name,detail:phone.nextAction||'Tarefa operacional vencida',cta:'Abrir aparelho'});return}
+  if(status==='Reservado'){addAction({id:`sale:${phoneId}`,phoneId,priority:96,type:'sale',title:name,detail:'Aparelho reservado · falta registrar a venda',cta:'Registrar venda'});return}
+  if(status==='Aguardando análise'){addAction({id:`analyze:${phoneId}`,phoneId,priority:95,type:'analyze',title:name,detail:'Aguardando análise inicial',cta:'Abrir análise'});return}
+  if(status==='Aguardando peças'||(phone.parts||[]).some(part=>['Cotando','Comprar','Comprada'].includes(String(part?.status||''))&&!['Pedido entregue','Instalada'].includes(String(part?.orderStatus||'')))){
+   if(orderRows.length){
+    const suppliers=[...new Set(orderRows.map(row=>row.order?.supplier).filter(Boolean))];
+    addWaiting({id:`parts-wait:${phoneId}`,phoneId,type:'parts',title:name,detail:`${orderRows.length} peça(s) aguardando recebimento${suppliers.length?` · ${suppliers.join(', ')}`:''}`,status:'Aguardando fornecedor'});
+   }else addAction({id:`parts:${phoneId}`,phoneId,priority:92,type:'parts',title:name,detail:'Peças ainda precisam de cotação ou compra',cta:'Resolver peças'});
+   return;
+  }
+  if(['Em reparo','Em testes','Conta Google/FRP','Preparar sistema'].includes(status)){
+   const cta=status==='Em testes'?'Concluir testes':'Continuar reparo';
+   addAction({id:`repair:${phoneId}`,phoneId,priority:88,type:'repair',title:name,detail:status,cta});return;
+  }
+  if(['Pronto','Para fotografar','Anúncio preparado'].includes(status)){
+   if(photoCount<photoTarget){addAction({id:`photos:${phoneId}`,phoneId,priority:86,type:'photos',title:name,detail:`Fotos ${photoCount}/${photoTarget}`,cta:'Continuar fotos'});return}
+   if(coverage===0){addAction({id:`ads:${phoneId}`,phoneId,priority:84,type:'ads',title:name,detail:'Fotos concluídas · anúncio ainda não publicado',cta:'Preparar anúncio'});return}
+   if(activeProfiles.length&&coverage<activeProfiles.length){const missing=activeProfiles.find(profile=>!publishedIds.includes(String(profile.id)));addAction({id:`coverage:${phoneId}`,phoneId,priority:82,type:'coverage',title:name,detail:`Publicado em ${coverage}/${activeProfiles.length} perfil(is)`,cta:missing?`Publicar em ${missing.name}`:'Completar anúncios'});return}
+   addWaiting({id:`sale-wait:${phoneId}`,phoneId,type:'sale',title:name,detail:'Anúncios completos · aguardando venda',status:'Aguardando comprador'});return;
+  }
+  if(status==='Anunciado'){
+   if(activeProfiles.length&&coverage<activeProfiles.length){const missing=activeProfiles.find(profile=>!publishedIds.includes(String(profile.id)));addAction({id:`coverage:${phoneId}`,phoneId,priority:82,type:'coverage',title:name,detail:`Publicado em ${coverage}/${activeProfiles.length} perfil(is)`,cta:missing?`Publicar em ${missing.name}`:'Completar anúncios'});return}
+   addWaiting({id:`sale-wait:${phoneId}`,phoneId,type:'sale',title:name,detail:'Anúncios ativos · aguardando venda',status:'Aguardando comprador'});return;
+  }
+  const idle=operationalIdleDays(phone,now);
+  if(idle>=7)addAction({id:`stale:${phoneId}`,phoneId,priority:60+Math.min(idle,25),type:'stale',title:name,detail:`${idle} dia(s) sem movimentação`,cta:'Revisar aparelho'});
+ });
+ const exceptional=returnPendingActions(orders).map(item=>({...item,cta:item.type==='return'?'Registrar devolução':'Resolver reembolso'}));
+ const merged=[...exceptional,...actions].sort((a,b)=>b.priority-a.priority);
+ const uniqueActions=[];const seenAction=new Set();
+ merged.forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenAction.has(key))return;seenAction.add(key);uniqueActions.push(item)});
+ const uniqueWaiting=[];const seenWaiting=new Set();
+ waiting.forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenWaiting.has(key)||seenAction.has(key))return;seenWaiting.add(key);uniqueWaiting.push(item)});
+ return{actions:uniqueActions,waiting:uniqueWaiting};
+}
+
 export function capitalAllocation(phones=[]){
  const active=(phones||[]).filter(phone=>!closed(phone));
  const buckets={analysis:0,parts:0,repair:0,ready:0,announced:0,other:0,total:0};

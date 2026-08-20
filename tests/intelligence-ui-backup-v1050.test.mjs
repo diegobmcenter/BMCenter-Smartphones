@@ -15,7 +15,7 @@ assert.match(main,/buildOperationalTimeline/,'timeline operacional completa deve
 assert.match(main,/photoThumbnail/,'fluxo integrado de fotos deve gerar miniatura persistente');
 assert.match(main,/async function addMedia\(files\)[\s\S]*onSave\(next\)/,'Foto capturada deve ser persistida imediatamente no aparelho e no backup');
 assert.match(dash,/Capital por etapa/);assert.match(dash,/RADAR DE ESTOQUE/);assert.match(dash,/SUGESTÕES AUTOMÁTICAS/);
-assert.match(today,/PRIORIDADES AUTOMÁTICAS/);assert.match(reports,/Preço máximo sugerido/);assert.match(reports,/Rentabilidade das vendas/);assert.match(reports,/GIRO POR MODELO/);
+assert.match(today,/PRÓXIMAS AÇÕES|PRIORIDADES AUTOMÁTICAS/,'Tela Hoje precisa manter uma fila operacional explícita');assert.match(reports,/Preço máximo sugerido/);assert.match(reports,/Rentabilidade das vendas/);assert.match(reports,/GIRO POR MODELO/);
 assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/,'KPIs desktop devem permanecer compactos');
 assert.match(css,/@media\(max-width:720px\)/,'novos recursos precisam de regra mobile explícita');
 // Todos os novos dados persistentes ficam dentro de bmcenter-smartphones, já coberto pelo backup prefix-based.
