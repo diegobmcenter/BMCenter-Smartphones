@@ -57,8 +57,8 @@ export function partsOperationalCounters(phones=[],orders=[]){
  return{
   open:openRows.length,
   quotes:openRows.filter(row=>row.quotes.length).length,
-  orders:normalizedOrders.filter(order=>order.status!=='received').length,
-  received:normalizedOrders.filter(order=>order.status==='received').length,
+  orders:normalizedOrders.filter(order=>(order.items||[]).length&&order.status!=='received').length,
+  received:normalizedOrders.filter(order=>(order.items||[]).length&&order.status==='received').length,
   returns:pendingReturns+financialPending
  }
 }
@@ -151,13 +151,29 @@ export function allocateFreight(items=[],freight=0){
 }
 
 export function normalizePartsOrder(order={}){
- const items=allocateFreight(Array.isArray(order.items)?order.items:[],order.freight||0);
- const subtotal=roundMoney(items.reduce((sum,item)=>sum+Number(item.price||0),0));
  const freight=roundMoney(order.freight||0);
- const status=deriveOrderStatus(items);
+ const linkedRaw=(Array.isArray(order.items)?order.items:[]).map(item=>({...item,__orderKind:'linked',price:roundMoney(item.price||0)}));
+ const externalRaw=(Array.isArray(order.externalItems)?order.externalItems:[]).map((item,index)=>{
+  const quantity=Math.max(1,Math.floor(Number(item.quantity||1)||1));
+  const unitPrice=roundMoney(item.unitPrice!==undefined?item.unitPrice:(Number(item.price||0)/quantity));
+  return{...item,id:item.id||`external-${index+1}`,__orderKind:'external',partName:String(item.partName||item.name||'Item avulso').trim()||'Item avulso',reference:String(item.reference||''),quantity,unitPrice,price:roundMoney(unitPrice*quantity),confirmedAt:item.confirmedAt||'',receivedAt:item.receivedAt||''}
+ });
+ // O frete do pedido real é rateado entre TODOS os itens, inclusive avulsos. Assim a
+ // parcela pertencente a cliente/uso pessoal nunca é empurrada para o custo dos aparelhos BMCenter.
+ const allocated=allocateFreight([...linkedRaw,...externalRaw],freight);
+ const items=allocated.filter(item=>item.__orderKind==='linked').map(({__orderKind,...item})=>item);
+ const externalItems=allocated.filter(item=>item.__orderKind==='external').map(({__orderKind,...item})=>item);
+ const allItems=[...items,...externalItems];
+ const linkedSubtotal=roundMoney(items.reduce((sum,item)=>sum+Number(item.price||0),0));
+ const externalSubtotal=roundMoney(externalItems.reduce((sum,item)=>sum+Number(item.price||0),0));
+ const subtotal=roundMoney(linkedSubtotal+externalSubtotal);
+ const status=deriveOrderStatus(allItems);
  const allReceived=status==='received';
  const returnedRecovered=roundMoney(items.reduce((sum,item)=>sum+returnRecoveredAmount(item),0));
  const returnedPending=roundMoney(items.reduce((sum,item)=>sum+(item.returnStatus==='returned'&&item.returnFinancialStatus==='pending'?returnRefundTotal(item):0),0));
+ const linkedFreight=roundMoney(items.reduce((sum,item)=>sum+Number(item.freightShare||0),0));
+ const externalFreight=roundMoney(externalItems.reduce((sum,item)=>sum+Number(item.freightShare||0),0));
+ const externalReturnPending=roundMoney(externalItems.filter(item=>item.returnStatus==='pending').reduce((sum,item)=>sum+Number(item.effectiveCost||item.price||0),0));
  return{
   ...order,
   id:order.id||crypto.randomUUID(),
@@ -165,15 +181,25 @@ export function normalizePartsOrder(order={}){
   status,
   orderDate:order.orderDate||'',
   expectedDate:order.expectedDate||'',
-  receivedAt:allReceived?(order.receivedAt||items.map(item=>item.receivedAt).filter(Boolean).sort().at(-1)||''):'',
+  receivedAt:allReceived?(order.receivedAt||allItems.map(item=>item.receivedAt).filter(Boolean).sort().at(-1)||''):'',
   freight,
   notes:String(order.notes||''),
   items,
+  externalItems,
+  linkedSubtotal,
+  externalSubtotal,
   subtotal,
+  linkedFreight,
+  externalFreight,
+  systemTotal:roundMoney(linkedSubtotal+linkedFreight),
+  externalTotal:roundMoney(externalSubtotal+externalFreight),
   total:roundMoney(subtotal+freight),
   returnedRecovered,
   returnedPending,
-  netCost:roundMoney(Math.max(0,subtotal+freight-returnedRecovered)),
+  externalReturnPending,
+  // netCost continua representando somente o custo operacional BMCenter. Itens avulsos
+  // são preservados no total pago ao fornecedor, mas não entram na margem dos aparelhos.
+  netCost:roundMoney(Math.max(0,linkedSubtotal+linkedFreight-returnedRecovered)),
   createdAt:order.createdAt||new Date().toISOString(),
   updatedAt:order.updatedAt||new Date().toISOString()
  }
@@ -267,17 +293,23 @@ export function createMultiBulkPartsOrder({phones=[],products=[],supplier='',fre
  const cleanSupplier=String(supplier||'').trim();
  if(!cleanSupplier)throw new Error('Informe o fornecedor.');
  const normalizeName=value=>String(value||'').trim().toLocaleLowerCase('pt-BR');
- const prepared=(Array.isArray(products)?products:[]).map((product,index)=>({
+ const sourceProducts=(Array.isArray(products)?products:[]).map((product,index)=>({
   ...product,
   id:product.id||`product-${index+1}`,
+  type:product.type==='external'?'external':'linked',
   name:String(product.name||product.partName||'').trim(),
   unitPrice:roundMoney(product.unitPrice||0),
+  quantity:Math.max(1,Math.floor(Number(product.quantity||1)||1)),
+  reference:String(product.reference||''),
   phoneIds:[...new Set((Array.isArray(product.phoneIds)?product.phoneIds:[]).map(String))],
   pricesByPhone:product.pricesByPhone&&typeof product.pricesByPhone==='object'?product.pricesByPhone:{}
- })).filter(product=>product.name&&product.phoneIds.length);
- if(!prepared.length)throw new Error('Adicione pelo menos um produto e selecione os aparelhos dele.');
+ }));
+ const prepared=sourceProducts.filter(product=>product.name&&(product.type==='external'||product.phoneIds.length));
+ if(!prepared.length)throw new Error('Adicione pelo menos um produto do BMCenter ou um item avulso.');
+ const linkedProducts=prepared.filter(product=>product.type!=='external');
+ const externalProducts=prepared.filter(product=>product.type==='external');
  const names=new Set();
- for(const product of prepared){
+ for(const product of linkedProducts){
   const key=normalizeName(product.name);
   if(names.has(key))throw new Error(`O produto "${product.name}" foi adicionado mais de uma vez. Una os aparelhos no mesmo produto.`);
   names.add(key)
@@ -286,7 +318,7 @@ export function createMultiBulkPartsOrder({phones=[],products=[],supplier='',fre
  const skipped=[],items=[];
  let added=0,reused=0;
  const assignments=new Map();
- prepared.forEach(product=>product.phoneIds.forEach(phoneId=>{
+ linkedProducts.forEach(product=>product.phoneIds.forEach(phoneId=>{
   const list=assignments.get(phoneId)||[];
   list.push(product);assignments.set(phoneId,list)
  }));
@@ -320,10 +352,26 @@ export function createMultiBulkPartsOrder({phones=[],products=[],supplier='',fre
    timelineNames.push(product.name)
   }
   if(!timelineNames.length)return{...phone,parts};
-  return{...phone,parts,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:idFactory(),date:stamp,message:`Compra em massa registrada: ${timelineNames.join(', ')}`}]} 
+  return{...phone,parts,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:idFactory(),date:stamp,message:`Compra em massa registrada: ${timelineNames.join(', ')}`}]}
  });
- if(!items.length)return{phones:nextPhones,order:null,skipped,added,reused};
- const order=normalizePartsOrder({id:idFactory(),source:'bulk',bulkVersion:2,supplier:cleanSupplier,orderDate:orderDate||today,expectedDate:expectedDate||'',freight:roundMoney(freight),notes:String(notes||''),items,createdAt:stamp,updatedAt:stamp,receivedAt:receivedNow?stamp:''});
+ const externalItems=externalProducts.map(product=>({
+  id:idFactory(),
+  itemType:'external',
+  bulkProductId:product.id,
+  partName:product.name,
+  reference:product.reference,
+  quantity:product.quantity,
+  unitPrice:roundMoney(product.unitPrice),
+  price:roundMoney(product.unitPrice*product.quantity),
+  confirmedAt:stamp,
+  receivedAt:receivedNow?stamp:'',
+  returnStatus:'',
+  returnMarkedAt:'',
+  returnedToSupplierAt:'',
+  resolvedAt:''
+ }));
+ if(!items.length&&!externalItems.length)return{phones:nextPhones,order:null,skipped,added,reused};
+ const order=normalizePartsOrder({id:idFactory(),source:'bulk',bulkVersion:2,mixedOrderVersion:1,supplier:cleanSupplier,orderDate:orderDate||today,expectedDate:expectedDate||'',freight:roundMoney(freight),notes:String(notes||''),items,externalItems,createdAt:stamp,updatedAt:stamp,receivedAt:receivedNow?stamp:''});
  return{phones:nextPhones,order,skipped,added,reused}
 }
 
