@@ -74,3 +74,20 @@
 .parts-v10535-inline-filters{grid-template-columns:repeat(4,minmax(120px,1fr)) 34px!important}
 @media(max-width:1180px){.parts-v10535-inline-filters{grid-template-columns:repeat(3,minmax(120px,1fr)) auto 34px!important}}
 @media(max-width:860px){.parts-v10535-inline-filters{grid-template-columns:repeat(2,minmax(0,1fr)) 34px!important}}
+
+
+/* BMCenter v10.5.37 — topo da Central de Peças realmente em uma linha no desktop */
+.parts-v10518-head{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:"intro summary actions"!important;align-items:start!important;column-gap:10px!important;row-gap:8px!important}
+.parts-v10518-head>.parts-v47-head-actions{justify-self:end!important;align-self:start!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:5px!important;width:auto!important}
+.parts-v10518-head>.parts-v47-head-actions button{min-height:32px!important;height:32px!important;padding:0 8px!important;font-size:8px!important}
+.parts-v10518-head>.parts-v47-head-actions .icon-only{width:32px!important;min-width:32px!important}
+.parts-v10535-head-main{gap:6px!important}
+.parts-v10535-inline-filters{grid-template-columns:92px 128px 122px 126px 34px!important;gap:6px!important;justify-content:start!important;max-width:max-content!important}
+.parts-v10535-inline-filters select,.parts-v10535-inline-filters button{min-width:0!important;width:100%!important;min-height:32px!important;height:32px!important;padding-left:10px!important;padding-right:10px!important}
+.parts-v10536-icon-clear{padding:0!important}
+.parts-v10518-summary{gap:5px!important}
+.parts-v10518-summary>button{padding:6px 8px!important;min-height:32px!important;height:32px!important;font-size:9px!important}
+.parts-v10518-summary>button b{font-size:14px!important}
+@media(max-width:1320px){.parts-v10518-head{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"intro summary" "actions actions"!important}.parts-v10518-head>.parts-v47-head-actions{justify-self:stretch!important;width:100%!important;justify-content:flex-end!important}.parts-v10535-inline-filters{grid-template-columns:88px 118px 112px 116px 34px!important}}
+@media(max-width:1180px){.parts-v10518-head{grid-template-columns:1fr!important;grid-template-areas:"intro" "summary" "actions"!important}.parts-v10518-head>.parts-v47-head-actions{justify-self:stretch!important;width:100%!important;justify-content:flex-start!important;flex-wrap:wrap!important}.parts-v10535-inline-filters{grid-template-columns:repeat(3,minmax(120px,1fr)) 34px!important;max-width:100%!important}}
+@media(max-width:860px){.parts-v10535-inline-filters{grid-template-columns:repeat(2,minmax(0,1fr)) 34px!important}}
