@@ -77,7 +77,7 @@ export function partsPeriodReportMetrics(orders=[],dateInRange=()=>true){
   purchasedValue:roundMoney(purchased.reduce((sum,row)=>sum+row.gross,0)),
   returnsQty:returned.length,
   recoveredValue:roundMoney(settled.reduce((sum,row)=>sum+returnRecoveredAmount(row.item),0)),
-  unrecoveredLoss:roundMoney(settled.reduce((sum,row)=>sum+Math.max(0,row.gross-returnRecoveredAmount(row.item)),0)),
+  unrecoveredLoss:roundMoney(settled.reduce((sum,row)=>sum+Math.max(0,row.gross-returnRecoveredAmount(row.item))+returnShippingNetCost(row.item),0)),
   supplierSpend
  }
 }
@@ -99,7 +99,8 @@ export function isPartCostCommitted(part={}){
 export function effectivePartCost(part){
  if(!isPartCostCommitted(part))return 0;
  const gross=partGrossCost(part);
- return roundMoney(Math.max(0,gross-returnRecoveredAmount({...part,effectiveCost:gross})))
+ const purchaseNet=Math.max(0,gross-returnRecoveredAmount({...part,effectiveCost:gross}));
+ return roundMoney(purchaseNet+returnShippingNetCost(part))
 }
 
 export function isPartProcurementComplete(part={}){
@@ -126,28 +127,34 @@ export function deriveOrderStatus(items=[]){
  return'draft'
 }
 
+export function itemQuantity(item={}){
+ return Math.max(1,Math.floor(Number(item?.quantity||1)||1))
+}
+
+// Regra oficial BMCenter: o frete é sempre dividido pela QUANTIDADE TOTAL DE UNIDADES,
+// nunca pelo valor dos produtos. Linhas avulsas com quantidade > 1 contam cada unidade.
 export function allocateFreight(items=[],freight=0){
  const freightCents=Math.max(0,Math.round((Number(freight)||0)*100));
- const normalized=items.map(item=>({...item,price:roundMoney(item.price)}));
+ const normalized=items.map(item=>({...item,quantity:itemQuantity(item),price:roundMoney(item.price)}));
  if(!normalized.length)return normalized;
  if(!freightCents)return normalized.map(item=>({...item,freightShare:0,effectiveCost:roundMoney(item.price)}));
- const priceCents=normalized.map(item=>Math.max(0,Math.round(Number(item.price||0)*100)));
- const subtotalCents=priceCents.reduce((a,b)=>a+b,0);
- let shares=new Array(normalized.length).fill(0);
- if(subtotalCents>0){
-  const raw=priceCents.map(value=>freightCents*value/subtotalCents);
-  shares=raw.map(value=>Math.floor(value));
-  let remainder=freightCents-shares.reduce((a,b)=>a+b,0);
-  const order=raw.map((value,index)=>({index,fraction:value-Math.floor(value)})).sort((a,b)=>b.fraction-a.fraction||a.index-b.index);
-  for(let i=0;i<remainder;i++)shares[order[i%order.length].index]++
- }else{
-  const base=Math.floor(freightCents/normalized.length),remainder=freightCents-base*normalized.length;
-  shares=shares.map((_,index)=>base+(index<remainder?1:0))
- }
+ const totalUnits=normalized.reduce((sum,item)=>sum+itemQuantity(item),0);
+ const basePerUnit=Math.floor(freightCents/totalUnits);
+ let remainder=freightCents-(basePerUnit*totalUnits);
+ const shares=normalized.map(item=>{
+  const quantity=itemQuantity(item);
+  const extra=Math.min(remainder,quantity);
+  remainder-=extra;
+  return basePerUnit*quantity+extra
+ });
  return normalized.map((item,index)=>{
   const freightShare=shares[index]/100;
   return{...item,freightShare,effectiveCost:roundMoney(Number(item.price||0)+freightShare)}
  })
+}
+
+export function returnShippingNetCost(part={}){
+ return roundMoney(Math.max(0,Number(part?.returnShippingFreightShare||0)-Number(part?.returnShippingFreightRefundShare||0)))
 }
 
 export function normalizePartsOrder(order={}){
@@ -173,6 +180,10 @@ export function normalizePartsOrder(order={}){
  const returnedPending=roundMoney(items.reduce((sum,item)=>sum+(item.returnStatus==='returned'&&item.returnFinancialStatus==='pending'?returnRefundTotal(item):0),0));
  const linkedFreight=roundMoney(items.reduce((sum,item)=>sum+Number(item.freightShare||0),0));
  const externalFreight=roundMoney(externalItems.reduce((sum,item)=>sum+Number(item.freightShare||0),0));
+ const linkedReturnFreight=roundMoney(items.reduce((sum,item)=>sum+Number(item.returnShippingFreightShare||0),0));
+ const linkedReturnFreightRefund=roundMoney(items.reduce((sum,item)=>sum+Number(item.returnShippingFreightRefundShare||0),0));
+ const externalReturnFreight=roundMoney(externalItems.reduce((sum,item)=>sum+Number(item.returnShippingFreightShare||0),0));
+ const externalReturnFreightRefund=roundMoney(externalItems.reduce((sum,item)=>sum+Number(item.returnShippingFreightRefundShare||0),0));
  const externalReturnPending=roundMoney(externalItems.filter(item=>item.returnStatus==='pending').reduce((sum,item)=>sum+Number(item.effectiveCost||item.price||0),0));
  return{
   ...order,
@@ -191,6 +202,10 @@ export function normalizePartsOrder(order={}){
   subtotal,
   linkedFreight,
   externalFreight,
+  linkedReturnFreight,
+  linkedReturnFreightRefund,
+  externalReturnFreight,
+  externalReturnFreightRefund,
   systemTotal:roundMoney(linkedSubtotal+linkedFreight),
   externalTotal:roundMoney(externalSubtotal+externalFreight),
   total:roundMoney(subtotal+freight),
@@ -199,7 +214,7 @@ export function normalizePartsOrder(order={}){
   externalReturnPending,
   // netCost continua representando somente o custo operacional BMCenter. Itens avulsos
   // são preservados no total pago ao fornecedor, mas não entram na margem dos aparelhos.
-  netCost:roundMoney(Math.max(0,linkedSubtotal+linkedFreight-returnedRecovered)),
+  netCost:roundMoney(Math.max(0,linkedSubtotal+linkedFreight-returnedRecovered)+Math.max(0,linkedReturnFreight-linkedReturnFreightRefund)),
   createdAt:order.createdAt||new Date().toISOString(),
   updatedAt:order.updatedAt||new Date().toISOString()
  }
@@ -263,6 +278,11 @@ export function syncOrdersIntoPhones(phones=[],orders=[]){
     returnRefundDate:item.returnRefundDate||'',
     returnFinancialUpdatedAt:item.returnFinancialUpdatedAt||'',
     returnRecoveredAmount:returnRecoveredAmount(item),
+    returnShipmentId:item.returnShipmentId||'',
+    returnShippingDate:item.returnShippingDate||'',
+    returnShippingFreightShare:roundMoney(item.returnShippingFreightShare||0),
+    returnShippingFreightRefundShare:roundMoney(item.returnShippingFreightRefundShare||0),
+    returnShippingNetCost:returnShippingNetCost(item),
     orderStatus:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?'Pedido entregue':confirmed?'Pedido realizado':'Não pedido',
     status:returnStatus==='pending'?'Para devolver':returnStatus==='returned'?'Devolvida':received?(part.status==='Instalada'?'Instalada':'Recebida'):confirmed?'Comprada':['Comprada','Recebida'].includes(part.status)?'Cotando':part.status
    }

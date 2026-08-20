@@ -22,25 +22,25 @@ assert.equal(result.order.externalItems.length,1,'item de cliente fica isolado e
 assert.equal(result.order.linkedSubtotal,100);
 assert.equal(result.order.externalSubtotal,50);
 assert.equal(result.order.total,165,'total real do fornecedor inclui BMCenter + avulsos + frete');
-assert.equal(result.order.items[0].freightShare,10,'frete do aparelho deve considerar também os itens avulsos no rateio');
-assert.equal(result.order.externalItems[0].freightShare,5);
-assert.equal(result.order.systemTotal,110,'somente parcela BMCenter compõe custo operacional');
-assert.equal(result.order.externalTotal,55);
+assert.equal(result.order.items[0].freightShare,5,'frete deve ser dividido pela quantidade total de unidades do pedido');
+assert.equal(result.order.externalItems[0].freightShare,10,'duas unidades avulsas recebem duas cotas iguais de frete');
+assert.equal(result.order.systemTotal,105,'somente a cota de frete da unidade BMCenter compõe custo operacional');
+assert.equal(result.order.externalTotal,60);
 assert.equal(result.order.status,'received');
 
 const synced=syncOrdersIntoPhones(result.phones,[result.order]);
-assert.equal(synced[0].parts[0].effectiveCost,110,'item avulso não pode empurrar seu custo/frete para o aparelho');
+assert.equal(synced[0].parts[0].effectiveCost,105,'item avulso não pode empurrar seu custo/frete para o aparelho');
 assert.equal(synced[0].parts.length,1,'item avulso nunca cria peça no aparelho');
 
 const period=partsPeriodReportMetrics([result.order],()=>true);
 assert.equal(period.purchasedQty,1,'relatório operacional ignora item avulso');
-assert.equal(period.purchasedValue,110,'relatório inclui apenas custo BMCenter e seu frete rateado');
-assert.equal(period.supplierSpend['TEC Cell'],110);
+assert.equal(period.purchasedValue,105,'relatório inclui apenas custo BMCenter e sua cota por unidade');
+assert.equal(period.supplierSpend['TEC Cell'],105);
 
 const withExternalReturn=normalizePartsOrder({...result.order,externalItems:result.order.externalItems.map(item=>({...item,returnStatus:'pending',returnMarkedAt:'2026-08-20T11:00:00Z'}))});
-assert.equal(withExternalReturn.externalReturnPending,55,'lembrete avulso guarda o valor físico separado, inclusive seu frete rateado');
-assert.equal(withExternalReturn.netCost,110,'devolução avulsa não altera custo BMCenter');
-assert.equal(syncOrdersIntoPhones(synced,[withExternalReturn])[0].parts[0].effectiveCost,110);
+assert.equal(withExternalReturn.externalReturnPending,60,'lembrete avulso guarda o valor físico separado, inclusive o frete de suas duas unidades');
+assert.equal(withExternalReturn.netCost,105,'devolução avulsa não altera custo BMCenter');
+assert.equal(syncOrdersIntoPhones(synced,[withExternalReturn])[0].parts[0].effectiveCost,105);
 
 const externalOnly=normalizePartsOrder({id:'ext-only',supplier:'Pessoal',freight:3,externalItems:[{id:'e1',partName:'Cabo',reference:'Uso pessoal',quantity:1,unitPrice:10,confirmedAt:'2026-08-20T10:00:00Z'}]});
 const counters=partsOperationalCounters([], [externalOnly]);
