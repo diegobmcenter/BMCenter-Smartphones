@@ -15,9 +15,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';import'./v1072.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';import'./v1072.css';import'./v1073.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.25';
+const APP_VERSION='10.5.26';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{const next=k===SKEY&&Array.isArray(v)?v.map(phone=>syncPhonePublicationStatus(phone,normalizeMarketplaceProfiles(phone))):v;localStorage.setItem(k,JSON.stringify(next));queueCloudSave(k,next)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -714,27 +714,85 @@ function FacebookProfileModal({item,onClose,onSave}){
 }
 
 function BatchActionsPage(){
- const[phones,setPhones]=useState(load(SKEY)),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState('Ativos'),[selected,setSelected]=useState([]),[newStatus,setNewStatus]=useState(''),[newTag,setNewTag]=useState('');
+ const[phones,setPhones]=useState(load(SKEY)),[profiles,setProfiles]=useState(load(PKEY)),[query,setQuery]=useState(''),[statusFilter,setStatusFilter]=useState('Ativos'),[selected,setSelected]=useState([]),[newStatus,setNewStatus]=useState(''),[newTag,setNewTag]=useState(''),[removeTagValue,setRemoveTagValue]=useState(''),[publicationProfileId,setPublicationProfileId]=useState(''),[publicationMode,setPublicationMode]=useState(''),[reviewOpen,setReviewOpen]=useState(false),[lastBatchAction,setLastBatchAction]=useState(null);
  useRemoteStorageBridge(SKEY,setPhones,value=>Array.isArray(value)?value:[]);
+ useRemoteStorageBridge(PKEY,setProfiles,value=>Array.isArray(value)?value:[]);
  const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setPhones(lean);save(SKEY,lean)};
  const rows=phones.filter(p=>{const text=`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')}`.toLowerCase();const statusOk=statusFilter==='Todos'||(statusFilter==='Ativos'?!isClosedPhone(p):p.status===statusFilter);return text.includes(query.toLowerCase())&&statusOk});
  const allSelected=rows.length>0&&rows.every(p=>selected.includes(p.id));
- function toggle(id){setSelected(selected.includes(id)?selected.filter(x=>x!==id):[...selected,id])}
- function applyBatch(){
+ const selectedPhones=phones.filter(p=>selected.includes(p.id));
+ const selectedTags=[...new Set(selectedPhones.flatMap(p=>p.tags||[]))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+ const targetStatuses=statuses.filter(status=>!['Vendido','Descarte/Sucata'].includes(status));
+ const batchProfile=profiles.find(profile=>String(profile.id)===String(publicationProfileId));
+ const cleanAddTag=newTag.trim().toUpperCase();
+ const hasBatchIntent=!!(newStatus||cleanAddTag||removeTagValue||publicationMode);
+ const protectedOps=!!(newStatus||publicationMode);
+ const protectedSelected=protectedOps?selectedPhones.filter(isClosedPhone):[];
+ const previewItems=[newStatus&&`Status → ${newStatus}`,cleanAddTag&&`Adicionar etiqueta → ${cleanAddTag}`,removeTagValue&&`Remover etiqueta → ${removeTagValue}`,publicationMode&&batchProfile&&`${publicationMode==='publish'?'Marcar publicado':'Remover publicação'} → ${batchProfile.name}`].filter(Boolean);
+ const canReview=selected.length>0&&hasBatchIntent&&(!publicationMode||!!batchProfile)&&!(cleanAddTag&&removeTagValue&&cleanAddTag===removeTagValue);
+ const batchPreview={selectedCount:selected.length,protectedCount:protectedSelected.length,items:previewItems,profileName:batchProfile?.name||''};
+ function toggle(id){setSelected(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id])}
+ function clearBatchInputs(){setNewStatus('');setNewTag('');setRemoveTagValue('');setPublicationProfileId('');setPublicationMode('')}
+ function openBatchReview(){
   if(!selected.length)return alert('Selecione pelo menos um aparelho.');
-  const stamp=new Date().toISOString();
-  const changed=phones.map(p=>{if(!selected.includes(p.id))return p;let next={...p},changes=[];if(newStatus){next.status=newStatus;changes.push(`status para ${newStatus}`)}if(newTag.trim()){const clean=newTag.trim().toUpperCase();next.tags=[...new Set([...(next.tags||[]),clean])];changes.push(`etiqueta ${clean}`)}next.lastActivityAt=stamp;return changes.length?addTimeline(next,`Alteração em lote: ${changes.join(', ')}`):next});
-  persist(changed);setSelected([]);setNewStatus('');setNewTag('');
+  if(!hasBatchIntent)return alert('Escolha pelo menos uma alteração.');
+  if(publicationMode&&!batchProfile)return alert('Selecione o perfil de publicação.');
+  if(cleanAddTag&&removeTagValue&&cleanAddTag===removeTagValue)return alert('A mesma etiqueta não pode ser adicionada e removida na mesma operação.');
+  setReviewOpen(true)
  }
- const selectedTags=[...new Set(phones.filter(p=>selected.includes(p.id)).flatMap(p=>p.tags||[]))].sort();
- function removeTag(tag){persist(phones.map(p=>selected.includes(p.id)?addTimeline({...p,tags:(p.tags||[]).filter(t=>t!==tag),lastActivityAt:new Date().toISOString()},`Etiqueta removida em lote: ${tag}`):p))}
+ function confirmBatch(){
+  if(!canReview)return;
+  const stamp=new Date().toISOString(),date=stamp.slice(0,10),before=[],changedIds=[];
+  const changed=phones.map(phone=>{
+   if(!selected.includes(phone.id))return phone;
+   let next={...phone},changes=[];
+   const protectedPhone=isClosedPhone(phone);
+   if(newStatus&&!protectedPhone&&next.status!==newStatus){next.status=newStatus;changes.push(`status para ${newStatus}`)}
+   if(cleanAddTag&&!(next.tags||[]).includes(cleanAddTag)){next.tags=[...new Set([...(next.tags||[]),cleanAddTag])];changes.push(`etiqueta adicionada ${cleanAddTag}`)}
+   if(removeTagValue&&(next.tags||[]).includes(removeTagValue)){next.tags=(next.tags||[]).filter(tag=>tag!==removeTagValue);changes.push(`etiqueta removida ${removeTagValue}`)}
+   if(publicationMode&&batchProfile&&!protectedPhone){
+    const map=normalizeMarketplaceProfiles(next),hasEntry=Object.prototype.hasOwnProperty.call(map,publicationProfileId),current=map[publicationProfileId]||{},currentActive=hasEntry&&current.active!==false,active=publicationMode==='publish';
+    if(currentActive!==active){
+     const marketplaceProfiles={...map,[publicationProfileId]:{...current,active,publishedAt:active?(current.publishedAt||date):current.publishedAt||'',updatedAt:stamp}};
+     const beforeStatus=next.status;
+     next=syncPhonePublicationStatus({...next,marketplaceProfiles},marketplaceProfiles,{returnToReadyWhenEmpty:!active});
+     changes.push(`${active?'publicado':'publicação removida'} no perfil ${batchProfile.name}`);
+     if(next.status!==beforeStatus)changes.push(`status sincronizado para ${next.status}`)
+    }
+   }
+   if(!changes.length)return phone;
+   before.push(phone);changedIds.push(phone.id);
+   next=addTimeline(next,`Alteração em lote: ${changes.join(', ')}`);
+   return{...next,lastActivityAt:stamp}
+  });
+  if(!changedIds.length){setReviewOpen(false);return alert('Nenhum dado precisava ser alterado nos aparelhos selecionados.');}
+  persist(changed);
+  setLastBatchAction({stamp,before,ids:changedIds,summary:previewItems.join(' · '),count:changedIds.length});
+  setSelected([]);clearBatchInputs();setReviewOpen(false)
+ }
+ function undoLastBatch(){
+  if(!lastBatchAction?.before?.length)return;
+  const previousById=new Map(lastBatchAction.before.map(phone=>[phone.id,phone]));
+  let restored=0,skipped=0;
+  const next=phones.map(phone=>{
+   const previous=previousById.get(phone.id);if(!previous)return phone;
+   if(phone.lastActivityAt!==lastBatchAction.stamp){skipped++;return phone}
+   restored++;return previous
+  });
+  if(restored)persist(next);
+  setLastBatchAction(null);
+  if(skipped)alert(`${restored} aparelho(s) restaurado(s). ${skipped} não foram desfeitos porque receberam outra alteração depois da ação em lote.`)
+ }
  return <BatchV102
   rows={rows} selected={selected} setSelected={setSelected} query={query} setQuery={setQuery}
-  statusFilter={statusFilter} setStatusFilter={setStatusFilter} statuses={statuses}
+  statusFilter={statusFilter} setStatusFilter={setStatusFilter} statuses={statuses} targetStatuses={targetStatuses}
   newStatus={newStatus} setNewStatus={setNewStatus} newTag={newTag} setNewTag={setNewTag}
-  applyBatch={applyBatch} toggle={toggle} allSelected={allSelected}
-  daysSince={daysSince} phoneDisplayName={phoneDisplayName}
-/>
+  removeTagValue={removeTagValue} setRemoveTagValue={setRemoveTagValue} selectedTags={selectedTags}
+  profiles={profiles} publicationProfileId={publicationProfileId} setPublicationProfileId={setPublicationProfileId} publicationMode={publicationMode} setPublicationMode={setPublicationMode}
+  openBatchReview={openBatchReview} confirmBatch={confirmBatch} reviewOpen={reviewOpen} setReviewOpen={setReviewOpen} batchPreview={batchPreview} canReview={canReview}
+  lastBatchAction={lastBatchAction} undoLastBatch={undoLastBatch} clearBatchInputs={clearBatchInputs}
+  toggle={toggle} allSelected={allSelected} daysSince={daysSince} phoneDisplayName={phoneDisplayName}
+ />
 }
 
 function DataQualityPage(){
