@@ -1,0 +1,73 @@
+/* BMCenter v10.5.22 — correção definitiva do enquadramento do topo da Central de Peças */
+.parts-v10518-head{
+  grid-template-columns:minmax(280px,1fr) minmax(0,max-content)!important;
+  grid-template-areas:
+    "intro summary"
+    "actions actions"!important;
+  align-items:start!important;
+  gap:10px!important;
+}
+.parts-v10518-head>div:first-child{
+  grid-area:intro!important;
+  min-width:0!important;
+}
+.parts-v10518-head>.parts-v10518-summary{
+  grid-area:summary!important;
+  justify-self:end!important;
+  align-self:start!important;
+  justify-content:flex-end!important;
+  flex-wrap:wrap!important;
+  row-gap:6px!important;
+  max-width:100%!important;
+}
+.parts-v10518-head>.parts-v47-head-actions{
+  grid-area:actions!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+.parts-v10518-head>.parts-v47-head-actions button{
+  flex:0 0 auto!important;
+  min-height:34px!important;
+  height:34px!important;
+  padding:0 10px!important;
+}
+.parts-v10518-head>.parts-v47-head-actions .icon-only{
+  width:34px!important;
+  min-width:34px!important;
+  padding:0!important;
+}
+
+/* garante enquadramento correto mesmo com sidebar + zoom do navegador */
+@media(max-width:1500px){
+  .parts-v10518-head>.parts-v10518-summary{
+    justify-self:start!important;
+  }
+}
+@media(max-width:1180px){
+  .parts-v10518-head{
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "intro"
+      "summary"
+      "actions"!important;
+  }
+  .parts-v10518-head>.parts-v10518-summary,
+  .parts-v10518-head>.parts-v47-head-actions{
+    justify-self:stretch!important;
+    width:100%!important;
+  }
+  .parts-v10518-head>.parts-v47-head-actions{
+    justify-content:flex-start!important;
+  }
+}
+@media(max-width:760px){
+  .parts-v10518-head>.parts-v47-head-actions button:not(.icon-only){
+    flex:1 1 auto!important;
+    min-width:140px!important;
+  }
+}
