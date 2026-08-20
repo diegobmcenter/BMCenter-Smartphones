@@ -2,7 +2,7 @@ import React,{useEffect,useMemo,useRef,useState}from'react';import{createRoot}fr
 import{QRCodeSVG}from'qrcode.react';
 import{effectivePartCost,partsOperationalCounters,partsPeriodReportMetrics,returnRefundTotal,returnRecoveredAmount,returnPartRefundDraft,normalizePartsOrder,normalizePartsOrders,syncOrdersIntoPhones,migrateLegacyPartsOrders,recoverLegacyPartOrderStatusMutations,isPartProcurementComplete,isPartOpenForProcurement,orderStatusLabel,createBulkPartsOrder,createMultiBulkPartsOrder,removePartsOrderLinks,bulkPhoneProductsTotal,undoPartsOrderStep}from'./partsOrders.js';
 import{workflowStageForPhone}from'./workflow.js';
-import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAllocation,intelligencePhoneCost,modelKey,operationalIdleDays,phoneOtherCosts,profitabilityForPhone,purchaseSuggestion,smartActionQueue,stockAgingRows,todayProductionQueue,turnoverByModel}from'./businessIntelligence.js';
+import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAllocation,intelligencePhoneCost,modelKey,operationalIdleDays,phoneOtherCosts,profitabilityForPhone,purchaseSuggestion,smartActionQueue,stockAgingRows,todayCompletedActivity,todayProductionQueue,turnoverByModel}from'./businessIntelligence.js';
 import{phoneSaleDisplayValue,restoreSuggestedValueAfterSaleRemoval,soldSaleValueNeedsRepair,syncRecordedSaleValue}from'./saleAccounting.js';
 import{syncPhonePublicationStatus}from'./publicationStatus.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
@@ -15,9 +15,9 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';
 const SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.23';
+const APP_VERSION='10.5.24';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales'];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{const next=k===SKEY&&Array.isArray(v)?v.map(phone=>syncPhonePublicationStatus(phone,normalizeMarketplaceProfiles(phone))):v;localStorage.setItem(k,JSON.stringify(next));queueCloudSave(k,next)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -551,8 +551,8 @@ function GoalsPage(){
 }
 
 function TodayPage({navigate}){
- const[detail,setDetail]=useState(null);
- const phones=load(SKEY),profiles=load(PKEY),orders=normalizePartsOrders(load(OKEY)),alerts=getOperationalAlerts(),active=phones.filter(p=>!isClosedPhone(p));
+ const[detail,setDetail]=useState(null),[,setTodayRevision]=useState(0);
+ const phones=load(SKEY),profiles=load(PKEY),orders=normalizePartsOrders(load(OKEY)),active=phones.filter(p=>!isClosedPhone(p));
  const stageFor=phone=>workflowStageForPhone(phone,{hasAds:!!(phone.ads||migrateLegacyAds(phone)).length});
  const groups=[
   {title:'Analisar',items:active.filter(p=>stageFor(p)==='analyze')},
@@ -561,17 +561,31 @@ function TodayPage({navigate}){
   {title:'Prontos para anunciar',items:active.filter(p=>stageFor(p)==='ready')}
  ];
  const production=todayProductionQueue(phones,profiles,orders,new Date());
+ const completed=todayCompletedActivity(phones,profiles,orders,new Date());
  const publishedPhones=active.filter(phone=>publishedProfileIds(phone).length>0).length;
  const readyPhones=active.filter(phone=>['Pronto','Para fotografar','Anúncio preparado'].includes(phone.status)).length;
- const metrics={actions:production.actions.length,waiting:production.waiting.length,ready:readyPhones,published:publishedPhones};
+ const metrics={attention:production.attention.length,actions:production.actions.length,waiting:production.waiting.length,ready:readyPhones,published:publishedPhones,completed:completed.length};
  const openPhone=phoneId=>{const phone=phones.find(item=>String(item.id)===String(phoneId));if(phone)setDetail(phone)};
  const runAction=item=>{
-  if(['parts','return','refund'].includes(item?.type)){navigate?.('parts');return}
-  if(['ads','coverage'].includes(item?.type)){navigate?.('ads');return}
+  if(['parts','return','refund'].includes(item?.type)||/^(late-part|quote-stale|return|refund):/.test(String(item?.id||''))){navigate?.('parts');return}
+  if(['ads','coverage'].includes(item?.type)||String(item?.id||'').startsWith('ready-no-ad:')){navigate?.('ads');return}
   openPhone(item?.phoneId);
  };
- const persistPhone=phone=>{const next=phones.map(item=>item.id===phone.id?touchPhone(phone):item);save(SKEY,next);setDetail(phone)};
- return <><TodayV102 groups={groups} alerts={alerts} actions={production.actions} waiting={production.waiting} metrics={metrics} phoneDisplayName={phoneDisplayName} onOpenPhone={openPhone} onRunAction={runAction}/>{detail&&<PhoneDetailModal item={phones.find(item=>item.id===detail.id)||detail} profiles={profiles} orders={orders} onClose={()=>setDetail(null)} onSave={persistPhone}/>}</>
+ const runQuickAction=item=>{
+  if(!item?.quickAction)return runAction(item);
+  const phone=phones.find(x=>String(x.id)===String(item.phoneId));if(!phone)return;
+  let nextStatus='',message='';
+  if(item.quickAction==='startTests'){nextStatus='Em testes';message='Reparo concluído; aparelho enviado para testes'}
+  if(item.quickAction==='markReady'){nextStatus='Pronto';message='Testes concluídos; aparelho marcado como Pronto'}
+  if(!nextStatus)return runAction(item);
+  if(!confirm(`${item.cta}?\n\n${phoneDisplayName(phone,{includeCode:true})}`))return;
+  const now=new Date().toISOString(),updated=touchPhone({...phone,status:nextStatus,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:now,message}]});
+  save(SKEY,phones.map(x=>x.id===phone.id?updated:x));
+  setDetail(current=>current?.id===phone.id?updated:current);
+  setTodayRevision(value=>value+1);
+ };
+ const persistPhone=phone=>{const next=phones.map(item=>item.id===phone.id?touchPhone(phone):item);save(SKEY,next);setDetail(phone);setTodayRevision(value=>value+1)};
+ return <><TodayV102 groups={groups} attention={production.attention} actions={production.actions} waiting={production.waiting} completed={completed} metrics={metrics} phoneDisplayName={phoneDisplayName} onOpenPhone={openPhone} onRunAction={runAction} onQuickAction={runQuickAction}/>{detail&&<PhoneDetailModal item={phones.find(item=>item.id===detail.id)||detail} profiles={profiles} orders={orders} onClose={()=>setDetail(null)} onSave={persistPhone}/>}</>
 
 }
 

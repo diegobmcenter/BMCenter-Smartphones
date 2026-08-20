@@ -2,7 +2,7 @@ import{effectivePartCost}from'./partsOrders.js';
 
 const n=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;let text=String(v??'').trim().replace(/[^0-9,.-]/g,'');if(text.includes(','))text=text.replace(/\./g,'').replace(',','.');const x=Number(text);return Number.isFinite(x)?x:0};
 const dayMs=86400000;
-const dateKey=value=>String(value||'').slice(0,10);
+const dateKey=value=>{if(value instanceof Date&&Number.isFinite(value.getTime()))return`${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')}`;const text=String(value||'');if(/^\d{4}-\d{2}-\d{2}/.test(text))return text.slice(0,10);const d=new Date(value||0);return Number.isFinite(d.getTime())?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''};
 const time=value=>{const t=new Date(value||0).getTime();return Number.isFinite(t)?t:0};
 const daysBetween=(a,b)=>{const start=time(a),end=time(b);return start&&end?Math.max(0,Math.round((end-start)/dayMs)):0};
 const closed=phone=>['Vendido','Descarte/Sucata'].includes(String(phone?.status||''));
@@ -124,18 +124,38 @@ export function smartActionQueue(phones=[],profiles=[],orders=[],now=new Date(),
 
 
 export function todayProductionQueue(phones=[],profiles=[],orders=[],now=new Date(),options={}){
- const activeProfiles=(profiles||[]).filter(profile=>profile?.active!==false),photoDefault=Math.max(1,n(options.photoTarget)||10),actions=[],waiting=[];
+ const activeProfiles=(profiles||[]).filter(profile=>profile?.active!==false),photoDefault=Math.max(1,n(options.photoTarget)||10),attention=[],actions=[],waiting=[];
  const waitingOrders=new Map();
  (orders||[]).forEach(order=>(order?.items||[]).forEach(item=>{
   if(!item?.phoneId||!item?.confirmedAt||item?.receivedAt||item?.returnStatus)return;
   const key=String(item.phoneId),rows=waitingOrders.get(key)||[];
   rows.push({order,item});waitingOrders.set(key,rows);
  }));
- const addAction=item=>actions.push(item);
- const addWaiting=item=>waiting.push(item);
+ const attentionPhoneIds=new Set();
+ const addAttention=item=>{const key=item?.phoneId?String(item.phoneId):item.id;if(attentionPhoneIds.has(key))return;attentionPhoneIds.add(key);attention.push(item)};
+ const addAction=item=>{const key=item?.phoneId?String(item.phoneId):item.id;if(!attentionPhoneIds.has(key))actions.push(item)};
+ const addWaiting=item=>{const key=item?.phoneId?String(item.phoneId):item.id;if(!attentionPhoneIds.has(key))waiting.push(item)};
+
+ /* Exceções primeiro: o aparelho não deve aparecer também em Ações/Aguardando. */
+ returnPendingActions(orders).forEach(item=>addAttention({...item,priority:item.type==='return'?100:98,cta:item.type==='return'?'Registrar devolução':'Resolver reembolso',reason:item.type==='return'?'Devolução pendente':'Financeiro pendente'}));
+ (phones||[]).forEach(phone=>{
+  const phoneId=phone?.id;if(!phoneId||closed(phone)||phone?.sale?.soldAt)return;
+  const name=modelLabel(phone),status=String(phone?.status||'').trim(),key=String(phoneId),publishedIds=publishedProfileIdsBI(phone,activeProfiles),coverage=publishedIds.length,idle=operationalIdleDays(phone,now),orderRows=waitingOrders.get(key)||[];
+  if(coverage>0&&!['Anunciado','Reservado'].includes(status))addAttention({id:`status-ad:${phoneId}`,phoneId,priority:99,type:'attention',title:name,detail:`Publicado em ${coverage} perfil(is), mas o status está “${status||'Sem status'}”`,cta:'Revisar aparelho',reason:'Status e anúncios divergentes'});
+  else if(status==='Reservado'&&idle>=2)addAttention({id:`reserved:${phoneId}`,phoneId,priority:94,type:'attention',title:name,detail:`Reservado há ${idle} dia(s) sem venda registrada`,cta:'Registrar venda',reason:'Reserva parada'});
+  else if(orderRows.length){
+   const oldest=Math.max(...orderRows.map(row=>daysBetween(row.item.confirmedAt||row.order?.orderDate||row.order?.createdAt,now)));
+   if(oldest>=7){const suppliers=[...new Set(orderRows.map(row=>row.order?.supplier).filter(Boolean))];addAttention({id:`late-part:${phoneId}`,phoneId,priority:93,type:'attention',title:name,detail:`${orderRows.length} peça(s) aguardando há até ${oldest} dia(s)${suppliers.length?` · ${suppliers.join(', ')}`:''}`,cta:'Ver pedido',reason:'Pedido demorando'});}
+  }
+  const photoCount=Array.isArray(phone.mediaLibrary)?phone.mediaLibrary.length:0,photoTarget=Math.max(1,n(phone.photoTarget)||photoDefault);
+  if(!attentionPhoneIds.has(key)&&['Pronto','Para fotografar','Anúncio preparado'].includes(status)&&photoCount>=photoTarget&&coverage===0&&idle>=3)addAttention({id:`ready-no-ad:${phoneId}`,phoneId,priority:91,type:'attention',title:name,detail:`Pronto há ${idle} dia(s), fotos concluídas e nenhum anúncio ativo`,cta:'Preparar anúncio',reason:'Pronto sem anúncio'});
+  const hasQuote=(phone.parts||[]).some(part=>Array.isArray(part?.quotes)&&part.quotes.length>0&&!part?.purchaseOrderId&&!['Pedido entregue','Instalada'].includes(String(part?.orderStatus||'')));
+  if(!attentionPhoneIds.has(key)&&status==='Aguardando peças'&&hasQuote&&!orderRows.length&&idle>=5)addAttention({id:`quote-stale:${phoneId}`,phoneId,priority:89,type:'attention',title:name,detail:`Cotação sem avanço há ${idle} dia(s)`,cta:'Resolver peças',reason:'Cotação parada'});
+ });
+
  (phones||[]).forEach(phone=>{
   const phoneId=phone?.id,name=modelLabel(phone),status=String(phone?.status||'').trim(),key=String(phoneId||'');
-  if(!phoneId)return;
+  if(!phoneId||attentionPhoneIds.has(key))return;
   if(phone?.sale?.soldAt){
    const sale=phone.sale,net=saleNetValueBI(sale),received=sale.receivedAmount===undefined?(sale.paymentStatus==='Pendente'?0:net):Math.max(0,n(sale.receivedAmount)),pending=Math.max(0,net-received);
    if(pending>0)addAction({id:`receivable:${phoneId}`,phoneId,priority:sale.dueDate&&dateKey(sale.dueDate)<dateKey(now)?100:90,type:'receivable',title:name,detail:`Recebimento pendente · R$ ${pending.toFixed(2).replace('.',',')}`,cta:'Abrir venda'});
@@ -156,8 +176,9 @@ export function todayProductionQueue(phones=[],profiles=[],orders=[],now=new Dat
    return;
   }
   if(['Em reparo','Em testes','Conta Google/FRP','Preparar sistema'].includes(status)){
-   const cta=status==='Em testes'?'Concluir testes':'Continuar reparo';
-   addAction({id:`repair:${phoneId}`,phoneId,priority:88,type:'repair',title:name,detail:status,cta});return;
+   if(status==='Em reparo'){addAction({id:`repair:${phoneId}`,phoneId,priority:88,type:'repair',title:name,detail:'Em reparo',cta:'Enviar para testes',quickAction:'startTests'});return}
+   if(status==='Em testes'){addAction({id:`repair:${phoneId}`,phoneId,priority:88,type:'repair',title:name,detail:'Em testes',cta:'Concluir testes',quickAction:'markReady'});return}
+   addAction({id:`repair:${phoneId}`,phoneId,priority:88,type:'repair',title:name,detail:status,cta:'Continuar reparo'});return;
   }
   if(['Pronto','Para fotografar','Anúncio preparado'].includes(status)){
    if(photoCount<photoTarget){addAction({id:`photos:${phoneId}`,phoneId,priority:86,type:'photos',title:name,detail:`Fotos ${photoCount}/${photoTarget}`,cta:'Continuar fotos'});return}
@@ -172,13 +193,24 @@ export function todayProductionQueue(phones=[],profiles=[],orders=[],now=new Dat
   const idle=operationalIdleDays(phone,now);
   if(idle>=7)addAction({id:`stale:${phoneId}`,phoneId,priority:60+Math.min(idle,25),type:'stale',title:name,detail:`${idle} dia(s) sem movimentação`,cta:'Revisar aparelho'});
  });
- const exceptional=returnPendingActions(orders).map(item=>({...item,cta:item.type==='return'?'Registrar devolução':'Resolver reembolso'}));
- const merged=[...exceptional,...actions].sort((a,b)=>b.priority-a.priority);
  const uniqueActions=[];const seenAction=new Set();
- merged.forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenAction.has(key))return;seenAction.add(key);uniqueActions.push(item)});
+ actions.sort((a,b)=>b.priority-a.priority).forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenAction.has(key)||attentionPhoneIds.has(key))return;seenAction.add(key);uniqueActions.push(item)});
  const uniqueWaiting=[];const seenWaiting=new Set();
- waiting.forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenWaiting.has(key)||seenAction.has(key))return;seenWaiting.add(key);uniqueWaiting.push(item)});
- return{actions:uniqueActions,waiting:uniqueWaiting};
+ waiting.forEach(item=>{const key=item.phoneId?String(item.phoneId):item.id;if(seenWaiting.has(key)||seenAction.has(key)||attentionPhoneIds.has(key))return;seenWaiting.add(key);uniqueWaiting.push(item)});
+ return{attention:attention.sort((a,b)=>b.priority-a.priority),actions:uniqueActions,waiting:uniqueWaiting};
+}
+
+export function todayCompletedActivity(phones=[],profiles=[],orders=[],now=new Date()){
+ const today=dateKey(now),rows=[];const push=(id,date,phoneId,title,detail,type='done')=>{if(dateKey(date)!==today)return;rows.push({id,date,phoneId,title,detail,type})};
+ (phones||[]).forEach(phone=>{
+  if(!phone?.id)return;const name=modelLabel(phone);
+  if(phone?.sale?.soldAt)push(`sale:${phone.id}`,phone.sale.soldAt,phone.id,name,`Venda registrada · R$ ${n(phone.sale.value).toFixed(2).replace('.',',')}`,'sale');
+  const photos=(phone?.mediaLibrary||[]).filter(item=>dateKey(item?.date)===today);if(photos.length)push(`photos:${phone.id}`,photos[photos.length-1]?.date||`${today}T12:00:00`,phone.id,name,`${photos.length} foto(s) vinculada(s) hoje`,'photos');
+  const published=[];const map=phone?.marketplaceProfiles&&typeof phone.marketplaceProfiles==='object'&&!Array.isArray(phone.marketplaceProfiles)?phone.marketplaceProfiles:{};Object.entries(map).forEach(([id,value])=>{if(dateKey(value?.publishedAt)===today)published.push(id)});(phone?.ads||[]).forEach(ad=>Object.entries(ad?.publications||{}).forEach(([id,pub])=>{if(pub?.status==='published'&&dateKey(pub?.date||pub?.updatedAt)===today)published.push(id)}));if(published.length)push(`ads:${phone.id}`,`${today}T12:00:00`,phone.id,name,`${new Set(published).size} publicação(ões) registrada(s) hoje`,'ads');
+  (phone?.timeline||[]).forEach(entry=>{const msg=String(entry?.message||'');if(dateKey(entry?.date)===today&&/(teste|reparo|pronto|anúncio|publica|venda|recebid|devolu|reembolso)/i.test(msg))push(`timeline:${phone.id}:${entry.id}`,entry.date,phone.id,name,msg,'timeline')});
+ });
+ (orders||[]).forEach(order=>(order?.items||[]).forEach(item=>{if(item?.receivedAt)push(`received:${order.id}:${item.id}`,item.receivedAt,item.phoneId,item.phoneLabel||'Aparelho',`${item.partName||'Peça'} recebida · ${order.supplier||'Fornecedor'}`,'parts')}));
+ const seen=new Set();return rows.sort((a,b)=>time(b.date)-time(a.date)).filter(row=>{const key=`${row.phoneId}:${row.detail}`;if(seen.has(key))return false;seen.add(key);return true});
 }
 
 export function capitalAllocation(phones=[]){
