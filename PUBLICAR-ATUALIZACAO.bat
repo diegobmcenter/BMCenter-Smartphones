@@ -2,11 +2,11 @@
 setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
 
-title BMCenter Smartphones v10.5.38 - Publicar Atualizacao
+title BMCenter Smartphones v10.5.39 - Publicar Atualizacao
 
 set "REPO=https://github.com/diegobmcenter/BMCenter-Smartphones.git"
 set "BRANCH=main"
-set "VERSION=10.5.38"
+set "VERSION=10.5.39"
 
 echo.
 echo ============================================================
