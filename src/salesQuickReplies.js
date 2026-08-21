@@ -27,3 +27,22 @@ export function buildSalesQuickReplies(phone,settings={}){
   {id:'complete',label:'Resposta completa',hint:'Resumo pronto para enviar',text:[`Oi! ${availability}`,`${detailLine}, ${condition}.`,extrasSentence,`Valor: ${price}.`,location].filter(Boolean).join(' ')}
  ]
 }
+
+export function buildAvailablePhonesReply(phones,options={}){
+ const source=Array.isArray(phones)?phones:[];
+ const showColor=options.showColor!==false,showStorage=options.showStorage!==false,showBattery=options.showBattery===true,showCondition=options.showCondition===true;
+ const title=clean(options.title)||'📱 Aparelhos disponíveis:';
+ const location=clean(options.location);
+ const lines=source.map(phone=>{
+  const name=[clean(phone?.brand),clean(phone?.model)].filter(Boolean).join(' ')||'Smartphone';
+  const bits=[name];
+  if(showStorage&&phone?.storage)bits.push(capacity(phone.storage));
+  if(showColor&&phone?.color)bits.push(clean(phone.color));
+  if(showBattery&&phone?.batteryHealth)bits.push(`Bateria ${clean(phone.batteryHealth)}${String(phone.batteryHealth).includes('%')?'':'%'}`);
+  if(showCondition)bits.push(phone?.likeNew===true?'estado de novo':'seminovo');
+  const value=Number(phoneSaleDisplayValue(phone)||0);
+  return `• ${bits.join(' • ')} — ${value>0?brl(value):'valor a consultar'}`;
+ });
+ const footer=location?`\n\nEstou em ${location}. Se tiver interesse em algum, me fala que te envio fotos e mais detalhes. 😊`:'\n\nSe tiver interesse em algum, me fala que te envio fotos e mais detalhes. 😊';
+ return [title,...lines].join('\n')+footer;
+}
