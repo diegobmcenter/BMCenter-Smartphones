@@ -18,7 +18,7 @@ import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
 import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';import'./v1072.css';import'./v1073.css';import'./v1074.css';import'./v1075.css';import'./v10529.css';import'./v10530.css';
 const SALESREPLYKEY='bmcenter-sales-reply-settings',SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',RKEY='bmcenter-parts-standalone-returns',RSHIPKEY='bmcenter-parts-return-shipments',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.41';
+const APP_VERSION='10.5.42';
 const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,RKEY,RSHIPKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales',SALESREPLYKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{const next=k===SKEY&&Array.isArray(v)?v.map(phone=>syncPhonePublicationStatus(phone,normalizeMarketplaceProfiles(phone))):v;localStorage.setItem(k,JSON.stringify(next));queueCloudSave(k,next)};
 function useRemoteStorageBridge(key,setter,normalize){
@@ -3378,24 +3378,70 @@ function PhoneModal({item,banks,suppliers,onClose,onSave}){
 
 function SellerModal({item,onClose,onSave}){const[f,setF]=useState(item),set=(k,v)=>setF({...f,[k]:v});return <Modal title="Cadastro de vendedor" onClose={onClose}><div className="grid"><Field label="Nome" value={f.name} onChange={v=>set('name',v)}/><Field label="Telefone" value={f.phone} onChange={v=>set('phone',v)}/><Field label="Cidade" value={f.city} onChange={v=>set('city',v)}/><Field label="Endereço" value={f.address} onChange={v=>set('address',v)}/></div><label>Observações<textarea value={f.notes} onChange={e=>set('notes',e.target.value)}/></label><div className="actions"><button onClick={onClose}>Cancelar</button><button className="primary" onClick={()=>onSave(f)}>Salvar</button></div></Modal>}
 function GlobalInlineSelectLayer(){
- const[menu,setMenu]=useState(null);
+ const [menu,setMenu]=useState(null);
+ const menuRef=useRef(null);
  useEffect(()=>{
+  const cleanupTarget=target=>{try{target?.classList?.remove('global-inline-select-open')}catch{}};
+  const close=()=>setMenu(current=>{if(current?.target)cleanupTarget(current.target);return null});
   const open=event=>{
    const target=event.target instanceof Element?event.target.closest('select'):null;
    if(!target||target.disabled||target.multiple||target.closest('.global-inline-select-menu'))return;
-   event.preventDefault();event.stopPropagation();
-   const rect=target.getBoundingClientRect(),options=[...target.options].map((option,index)=>({index,value:option.value,label:option.textContent||option.label||option.value,disabled:option.disabled,selected:option.selected}));
-   setMenu({target,rect:{left:rect.left,top:rect.top,bottom:rect.bottom,width:rect.width},options,value:target.value});
+   if('button' in event && event.button!==0)return;
+   event.preventDefault();
+   event.stopPropagation();
+   cleanupTarget(menuRef.current?.target);
+   try{document.activeElement instanceof HTMLElement&&document.activeElement.blur?.();target.blur?.()}catch{}
+   const rect=target.getBoundingClientRect();
+   const options=[...target.options].map((option,index)=>({index,value:option.value,label:option.textContent||option.label||option.value,disabled:option.disabled}));
+   target.classList.add('global-inline-select-open');
+   const viewport=window.visualViewport;
+   setMenu({target,options,value:target.value,rect:{left:rect.left+(viewport?.offsetLeft||0),top:rect.top+(viewport?.offsetTop||0),bottom:rect.bottom+(viewport?.offsetTop||0),width:rect.width},stamp:Date.now()});
   };
-  const blockClick=event=>{const target=event.target instanceof Element?event.target.closest('select'):null;if(target&&!target.disabled&&!target.multiple){event.preventDefault();event.stopPropagation()}};
-  const close=()=>setMenu(null);
-  document.addEventListener('pointerdown',open,true);document.addEventListener('click',blockClick,true);window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
-  return()=>{document.removeEventListener('pointerdown',open,true);document.removeEventListener('click',blockClick,true);window.removeEventListener('resize',close);window.removeEventListener('scroll',close,true)};
+  const blockClick=event=>{
+   const target=event.target instanceof Element?event.target.closest('select'):null;
+   if(target&&!target.disabled&&!target.multiple){event.preventDefault();event.stopPropagation()}
+  };
+  const closeOnEscape=event=>{if(event.key==='Escape')close()};
+  document.addEventListener('pointerdown',open,true);
+  document.addEventListener('click',blockClick,true);
+  document.addEventListener('keydown',closeOnEscape,true);
+  window.addEventListener('resize',close);
+  window.addEventListener('scroll',close,true);
+  window.visualViewport?.addEventListener?.('resize',close);
+  window.visualViewport?.addEventListener?.('scroll',close);
+  return()=>{
+   document.removeEventListener('pointerdown',open,true);
+   document.removeEventListener('click',blockClick,true);
+   document.removeEventListener('keydown',closeOnEscape,true);
+   window.removeEventListener('resize',close);
+   window.removeEventListener('scroll',close,true);
+   window.visualViewport?.removeEventListener?.('resize',close);
+   window.visualViewport?.removeEventListener?.('scroll',close);
+   cleanupTarget(menuRef.current?.target);
+  };
  },[]);
- if(!menu)return null;
- const width=Math.min(Math.max(menu.rect.width,180),Math.max(180,window.innerWidth-16)),estimated=Math.min(320,menu.options.length*38+14),below=window.innerHeight-menu.rect.bottom,top=below>=Math.min(estimated,220)?menu.rect.bottom+4:Math.max(8,menu.rect.top-estimated-4),left=Math.min(Math.max(8,menu.rect.left),Math.max(8,window.innerWidth-width-8));
- const choose=option=>{if(option.disabled)return;const select=menu.target;if(!select?.isConnected){setMenu(null);return}select.value=option.value;select.dispatchEvent(new Event('input',{bubbles:true}));select.dispatchEvent(new Event('change',{bubbles:true}));setMenu(null)};
- return <div className="global-inline-select-layer" onPointerDown={()=>setMenu(null)}><div className="global-inline-select-menu" style={{left,top,width}} onPointerDown={e=>e.stopPropagation()}>{menu.options.map(option=><button type="button" key={`${option.index}-${option.value}`} className={option.value===menu.value?'selected':''} disabled={option.disabled} onClick={()=>choose(option)}><span>{option.label}</span>{option.value===menu.value&&<Check size={15}/>}</button>)}</div></div>
+ useEffect(()=>{menuRef.current=menu||null},[menu]);
+ if(!menu||!menu.options?.length)return null;
+ const vv=window.visualViewport;
+ const viewportWidth=vv?.width||window.innerWidth;
+ const viewportHeight=vv?.height||window.innerHeight;
+ const rowHeight=viewportWidth<=720?42:36;
+ const maxHeight=Math.max(120,Math.min(viewportHeight-24,Math.min(menu.options.length*rowHeight+12,viewportWidth<=720?260:300)));
+ const width=Math.min(Math.max(menu.rect.width,180),Math.max(180,viewportWidth-16));
+ const placeBelow=menu.rect.bottom+maxHeight+8<=viewportHeight+(vv?.offsetTop||0);
+ const top=placeBelow?Math.min((vv?.offsetTop||0)+viewportHeight-maxHeight-8,menu.rect.bottom+4):Math.max((vv?.offsetTop||0)+8,menu.rect.top-maxHeight-4);
+ const left=Math.min(Math.max((vv?.offsetLeft||0)+8,menu.rect.left),Math.max((vv?.offsetLeft||0)+8,(vv?.offsetLeft||0)+viewportWidth-width-8));
+ const choose=option=>{
+  if(option.disabled)return;
+  const select=menu.target;
+  if(!select?.isConnected){setMenu(null);return}
+  select.value=option.value;
+  select.dispatchEvent(new Event('input',{bubbles:true}));
+  select.dispatchEvent(new Event('change',{bubbles:true}));
+  try{select.blur?.()}catch{}
+  setMenu(current=>{if(current?.target)current.target.classList.remove('global-inline-select-open');return null});
+ };
+ return <div className="global-inline-select-layer" onPointerDown={()=>setMenu(current=>{if(current?.target)current.target.classList.remove('global-inline-select-open');return null})}><div className="global-inline-select-menu" role="listbox" style={{left,top,width,maxHeight}} onPointerDown={e=>e.stopPropagation()}>{menu.options.map(option=><button type="button" key={`${option.index}-${option.value}`} className={option.value===menu.value?'selected':''} disabled={option.disabled} onPointerDown={e=>{e.preventDefault();e.stopPropagation();choose(option)}}><span>{option.label}</span>{option.value===menu.value&&<Check size={15}/>}</button>)}</div></div>
 }
 
 function Modal({title,onClose,children,className='',subtitle='',titleIcon=null}) {

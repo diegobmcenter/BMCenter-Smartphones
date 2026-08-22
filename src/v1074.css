@@ -391,3 +391,27 @@
  .v102-app .v10538-phone-list{max-height:none!important;overflow:visible!important}
  .v102-app .v10538-list-options pre{min-height:120px!important}
 }
+
+
+/* BMCenter v10.5.42 — hotfix visual global dos selects + mobile */
+.global-inline-select-layer{position:fixed!important;inset:0!important;z-index:2147483000!important;background:transparent!important;pointer-events:auto!important}
+.global-inline-select-menu{position:fixed!important;display:flex!important;flex-direction:column!important;gap:4px!important;padding:6px!important;overflow:auto!important;border:1px solid rgba(15,23,42,.12)!important;border-radius:14px!important;background:var(--surface,#ffffff)!important;box-shadow:0 20px 48px rgba(15,23,42,.22)!important;backdrop-filter:none!important;opacity:1!important;color:var(--text,#0f172a)!important}
+.global-inline-select-menu button{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-height:36px!important;padding:8px 10px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:inherit!important;text-align:left!important;font-size:12px!important;line-height:1.25!important;box-shadow:none!important}
+.global-inline-select-menu button:hover,.global-inline-select-menu button.selected{background:var(--accent-soft,rgba(37,99,235,.10))!important;color:var(--accent,#2563eb)!important}
+.global-inline-select-menu button:disabled{opacity:.45!important;cursor:not-allowed!important}
+.global-inline-select-menu button span{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+select.global-inline-select-open{outline:2px solid color-mix(in srgb,var(--accent,#2563eb) 40%,transparent)!important;outline-offset:1px!important}
+@media(max-width:720px){
+ .global-inline-select-menu{border-radius:16px!important;padding:7px!important}
+ .global-inline-select-menu button{min-height:40px!important;font-size:13px!important;padding:9px 11px!important}
+ .v102-app .v10538-list-builder{gap:10px!important}
+ .v102-app .v10538-list-options article>header{align-items:flex-start!important;flex-direction:column!important}
+ .v102-app .v10538-list-options article>header button{width:100%!important}
+ .parts-v10535-inline-filters{grid-template-columns:1fr 1fr!important;max-width:100%!important;gap:8px!important}
+ .parts-v10535-inline-filters>*{min-width:0!important;width:100%!important}
+ .parts-v10535-inline-filters>button:last-child,.parts-v10535-inline-filters>.icon-only{width:100%!important;min-width:0!important}
+ .parts-v10518-head>.parts-v47-head-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important}
+ .parts-v10518-head>.parts-v47-head-actions button:not(.icon-only){width:100%!important;justify-content:center!important}
+ .parts-v10518-head>.parts-v47-head-actions .icon-only{width:100%!important;min-width:0!important}
+ .parts-v10518-summary{grid-template-columns:1fr 1fr!important}
+}
