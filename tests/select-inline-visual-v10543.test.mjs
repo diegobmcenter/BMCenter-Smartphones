@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1074.css',import.meta.url),'utf8');
+assert.match(main,/theme-dark-menu/);
+assert.match(main,/maxRows=5/);
+assert.match(css,/theme-light-menu/);
+assert.match(css,/theme-dark-menu/);
+assert.match(css,/height:42px!important/);
+assert.match(css,/flex:0 0 auto!important/);
+assert.match(css,/background:#242421!important/);
+console.log('select-inline-visual-v10543.test: OK');

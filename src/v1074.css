@@ -415,3 +415,44 @@ select.global-inline-select-open{outline:2px solid color-mix(in srgb,var(--accen
  .parts-v10518-head>.parts-v47-head-actions .icon-only{width:100%!important;min-width:0!important}
  .parts-v10518-summary{grid-template-columns:1fr 1fr!important}
 }
+
+
+/* BMCenter v10.5.43 — dropdown global compacto e legível em claro/escuro */
+.global-inline-select-layer{
+  position:fixed!important;inset:0!important;z-index:2147483000!important;
+  background:transparent!important;pointer-events:auto!important;
+}
+.global-inline-select-menu{
+  position:fixed!important;display:block!important;height:auto!important;min-height:0!important;
+  overflow-y:auto!important;overflow-x:hidden!important;padding:6px!important;margin:0!important;
+  border-radius:12px!important;box-shadow:0 12px 30px rgba(15,23,42,.22)!important;
+  opacity:1!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
+}
+.global-inline-select-menu.theme-light-menu{
+  background:#ffffff!important;color:#1f2937!important;border:1px solid #d7dde5!important;
+}
+.global-inline-select-menu.theme-dark-menu{
+  background:#242421!important;color:#f4f4f5!important;border:1px solid #4a4a46!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.48)!important;
+}
+.global-inline-select-menu button{
+  display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;height:42px!important;min-height:42px!important;max-height:42px!important;
+  margin:0 0 2px!important;padding:0 10px!important;border:0!important;border-radius:8px!important;
+  background:transparent!important;color:inherit!important;box-shadow:none!important;text-align:left!important;
+  font-size:13px!important;font-weight:500!important;line-height:1.2!important;opacity:1!important;
+}
+.global-inline-select-menu button:last-child{margin-bottom:0!important}
+.global-inline-select-menu.theme-light-menu button:not(.selected){color:#1f2937!important}
+.global-inline-select-menu.theme-dark-menu button:not(.selected){color:#f4f4f5!important}
+.global-inline-select-menu.theme-light-menu button.selected{background:#e8efff!important;color:#2563eb!important}
+.global-inline-select-menu.theme-dark-menu button.selected{background:#26334f!important;color:#8fb3ff!important}
+.global-inline-select-menu button:disabled{opacity:.38!important}
+.global-inline-select-menu button span{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:inherit!important}
+.global-inline-select-menu button svg{flex:0 0 auto!important;color:currentColor!important}
+select.global-inline-select-open{outline:2px solid rgba(75,113,226,.45)!important;outline-offset:1px!important}
+@media(max-width:720px){
+ .global-inline-select-menu{padding:5px!important;border-radius:11px!important}
+ .global-inline-select-menu button{height:40px!important;min-height:40px!important;max-height:40px!important;font-size:12px!important;padding:0 9px!important}
+}
