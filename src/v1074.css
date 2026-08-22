@@ -381,3 +381,13 @@
  .global-inline-select-menu{font-size:12px!important;max-height:min(46dvh,320px)!important}
  .global-inline-select-menu button{min-height:42px!important;font-size:12px!important;padding:9px 11px!important}
 }
+
+
+/* BMCenter v10.5.41 — hotfix crash Check + quick reply mobile */
+.v102-app .v10538-quick-reply-modal .v10527-reply-footer{display:none!important}
+.v102-app .v10538-quick-reply-modal>.modalbody{padding-bottom:12px!important}
+@media(max-width:720px){
+ .v102-app .v10538-list-selection{min-height:0!important}
+ .v102-app .v10538-phone-list{max-height:none!important;overflow:visible!important}
+ .v102-app .v10538-list-options pre{min-height:120px!important}
+}
