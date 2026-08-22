@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+assert.match(main,/Confirmar alteração de status\?/,'troca de status deve pedir confirmação');
+assert.match(main,/Confirmar (?:recebimento|\$\{actionLabel\})|Confirmar \$\{actionLabel\}/,'confirmação\/recebimento de peças deve ser protegido');
+assert.match(main,/Confirmar ação: \$\{actionText\}\?/,'devoluções devem pedir confirmação');
+assert.match(main,/Confirmar .*remessa de devolução/,'remessa de devolução deve pedir confirmação');
+assert.match(main,/Confirmar registro financeiro da devolução\?/,'registro financeiro de devolução deve pedir confirmação');
+assert.match(main,/Confirmar movimentação de estoque\?/,'movimentação de estoque deve pedir confirmação');
+assert.match(main,/Confirmar \$\{action\}\?/,'registro ou alteração de venda deve pedir confirmação');
+assert.match(main,/Salvar alterações na lista de Status\?/,'edição global de status deve pedir confirmação');
+console.log('critical-confirmations-v10545.test: OK');

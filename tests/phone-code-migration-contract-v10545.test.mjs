@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+assert.match(main,/PHONE_CODE_MIGRATION_V10545_KEY/,'deve existir migração única dos códigos');
+assert.match(main,/resequencePhoneCodes\(phones/,'migração deve ressequenciar os aparelhos existentes');
+assert.match(main,/legacyCode/,'busca deve preservar acesso pelo código antigo');
+assert.match(main,/PHONE_CODE_COUNTER_KEY/,'sequência futura deve ter contador independente dos registros existentes');
+assert.doesNotMatch(main,/Math\.max\(870/,'nova sequência não pode manter piso antigo 870');
+assert.doesNotMatch(main,/848\+index/,'nova sequência não pode iniciar em 848');
+console.log('phone-code-migration-contract-v10545.test: OK');

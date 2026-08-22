@@ -6,6 +6,7 @@ import{adCoverageMetrics,buildOperationalTimeline,businessSuggestions,capitalAll
 import{phoneSaleDisplayValue,restoreSuggestedValueAfterSaleRemoval,soldSaleValueNeedsRepair,syncRecordedSaleValue}from'./saleAccounting.js';
 import{syncPhonePublicationStatus}from'./publicationStatus.js';
 import{buildSalesQuickReplies,buildAvailablePhonesReply,defaultSalesReplySettings,normalizeSalesReplySettings}from'./salesQuickReplies.js';
+import{nextPhoneCode as nextPhoneCodeValue,resequencePhoneCodes,phoneCreationTimestamp}from'./phoneCodes.js';
 import{BACKUP_RUNTIME_KEY,AUTO_BACKUP_CHECK_MS,automaticBackupBucket,backupFingerprint,shouldRefreshAutomaticBackup,auditBackupObject,decodeStorageRaw,encodeStorageValue}from'./backupAudit.js';
 import SmartphonesView from './pages/SmartphonesView.jsx';
 import AdsOverviewView from './pages/AdsOverviewView.jsx';
@@ -16,10 +17,10 @@ import DashboardV102 from './v102/pages/DashboardV102.jsx';
 import TodayV102 from './v102/pages/TodayV102.jsx';
 import SmartphonesV102 from './v102/pages/SmartphonesV102.jsx';
 import AdsV102 from './v102/pages/AdsV102.jsx';
-import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';import'./v1072.css';import'./v1073.css';import'./v1074.css';import'./v1075.css';import'./v10529.css';import'./v10530.css';
-const SALESREPLYKEY='bmcenter-sales-reply-settings',SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',RKEY='bmcenter-parts-standalone-returns',RSHIPKEY='bmcenter-parts-return-shipments',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
-const APP_VERSION='10.5.44';
-const ALL_CLOUD_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,RKEY,RSHIPKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales',SALESREPLYKEY];
+import BatchV102 from './v102/pages/BatchV102.jsx';import ActivityV102 from './v102/pages/ActivityV102.jsx';import ReportsV10 from './v10/pages/ReportsV10.jsx';import{cloudConfigured,getCloudSession,signInCloud,signUpCloud,signOutCloud,initializeCloudState,queueCloudSave,subscribeCloudState,getCloudStatus,clearCloudState,pushCloudStateNow,createCloudBackup,listCloudBackups,restoreCloudBackup,deleteCloudBackup,CLOUD_REMOTE_EVENT}from'./cloud.js';import'./styles.css';import'./v10.css';import'./v102.css';import'./v1023.css';import'./v1024.css';import'./v1025.css';import'./v1026.css';import'./v1027.css';import'./v1028.css';import'./v1029.css';import'./v1030.css';import'./v1031.css';import'./v1033.css';import'./v1034.css';import'./v1038.css';import'./v1039.css';import'./v10311.css';import'./v10312.css';import'./v10313.css';import'./v10314.css';import'./v10315.css';import'./v1040.css';import'./v1041.css';import'./v1042.css';import'./v1043.css';import'./v1044.css';import'./v1046.css';import'./v1047.css';import'./v1048.css';import'./v1049.css';import'./v10410.css';import'./v10413.css';import'./v10414.css';import'./v10415.css';import'./v10416.css';import'./v10417.css';import'./v10418.css';import'./v10423.css';import'./v10424.css';import'./v10447.css';import'./v10448.css';import'./v10449.css';import'./v10450.css';import'./v10451.css';import'./v10452.css';import'./v10453.css';import'./v10454.css';import'./v10455.css';import'./v10456.css';import'./v10457.css';import'./v10458.css';import'./v10459.css';import'./v10460.css';import'./v10461.css';import'./v10462.css';import'./v10463.css';import'./v10464.css';import'./v10465.css';import'./v10466.css';import'./v10467.css';import'./v10468.css';import'./v10469.css';import'./v10470.css';import'./v10472.css';import'./v10474.css';import'./v10476.css';import'./v10477.css';import'./v10478.css';import'./v10479.css';import'./v10480.css';import'./v10481.css';import'./v10482.css';import'./v10483.css';import'./v10484.css';import'./v10486.css';import'./v10487.css';import'./v10489.css';import'./v10490.css';import'./v10491.css';import'./v10493.css';import'./v1050.css';import'./v1051.css';import'./v1052.css';import'./v1053.css';import'./v1054.css';import'./v1055.css';import'./v1057.css';import'./v1059.css';import'./v1060.css';import'./v1061.css';import'./v1062.css';import'./v1063.css';import'./v1064.css';import'./v1067.css';import'./v1068.css';import'./v1069.css';import'./v1070.css';import'./v1071.css';import'./v1072.css';import'./v1073.css';import'./v1074.css';import'./v1075.css';import'./v10529.css';import'./v10530.css';import'./v1076.css';
+const SALESREPLYKEY='bmcenter-sales-reply-settings',PHONE_CODE_COUNTER_KEY='bmcenter-phone-code-counter-v10545',SKEY='bmcenter-smartphones',ADSNOTEKEY='bmcenter-ads-observations',VKEY='bmcenter-sellers',BKEY='bmcenter-bank-accounts',FKEY='bmcenter-suppliers',QKEY='bmcenter-parts-quote-settings',OKEY='bmcenter-parts-orders',RKEY='bmcenter-parts-standalone-returns',RSHIPKEY='bmcenter-parts-return-shipments',UKEY='bmcenter-users',PKEY='bmcenter-marketplace-profiles',TKEY='bmcenter-ad-templates',IKEY='bmcenter-parts-inventory',MKEY='bmcenter-inventory-movements',MENUKEY='bmcenter-visible-menus',CFGKEY='bmcenter-system-config',ATITLEKEY='bmcenter-ad-title-library',ADESCKEY='bmcenter-ad-description-library',VIEWKEY='bmcenter-saved-views',CHECKKEY='bmcenter-custom-checklists',GOALKEY='bmcenter-operational-goals',PHONECOLKEY='bmcenter-phone-columns',TABLELAYOUTKEY='bmcenter-table-layouts',SNAPKEY='bmcenter-auto-snapshots',PHONE_DRAFT_KEY='bmcenter-phone-draft',BATCH_DRAFT_KEY='bmcenter-batch-phone-draft',STATUSKEY='bmcenter-phone-statuses',AKEY='bmcenter-auth';
+const APP_VERSION='10.5.45';
+const ALL_CLOUD_KEYS=[SKEY,PHONE_CODE_COUNTER_KEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,RKEY,RSHIPKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,SNAPKEY,PHONE_DRAFT_KEY,BATCH_DRAFT_KEY,STATUSKEY,'bmcenter-font-scales',SALESREPLYKEY];
 const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}},save=(k,v)=>{const next=k===SKEY&&Array.isArray(v)?v.map(phone=>syncPhonePublicationStatus(phone,normalizeMarketplaceProfiles(phone))):v;localStorage.setItem(k,JSON.stringify(next));queueCloudSave(k,next)};
 function useRemoteStorageBridge(key,setter,normalize){
  const normalizeRef=useRef(normalize);normalizeRef.current=normalize;
@@ -55,21 +56,19 @@ function savePhoneStatuses(list){const next=sortPhoneStatuses(list);localStorage
 const statuses=loadPhoneStatuses();
 
 function isClosedPhone(phone){return ['Vendido','Descarte/Sucata'].includes(phone?.status)}
-const PHONE_CODE_FLOOR_KEY='bmcenter-phone-code-floor-v1042',PHONE_CODE_MIGRATION_KEY='bmcenter-phone-code-migration-v1042',STATUS_V1042_MIGRATION_KEY='bmcenter-status-v1042';
-function ensurePhoneCodeSequenceV1042(){
+const PHONE_CODE_MIGRATION_V10545_KEY='bmcenter-phone-code-migration-v10545',STATUS_V1042_MIGRATION_KEY='bmcenter-status-v1042';
+function ensurePhoneCodeSequenceV10545(){
  try{
-  const floor=Math.max(870,Number(localStorage.getItem(PHONE_CODE_FLOOR_KEY)||0));
-  localStorage.setItem(PHONE_CODE_FLOOR_KEY,String(floor));
-  if(localStorage.getItem(PHONE_CODE_MIGRATION_KEY)==='1')return false;
+  if(localStorage.getItem(PHONE_CODE_MIGRATION_V10545_KEY)==='1')return false;
   const phones=load(SKEY);
-  if(!Array.isArray(phones)||!phones.length)return false;
-  const ordered=[...phones].sort((a,b)=>{const an=Number(String(a.code||'').replace(/\D/g,''))||0,bn=Number(String(b.code||'').replace(/\D/g,''))||0;return an-bn||String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||''))});
-  const codes=new Map(ordered.map((phone,index)=>[phone.id,`BM-${String(848+index).padStart(6,'0')}`]));
-  const migrated=phones.map(phone=>({...phone,code:codes.get(phone.id)||phone.code}));
-  localStorage.setItem(SKEY,JSON.stringify(migrated));queueCloudSave(SKEY,migrated);pushCloudStateNow(SKEY,migrated).catch(()=>{});
-  localStorage.setItem(PHONE_CODE_MIGRATION_KEY,'1');
-  return true
- }catch(error){console.warn('Migração de códigos não concluída.',error);return false}
+  if(!Array.isArray(phones)||!phones.length){localStorage.setItem(PHONE_CODE_MIGRATION_V10545_KEY,'1');return false}
+  const result=resequencePhoneCodes(phones,new Date().toISOString());
+  if(result.changed){localStorage.setItem(SKEY,JSON.stringify(result.phones));queueCloudSave(SKEY,result.phones);pushCloudStateNow(SKEY,result.phones).catch(()=>{})}
+  const counter=result.phones.reduce((max,phone)=>Math.max(max,Number(String(phone.code||'').replace(/\D/g,''))||0),0);
+  localStorage.setItem(PHONE_CODE_COUNTER_KEY,JSON.stringify(counter));queueCloudSave(PHONE_CODE_COUNTER_KEY,counter);
+  localStorage.setItem(PHONE_CODE_MIGRATION_V10545_KEY,'1');
+  return result.changed
+ }catch(error){console.warn('Ressequenciamento dos códigos BM não concluído.',error);return false}
 }
 function ensureStatusV1042(){
  try{
@@ -142,7 +141,7 @@ function fontScaleId(kind,name){return `${kind}:${String(name||'default').toLowe
 function getFontScale(id){const value=Number(loadFontScales()[id]??1);return Math.min(1.15,Math.max(.9,Number.isFinite(value)?value:1))}
 function saveFontScale(id,value){const next={...loadFontScales(),[id]:Math.min(1.15,Math.max(.9,Number(value)||1))};localStorage.setItem(FONT_SCALE_KEY,JSON.stringify(next));queueCloudSave(FONT_SCALE_KEY,next);return next[id]}
 function App({cloudUser,onCloudLogout}){
- const migrationV1042=useMemo(()=>{ensureStatusV1042();const migrated=ensurePhoneCodeSequenceV1042();try{if(localStorage.getItem('bmcenter-parts-orders-migration-v10448')!=='1'){const result=migrateLegacyPartsOrders(load(SKEY),load(OKEY));localStorage.setItem(OKEY,JSON.stringify(result.orders));localStorage.setItem(SKEY,JSON.stringify(result.phones));queueCloudSave(OKEY,result.orders);queueCloudSave(SKEY,result.phones);localStorage.setItem('bmcenter-parts-orders-migration-v10448','1')}}catch(error){console.warn('Migração de pedidos de peças não concluída.',error)}try{const before=load(SKEY),after=repairSoldPublicationStates(before,load(PKEY));if(JSON.stringify(before)!==JSON.stringify(after))save(SKEY,after)}catch(error){console.warn('Sincronização de status de publicação não concluída.',error)}return migrated},[]);void migrationV1042;
+ const migrationV10545=useMemo(()=>{ensureStatusV1042();const migrated=ensurePhoneCodeSequenceV10545();try{if(localStorage.getItem('bmcenter-parts-orders-migration-v10448')!=='1'){const result=migrateLegacyPartsOrders(load(SKEY),load(OKEY));localStorage.setItem(OKEY,JSON.stringify(result.orders));localStorage.setItem(SKEY,JSON.stringify(result.phones));queueCloudSave(OKEY,result.orders);queueCloudSave(SKEY,result.phones);localStorage.setItem('bmcenter-parts-orders-migration-v10448','1')}}catch(error){console.warn('Migração de pedidos de peças não concluída.',error)}try{const before=load(SKEY),after=repairSoldPublicationStates(before,load(PKEY));if(JSON.stringify(before)!==JSON.stringify(after))save(SKEY,after)}catch(error){console.warn('Sincronização de status de publicação não concluída.',error)}return migrated},[]);void migrationV10545;
  const[mobileMenuOpen,setMobileMenuOpen]=useState(false);
  const[config,setConfig]=useState(()=>loadSystemConfig());
  const[page,setPage]=useState(()=>sessionStorage.getItem('bmcenter-current-page')||loadSystemConfig().homePage||'dashboard');
@@ -331,7 +330,7 @@ const BALANCED_THEME_MIGRATION_KEY='bmcenter-balanced-theme-v807';
 
 function loadSystemConfig(){
  const defaults={
-  homePage:'dashboard',compact:false,autoSnapshot:true,showProductCode:true,brightness:100,readingMode:false,
+  homePage:'dashboard',compact:false,autoSnapshot:true,showProductCode:true,historicalSalesBeforeSystem:0,brightness:100,readingMode:false,
   dashboardWidgets:['metrics','profiles','workflow'],...BALANCED_THEME
  };
  const saved=load(CFGKEY);
@@ -416,6 +415,7 @@ function StatusManager(){
   const clean=items.map(item=>({...item,name:item.name.trim()})).filter(item=>item.name);
   const names=clean.map(item=>item.name);
   if(new Set(names.map(x=>x.toLocaleLowerCase('pt-BR'))).size!==names.length){alert('Existem status duplicados. Corrija antes de salvar.');return}
+  if(!confirm('Salvar alterações na lista de Status? Renomeações serão aplicadas aos aparelhos que usam esses status.'))return;
   let updatedPhones=phones;
   clean.forEach(item=>{
    if(item.original&&item.original!==item.name){
@@ -455,7 +455,7 @@ function SystemSettingsPage({visibleMenus,onChange,menuItems,config,onConfigChan
     <button className={config.themeMode==='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'light',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="light"/><div className="v102-theme-copy"><b>Claro</b><span>Fundo suave, cartões claros e azul reservado para ações.</span></div>{config.themeMode==='light'&&<em>✓ Em uso</em>}</button>
     <button className={config.themeMode!=='light'?'selected':''} onClick={()=>onConfigChange({...config,themeMode:'dark',accent:'v102',applyThemeGlobally:true})}><ThemeDashboardPreview mode="dark"/><div className="v102-theme-copy"><b>Escuro</b><span>Grafite confortável, superfícies discretas e sem faixas brancas.</span></div>{config.themeMode!=='light'&&<em>✓ Em uso</em>}</button>
    </div><div className="v102-theme-note"><ShieldCheck/><div><b>Paleta fixa aprovada</b><p>O ajuste de brilho não modifica sua paleta; ele apenas reduz a luminosidade da interface. O modo leitura acrescenta conforto para uso noturno.</p></div></div></section>}
-  {tab==='general'&&<section className="v102-settings-section"><header><span>GERAL</span><h2>Preferências do sistema</h2></header><div className="v102-settings-card"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/><span><b>Exibir código interno dos aparelhos</b><small>Quando desligado, BM-000000 desaparece de todo o sistema.</small></span></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/><span><b>Ponto automático antes de uma nova versão</b><small>Mantém uma restauração rápida em caso de atualização.</small></span></label></div><div className="v102-settings-card"><StatusManager/></div><div className="v102-settings-card"><h3>Menus visíveis</h3><div className="v102-settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Somente essenciais</button></div><div className="v102-menu-grid v102-menu-settings">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div></section>}
+  {tab==='general'&&<section className="v102-settings-section"><header><span>GERAL</span><h2>Preferências do sistema</h2></header><div className="v102-settings-card"><label>Página inicial<select value={config.homePage||'dashboard'} onChange={e=>onConfigChange({...config,homePage:e.target.value})}>{menuItems.filter(x=>visibleMenus[x.id]!==false).map(x=><option value={x.id} key={x.id}>{x.text}</option>)}</select></label><label className="v10545-historical-sales-setting"><span>Vendas realizadas antes do BMCenter</span><input type="number" min="0" inputMode="numeric" value={Number(config.historicalSalesBeforeSystem||0)} onFocus={e=>{if(Number(config.historicalSalesBeforeSystem||0)===0)e.currentTarget.select()}} onChange={e=>onConfigChange({...config,historicalSalesBeforeSystem:Math.max(0,Math.floor(Number(e.target.value)||0))})}/><small>Usado somente no contador histórico visual. Não cria vendas, aparelhos ou lançamentos financeiros.</small></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.showProductCode!==false} onChange={e=>onConfigChange({...config,showProductCode:e.target.checked})}/><span><b>Exibir código interno dos aparelhos</b><small>Quando desligado, BM-000000 desaparece de todo o sistema.</small></span></label><label className="v102-setting-toggle"><input type="checkbox" checked={config.autoSnapshot!==false} onChange={e=>onConfigChange({...config,autoSnapshot:e.target.checked})}/><span><b>Ponto automático antes de uma nova versão</b><small>Mantém uma restauração rápida em caso de atualização.</small></span></label></div><div className="v102-settings-card"><StatusManager/></div><div className="v102-settings-card"><h3>Menus visíveis</h3><div className="v102-settings-actions"><button onClick={showAll}>Mostrar todos</button><button onClick={hideOptional}>Somente essenciais</button></div><div className="v102-menu-grid v102-menu-settings">{menuItems.map(item=>{const essential=item.id==='phones';return <label key={item.id}><input type="checkbox" checked={essential||visibleMenus[item.id]!==false} disabled={essential} onChange={e=>onChange({...visibleMenus,[item.id]:e.target.checked})}/><span>{item.icon}</span><b>{item.text}</b>{essential&&<small>Essencial</small>}</label>})}</div></div></section>}
   {tab==='suppliers'&&<section className="v102-settings-embedded"><Suppliers/></section>}
   {tab==='banks'&&<section className="v102-settings-embedded"><Banks/></section>}
   {tab==='notifications'&&<section className="v102-settings-section"><header><span>NOTIFICAÇÕES</span><h2>Notificações</h2></header><div className="v102-settings-card"><Empty text="As configurações de notificações serão centralizadas aqui."/></div></section>}
@@ -468,7 +468,7 @@ function CommandPalette({menuItems,onNavigate,onClose}){
  const[q,setQ]=useState(''),phones=load(SKEY),profiles=load(PKEY);
  const query=q.trim().toLowerCase();
  const menus=menuItems.filter(x=>x.text.toLowerCase().includes(query));
- const devices=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')}`.toLowerCase().includes(query)).slice(0,6):[];
+ const devices=query?phones.filter(p=>`${p.code} ${p.legacyCode||''} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')}`.toLowerCase().includes(query)).slice(0,6):[];
  const ads=query?phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)}))).filter(x=>`${x.phone.code} ${x.phone.brand} ${x.phone.model} ${x.ad.name||''} ${x.ad.title||''}`.toLowerCase().includes(query)).slice(0,5):[];
  return <div className="command-backdrop" onMouseDown={e=>e.target===e.currentTarget&&onClose()}>
   <div className="command-palette">
@@ -594,7 +594,7 @@ function GlobalSearchPage(){
  const[q,setQ]=useState('');
  const phones=load(SKEY),sellers=load(VKEY),suppliers=load(FKEY),profiles=load(PKEY);
  const query=q.trim().toLowerCase();
- const phoneResults=query?phones.filter(p=>`${p.code} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')} ${p.tasks||''} ${p.notes||''}`.toLowerCase().includes(query)):[];
+ const phoneResults=query?phones.filter(p=>`${p.code} ${p.legacyCode||''} ${p.brand} ${p.model} ${(p.tags||[]).join(' ')} ${p.tasks||''} ${p.notes||''}`.toLowerCase().includes(query)):[];
  const sellerResults=query?sellers.filter(x=>`${x.name} ${x.phone||''} ${x.city||''} ${x.address||''}`.toLowerCase().includes(query)):[];
  const supplierResults=query?suppliers.filter(x=>`${x.name} ${x.phone||''} ${x.whatsapp||''} ${x.city||''}`.toLowerCase().includes(query)):[];
  const adResults=query?phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)}))).filter(x=>`${x.ad.name||''} ${x.ad.title||''} ${x.ad.description||''} ${x.phone.code} ${x.phone.brand} ${x.phone.model}`.toLowerCase().includes(query)):[];
@@ -862,9 +862,10 @@ function ArchivedPhonesPage(){
 }
 
 function Dashboard(){
- const phones=load(SKEY),profiles=load(PKEY),today=new Date();
+ const phones=load(SKEY),profiles=load(PKEY),today=new Date(),systemConfig=loadSystemConfig();
  const active=phones.filter(p=>!isClosedPhone(p));
  const sales=phones.filter(p=>p.sale?.soldAt);
+ const historicalSalesBeforeSystem=Math.max(0,Math.floor(Number(systemConfig.historicalSalesBeforeSystem||0))),historicalSalesTotal=historicalSalesBeforeSystem+sales.length;
  const pendingReceivables=sales.reduce((a,p)=>a+salePendingValue(p.sale),0);
  const allAds=phones.flatMap(p=>(p.ads||migrateLegacyAds(p)).map(ad=>({phone:p,ad:normalizeAd(ad)})));
  const prepared=allAds.filter(x=>x.ad.title&&x.ad.description);
@@ -888,7 +889,7 @@ function Dashboard(){
  const metrics=[
   {label:'Total de aparelhos',value:phones.length,detail:`${active.length} em estoque`,kind:'blue'},
   {label:'Anúncios publicados',value:publishedCount,detail:`${prepared.length} preparados`,kind:'purple'},
-  {label:'Vendas realizadas',value:sales.length,detail:money(sales.reduce((a,p)=>a+Number(p.sale?.value||0),0)),kind:'green'},
+  {label:'Histórico de vendas',value:historicalSalesTotal,detail:`${sales.length} no BMCenter + ${historicalSalesBeforeSystem} anteriores`,kind:'green'},
   {label:'Previsão 7 dias',value:money(forecast7),detail:'entrada estimada',kind:'blue'},
   {label:'Previsão 30 dias',value:money(forecast30),detail:'entrada estimada',kind:'purple'},
   {label:'Valor em estoque',value:money(expected),detail:`Custo ${money(invested)}`,kind:'amber'},
@@ -928,10 +929,10 @@ function Phones(){
  const continueBatchDraft=()=>setBatchCreate(true);
  const deletePhoneDraft=()=>{if(!confirm('Excluir o rascunho do aparelho?'))return;clearDraft(PHONE_DRAFT_KEY);refreshDrafts()};
  const deleteBatchDraft=()=>{if(!confirm('Excluir o rascunho do cadastro em massa?'))return;clearDraft(BATCH_DRAFT_KEY);refreshDrafts()};
- const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);setItems(lean);save(SKEY,lean)};
+ const persist=v=>{const lean=v.map(sanitizePhoneForLeanMode);updatePhoneCodeCounter(lean);setItems(lean);save(SKEY,lean)};
  const persistColumns=v=>{setColumns(v);save(PHONECOLKEY,v)};
  const allTags=[...new Set(items.flatMap(x=>x.tags||[]))].sort();
- const changeStatus=(id,status)=>persist(items.map(x=>x.id===id?touchPhone(addTimeline({...x,status},`Status alterado para ${status}`)):x));
+ const changeStatus=(id,status)=>{const current=items.find(x=>x.id===id);if(!current||current.status===status)return true;const label=phoneDisplayName(current,{includeCode:true});if(!confirm(`Confirmar alteração de status?\n\n${label}\n${current.status||'Sem status'} → ${status}`)){setItems([...items]);return false}persist(items.map(x=>x.id===id?touchPhone(addTimeline({...x,status},`Status alterado para ${status}`)):x));return true};
  const updateFinancial=(id,field,value)=>{
   const numeric=Math.max(0,Number(String(value).replace(',','.'))||0);
   persist(items.map(phone=>{
@@ -943,7 +944,7 @@ function Phones(){
    return phone
   }))
  };
- const filtered=items.filter(x=>{const text=`${x.code} ${x.brand} ${x.model} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();const statusOk=statusFilter.length?statusFilter.includes(x.status):!isClosedPhone(x);return text.includes(query.toLowerCase())&&statusOk&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
+ const filtered=items.filter(x=>{const text=`${x.code} ${x.legacyCode||''} ${x.brand} ${x.model} ${(x.tags||[]).join(' ')} ${x.status}`.toLowerCase();const statusOk=statusFilter.length?statusFilter.includes(x.status):!isClosedPhone(x);return text.includes(query.toLowerCase())&&statusOk&&(tagFilter==='Todas'||(x.tags||[]).includes(tagFilter))&&(!onlyFavorites||x.favorite)});
  function toggleFavorite(phone){persist(items.map(x=>x.id===phone.id?touchPhone({...x,favorite:!x.favorite}):x))}
  function duplicatePhone(phone){const copy={...phone,id:crypto.randomUUID(),code:nextPhoneCode(items),status:'Aguardando análise',sale:null,ads:[],favorite:false,archived:false,archivedAt:'',timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:`Duplicado a partir de ${phone.code}`}],lastActivityAt:new Date().toISOString()};persist([copy,...items])}
  function moveColumn(draggedId,targetId){if(!draggedId||draggedId===targetId)return;const from=columns.findIndex(c=>c.id===draggedId),to=columns.findIndex(c=>c.id===targetId);if(from<0||to<0)return;const next=[...columns],item=next.splice(from,1)[0];next.splice(to,0,item);persistColumns(next)}
@@ -981,10 +982,10 @@ function Phones(){
   />
   {batchCreate&&<BatchPhoneModal existing={items} banks={banks} onClose={()=>{setBatchCreate(false);refreshDrafts()}} onSave={created=>{persist([...created,...items]);setBatchCreate(false);refreshDrafts()}}/>}
   {columnEditor&&<PhoneColumnsModal columns={showProductCode()?columns:columns.filter(c=>c.id!=='code')} onClose={()=>setColumnEditor(false)} onChange={next=>persistColumns(showProductCode()?next:[...next,columns.find(c=>c.id==='code')].filter(Boolean))}/>}
-  {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} orders={normalizePartsOrders(load(OKEY))} onClose={()=>setDetail(null)} onSave={v=>{persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
-  {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);const statusChanged=current&&String(current.status||'')!==String(v.status||'');let saved=touchPhone(addTimeline(v,statusChanged?`Status alterado para ${v.status}`:'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
+  {detail&&<PhoneDetailModal item={items.find(x=>x.id===detail.id)||detail} profiles={profiles} orders={normalizePartsOrders(load(OKEY))} onClose={()=>setDetail(null)} onSave={v=>{const current=items.find(x=>x.id===v.id);if(current&&String(current.status||'')!==String(v.status||'')&&!confirm(`Confirmar alteração de status?\n\n${phoneDisplayName(current,{includeCode:true})}\n${current.status||'Sem status'} → ${v.status}`))return;persist(items.map(x=>x.id===v.id?touchPhone(v):x));setDetail(v)}}/>}
+  {edit&&<PhoneModal item={edit} banks={banks} suppliers={suppliers} onClose={()=>{setEdit(null);refreshDrafts()}} onSave={v=>{const current=items.find(x=>x.id===v.id),priceChanged=current&&Number(current.expected)!==Number(v.expected);const statusChanged=current&&String(current.status||'')!==String(v.status||'');if(statusChanged&&!confirm(`Confirmar alteração de status?\n\n${phoneDisplayName(current,{includeCode:true})}\n${current.status||'Sem status'} → ${v.status}`))return;let saved=touchPhone(addTimeline(v,statusChanged?`Status alterado para ${v.status}`:'Cadastro atualizado'));if(priceChanged)saved={...saved,priceHistory:[...(current.priceHistory||[]),{id:crypto.randomUUID(),date:new Date().toISOString(),oldValue:Number(current.expected||0),newValue:Number(v.expected||0)}]};persist(items.some(x=>x.id===v.id)?items.map(x=>x.id===v.id?saved:x):[saved,...items]);setEdit(null);refreshDrafts()}}/>}
   {quickReplyPhone&&<QuickReplyModal phone={items.find(x=>x.id===quickReplyPhone.id)||quickReplyPhone} onClose={()=>setQuickReplyPhone(null)}/>}
-  {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{persist(items.map(x=>{if(x.id!==salePhone.id)return x;const finalized=finalizeSoldPhonePublications(x,profiles,sale);return touchPhone(addTimeline(finalized,`Venda registrada por ${money(sale.value)} · anúncios encerrados`))}));setSalePhone(null)}}/>}
+  {salePhone&&<SaleModal item={salePhone} profiles={profiles} onClose={()=>setSalePhone(null)} onSave={sale=>{const action=salePhone.sale?.soldAt?'alteração da venda':'venda';if(!confirm(`Confirmar ${action}?\n\n${phoneDisplayName(salePhone,{includeCode:true})}\nValor: ${money(sale.value)}`))return;persist(items.map(x=>{if(x.id!==salePhone.id)return x;const finalized=finalizeSoldPhonePublications(x,profiles,sale);return touchPhone(addTimeline(finalized,`Venda registrada por ${money(sale.value)} · anúncios encerrados`))}));setSalePhone(null)}}/>}
  </>
 }
 
@@ -1481,6 +1482,8 @@ function Parts(){
       const snapshots=bulkOrderMode==='single'?[]:[...bulkStagedOrders];
       if(bulkCurrentHasSelection||String(bulkDraft.supplier||'').trim())snapshots.push(buildBulkSnapshot());
       if(!snapshots.length)return flash('Cadastre pelo menos um pedido antes de concluir o lançamento.');
+      const totalSnapshotItems=snapshots.reduce((sum,snapshot)=>sum+snapshot.products.reduce((inner,product)=>inner+(product.type==='external'?Math.max(1,Number(product.quantity||1)||1):(product.phoneIds||[]).length),0),0);
+      if(!confirm(`Confirmar criação de ${snapshots.length} pedido(s) com ${totalSnapshotItems} unidade(s)?${snapshots.some(snapshot=>snapshot.draft.receivedNow)?'\nHá pedido(s) que serão registrados como já recebidos.':''}`))return;
       let sourcePhones=phones,nextOrders=[...orders],createdOrders=0,createdItems=0,skippedItems=0,receivedOrdersCount=0;
       for(const snapshot of snapshots){
         const products=snapshot.products.map(product=>product.type==='external'?{...product,type:'external',unitPrice:toNumber(product.unitPrice),quantity:Math.max(1,Math.floor(Number(product.quantity||1)||1)),phoneIds:[],pricesByPhone:{}}:{...product,type:'linked',unitPrice:toNumber(product.unitPrice),pricesByPhone:Object.fromEntries((product.phoneIds||[]).map(phoneId=>[phoneId,toNumber(product.pricesByPhone?.[phoneId]??product.unitPrice)]))});
@@ -1531,6 +1534,7 @@ function Parts(){
     let quoteId='';
     const nextPhones=phones.map(phone=>{if(phone.id!==directBuy.phone.id)return phone;const parts=(phone.parts||[]).map(part=>{if(part.id!==directBuy.part.id)return part;const quotes=[...(part.quotes||[])],editingId=directBuy.mode==='quote'?directBuy.editingQuoteId:'',index=editingId?quotes.findIndex(q=>q.id===editingId):quotes.findIndex(q=>q.supplier===supplier),duplicateIndex=editingId?quotes.findIndex(q=>q.id!==editingId&&q.supplier===supplier):-1;if(duplicateIndex>=0){quoteId=quotes[duplicateIndex].id;quotes[duplicateIndex]={...quotes[duplicateIndex],price,notes:directDraft.notes,updatedAt:stamp};if(index>=0)quotes.splice(index,1)}else{const quote={...(index>=0?quotes[index]:{}),id:index>=0?quotes[index].id:crypto.randomUUID(),supplier,price,notes:directDraft.notes,updatedAt:stamp};quoteId=quote.id;if(index>=0)quotes[index]=quote;else quotes.push(quote)}return{...part,quotes,selectedQuoteId:quoteId,status:directBuy.mode==='quote'?'Cotando':part.status}});return{...phone,parts,lastActivityAt:stamp}});
     if(directBuy.mode==='quote'){savePhonesOnly(nextPhones);setDirectBuy(null);setPartsView('quotes');flash(directBuy.editingQuoteId?'Cotação atualizada.':'Cotação salva.');return}
+    if(!confirm(`Confirmar compra da peça “${directBuy.part.name}” de ${supplier}?${directDraft.receivedNow?'\nEla será registrada como já recebida.':''}`))return;
     const confirmedAt=stamp,receivedAt=directDraft.receivedNow?stamp:'';
     const order=normalizePartsOrder({id:crypto.randomUUID(),supplier,orderDate:directDraft.orderDate||stamp.slice(0,10),freight:toNumber(directDraft.freight),notes:directDraft.notes,items:[{id:crypto.randomUUID(),phoneId:directBuy.phone.id,partId:directBuy.part.id,partName:directBuy.part.name,phoneLabel:phoneDisplayName(directBuy.phone,{includeCode:false}),quoteId,price,confirmedAt,receivedAt}],createdAt:stamp,updatedAt:stamp,receivedAt});
     persistOrders([...orders,order],nextPhones);setDirectBuy(null);setPartsView(directDraft.receivedNow?'received':'orders');flash(directDraft.receivedNow?'Compra registrada como recebida.':'Compra registrada.')
@@ -1541,6 +1545,11 @@ function Parts(){
     return sourcePhones.map(phone=>{const names=(phone.parts||[]).filter(part=>set.has(`${phone.id}::${part.id}`)).map(part=>part.name);return names.length?{...phone,lastActivityAt:stamp,timeline:[...(phone.timeline||[]),{id:crypto.randomUUID(),date:stamp,message:`${message}: ${names.join(', ')}`}]}:phone})
   }
   function changeOrderItems(orderId,itemId,action){
+    const currentOrder=orders.find(order=>order.id===orderId);if(!currentOrder)return;
+    const currentItem=[...(currentOrder.items||[]),...(currentOrder.externalItems||[])].find(item=>item.id===itemId);
+    const actionLabel=action==='receive'?'recebimento':'confirmação do pedido';
+    const targetLabel=itemId?(currentItem?.partName||'este item'):`todos os itens do pedido de ${currentOrder.supplier}`;
+    if(!confirm(`Confirmar ${actionLabel} de ${targetLabel}?`))return;
     const stamp=new Date().toISOString(),today=stamp.slice(0,10);let affected=[];
     const next=orders.map(order=>{if(order.id!==orderId)return order;
       const items=order.items.map(item=>{if(itemId&&item.id!==itemId)return item;affected.push(`${item.phoneId}::${item.partId}`);if(action==='confirm')return{...item,confirmedAt:item.confirmedAt||stamp};if(action==='receive')return{...item,confirmedAt:item.confirmedAt||stamp,receivedAt:item.receivedAt||stamp};return item});
@@ -1554,6 +1563,7 @@ function Parts(){
     if(targets.some(item=>item.confirmedAt||item.receivedAt))return flash('Desfaça primeiro a confirmação ou o recebimento desta peça.');
     if(targets.some(item=>item.returnStatus))return flash('Cancele ou conclua a devolução antes de desfazer este pedido.');
     if(!itemId&&!confirm('Desfazer a preparação do pedido completo? As peças serão desvinculadas deste pedido e voltarão à etapa anterior.'))return;
+    if(itemId&&!confirm('Desfazer a preparação desta peça? Ela será removida do pedido e voltará à etapa anterior.'))return;
     const stamp=new Date().toISOString(),targetIds=new Set(targets.map(item=>String(item.id)));
     const affected=targets.map(item=>`${item.phoneId}::${item.partId}`);
     const remainingItems=(order.items||[]).filter(item=>!targetIds.has(String(item.id)));
@@ -1575,6 +1585,7 @@ function Parts(){
     const step=targets.some(item=>item.receivedAt)?'receive':targets.some(item=>item.confirmedAt&&!item.receivedAt)?'confirm':'prepare';
     if(step==='prepare'){
       if(itemId&&externalTargets.length){
+        if(!confirm('Remover este item avulso do pedido?'))return;
         const remainingExternal=(order.externalItems||[]).filter(item=>item.id!==itemId),stamp=new Date().toISOString();
         if(!(order.items||[]).length&&!remainingExternal.length){persistOrders(orders.filter(current=>current.id!==order.id),phones);setExpandedOrderCards(current=>{const next={...current};delete next[order.id];return next})}
         else persistOrders(orders.map(current=>current.id===order.id?normalizePartsOrder({...current,externalItems:remainingExternal,updatedAt:stamp}):current),phones);
@@ -1588,6 +1599,7 @@ function Parts(){
       return undoDraftOrderPreparation(order,itemId)
     }
     if(!itemId&&!confirm(step==='receive'?'Desfazer o recebimento do pedido completo? Os itens voltarão para Pedidos, mas continuarão como comprados.':'Desfazer a confirmação do pedido completo? Os itens voltarão ao estado anterior à compra.'))return;
+    if(itemId&&!confirm(step==='receive'?'Desfazer o recebimento deste item? Ele voltará para Pedidos.':'Desfazer a confirmação deste item? Ele voltará ao estado anterior à compra.'))return;
     const stamp=new Date().toISOString();let affected=[];
     const next=orders.map(current=>{
       if(current.id!==order.id)return current;
@@ -1602,6 +1614,9 @@ function Parts(){
     const currentOrder=orders.find(order=>order.id===orderId),currentItem=currentOrder?.items?.find(item=>item.id===itemId);
     if(state==='pending'&&currentItem?.returnStatus==='returned'&&returnRecoveredAmount(currentItem)>0){
       if(!confirm('Reabrir esta devolução também cancelará o registro financeiro já recuperado e o valor voltará ao custo do aparelho. Continuar?'))return;
+    }else if(!financial){
+      const actionText=state==='pending'?'separar esta peça para devolução':state==='returned'?'registrar esta peça como devolvida ao fornecedor':'cancelar esta devolução';
+      if(!confirm(`Confirmar ação: ${actionText}?`))return;
     }
     const stamp=new Date().toISOString();let affected=[];
     const next=orders.map(order=>{if(order.id!==orderId)return order;const items=order.items.map(item=>{
@@ -1616,6 +1631,8 @@ function Parts(){
     if(state==='pending'){setPartsView('returns');setReturnFilter('pending');flash('Item adicionado à lista de devoluções.')}else if(state==='returned')flash(financial?.status==='pending'?'Devolução concluída; financeiro ficou pendente.':'Devolução e recuperação financeira registradas.');else flash('Item removido da lista de devoluções.')
   }
   function changeExternalReturnState(orderId,itemId,state){
+    const actionText=state==='pending'?'separar o item avulso para devolução':state==='returned'?'marcar o item avulso como devolvido':state==='resolved'?'resolver esta devolução avulsa':'cancelar esta devolução avulsa';
+    if(!confirm(`Confirmar ação: ${actionText}?`))return;
     const stamp=new Date().toISOString();
     const next=orders.map(order=>{if(order.id!==orderId)return order;const externalItems=(order.externalItems||[]).map(item=>{
       if(item.id!==itemId)return item;
@@ -1641,12 +1658,15 @@ function Parts(){
     if(!standaloneReturnEditor.returnDate)return flash('Informe a data da devolução.');
     const stamp=new Date().toISOString(),quantity=Math.max(1,Math.floor(Number(standaloneReturnEditor.quantity||1)||1)),unitPrice=Math.max(0,toNumber(standaloneReturnEditor.unitPrice)),freight=Math.max(0,toNumber(standaloneReturnEditor.freight));
     const current=standaloneReturnEditor.id?standaloneReturns.find(item=>item.id===standaloneReturnEditor.id):null;
+    if(!confirm(`${current?'Salvar alterações desta':'Criar esta'} devolução avulsa de ${quantity} unidade(s) de “${partName}” para ${supplier}?`))return;
     const nextItem={...standaloneReturnEditor,id:standaloneReturnEditor.id||crypto.randomUUID(),supplier,partName,reference:String(standaloneReturnEditor.reference||'').trim(),quantity,unitPrice,freight,reason:String(standaloneReturnEditor.reason||'').trim(),notes:String(standaloneReturnEditor.notes||'').trim(),status:standaloneReturnEditor.status||'pending',createdAt:current?.createdAt||stamp,updatedAt:stamp,undoSnapshot:current?standaloneReturnClean(current):null};
     const next=current?standaloneReturns.map(item=>item.id===current.id?nextItem:item):[...standaloneReturns,nextItem];
     persistStandaloneReturns(next);setStandaloneReturnEditor(null);setPartsView('returns');setReturnFilter('pending');flash(current?'Devolução avulsa atualizada. Use “Desfazer” no cartão para reverter.':'Devolução avulsa criada. Use “Desfazer” no cartão para cancelar o lançamento.')
   }
   function changeStandaloneReturnState(id,state){
     const current=standaloneReturns.find(item=>item.id===id);if(!current)return;
+    const actionText=state==='pending'?'reabrir esta devolução avulsa':state==='returned'?'marcar esta devolução avulsa como devolvida':'resolver esta devolução avulsa';
+    if(!confirm(`Confirmar ação: ${actionText}?`))return;
     const stamp=new Date().toISOString(),snapshot=standaloneReturnClean(current);
     const changed={...current,undoSnapshot:snapshot,updatedAt:stamp};
     if(state==='pending'){changed.status='pending';changed.returnedAt='';changed.resolvedAt=''}
@@ -1657,7 +1677,7 @@ function Parts(){
   }
   function undoStandaloneReturn(id){
     const current=standaloneReturns.find(item=>item.id===id);if(!current)return;
-    if(current.undoSnapshot){const restored={...current.undoSnapshot,undoSnapshot:null,updatedAt:new Date().toISOString()};persistStandaloneReturns(standaloneReturns.map(item=>item.id===id?restored:item));setReturnFilter(restored.status||'pending');flash('Última ação da devolução avulsa desfeita.');return}
+    if(current.undoSnapshot){if(!confirm(`Desfazer a última alteração da devolução avulsa “${current.partName}”?`))return;const restored={...current.undoSnapshot,undoSnapshot:null,updatedAt:new Date().toISOString()};persistStandaloneReturns(standaloneReturns.map(item=>item.id===id?restored:item));setReturnFilter(restored.status||'pending');flash('Última ação da devolução avulsa desfeita.');return}
     if(!confirm(`Desfazer o lançamento da devolução avulsa “${current.partName}”? O registro será removido.`))return;
     persistStandaloneReturns(standaloneReturns.filter(item=>item.id!==id));flash('Lançamento da devolução avulsa desfeito.')
   }
@@ -1703,6 +1723,8 @@ function Parts(){
       rows=pendingReturnRowsForSupplier(supplier).filter(row=>selected.has(returnShipmentRowKey(row)))
     }
     if(!rows.length)return flash('Selecione pelo menos um item para esta remessa.');
+    const shipmentUnits=rows.reduce((sum,row)=>sum+returnShipmentQty(row),0);
+    if(!confirm(`Confirmar ${existing?'alteração da':'criação da'} remessa de devolução para ${supplier}?\n\n${shipmentUnits} unidade(s) · Frete ${money(freight)} · Recuperado ${money(freightRefund)}`))return;
     const quantityRows=rows.map(row=>({id:returnShipmentRowKey(row),quantity:returnShipmentQty(row),price:0}));
     const freightAllocation=new Map(allocateFreight(quantityRows,freight).map(item=>[item.id,Number(item.freightShare||0)]));
     const refundAllocation=new Map(allocateFreight(quantityRows,freightRefund).map(item=>[item.id,Number(item.freightShare||0)]));
@@ -1735,6 +1757,7 @@ function Parts(){
     }
     const progressed=(shipment.items||[]).some(ref=>{const item=currentShipmentItem(ref);return ref.type==='linked'?['received','supplier_credit'].includes(item?.returnFinancialStatus):ref.type==='external'?item?.returnStatus==='resolved':item?.status==='resolved'});
     if(progressed&&!confirm('Há ações posteriores nesta devolução. Desfazer a remessa restaurará os itens ao estado anterior ao envio. Continuar?'))return;
+    if(!progressed&&!confirm('Desfazer esta remessa de devolução? Os itens voltarão ao estado anterior ao envio.'))return;
     restoreShipmentSnapshots(shipment.items||[]);persistReturnShipments(returnShipments.filter(item=>item.id!==id));setReturnFilter('pending');flash('Remessa desfeita. Os itens voltaram ao estado anterior.')
   }
 
@@ -1754,6 +1777,7 @@ function Parts(){
     if(refundEditor.financialStatus==='supplier_credit')method='Crédito no fornecedor';
     if(refundEditor.financialStatus==='pending'&&!method)method='Aguardando fornecedor';
     if(refundEditor.financialStatus==='received'&&!method)return alert('Informe a forma em que o reembolso foi recebido.');
+    if(!confirm(`Confirmar registro financeiro da devolução?\n\nPeça: ${money(partRefund)} · Frete: ${money(freightRefund)} · Situação: ${refundEditor.financialStatus}`))return;
     changeReturnState(refundEditor.orderId,refundEditor.itemId,'returned',{status:refundEditor.financialStatus,partRefund,freightRefund,method,date:refundEditor.date});
     setRefundEditor(null);
   }
@@ -1889,6 +1913,8 @@ function PartsInventoryPage(){
  }
 
  function quickAdjust(item,delta){
+  const action=delta>0?'adicionar 1 unidade ao':'retirar 1 unidade do';
+  if(!confirm(`Confirmar ajuste rápido?\n\n${action} estoque de “${item.name}”.`))return;
   recordMovement(item,delta>0?'Entrada':'Saída',Math.abs(delta),delta>0?'Ajuste rápido de entrada':'Ajuste rápido de saída',item.unitCost);
  }
 
@@ -1920,7 +1946,7 @@ function PartsInventoryPage(){
    }
    setEditing(null)
   }}/>}
-  {moving&&<InventoryMovementModal item={moving} onClose={()=>setMoving(null)} onSave={data=>{recordMovement(moving,data.type,data.quantity,data.reason,data.unitCost);setMoving(null)}}/>}
+  {moving&&<InventoryMovementModal item={moving} onClose={()=>setMoving(null)} onSave={data=>{if(!confirm(`Confirmar movimentação de estoque?\n\n${moving.name} · ${data.type} · ${data.quantity}`))return;recordMovement(moving,data.type,data.quantity,data.reason,data.unitCost);setMoving(null)}}/>}
  </>
 }
 
@@ -2682,7 +2708,7 @@ function DataCenterPage(){
 
 const BACKUP_FORMAT='bmcenter-complete-backup';
 const BACKUP_FORMAT_VERSION=7;
-const BACKUP_REQUIRED_KEYS=[SKEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,RKEY,RSHIPKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,STATUSKEY,FONT_SCALE_KEY];
+const BACKUP_REQUIRED_KEYS=[SKEY,PHONE_CODE_COUNTER_KEY,ADSNOTEKEY,VKEY,BKEY,FKEY,QKEY,OKEY,RKEY,RSHIPKEY,UKEY,PKEY,TKEY,IKEY,MKEY,MENUKEY,CFGKEY,ATITLEKEY,ADESCKEY,VIEWKEY,CHECKKEY,GOALKEY,PHONECOLKEY,TABLELAYOUTKEY,STATUSKEY,FONT_SCALE_KEY];
 function backupEligibleKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-cloud-session',BACKUP_RUNTIME_KEY].includes(key);
 }
@@ -2690,8 +2716,9 @@ function backupEligibleSessionKey(key){
  return key.startsWith('bmcenter-')&&!['bmcenter-client-id'].includes(key);
 }
 function materializeBackupSchema(storage){
+ const backupPhoneCounter=Array.isArray(storage?.[SKEY])?storage[SKEY].reduce((max,phone)=>Math.max(max,Number(String(phone?.code||'').replace(/\D/g,''))||0),0):0;
  const defaults={
-  [SKEY]:[],[ADSNOTEKEY]:'',[VKEY]:[],[BKEY]:[],[FKEY]:[],[QKEY]:{},[OKEY]:[],[RKEY]:[],[RSHIPKEY]:[],[UKEY]:[],[PKEY]:[],[TKEY]:[],[IKEY]:[],[MKEY]:[],
+  [SKEY]:[],[PHONE_CODE_COUNTER_KEY]:backupPhoneCounter,[ADSNOTEKEY]:'',[VKEY]:[],[BKEY]:[],[FKEY]:[],[QKEY]:{},[OKEY]:[],[RKEY]:[],[RSHIPKEY]:[],[UKEY]:[],[PKEY]:[],[TKEY]:[],[IKEY]:[],[MKEY]:[],
   [MENUKEY]:loadMenuSettings(),[CFGKEY]:loadSystemConfig(),[ATITLEKEY]:[],[ADESCKEY]:[],[VIEWKEY]:[],[CHECKKEY]:[],[GOALKEY]:{},
   [PHONECOLKEY]:loadPhoneColumns(),[TABLELAYOUTKEY]:getTableLayouts(),[STATUSKEY]:loadPhoneStatuses(),[FONT_SCALE_KEY]:loadFontScales()
  };
@@ -2731,6 +2758,7 @@ function backupCriticalAudit(storage){
   phoneDraftCaptured:storage[PHONE_DRAFT_KEY]!==undefined,
   batchPhoneDraftCaptured:storage[BATCH_DRAFT_KEY]!==undefined,
   phoneStatuses:storage[STATUSKEY]!==undefined,
+  phoneCodeCounter:storage[PHONE_CODE_COUNTER_KEY]!==undefined,
   counts:{phones:phones.length,ads:phoneAds,timelineEntries:phoneTimeline,phoneParts,partsOrders:Array.isArray(storage[OKEY])?storage[OKEY].length:0,inventoryItems:Array.isArray(storage[IKEY])?storage[IKEY].length:0,returns:Array.isArray(storage[OKEY])?storage[OKEY].reduce((sum,order)=>sum+(order?.items||[]).filter(item=>['pending','returned'].includes(item?.returnStatus)).length,0):0,financialReturns:Array.isArray(storage[OKEY])?storage[OKEY].reduce((sum,order)=>sum+(order?.items||[]).filter(item=>item?.returnStatus==='returned'&&item?.returnFinancialStatus).length,0):0}
  }
 }
@@ -3190,6 +3218,7 @@ function BatchPhoneModal({existing,banks,onClose,onSave}){
      paid:parseMoneyInput(row.paid),
      expected:parseMoneyInput(row.expected),
      notes:[row.notes,shared.buyerNotes].filter(Boolean).join('\n'),
+     createdAt:now,
      lastActivityAt:now,
      timeline:[{id:crypto.randomUUID(),date:now,message:'Aparelho cadastrado em compra em massa'}]
     }
@@ -3397,8 +3426,9 @@ function GlobalInlineSelectLayer(){
    const rect=target.getBoundingClientRect(),vv=window.visualViewport;
    const options=[...target.options].map((option,index)=>({index,value:option.value,label:option.textContent||option.label||option.value,disabled:option.disabled}));
    const dark=!!target.closest('.theme-dark,.dark-theme')||document.documentElement.classList.contains('theme-dark')||document.body.classList.contains('theme-dark')||!!document.querySelector('.v102-app.theme-dark');
+   const statusGrid=options.length>=6&&options.some(option=>option.value==='Vendido')&&options.some(option=>option.value==='Descarte/Sucata');
    target.classList.add('global-inline-select-open');
-   setMenu({target,options,value:target.value,dark,rect:{left:rect.left+(vv?.offsetLeft||0),top:rect.top+(vv?.offsetTop||0),bottom:rect.bottom+(vv?.offsetTop||0),width:rect.width}});
+   setMenu({target,options,value:target.value,dark,statusGrid,rect:{left:rect.left+(vv?.offsetLeft||0),top:rect.top+(vv?.offsetTop||0),bottom:rect.bottom+(vv?.offsetTop||0),width:rect.width}});
   };
   const block=event=>{const target=event.target instanceof Element?event.target.closest('select'):null;if(target&&!target.disabled&&!target.multiple){event.preventDefault();event.stopPropagation()}};
   const escape=event=>{if(event.key==='Escape')closeMenu()};
@@ -3410,14 +3440,14 @@ function GlobalInlineSelectLayer(){
  useEffect(()=>{menuRef.current=menu},[menu]);
  if(!menu||!menu.options.length)return null;
  const vv=window.visualViewport,viewportWidth=vv?.width||window.innerWidth,viewportHeight=vv?.height||window.innerHeight,offsetTop=vv?.offsetTop||0,offsetLeft=vv?.offsetLeft||0;
- const rowHeight=42,padding=12,maxRows=5,menuHeight=Math.min(menu.options.length*rowHeight+padding,maxRows*rowHeight+padding,Math.max(96,viewportHeight-24));
- const width=Math.min(Math.max(menu.rect.width,160),Math.max(160,viewportWidth-16));
+ const mobileStatusGrid=!!menu.statusGrid&&viewportWidth<=720,rowHeight=mobileStatusGrid?48:42,padding=12,maxRows=5,statusRows=mobileStatusGrid?Math.ceil(menu.options.length/2):menu.options.length,menuHeight=Math.min(statusRows*rowHeight+padding,maxRows*rowHeight+padding,Math.max(96,viewportHeight-24));
+ const width=mobileStatusGrid?Math.min(420,Math.max(menu.rect.width,viewportWidth-16)):Math.min(Math.max(menu.rect.width,160),Math.max(160,viewportWidth-16));
  const roomBelow=offsetTop+viewportHeight-menu.rect.bottom-8,roomAbove=menu.rect.top-offsetTop-8;
  const below=roomBelow>=Math.min(menuHeight,150)||roomBelow>=roomAbove;
  const top=below?Math.min(offsetTop+viewportHeight-menuHeight-8,menu.rect.bottom+4):Math.max(offsetTop+8,menu.rect.top-menuHeight-4);
  const left=Math.min(Math.max(offsetLeft+8,menu.rect.left),Math.max(offsetLeft+8,offsetLeft+viewportWidth-width-8));
  const choose=option=>{if(option.disabled)return;const select=menu.target;if(!select?.isConnected){closeMenu();return}select.value=option.value;select.dispatchEvent(new Event('input',{bubbles:true}));select.dispatchEvent(new Event('change',{bubbles:true}));try{select.blur?.()}catch{}closeMenu()};
- return <div className="global-inline-select-layer" onPointerDown={e=>{e.preventDefault();e.stopPropagation();closeMenu();}}><div className={`global-inline-select-menu ${menu.dark?'theme-dark-menu':'theme-light-menu'}`} role="listbox" style={{left,top,width,maxHeight:menuHeight}} onPointerDown={e=>{e.preventDefault();e.stopPropagation();}}>{menu.options.map(option=><button type="button" role="option" aria-selected={option.value===menu.value} key={`${option.index}-${option.value}`} className={option.value===menu.value?'selected':''} disabled={option.disabled} onPointerDown={e=>{e.preventDefault();e.stopPropagation();choose(option)}}><span>{option.label}</span>{option.value===menu.value&&<Check size={15}/>}</button>)}</div></div>
+ return <div className="global-inline-select-layer" onPointerDown={e=>{e.preventDefault();e.stopPropagation();closeMenu();}}><div className={`global-inline-select-menu ${menu.dark?'theme-dark-menu':'theme-light-menu'} ${mobileStatusGrid?'status-grid-menu':''}`} role="listbox" style={{left,top,width,maxHeight:menuHeight}} onPointerDown={e=>{e.preventDefault();e.stopPropagation();}}>{menu.options.map(option=><button type="button" role="option" aria-selected={option.value===menu.value} key={`${option.index}-${option.value}`} className={option.value===menu.value?'selected':''} disabled={option.disabled} onPointerDown={e=>{e.preventDefault();e.stopPropagation();choose(option)}}><span>{option.label}</span>{option.value===menu.value&&<Check size={15}/>}</button>)}</div></div>
 }
 
 function Modal({title,onClose,children,className='',subtitle='',titleIcon=null}) {
@@ -3486,14 +3516,12 @@ function salePaymentStatus(sale){
  return pending<=0?'Recebido':received>0?'Parcial':'Pendente';
 }
 
-function nextPhoneCode(items){
- const configuredFloor=Math.max(870,Number(localStorage.getItem(PHONE_CODE_FLOOR_KEY)||0));
- const max=items.reduce((m,p)=>Math.max(m,Number(String(p.code||'').replace(/\D/g,''))||0),configuredFloor);
- return `BM-${String(max+1).padStart(6,'0')}`;
-}
+function loadPhoneCodeCounter(){try{const value=Number(JSON.parse(localStorage.getItem(PHONE_CODE_COUNTER_KEY)||'0'));return Number.isFinite(value)?Math.max(0,Math.floor(value)):0}catch{return 0}}
+function updatePhoneCodeCounter(items){const max=(Array.isArray(items)?items:[]).reduce((value,phone)=>Math.max(value,Number(String(phone?.code||'').replace(/\D/g,''))||0),0),current=loadPhoneCodeCounter(),next=Math.max(current,max);if(next!==current){localStorage.setItem(PHONE_CODE_COUNTER_KEY,JSON.stringify(next));queueCloudSave(PHONE_CODE_COUNTER_KEY,next)}return next}
+function nextPhoneCode(items){return nextPhoneCodeValue(items,loadPhoneCodeCounter())}
 function collectAllData(){return captureCompleteBackup()}
 async function restoreAllData(data){return applyCompleteBackup(data,{replace:true})}
 function csvCell(value){const s=String(value??'').replaceAll('"','""');return `"${s}"`}
 function downloadText(name,text,type){const blob=new Blob(['\ufeff'+text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function blankPhone(n){return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:new Date().toISOString().slice(0,10),origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],otherCosts:0,expectedSaleDate:'',nextAction:'',nextActionDate:'',mediaLibrary:[],photoTarget:10,priceHistory:[],lastActivityAt:new Date().toISOString(),parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:new Date().toISOString(),message:'Aparelho cadastrado'}],ad:{}}}
+function blankPhone(n){const now=new Date().toISOString();return{id:crypto.randomUUID(),code:`BM-${String(n).padStart(6,'0')}`,brand:'',model:'',color:'',storage:'',ram:'',nfc:null,connector:'',screenProtector:null,caseIncluded:null,likeNew:null,biometrics:null,unlockCredentials:[],date:now.slice(0,10),createdAt:now,origin:'',payment:'',bankAccountId:'',paid:0,expected:0,status:'Aguardando análise',tasks:'',notes:'',tags:[],otherCosts:0,expectedSaleDate:'',nextAction:'',nextActionDate:'',mediaLibrary:[],photoTarget:10,priceHistory:[],lastActivityAt:now,parts:[],diagnostics:[],timeline:[{id:crypto.randomUUID(),date:now,message:'Aparelho cadastrado'}],ad:{}}}
 createRoot(document.getElementById('root')).render(<AppErrorBoundary><><CloudGate/><GlobalInlineSelectLayer/></></AppErrorBoundary>);

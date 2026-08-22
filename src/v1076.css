@@ -1,0 +1,85 @@
+/* BMCenter v10.5.45 — segurança operacional, filtros compactos e status mobile */
+.v10545-historical-sales-setting{display:grid!important;gap:5px!important;max-width:340px!important}
+.v10545-historical-sales-setting>span{font-weight:700!important;color:var(--text)!important}
+.v10545-historical-sales-setting>input{width:150px!important;max-width:100%!important}
+.v10545-historical-sales-setting>small{font-size:9px!important;line-height:1.4!important;color:var(--muted)!important}
+
+@media(max-width:720px){
+  .global-inline-select-menu.status-grid-menu{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-content:start!important;
+    gap:5px!important;
+  }
+  .global-inline-select-menu.status-grid-menu button{
+    min-width:0!important;
+    min-height:44px!important;
+    height:auto!important;
+    padding:7px 8px!important;
+    align-items:center!important;
+    font-size:10px!important;
+    line-height:1.18!important;
+  }
+  .global-inline-select-menu.status-grid-menu button span{
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  .v102-route .v1041-status-chips,
+  .v102-route .v10314-status-options{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .v102-route .v1041-status-chips>button,
+  .v102-route .v10314-status-options>button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:34px!important;
+    height:auto!important;
+    padding:6px 7px!important;
+    justify-content:flex-start!important;
+    white-space:normal!important;
+    text-align:left!important;
+    line-height:1.18!important;
+    font-size:8.5px!important;
+  }
+
+  .v102-route .v10313-filter-fields{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  .v102-route .v10313-filter-fields label{
+    min-width:0!important;
+    gap:3px!important;
+  }
+  .v102-route .v10313-filter-fields label>span{
+    font-size:7.5px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .v102-route .v10313-filter-fields select{
+    width:100%!important;
+    min-width:0!important;
+    height:32px!important;
+    min-height:32px!important;
+    padding:0 22px 0 7px!important;
+    font-size:8.5px!important;
+  }
+  .v102-route .v10313-extra-filters{
+    padding:7px!important;
+  }
+  .v102-route .v10313-filter-footer{
+    margin-top:6px!important;
+    padding-top:6px!important;
+  }
+}
+
+@media(max-width:360px){
+  .v102-route .v10313-filter-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}

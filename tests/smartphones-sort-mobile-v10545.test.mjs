@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const main=fs.readFileSync(new URL('../src/main.jsx',import.meta.url),'utf8');
+const phones=fs.readFileSync(new URL('../src/v102/pages/SmartphonesV102.jsx',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v1076.css',import.meta.url),'utf8');
+assert.match(phones,/Cadastro: mais recentes/,'ordenação deve explicar que recentes significa cadastro');
+assert.match(phones,/Venda: mais recentes/,'vendidos devem permitir ordenar por data de venda recente');
+assert.match(phones,/Venda: mais antigas/,'vendidos devem permitir ordenar por data de venda antiga');
+assert.match(phones,/phoneCreationTimestamp/,'ordenação de cadastro deve usar data de criação, não última atividade');
+assert.match(css,/status-grid-menu[\s\S]*grid-template-columns:repeat\(2/,'status no mobile deve usar duas colunas');
+assert.match(css,/v10313-filter-fields[\s\S]*grid-template-columns:repeat\(3/,'filtros extras mobile devem usar três colunas quando houver espaço');
+assert.match(main,/historicalSalesBeforeSystem/,'configuração deve guardar vendas anteriores ao sistema');
+assert.match(main,/Histórico de vendas/,'dashboard deve exibir total histórico de vendas');
+console.log('smartphones-sort-mobile-v10545.test: OK');
