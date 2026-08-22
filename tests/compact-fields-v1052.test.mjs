@@ -5,7 +5,7 @@ const css=fs.readFileSync(new URL('../src/v1054.css',import.meta.url),'utf8');
 assert.match(main,/import'\.\/v1053\.css';import'\.\/v1054\.css';/,'v1054.css deve carregar por último');
 assert.match(main,/const APP_VERSION='\d+\.\d+\.\d+'/, 'APP_VERSION deve existir no código');
 for(const cls of ['sale-field-value','sale-field-profile','sale-field-date','sale-field-installments','purchase-field-date','purchase-field-origin','purchase-field-paid','purchase-field-sale','purchase-field-other']) assert.ok(main.includes(cls),`classe semântica ausente: ${cls}`);
-assert.match(main,/function Field\(\{label,value,onChange,type='text',prefix='',suffix='',inputMode,className=''\}\)\{return <label className=\{className\}>/,'Field precisa aceitar className');
+assert.match(main,/function Field\(\{label,value,onChange,type='text',prefix='',suffix='',inputMode,className=''\}\)\{[\s\S]*?<label className=\{className\}>/,'Field precisa aceitar className');
 assert.match(css,/sale-register-modal \.sale-data-grid,[\s\S]*display:flex!important/,'venda desktop deve usar flex sem esticar campos');
 assert.match(css,/sale-field-installments\{flex:0 0 78px!important;width:78px!important/,'Parcelas deve ser estreito');
 assert.match(css,/purchase-field-date\{flex:0 0 112px!important;width:112px!important/,'Data da compra deve ter largura de data');
